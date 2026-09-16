@@ -54,7 +54,7 @@ Docker em execução, Supabase CLI e `corepack enable pnpm`.
 
 | Verificação | Comando | Estado |
 | --- | --- | --- |
-| Subir e parar o Supabase local | `pnpm db:start` · `pnpm db:stop` | Implementado. Portas 544xx, próprias da Oplyra |
+| Subir e parar o Supabase local | `pnpm db:start` · `pnpm db:stop` | Implementado. Portas 544xx, próprias da Oplyra; passam pela trava de projeto |
 | Recriar o banco do zero por migrations e seeds | `pnpm db:reset` | Implementado. 8 migrations + seeds sintéticos |
 | Definir senhas locais dos papéis de login | `pnpm db:roles` | Implementado. Senhas nunca entram no versionamento |
 | Tipos | `pnpm typecheck` | Implementado |
@@ -66,6 +66,23 @@ Docker em execução, Supabase CLI e `corepack enable pnpm`.
 | Experimento EXP-01 | `cd experiments/exp-01&& pnpm setup && node src/run.ts && node src/api.ts` | Executado e aprovado |
 | Aplicação local | `pnpm --filter @oplyra/web dev` (porta 3100) | Implementado |
 | Publicar e verificar produção | A definir com o destino aprovado | Não implementado |
+
+### Convivência com outro stack Supabase na mesma máquina
+
+Esta máquina roda outro projeto Supabase local. Os dois são independentes:
+containers, volumes de banco e de Storage, redes Docker e portas são
+separados, e um não alcança o outro nem por nome de container.
+
+O que **não** é separado são os comandos do operador: a CLI escolhe o stack
+pelo `project_id` do `config.toml` da pasta atual, então `supabase stop` ou
+`supabase db reset` na pasta errada acertam o projeto errado, e
+`supabase stop --all` derruba os dois.
+
+Por isso `db:start`, `db:stop`, `db:status` e `db:reset` passam por
+`scripts/db-guard.sh`, que se ancora na raiz deste repositório, confere
+`project_id` e porta antes de repassar o comando e usa `--project-id`
+explícito ao parar. Usar a CLI crua continua possível e continua sem rede de
+proteção: prefira os comandos do `package.json`.
 
 Antes de usar cada comando, inspecionar seu destino e efeitos. Não apontar checks locais para produção. A configuração falha fechada: ambiente local apontando para host remoto sem `OPLYRA_ALLOW_REMOTE=true` impede a inicialização.
 
