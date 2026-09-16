@@ -1,0 +1,8 @@
+{
+  "name": "@oplyra/testing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": { "@oplyra/core": "workspace:*" }
+}

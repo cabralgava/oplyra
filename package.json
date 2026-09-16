@@ -13,5 +13,11 @@
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "exp01": "pnpm --filter @oplyra/exp-01 run all"
-  }
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  },
+  "type": "module"
 }
