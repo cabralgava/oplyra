@@ -5,7 +5,7 @@ import type {
   AuditLogPort, AuditEntry, EntitlementsPort, Clock, TokenGenerator, AuthAdminPort,
 } from "@oplyra/core";
 import type { TenantId, UserId, MembershipId, InvitationId } from "@oplyra/core";
-import type { RoleKey } from "@oplyra/core";
+import type { RoleKey, PermissionKey } from "@oplyra/core";
 import type { AccessContext } from "@oplyra/core";
 import type { Tenant, Membership, Invitation, TenantSummary } from "@oplyra/core";
 
@@ -49,6 +49,7 @@ export function criarDeps(inicial?: Partial<Estado>): Deps & { estado: Estado } 
       return estado.memberships.filter((m) => m.userId === identidadeAtual && m.status === "active")
         .map((m): TenantSummary => ({ tenantId: m.tenantId, name: estado.tenants.find((t) => t.id === m.tenantId)?.name ?? "", roleKey: m.roleKey }));
     },
+    async listByTenant(_tx, t) { return estado.memberships.filter((m) => m.tenantId === t); },
     async countActiveOwners(_tx, t) { return estado.memberships.filter((m) => m.tenantId === t && m.roleKey === "owner" && m.status === "active").length; },
     async add(_tx, e) {
       const m: Membership = { id: novoId("m") as MembershipId, tenantId: e.tenantId, userId: e.userId, roleKey: e.roleKey, status: "active" };
@@ -103,8 +104,8 @@ export function criarDeps(inicial?: Partial<Estado>): Deps & { estado: Estado } 
 
 export function contexto(over: Partial<AccessContext> & Pick<AccessContext, "tenantId">): AccessContext {
   const papel: RoleKey = over.roleKey ?? "owner";
-  const todas = ["tenant.read", "member.read", "member.invite", "member.role.change", "member.remove", "entitlement.read", "asset.read", "asset.write"] as const;
-  const porPapel: Record<RoleKey, readonly string[]> = {
+  const todas: readonly PermissionKey[] = ["tenant.read", "member.read", "member.invite", "member.role.change", "member.remove", "entitlement.read", "asset.read", "asset.write"];
+  const porPapel: Record<RoleKey, readonly PermissionKey[]> = {
     owner: todas, admin: todas.filter((p) => p !== "member.remove"),
     marketing_manager: ["tenant.read", "member.read", "entitlement.read", "asset.read", "asset.write"],
     viewer: ["tenant.read", "member.read", "entitlement.read", "asset.read"],
@@ -114,7 +115,7 @@ export function contexto(over: Partial<AccessContext> & Pick<AccessContext, "ten
     tenantId: over.tenantId,
     membershipId: (over.membershipId ?? novoId("m")) as MembershipId,
     roleKey: papel,
-    permissions: new Set(porPapel[papel]) as ReadonlySet<never>,
+    permissions: new Set<PermissionKey>(porPapel[papel]),
     resolvedAt: over.resolvedAt ?? new Date("2026-09-15T12:00:00Z"),
-  } as AccessContext;
+  };
 }

@@ -264,6 +264,8 @@ Cada item é verificável e indica como é provado. Item não executado é regis
 | A16 | Telas do incremento com estados vazio, erro e sem permissão, no tema escuro do guia, revisadas com `apple-design` | Revisão de UI + Playwright nos fluxos do incremento |
 | A17 | Toda operação privilegiada gera auditoria na mesma transação do efeito | pgTAP + integração |
 
+**Resultado em 15/09/2026:** A01, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15 e A17 **atendidos**. A02 atendido no login por senha; o link mágico está implementado, mas a entrega pelo Mailpit não foi verificada. A16 atendido nos estados de erro e de sem permissão, verificados no navegador; faltam a revisão formal com o checklist `apple-design`, o estado vazio exercitado e os testes Playwright.
+
 **Pronto** significa: A01 a A17 aprovados, evidências associadas à versão entregue, diff revisado, gates de lint, tipos, testes e build verdes e [ESTADO](ESTADO.md) atualizado. Gate correspondente: **G3** de [VERIFICACOES](VERIFICACOES.md).
 
 ### 5.10 Continuidade em I-02 (não autorizado aqui)

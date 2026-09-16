@@ -1,0 +1,57 @@
+/* Tokens do guia de interface (15/09/2026), coerentes com o manual de marca.
+   Os valores marcados como derivados ainda dependem de inspeção dos frames (DP-35). */
+:root {
+  --bg: #0c1023;
+  --surface: #111e2c;
+  --surface-2: #1a2235;
+  --elevated: #1e2640;
+  --line: #1e2640;            /* derivado */
+  --text: #ffffff;
+  --text-2: #cbd5e1;
+  --text-3: #8a9bb0;
+  --accent: #5b3df5;
+  --accent-hover: #7c5ff7;
+  --ok: #16a36a;
+  --bad: #e5484d;
+  --warn: #f59e0b;
+  --radius: 14px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 100%/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+h1, h2, h3 { font-family: Manrope, Inter, system-ui, sans-serif; letter-spacing: -.02em; margin: 0 0 .5rem; }
+h1 { font-size: 1.6rem; font-weight: 800; }
+h2 { font-size: 1.1rem; font-weight: 700; }
+a { color: var(--accent-hover); }
+main { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; }
+.card + .card { margin-top: 1rem; }
+.muted { color: var(--text-3); font-size: .9rem; }
+label { display: block; font-size: .875rem; color: var(--text-2); margin-bottom: .3rem; }
+input, select {
+  width: 100%; padding: .6rem .7rem; border-radius: 10px; font: inherit;
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--line);
+}
+:focus-visible { outline: 3px solid var(--accent-hover); outline-offset: 2px; }
+.btn {
+  font: inherit; font-weight: 600; cursor: pointer; border-radius: 10px; padding: .6rem 1.1rem;
+  background: var(--accent); color: #fff; border: 1px solid var(--accent);
+  transition: transform 100ms ease-out, background 120ms ease-out;
+}
+.btn:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn:active { transform: scale(.97); }
+.btn.secundario { background: transparent; color: var(--text); border-color: var(--line); }
+.linha { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+.entre { display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+.pilha > * + * { margin-top: 1rem; }
+.aviso { border-left: 3px solid var(--warn); padding: .6rem .8rem; background: var(--surface-2); border-radius: 8px; }
+.erro { border-left: 3px solid var(--bad); padding: .6rem .8rem; background: var(--surface-2); border-radius: 8px; }
+.vazio { text-align: center; padding: 2rem 1rem; color: var(--text-3); }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: .6rem .5rem; border-top: 1px solid var(--line); font-size: .92rem; }
+th { color: var(--text-3); font-weight: 600; border-top: 0; }
+.selo { font-size: .75rem; border-radius: 999px; padding: .12rem .55rem; background: var(--elevated); color: var(--text-2); }
+.selo.revogado { color: var(--bad); }

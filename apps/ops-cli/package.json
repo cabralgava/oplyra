@@ -1,0 +1,9 @@
+{
+  "name": "@oplyra/ops-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": { "ops": "./src/main.ts" },
+  "scripts": { "ops": "node src/main.ts" },
+  "dependencies": { "@oplyra/core": "workspace:*", "@oplyra/infra": "workspace:*" }
+}

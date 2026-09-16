@@ -1,6 +1,7 @@
 // Integração com o Supabase LOCAL. Exige `pnpm db:start`, migrations e seeds.
 // Estes testes usam sessões e papéis reais: o que passa aqui não passou por fake.
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, afterAll } from "vitest";
+import { randomUUID } from "node:crypto";
 import { criarUnitOfWork } from "../src/db.ts";
 import {
   tenantRepository, membershipRepository, invitationRepository, auditLog,
@@ -30,6 +31,23 @@ const ctx = async (userId: UserId, tenantId: TenantId): Promise<AccessContext> =
   resolver.resolve({ userId, email: "" }, tenantId);
 
 afterAll(async () => { await uow.encerrar(); });
+
+/** Cria uma identidade nova no Auth local. Id aleatório por execução: os
+ *  testes precisam ser repetíveis sem depender de reset do banco. */
+async function novaIdentidade(email: string): Promise<UserId> {
+  const id = randomUUID() as UserId;
+  const admin = criarUnitOfWork({ connectionString: "postgresql://postgres:postgres@127.0.0.1:54422/postgres" });
+  try {
+    await admin.pool.query(
+      `insert into auth.users (instance_id,id,aud,role,email,encrypted_password,email_confirmed_at,
+                               raw_app_meta_data,raw_user_meta_data,created_at,updated_at,
+                               confirmation_token,recovery_token,email_change_token_new,
+                               email_change,email_change_token_current,reauthentication_token)
+       values ('00000000-0000-0000-0000-000000000000',$1,'authenticated','authenticated',$2,
+               crypt('x',gen_salt('bf')),now(),'{}','{}',now(),now(),'','','','','','')`, [id, email]);
+  } finally { await admin.encerrar(); }
+  return id;
+}
 
 describe("contexto de acesso", () => {
   it("monta papel e permissões a partir do vínculo ao vivo", async () => {
@@ -78,13 +96,7 @@ describe("convite ponta a ponta", () => {
     expect(antes).toBeGreaterThan(0);
 
     // Identidade nova aceita o convite: ela ainda não tem vínculo nenhum.
-    const nova = "c0000099-0000-4000-8000-000000000099" as UserId;
-    const admin = criarUnitOfWork({ connectionString: "postgresql://postgres:postgres@127.0.0.1:54422/postgres" });
-    await admin.pool.query(
-      `insert into auth.users (instance_id,id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at)
-       values ('00000000-0000-0000-0000-000000000000',$1,'authenticated','authenticated',$2,crypt('x',gen_salt('bf')),now(),'{}','{}',now(),now())
-       on conflict (id) do nothing`, [nova, email]);
-    await admin.encerrar();
+    const nova = await novaIdentidade(email);
 
     const r = await acceptInvitation(deps, { userId: nova, email, rawToken: token });
     expect(r.tenantId).toBe(TA);
@@ -105,13 +117,7 @@ describe("revogação tem efeito imediato", () => {
     const email = `temporaria-${Date.now()}@local.test`;
     const { token } = await inviteMember(deps, { ctx: dono, email, roleKey: "viewer" });
 
-    const alvo = `d0000099-0000-4000-8000-${String(Date.now()).slice(-12)}` as UserId;
-    const admin = criarUnitOfWork({ connectionString: "postgresql://postgres:postgres@127.0.0.1:54422/postgres" });
-    await admin.pool.query(
-      `insert into auth.users (instance_id,id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at)
-       values ('00000000-0000-0000-0000-000000000000',$1,'authenticated','authenticated',$2,crypt('x',gen_salt('bf')),now(),'{}','{}',now(),now())
-       on conflict (id) do nothing`, [alvo, email]);
-    await admin.encerrar();
+    const alvo = await novaIdentidade(email);
 
     const { membershipId } = await acceptInvitation(deps, { userId: alvo, email, rawToken: token });
     await expect(ctx(alvo, TA)).resolves.toMatchObject({ roleKey: "viewer" });

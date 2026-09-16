@@ -3,12 +3,17 @@
 
 -- Usuários do Supabase Auth com ids fixos, para que os testes de integração
 -- possam autenticar de verdade. Senha local: "oplyra-local-2026".
+-- As colunas de token ficam como string vazia, não NULL: o GoTrue as lê em
+-- campos de texto não anuláveis e falha com "Database error querying schema".
 insert into auth.users (instance_id, id, aud, role, email, encrypted_password,
                         email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
-                        created_at, updated_at)
+                        created_at, updated_at, confirmation_token, recovery_token,
+                        email_change_token_new, email_change, email_change_token_current,
+                        reauthentication_token)
 select '00000000-0000-0000-0000-000000000000', u.id, 'authenticated', 'authenticated', u.email,
        crypt('oplyra-local-2026', gen_salt('bf')), now(),
-       '{"provider":"email","providers":["email"]}'::jsonb, '{}'::jsonb, now(), now()
+       '{"provider":"email","providers":["email"]}'::jsonb, '{}'::jsonb, now(), now(),
+       '', '', '', '', '', ''
 from (values
   ('a0000001-0000-4000-8000-000000000001'::uuid, 'a-owner@local.test'),
   ('a0000002-0000-4000-8000-000000000002'::uuid, 'a-manager@local.test'),

@@ -40,6 +40,7 @@ export interface MembershipRepository {
   findActive(tx: Tx, userId: UserId, tenantId: TenantId): Promise<Membership | null>;
   findById(tx: Tx, tenantId: TenantId, id: MembershipId): Promise<Membership | null>;
   listActiveByUser(tx: Tx): Promise<TenantSummary[]>;
+  listByTenant(tx: Tx, tenantId: TenantId): Promise<Membership[]>;
   countActiveOwners(tx: Tx, tenantId: TenantId): Promise<number>;
   add(tx: Tx, entrada: { tenantId: TenantId; userId: UserId; roleKey: RoleKey }): Promise<Membership>;
   changeRole(tx: Tx, tenantId: TenantId, id: MembershipId, roleKey: RoleKey): Promise<void>;

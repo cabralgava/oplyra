@@ -47,6 +47,12 @@ export const membershipRepository: MembershipRepository = {
       `select tenant_id as "tenantId", name, role_key as "roleKey" from core.my_tenants()`);
     return rows as TenantSummary[];
   },
+  async listByTenant(tx, tenantId) {
+    const { rows } = await comoCliente(tx).query(
+      `select id, tenant_id as "tenantId", user_id as "userId", role_key as "roleKey", status
+         from core.memberships where tenant_id = $1 order by status, role_key`, [tenantId]);
+    return rows as Membership[];
+  },
   async countActiveOwners(tx, tenantId) {
     const { rows } = await comoCliente(tx).query(
       `select count(*)::int c from core.memberships

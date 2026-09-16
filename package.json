@@ -12,7 +12,14 @@
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
-    "exp01": "pnpm --filter @oplyra/exp-01 run all"
+    "exp01": "pnpm --filter @oplyra/exp-01 run all",
+    "db:roles": "scripts/local-db-roles.sh",
+    "test": "vitest run",
+    "test:db": "supabase test db --local",
+    "typecheck": "pnpm -r --filter @oplyra/core --filter @oplyra/infra --filter @oplyra/testing exec tsc -p tsconfig.json --noEmit",
+    "build": "pnpm --filter @oplyra/web build",
+    "scan:secrets": "scripts/scan-secrets.sh",
+    "verificar": "pnpm typecheck && pnpm test && pnpm test:db && pnpm scan:secrets && pnpm build"
   },
   "devDependencies": {
     "@types/node": "^22.20.2",

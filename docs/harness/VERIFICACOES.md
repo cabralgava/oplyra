@@ -47,21 +47,27 @@ G3–G5 são incrementais: verificar capacidades conforme forem implementadas. N
 
 Seguir [PUBLICACAO.md](PUBLICACAO.md). Antes de publicar: conferir destino de produção, versão aprovada, histórico de migrations, compatibilidade com módulos ativos, configurações Auth/Storage, secrets, recuperação e gates locais. Depois: verificar saúde, autenticação, acesso autorizado e negado em contas controladas, fluxo principal e jobs sem disparos reais não autorizados. Não executar reset, seeds de teste nem suítes destrutivas em produção. Falha pós-deploy impede declarar publicação verificada.
 
-## Catálogo de comandos a preencher após o discovery
+## Catálogo de comandos
 
-| Verificação | Comando real | Estado |
+Comandos reais do incremento I-01, executados em 15/09/2026. Pré-requisitos:
+Docker em execução, Supabase CLI e `corepack enable pnpm`.
+
+| Verificação | Comando | Estado |
 | --- | --- | --- |
-| Inicializar/parar ambiente Supabase local | A definir após aprovação | Não implementado. |
-| Formatação, lint e tipos, conforme stack | A definir após aprovação | Não implementado. |
-| Testes de domínio e casos de uso | A definir após aprovação | Não implementado. |
-| Integração com Auth, PostgreSQL/RLS e Storage | A definir após aprovação | Não implementado. |
-| Reconstruir banco descartável com migrations e seeds | A definir após aprovação | Não implementado. |
-| Contratos de adapters e simulação de falhas | A definir após aprovação | Não implementado. |
-| Avaliações de agentes e limites de ferramentas | A definir após aprovação | Não implementado. |
-| Fluxos de interface e build | A definir após aprovação | Não implementado. |
-| Publicar migrations/componentes e verificar produção sem ações destrutivas | A definir após aprovação, com destino explícito | Não implementado. |
+| Subir e parar o Supabase local | `pnpm db:start` · `pnpm db:stop` | Implementado. Portas 544xx, próprias da Oplyra |
+| Recriar o banco do zero por migrations e seeds | `pnpm db:reset` | Implementado. 8 migrations + seeds sintéticos |
+| Definir senhas locais dos papéis de login | `pnpm db:roles` | Implementado. Senhas nunca entram no versionamento |
+| Tipos | `pnpm typecheck` | Implementado |
+| Unidade, integração e arquitetura | `pnpm test` | Implementado. 36 testes |
+| Banco: matriz de isolamento | `pnpm test:db` | Implementado. 19 testes pgTAP |
+| Varredura de segredos | `pnpm scan:secrets` | Implementado |
+| Build de produção da web | `pnpm build` | Implementado |
+| Tudo acima em sequência | `pnpm verificar` | Implementado |
+| Experimento EXP-01 | `cd experiments/exp-01&& pnpm setup && node src/run.ts && node src/api.ts` | Executado e aprovado |
+| Aplicação local | `pnpm --filter @oplyra/web dev` (porta 3100) | Implementado |
+| Publicar e verificar produção | A definir com o destino aprovado | Não implementado |
 
-Antes de usar cada comando, inspecionar seu destino e efeitos. Não apontar checks locais para produção. Ao implementar, documentar pré-requisitos, resultado esperado e quais falhas devem bloquear a entrega no CI. Bloqueios obrigatórios incluem vazamento entre tenants, efeitos sem autorização e regressão dos critérios de aceite.
+Antes de usar cada comando, inspecionar seu destino e efeitos. Não apontar checks locais para produção. A configuração falha fechada: ambiente local apontando para host remoto sem `OPLYRA_ALLOW_REMOTE=true` impede a inicialização.
 
 ## Cenários adicionais de IA, FinOps e Stripe
 
