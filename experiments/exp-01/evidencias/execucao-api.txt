@@ -1,0 +1,12 @@
+  ok   E1-05a  token legítimo é aceito e enxerga a própria empresa — 50003 linhas
+  ok   E1-05b  todo token forjado é rejeitado — sub alterado, alg none, assinado por chave estranha, expirado
+  ok   E1-05c  nenhuma claim chega ao banco quando o token é inválido — 0 acessos após rejeição
+  ok   E1-10a  A grava no próprio prefixo — HTTP 200
+  ok   E1-10b  A não grava no prefixo de B — HTTP 400
+  ok   E1-10c  A lê o próprio arquivo — HTTP 200
+  ok   E1-10d  B não lê arquivo de A — HTTP 400
+  ok   E1-11a  tabela de domínio não acessível pela Data API — HTTP 404
+  ok   E1-11b  schema exp01 não exposto nem com Accept-Profile — HTTP 406
+  ok   E1-11c  nem com sessão válida o schema é exposto — HTTP 406
+
+10/10 cenários conforme o esperado

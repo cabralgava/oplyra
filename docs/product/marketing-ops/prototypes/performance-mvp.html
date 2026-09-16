@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oplyra — Protótipo conceitual do MVP Performance</title>
+<style>
+  .asset-preview { background: linear-gradient(135deg, #4e36d3, #7c5ff7); color: white; border-radius: 12px; padding: 2rem; min-height: 200px; display: grid; align-content: center; }
+  .asset-preview.edited { background: linear-gradient(135deg, #16a36a, #22d3c5); }
+  textarea { width: 100%; min-height: 5rem; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); padding: .7rem; border-radius: 8px; }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+
+  /* Tokens do guia de interface (15/09/2026). Valores marcados como derivados
+     ainda dependem de confirmação nos frames do Figma — ver DP-35. */
+  :root {
+    --bg: #0c1023;              /* color-bg-primary */
+    --surface: #111e2c;         /* color-surface-card */
+    --surface-2: #1a2235;       /* color-surface-section */
+    --surface-3: #1e2640;       /* color-surface-elevated */
+    --text: #ffffff;            /* color-text-primary */
+    --text-2: #cbd5e1;          /* color-text-secondary */
+    --text-3: #8a9bb0;          /* color-text-tertiary */
+    --line: #1e2640;            /* derivado da superfície elevada */
+    --accent: #5b3df5;          /* color-action-primary */
+    --accent-hover: #7c5ff7;    /* color-action-hover */
+    --accent-ink: #ffffff;
+    --accent-soft: #211a4d;     /* derivado */
+    --ok: #16a36a;
+    --ok-soft: #0f2a20;         /* derivado */
+    --warn: #f59e0b;
+    --warn-soft: #2e2413;       /* derivado */
+    --bad: #e5484d;
+    --bad-soft: #2e181b;        /* derivado */
+    --ai: #a78bfa;              /* color-accent-soft */
+    --ai-soft: #201a3d;         /* derivado */
+    --teal: #22d3c5;
+    --radius: 14px;
+    --radius-sm: 10px;
+    --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 8px 24px rgb(0 0 0 / .45);
+    --bar-bg: rgb(12 16 35 / .78);
+    --font-ui: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-display: Manrope, Inter, system-ui, sans-serif;
+    font: 100%/1.5 var(--font-ui);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .proto-banner { background: var(--warn-soft); color: var(--warn); font-size: .8125rem; text-align: center; padding: .35rem 1rem; }
+
+  /* Barra superior */
+  .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 1rem;
+    padding: .625rem 1.25rem; background: var(--bar-bg); border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); }
+  .brand { font-weight: 700; letter-spacing: -.02em; font-size: 1.125rem; }
+  .tenant { position: relative; }
+  .tenant-btn { display: flex; align-items: center; gap: .5rem; border: 1px solid var(--line); background: var(--surface);
+    border-radius: 999px; padding: .3rem .75rem .3rem .35rem; cursor: pointer; }
+  .tenant-dot { width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+    display: grid; place-items: center; font-size: .75rem; font-weight: 700; }
+  .tenant-role { color: var(--text-3); font-size: .8125rem; }
+  .menu { position: absolute; top: calc(100% + .4rem); left: 0; min-width: 18rem; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: .35rem;
+    transform-origin: top left; transition: opacity .16s ease, transform .16s ease; }
+  .menu[hidden] { display: block; opacity: 0; transform: scale(.97); pointer-events: none; visibility: hidden; }
+  .menu button { display: flex; justify-content: space-between; width: 100%; text-align: left; border: 0; background: none;
+    padding: .55rem .65rem; border-radius: 8px; cursor: pointer; }
+  .menu button:hover { background: var(--surface-2); }
+  .spacer { flex: 1; }
+  .pill { display: inline-flex; align-items: center; gap: .35rem; font-size: .8125rem; border-radius: 999px; padding: .2rem .6rem;
+    background: var(--surface-2); border: 1px solid var(--line); color: var(--text-2); white-space: nowrap; }
+  .pill.ai { background: var(--ai-soft); color: var(--ai); border-color: transparent; }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 13.5rem 1fr; min-height: calc(100vh - 5rem); }
+  nav.side { border-right: 1px solid var(--line); padding: 1rem .75rem; }
+  nav.side button { display: flex; justify-content: space-between; align-items: center; width: 100%; border: 0; background: none;
+    padding: .5rem .7rem; border-radius: 8px; text-align: left; cursor: pointer; color: var(--text-2); }
+  nav.side button[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  nav.side button:hover:not([aria-current="page"]) { background: var(--surface-2); }
+  nav.side .count { font-size: .75rem; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 0 .45rem; }
+  main { padding: 1.5rem 2rem 4rem; max-width: 76rem; width: 100%; }
+  h1 { font-family: var(--font-display); font-weight: 800; font-size: 1.75rem; line-height: 1.15; letter-spacing: -.02em; margin: 0 0 .25rem; }
+  h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.0625rem; margin: 0 0 .75rem; letter-spacing: -.01em; }
+  .brand { font-family: var(--font-display); }
+  .sub { color: var(--text-3); margin: 0 0 1.5rem; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.25rem; }
+  .next, .dialog, .panel { background: var(--surface); }
+  .grid { display: grid; gap: 1rem; }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stack > * + * { margin-top: 1rem; }
+
+  /* Botões */
+  .btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: .55rem 1rem; cursor: pointer;
+    touch-action: manipulation; transition: transform 100ms ease-out, opacity 100ms ease-out; font-weight: 500; }
+  .btn:active { transform: scale(.97); opacity: .86; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+
+  /* Próximo passo */
+  .next { display: flex; gap: 1.25rem; align-items: center; justify-content: space-between; padding: 1.4rem 1.5rem;
+    border-radius: 18px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); margin-bottom: 1.5rem; }
+  .eyebrow { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); font-weight: 600; }
+  .next h2 { font-size: 1.375rem; margin: .2rem 0 .35rem; letter-spacing: -.015em; }
+  .next p { margin: 0; color: var(--text-2); }
+
+  /* Listas */
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-top: 1px solid var(--line); }
+  .list li:first-child { border-top: 0; }
+  .muted { color: var(--text-3); font-size: .875rem; }
+
+  /* Indicadores e confiança */
+  .kpi .label { color: var(--text-3); font-size: .8125rem; }
+  .kpi .value { font-size: 1.6rem; font-weight: 650; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: .15rem 0 .35rem; }
+  .kpi .target { font-size: .8125rem; color: var(--text-2); }
+  .conf { display: inline-flex; align-items: center; gap: .3rem; font-size: .75rem; font-weight: 600; border-radius: 999px; padding: .1rem .5rem; }
+  .conf::before { font-size: .8rem; }
+  .conf.confirmed { background: var(--ok-soft); color: var(--ok); } .conf.confirmed::before { content: "●"; }
+  .conf.probable { background: var(--accent-soft); color: var(--accent); } .conf.probable::before { content: "◐"; }
+  .conf.estimated { background: var(--ai-soft); color: var(--ai); } .conf.estimated::before { content: "◌"; }
+  .conf.partial { background: var(--warn-soft); color: var(--warn); } .conf.partial::before { content: "◑"; }
+  .conf.unavailable { background: var(--surface-2); color: var(--text-3); border: 1px solid var(--line); } .conf.unavailable::before { content: "—"; }
+  .fresh { font-size: .75rem; color: var(--text-3); margin-left: .35rem; }
+  .note { font-size: .8125rem; color: var(--text-2); margin-top: .45rem; }
+
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: .6rem .5rem; border-top: 1px solid var(--line); font-size: .9rem; vertical-align: top; }
+  th { color: var(--text-3); font-weight: 600; font-size: .8125rem; border-top: 0; }
+  .table-wrap { overflow-x: auto; }
+
+  /* Entrega */
+  .variation { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .9rem 1rem; background: var(--surface-2); }
+  .variation h3 { margin: 0 0 .35rem; font-size: 1rem; }
+  .variation p { margin: 0 0 .5rem; color: var(--text-2); }
+  .check { display: flex; gap: .55rem; padding: .45rem 0; font-size: .9rem; }
+  .check .i { width: 1.2rem; flex: none; text-align: center; font-weight: 700; }
+  .check.ok .i { color: var(--ok); } .check.warn .i { color: var(--warn); }
+  .status { font-weight: 600; }
+
+  /* Painel lateral de revisão (não modal) */
+  .panel { position: fixed; top: 0; right: 0; height: 100vh; width: min(28rem, 100vw); z-index: 30; background: var(--surface);
+    border-left: 1px solid var(--line); box-shadow: var(--shadow); padding: 1.25rem 1.25rem 2rem; overflow-y: auto;
+    transform: translateX(0); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+  .panel[aria-hidden="true"] { transform: translateX(105%); visibility: hidden; transition: transform .3s cubic-bezier(.4,0,.6,1), visibility 0s .3s; }
+  .panel header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+
+  /* Modal */
+  .scrim { position: fixed; inset: 0; background: rgb(0 0 0 / .32); z-index: 40; display: grid; place-items: center; padding: 1rem; }
+  .dialog { background: var(--surface); border-radius: 18px; max-width: 26rem; width: 100%; padding: 1.4rem; box-shadow: var(--shadow); }
+  .dialog h2 { font-size: 1.2rem; }
+  .toast { position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg);
+    padding: .65rem 1rem; border-radius: 12px; z-index: 50; font-size: .9rem; }
+
+  /* Check-in */
+  .stmt { display: grid; grid-template-columns: 7.5rem 1fr; gap: .75rem; padding: .6rem 0; border-top: 1px solid var(--line); }
+  .stmt:first-of-type { border-top: 0; }
+  .tag { font-size: .75rem; font-weight: 700; border-radius: 6px; padding: .12rem .45rem; height: fit-content; text-align: center; }
+  .tag.fact { background: var(--ok-soft); color: var(--ok); }
+  .tag.inference { background: var(--accent-soft); color: var(--accent); }
+  .tag.hypothesis { background: var(--ai-soft); color: var(--ai); }
+  .tag.recommendation { background: var(--surface-2); color: var(--text); border: 1px solid var(--line); }
+  .tag.limitation { background: var(--warn-soft); color: var(--warn); }
+  a.ev { color: var(--accent); font-size: .8125rem; }
+
+  .view[hidden], .scrim[hidden], .toast[hidden], .card[hidden] { display: none !important; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.side { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: .5rem; gap: .25rem; }
+    nav.side button { width: auto; white-space: nowrap; }
+    main { padding: 1rem; }
+    .g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .g2 { grid-template-columns: 1fr; }
+    .next { flex-direction: column; align-items: flex-start; }
+    .stmt { grid-template-columns: 1fr; gap: .3rem; }
+    .tenant-role, .hide-sm { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .panel, .panel[aria-hidden="true"], .menu, .btn { transition: opacity 160ms ease !important; transform: none !important; }
+    .panel[aria-hidden="true"] { opacity: 0; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .topbar { background: var(--surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  }
+  @media (prefers-contrast: more) {
+    .card, .variation, .next { border-width: 2px; }
+    .muted, .sub, .kpi .label { color: var(--text-2); }
+  }
+</style>
+</head>
+<body>
+<div class="proto-banner" role="note">Protótipo conceitual · tema escuro conforme o guia de interface · dados e empresas fictícios · não é a aplicação e não possui integração de IA</div>
+
+<header class="topbar">
+  <span class="brand">Oplyra</span>
+  <div class="tenant">
+    <button class="tenant-btn" id="tenantBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="tenantMenu">
+      <span class="tenant-dot" id="tenantDot" aria-hidden="true">A</span>
+      <span id="tenantName">Alfa Software (fictícia)</span>
+      <span class="tenant-role" id="tenantRole">· Gestora de Marketing</span>
+    </button>
+    <div class="menu" id="tenantMenu" role="menu" hidden>
+      <button role="menuitem" data-tenant="alfa">Alfa Software (fictícia) <span class="muted">Gestora de Marketing</span></button>
+      <button role="menuitem" data-tenant="beta">Beta Cloud (fictícia) <span class="muted">Leitura</span></button>
+    </div>
+  </div>
+  <span class="spacer"></span>
+  <span class="pill ai hide-sm" title="Execuções de IA em andamento">✦ 1 execução de IA</span>
+  <span class="pill warn" title="Escalonamentos abertos">1 precisa de você</span>
+</header>
+
+<div class="layout">
+  <nav class="side" aria-label="Navegação principal">
+    <button data-view="home" aria-current="page">Início</button>
+    <button data-view="off">Estratégia</button>
+    <button data-view="production">Produção</button>
+    <button data-view="review">Aprovações <span class="count" aria-label="3 pendentes">3</span></button>
+    <button data-view="off">Operação</button>
+    <button data-view="off">Mídia</button>
+    <button data-view="results">Resultados</button>
+    <button data-view="checkin">Check-in semanal</button>
+    <button data-view="off">Marca</button>
+    <button data-view="consumption">Consumo</button>
+  </nav>
+
+  <main id="main" tabindex="-1">
+    <!-- INÍCIO -->
+    <section class="view" id="view-home" aria-labelledby="h-home">
+      <h1 id="h-home">Bom dia, Carla</h1>
+      <p class="sub">Semana de 07 a 13 de setembro · fuso America/Sao_Paulo</p>
+
+      <div class="next" id="nextStep">
+        <div>
+          <div class="eyebrow">Próximo passo</div>
+          <h2>Aprovar variações da campanha Lançamento Plataforma Pro</h2>
+          <p>3 variações geradas por IA passaram nas verificações e na revisão de Estratégia e Qualidade. Prazo: hoje.</p>
+        </div>
+        <button class="btn primary" data-go="review" data-open-panel="true">Revisar e aprovar</button>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <h2>Precisa de você</h2>
+          <ul class="list">
+            <li><span>3 aprovações de entregas <span class="muted">· 1 vence hoje</span></span><button class="btn" data-go="review">Abrir</button></li>
+            <li><span>Escalonamento: revisões automáticas esgotadas <span class="muted">· Copy Demonstração para equipes</span></span><button class="btn">Ver</button></li>
+            <li><span>2 recomendações de mídia <span class="muted">· modo recomendação</span></span><button class="btn">Ver</button></li>
+            <li><span>Google Ads com atraso <span class="muted">· reconecte antes do check-in de segunda</span></span><button class="btn">Reconectar</button></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Operação da semana</h2>
+          <ul class="list">
+            <li><span>Entregas aprovadas</span><strong>5</strong></li>
+            <li><span>Tarefas atrasadas</span><strong>2</strong></li>
+            <li><span>Riscos novos</span><strong>1</strong></li>
+            <li><span>Decisões pendentes</span><strong>2</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 style="margin-top:1.5rem">Como estamos · Objetivo: 80 leads qualificados em setembro</h2>
+      <div class="grid g4">
+        <div class="card kpi"><div class="label">Investimento (01–07/09)</div><div class="value">R$ 18.420</div>
+          <span class="conf probable">Provável</span><span class="fresh">há 3 h</span><div class="note">Planejado: R$ 20.000</div></div>
+        <div class="card kpi"><div class="label">Leads qualificados</div><div class="value">64</div>
+          <span class="conf confirmed">Confirmado</span><span class="fresh">há 20 min</span><div class="note">Alvo do mês: 80</div></div>
+        <div class="card kpi"><div class="label">Custo por lead qualificado</div><div class="value">R$ 287,81</div>
+          <span class="conf partial">Parcial</span><span class="fresh">há 3 h</span><div class="note">22% dos leads qualificados sem chave de rastreamento</div></div>
+        <div class="card kpi"><div class="label">Contratos</div><div class="value">2</div>
+          <span class="conf confirmed">Confirmado</span><span class="fresh">há 20 min</span><div class="note">Fonte: CRM da empresa (API)</div></div>
+      </div>
+    </section>
+
+    <!-- ENTREGA EM REVISÃO -->
+    <section class="view" id="view-review" aria-labelledby="h-review" hidden>
+      <p class="muted" style="margin:0">Aprovações › Lançamento Plataforma Pro</p>
+      <h1 id="h-review">Copy de anúncio · Meta Ads</h1>
+      <div class="row" style="margin:.35rem 0 1.25rem">
+        <span class="pill ai">✦ Gerado por IA</span>
+        <span class="pill">Versão 3 · <code>a41f…9c2</code></span>
+        <span class="pill">Marca v4</span>
+        <span class="pill"><span class="status" id="dlvStatus">Em revisão</span></span>
+      </div>
+
+      <div class="grid" style="grid-template-columns: minmax(0,1fr)">
+        <div class="stack">
+          <div class="variation">
+            <h3>Variação 1</h3>
+            <p><strong>Título:</strong> Sua operação em um só lugar</p>
+            <p><strong>Texto:</strong> Conheça a Plataforma Pro para organizar projetos e acompanhar entregas da sua equipe. Agende uma demonstração.</p>
+            <p class="muted">CTA: Agendar demonstração · Contagem ilustrativa removida</p>
+          </div>
+          <div class="variation">
+            <h3>Variação 2</h3>
+            <p><strong>Título:</strong> Projetos claros, equipe conectada</p>
+            <p><strong>Texto:</strong> Centralize tarefas e acompanhe prioridades com a Plataforma Pro. Conheça os recursos disponíveis.</p>
+            <p class="muted">CTA: Saiba mais · Versão demonstrativa, sem truncamento automático</p>
+          </div>
+          <div class="variation">
+            <h3>Variação 3</h3>
+            <p><strong>Título:</strong> Lançamento Plataforma Pro</p>
+            <p><strong>Texto:</strong> Organize sua operação com uma visão compartilhada de projetos. Fale com um especialista.</p>
+            <p class="muted">CTA: Falar com consultor · Conteúdo fictício para revisão</p>
+          </div>
+          <div class="row">
+            <button class="btn primary" id="openPanel" aria-controls="panel" aria-expanded="false">Ver revisão e decidir</button>
+            <button class="btn">Editar (cria versão 4)</button>
+          </div>
+          <div class="card" id="approvedBox" hidden>
+            <h2 id="approvedTitle" tabindex="-1">Aprovado · versão 3</h2>
+            <p class="note">UTMs recomendados para veicular no Meta Ads:</p>
+            <p><code>utm_source=meta&amp;utm_medium=paid_social&amp;utm_campaign=plataforma-pro-2026q4&amp;utm_content=v3-a41f</code></p>
+            <div class="row"><button class="btn">Copiar UTMs</button><button class="btn">Informar uso</button></div>
+            <p class="note">A Oplyra não publica anúncios no MVP. "Informar uso" registra a veiculação feita por você.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTADOS -->
+    <section class="view" id="view-results" aria-labelledby="h-results" hidden>
+      <h1 id="h-results">Resultados</h1>
+      <p class="sub">01 a 07/09/2026 · America/Sao_Paulo · Mídia em modo leitura: a Oplyra não altera suas campanhas</p>
+      <div class="grid g4">
+        <div class="card kpi"><div class="label">Investimento</div><div class="value">R$ 18.420</div><span class="conf probable">Provável</span><div class="note">Dentro da janela de reprocessamento das plataformas</div></div>
+        <div class="card kpi"><div class="label">Leads</div><div class="value">212</div><span class="conf confirmed">Confirmado</span><div class="note">Eventos recebidos da API</div></div>
+        <div class="card kpi"><div class="label">Conversões reportadas pelo Meta</div><div class="value">248</div><span class="conf estimated">Estimado</span><div class="note">Modelo de atribuição da plataforma</div></div>
+        <div class="card kpi"><div class="label">ROAS</div><div class="value">—</div><span class="conf unavailable">Indisponível</span><div class="note">Nenhum evento de receita no período</div></div>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <h2>Por campanha</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Campanha</th><th scope="col">Investimento</th><th scope="col">Leads qualificados</th><th scope="col">Custo por lead qualificado</th><th scope="col">Confiança</th></tr></thead>
+            <tbody>
+              <tr><td>Lançamento Plataforma Pro</td><td>R$ 11.200</td><td>41</td><td>R$ 273,17</td><td><span class="conf probable">Provável</span></td></tr>
+              <tr><td>Demonstração para equipes</td><td>R$ 7.220</td><td>9</td><td>R$ 802,22</td><td><span class="conf partial">Parcial</span><div class="note">Google Ads sem dados em 06–07/09</div></td></tr>
+              <tr><td>Sem chave de rastreamento</td><td>—</td><td>14</td><td>—</td><td><span class="conf unavailable">Indisponível</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Indicadores derivados herdam a menor confiança das fontes. Passe o foco sobre um selo para ver fontes e limitações (na aplicação).</p>
+      </div>
+    </section>
+
+    <!-- CHECK-IN -->
+    <section class="view" id="view-checkin" aria-labelledby="h-checkin" hidden>
+      <h1 id="h-checkin">Check-in semanal</h1>
+      <p class="sub">31/08–06/09/2026 · Dados até 06/09/2026 23:59 · Publicado no app em 07/09 às 07:02 (simulação)</p>
+      <div class="card">
+        <h2>Resultados e objetivos</h2>
+        <div class="stmt"><span class="tag fact">Fato</span><div>Investimento de R$ 18.420 (provável) contra R$ 20.000 planejados; 64 leads qualificados (confirmado), 80% do alvo mensal. <a class="ev" href="#">Evidência</a></div></div>
+        <div class="stmt"><span class="tag inference">Inferência</span><div>O custo por lead qualificado da Plataforma Pro caiu após a troca de criativos em 03/09. <a class="ev" href="#">Série diária</a></div></div>
+        <div class="stmt"><span class="tag hypothesis">Hipótese</span><div>Títulos com benefícios de colaboração aumentam a taxa de qualificação. Precisa de teste controlado.</div></div>
+        <div class="stmt"><span class="tag recommendation">Recomendação</span><div>Redistribuir 10% do orçamento de Demonstração para equipes para Plataforma Pro. Impacto esperado é hipótese; requer sua decisão. <button class="btn" style="margin-left:.4rem">Abrir recomendação</button></div></div>
+        <div class="stmt"><span class="tag limitation">Limitação</span><div>Google Ads sem dados para 06–07/09 (conexão com atraso). 22% dos leads qualificados chegaram sem chave de rastreamento.</div></div>
+      </div>
+      <div class="grid g2" style="margin-top:1rem">
+        <div class="card"><h2>Decisões pendentes</h2>
+          <ul class="list">
+            <li><span>Aprovar verba extra para webinar de demonstração</span><button class="btn">Registrar decisão</button></li>
+            <li><span>Manter ou pausar Demonstração para equipes</span><button class="btn">Registrar decisão</button></li>
+          </ul></div>
+        <div class="card"><h2>Próximos 7 dias</h2>
+          <ul class="list">
+            <li><span>Novas variações para Demonstração para equipes</span><span class="muted">Copywriting + revisão</span></li>
+            <li><span>Reconectar Google Ads</span><span class="muted">Tráfego</span></li>
+            <li><span>Tarefa proposta: revisar formulário sem UTM</span><button class="btn">Aceitar tarefa</button></li>
+          </ul></div>
+      </div>
+      <p class="note">O que a IA fez: Account v0.1.0 consolidou · Mídia Paga v0.1.0 analisou 2 contas · Estratégia e Qualidade aprovou com observações · 1 check-in da franquia ilustrativa de 4 · 6 min.</p>
+    </section>
+
+
+    <section class="view" id="view-production" aria-labelledby="h-production" hidden>
+      <h1 id="h-production">Imagens da campanha</h1>
+      <p class="sub">Plataforma Pro · Simulação sem geração real ou gasto</p>
+      <div class="grid g2">
+        <div class="card stack">
+          <h2>Prepare a próxima peça</h2>
+          <label for="visualBrief">Instrução para a imagem</label>
+          <textarea id="visualBrief">Apresentar a Plataforma Pro com foco em colaboração entre equipes.</textarea>
+          <p id="visualBalance">Geração: 12 de 60 utilizadas · Edição: 4 de 30 utilizadas</p>
+          <div class="row">
+            <button class="btn primary" id="generateVisual">Gerar · 1 geração</button>
+            <button class="btn" id="editVisual" disabled>Editar · 1 edição</button>
+          </div>
+          <p class="note">Geração cria uma nova imagem. Edição altera a versão existente. A aprovação não publica anúncios.</p>
+          <div class="row">
+            <button class="btn" id="finishVisual" disabled>Concluir simulação</button>
+            <button class="btn" id="failVisual" disabled>Simular falha</button>
+            <button class="btn" id="limitVisual">Simular limite</button>
+          </div>
+          <p id="visualStatus" role="status" aria-live="polite">Nenhuma imagem criada nesta simulação.</p>
+        </div>
+        <div class="card stack">
+          <h2>Versão em revisão</h2>
+          <div class="asset-preview" id="visualPreview" role="img" aria-label="Placeholder ilustrativo; não é uma imagem gerada por IA">
+            <span>EXEMPLO VISUAL · PLATAFORMA PRO</span><strong style="font-size:1.6rem">Sua equipe, conectada.</strong><span>Prévia ilustrativa em formato quadrado</span>
+          </div>
+          <p id="visualVersion">Sem resultado gerado. Esta prévia é ilustrativa.</p>
+          <p id="visualReview">A revisão será exibida ao concluir a simulação.</p>
+          <button class="btn" id="approveVisual" disabled>Aprovar versão</button>
+          <details><summary>Histórico de versões</summary><ul id="visualHistory"><li>Nenhuma versão nesta simulação.</li></ul></details>
+        </div>
+      </div>
+    </section>
+    <section class="view" id="view-consumption" aria-labelledby="h-consumption" hidden>
+      <h1 id="h-consumption">Capacidade do Performance</h1>
+      <p class="sub">Dados fictícios · setembro de 2026 · mês civil no fuso da empresa (proposta)</p>
+      <div class="card table-wrap">
+        <table><caption>Consumo por ação — simulação</caption><thead><tr><th scope="col">Capacidade</th><th scope="col">Utilizado</th><th scope="col">Limite</th></tr></thead><tbody>
+          <tr><th scope="row">Copies aprovadas</th><td>18</td><td>60</td></tr>
+          <tr><th scope="row">Gerações de imagem</th><td id="usedGenerations">12</td><td>60</td></tr>
+          <tr><th scope="row">Edições de imagem</th><td id="usedEdits">4</td><td>30</td></tr>
+          <tr><th scope="row">Análises de mídia</th><td>3</td><td>12</td></tr>
+          <tr><th scope="row">Check-ins com IA</th><td>1</td><td>4</td></tr>
+        </tbody></table>
+        <p id="reservedVisual">Nenhuma ação visual reservada.</p>
+        <p class="note">Próximo reinício ilustrativo: 01/10/2026. Pesos de créditos ainda não definidos; exibimos unidades por ação. Falhas técnicas e custos internos são contabilizados separadamente da franquia.</p>
+        <p class="note">Ao atingir o limite, novas ações ficam indisponíveis. Nenhum excedente é cobrado automaticamente nesta proposta.</p>
+        <button class="btn" data-go="production">Voltar às imagens</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-off" aria-labelledby="h-off" hidden>
+      <h1 id="h-off">Fora do escopo deste protótipo</h1>
+      <p class="sub">Esta área está descrita em 14-ux-flows.md, mas não foi prototipada.</p>
+      <button class="btn" data-go="home">Voltar ao Início</button>
+    </section>
+
+    <section class="view" id="view-beta" aria-labelledby="h-beta" hidden>
+      <h1 id="h-beta">Beta Cloud (fictícia)</h1>
+      <p class="sub">Seu papel nesta empresa é Leitura. Dados da Alfa não são exibidos aqui; o protótipo não possui um relatório próprio da Beta.</p>
+      <div class="card"><h2>Próximo passo</h2><p>Nenhuma ação pendente para você nesta simulação.</p>
+        <p class="note">Nenhum check-in da Beta disponível nesta simulação.</p></div>
+    </section>
+  </main>
+</div>
+
+<!-- Painel de revisão: paralelo, sem scrim -->
+<aside class="panel" id="panel" aria-hidden="true" aria-labelledby="panelTitle">
+  <header>
+    <h2 id="panelTitle" style="margin:0">Revisão da versão 3</h2>
+    <button class="btn" id="closePanel" aria-label="Fechar revisão">Fechar</button>
+  </header>
+  <h2 style="font-size:.9375rem">Verificações determinísticas</h2>
+  <div class="check ok"><span class="i" aria-hidden="true">✓</span><span>Limites de caracteres do Meta Ads</span></div>
+  <div class="check ok"><span class="i" aria-hidden="true">✓</span><span>Sem afirmações ou palavras proibidas da marca</span></div>
+  <div class="check ok"><span class="i" aria-hidden="true">✓</span><span>"Visão compartilhada" com evidência no catálogo fictício do produto</span></div>
+  <div class="check ok"><span class="i" aria-hidden="true">✓</span><span>UTMs com <code>utm_campaign=plataforma-pro-2026q4</code></span></div>
+  <div class="check warn"><span class="i" aria-hidden="true">!</span><span>Aviso: palavra preferida "equipe conectada" ausente nas variações 1 e 2</span></div>
+
+  <h2 style="font-size:.9375rem;margin-top:1rem">Estratégia e Qualidade <span class="pill ai" style="margin-left:.3rem">revisão independente</span></h2>
+  <p><strong>Aprovado com observações</strong> · confiança alta</p>
+  <ul class="list">
+    <li><span>Aderência ao objetivo e à persona</span><span class="conf confirmed">Atende</span></li>
+    <li><span>Tom de voz</span><span class="conf confirmed">Atende</span></li>
+    <li><span>Afirmações e evidências</span><span class="conf confirmed">Atende</span></li>
+    <li><span>Clareza da oferta (variação 2)</span><span class="conf partial">Menor</span></li>
+  </ul>
+  <p class="note">O benefício de colaboração precisa ser específico e sustentado pela versão disponível do produto.</p>
+
+  <div class="row" style="margin-top:1.25rem">
+    <button class="btn">Pedir ajustes</button>
+    <button class="btn primary" id="approveBtn">Aprovar versão 3</button>
+  </div>
+</aside>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle" aria-describedby="dlgDesc">
+    <h2 id="dlgTitle">Aprovar versão 3?</h2>
+    <p id="dlgDesc">Você está aprovando a <strong>versão 3</strong> (<code>a41f…9c2</code>) desta entrega. Edições futuras criam nova versão e exigirão nova aprovação.</p>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn" id="cancelApprove">Cancelar</button>
+      <button class="btn primary" id="confirmApprove">Aprovar versão 3</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+  const views = ["home", "review", "results", "checkin", "production", "consumption", "off", "beta"];
+  let activeTenant = "alfa";
+  const navButtons = document.querySelectorAll("nav.side button");
+  const panel = document.getElementById("panel");
+  const openPanelBtn = document.getElementById("openPanel");
+  const scrim = document.getElementById("scrim");
+  const toast = document.getElementById("toast");
+  let lastFocus = null;
+
+  function show(view) {
+    if (activeTenant === "beta") view = "beta";
+    views.forEach(v => { document.getElementById("view-" + v).hidden = v !== view; });
+    navButtons.forEach(b => {
+      if (b.dataset.view === view) b.setAttribute("aria-current", "page");
+      else b.removeAttribute("aria-current");
+    });
+    if (view !== "review") setPanel(false);
+    document.getElementById("main").focus?.();
+  }
+  function setPanel(open) {
+    panel.setAttribute("aria-hidden", String(!open));
+    openPanelBtn.setAttribute("aria-expanded", String(open));
+    if (open) document.getElementById("closePanel").focus();
+  }
+  function notify(msg) {
+    toast.textContent = msg; toast.hidden = false;
+    clearTimeout(notify.t); notify.t = setTimeout(() => { toast.hidden = true; }, 3200);
+  }
+
+  navButtons.forEach(b => b.addEventListener("click", () => show(b.dataset.view)));
+  document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => {
+    show(b.dataset.go);
+    if (b.dataset.openPanel) setPanel(true);
+  }));
+  openPanelBtn.addEventListener("click", () => setPanel(panel.getAttribute("aria-hidden") === "true"));
+  document.getElementById("closePanel").addEventListener("click", () => { setPanel(false); openPanelBtn.focus(); });
+
+  document.getElementById("approveBtn").addEventListener("click", () => {
+    lastFocus = document.activeElement; scrim.hidden = false; document.getElementById("confirmApprove").focus();
+  });
+  function closeDialog() { scrim.hidden = true; lastFocus?.focus(); }
+  document.getElementById("cancelApprove").addEventListener("click", closeDialog);
+  document.getElementById("confirmApprove").addEventListener("click", () => {
+    closeDialog(); setPanel(false);
+    document.getElementById("dlvStatus").textContent = "Aprovado";
+    document.getElementById("approvedBox").hidden = false;
+    document.getElementById("approveBtn").disabled = true;
+    document.getElementById("approvedTitle").focus();
+    notify("Simulação: versão 3 aprovada. Nenhuma auditoria real foi gravada.");
+  });
+  scrim.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeDialog();
+    if (e.key === "Tab") {
+      const f = scrim.querySelectorAll("button"); const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && scrim.hidden && panel.getAttribute("aria-hidden") === "false") { setPanel(false); openPanelBtn.focus(); }
+  });
+
+  // Seletor de empresa
+  const tenantBtn = document.getElementById("tenantBtn");
+  const tenantMenu = document.getElementById("tenantMenu");
+  tenantBtn.addEventListener("click", () => {
+    const open = tenantMenu.hidden; tenantMenu.hidden = !open; tenantBtn.setAttribute("aria-expanded", String(open));
+    if (open) tenantMenu.querySelector("button").focus();
+  });
+  tenantMenu.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    const beta = b.dataset.tenant === "beta";
+    activeTenant = beta ? "beta" : "alfa";
+    navButtons.forEach(button => { button.disabled = beta; });
+    if (!scrim.hidden) closeDialog();
+    document.getElementById("tenantName").textContent = beta ? "Beta Cloud (fictícia)" : "Alfa Software (fictícia)";
+    document.getElementById("tenantRole").textContent = beta ? "· Leitura" : "· Gestora de Marketing";
+    document.getElementById("tenantDot").textContent = beta ? "B" : "A";
+    tenantMenu.hidden = true; tenantBtn.setAttribute("aria-expanded", "false");
+    show(beta ? "beta" : "home");
+    notify("Empresa ativa: " + (beta ? "Beta Cloud (fictícia)" : "Alfa Software (fictícia)"));
+  }));
+  document.addEventListener("click", e => {
+    if (!tenantMenu.hidden && !e.target.closest(".tenant")) { tenantMenu.hidden = true; tenantBtn.setAttribute("aria-expanded", "false"); }
+  });
+
+  const visual = { generations: 12, edits: 4, version: 0, pending: null, limited: false };
+  const v = id => document.getElementById(id);
+  function syncVisual() {
+    v("visualBalance").textContent = `Geração: ${visual.generations} de 60 utilizadas · Edição: ${visual.edits} de 30 utilizadas`;
+    v("usedGenerations").textContent = visual.generations;
+    v("usedEdits").textContent = visual.edits;
+    v("generateVisual").disabled = !!visual.pending || visual.limited || visual.generations >= 60;
+    v("editVisual").disabled = !visual.version || !!visual.pending || visual.limited || visual.edits >= 30;
+    v("finishVisual").disabled = !visual.pending;
+    v("failVisual").disabled = !visual.pending;
+    v("reservedVisual").textContent = visual.pending ? `Reservada: 1 ${visual.pending === "generation" ? "geração" : "edição"}.` : "Nenhuma ação visual reservada.";
+  }
+  function startVisual(kind) {
+    if (activeTenant !== "alfa" || visual.pending || visual.limited) return;
+    if (!v("visualBrief").value.trim()) { v("visualStatus").textContent = "Preencha a instrução antes de continuar."; return; }
+    visual.pending = kind;
+    v("approveVisual").disabled = true;
+    v("visualStatus").textContent = "Produzindo (simulação). Capacidade reservada; escolha concluir ou simular falha.";
+    syncVisual();
+  }
+  v("generateVisual").addEventListener("click", () => startVisual("generation"));
+  v("editVisual").addEventListener("click", () => startVisual("edit"));
+  v("finishVisual").addEventListener("click", () => {
+    if (!visual.pending || activeTenant !== "alfa") return;
+    const edited = visual.pending === "edit";
+    if (edited) visual.edits++; else visual.generations++;
+    visual.version++; visual.pending = null;
+    v("visualPreview").classList.toggle("edited", edited);
+    v("visualVersion").textContent = `Versão ${visual.version} · Rascunho ilustrativo · ${edited ? "Edição" : "Geração"}`;
+    v("visualReview").textContent = "Simulação: Design produziu; Estratégia e Qualidade revisou. Aguarda aprovação humana desta versão.";
+    v("visualStatus").textContent = "Simulação concluída; resultado em revisão. Nenhum arquivo foi gerado por IA.";
+    if (visual.version === 1) v("visualHistory").replaceChildren();
+    const li = document.createElement("li"); li.textContent = `Versão ${visual.version}: ${edited ? "edição de versão anterior" : "nova geração"}, consumo de uma ação.`;
+    v("visualHistory").appendChild(li);
+    v("approveVisual").textContent = `Aprovar versão ${visual.version}`;
+    v("approveVisual").disabled = false; syncVisual();
+  });
+  v("failVisual").addEventListener("click", () => {
+    if (!visual.pending || activeTenant !== "alfa") return;
+    visual.pending = null;
+    v("visualStatus").textContent = "Falha simulada sem resultado. Franquia preservada; eventual custo externo exige conciliação. Você pode tentar novamente.";
+    syncVisual();
+  });
+  v("approveVisual").addEventListener("click", () => {
+    if (!visual.version || visual.pending || activeTenant !== "alfa") return;
+    v("visualVersion").textContent = `Versão ${visual.version} · Aprovada nesta simulação · Não publicada`;
+    v("visualReview").textContent = `Simulação: revisão de Estratégia e Qualidade concluída e versão ${visual.version} aprovada por você. Uma nova edição exige nova aprovação.`;
+    v("visualStatus").textContent = "Aprovação vinculada à versão atual. Uma edição produzirá outra versão para revisar.";
+    v("approveVisual").disabled = true;
+  });
+  v("limitVisual").addEventListener("click", () => {
+    if (visual.pending) { v("visualStatus").textContent = "Conclua ou simule a falha da ação reservada antes de testar o limite."; return; }
+    visual.limited = !visual.limited;
+    v("limitVisual").textContent = visual.limited ? "Encerrar simulação de limite" : "Simular limite";
+    v("visualStatus").textContent = visual.limited ? "Limite simulado: novas ações indisponíveis. Nenhuma cobrança de excedente; os contadores fictícios foram preservados." : "Simulação de limite encerrada.";
+    syncVisual();
+  });
+  syncVisual();
+</script>
+</body>
+</html>

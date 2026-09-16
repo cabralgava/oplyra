@@ -1,0 +1,17 @@
+{
+  "name": "oplyra",
+  "version": "0.1.0-i01",
+  "private": true,
+  "packageManager": "pnpm@12.4.2",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:status": "supabase status",
+    "db:reset": "supabase db reset",
+    "db:test": "supabase test db",
+    "exp01": "pnpm --filter @oplyra/exp-01 run all"
+  }
+}

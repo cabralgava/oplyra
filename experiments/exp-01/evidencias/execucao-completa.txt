@@ -1,0 +1,27 @@
+  ok   E1-01  consulta pelo login sem assumir papel de execução — código 42501
+  ok   E1-02a  A lê a própria campanha — CANARIO-ALFA-lancamento
+  ok   E1-02b  A não enxerga campanha de B — 0 linhas
+  ok   E1-02c  canário de B ausente no resultado de A
+  ok   E1-02d  A insere no próprio tenant
+  ok   E1-02e  A não insere no tenant de B — código 42501
+  ok   E1-02f  update em linha de B não afeta nada — 0 linhas
+  ok   E1-02g  delete em linha de B não afeta nada — 0 linhas
+  ok   E1-02h  trocar o tenant_id de um registro é negado — código 42501
+  ok   E1-02i  tarefa de A apontando para campanha de B é negada — código 23503
+  ok   E1-03  vínculo revogado não enxerga nada — 0 linhas
+  ok   E1-03b  vínculo revogado não escreve — código 42501
+  ok   E1-04  empresa forjada no contexto não devolve linhas — 0 linhas
+  ok   E1-04b  usuário de duas empresas enxerga B quando tem vínculo — 50001 linhas
+  ok   E1-06a  conexão reutilizada não carrega claims nem papel — papel=oplyra_web_login sub="" tenant=""
+  ok   E1-06b  conexão reutilizada volta sem privilégio — código 42501
+  ok   E1-06c  após reutilização, B não enxerga canário de A
+  ok   E1-08  worker sem app.tenant_id não enxerga linha — 0 linhas
+  ok   E1-08b  worker sem empresa não escreve — código 42501
+  ok   E1-09a  worker de A não enxerga canário de B
+  ok   E1-09b  worker de A não grava linha de B — código 42501
+  ok   E1-12  p95 do overhead de autorização ≤ 20 ms — com RLS 8.46ms, base 7.34ms, overhead 1.12ms
+  ok   E1-07/1  10000 transações concorrentes misturando empresas — 0 violações em 30.5s
+  ok   E1-07/2  10000 transações concorrentes misturando empresas — 0 violações em 30.5s
+  ok   E1-07/3  10000 transações concorrentes misturando empresas — 0 violações em 30.3s
+
+25/25 cenários conforme o esperado em 95.4s

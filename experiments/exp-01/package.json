@@ -1,0 +1,15 @@
+{
+  "name": "@oplyra/exp-01",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "EXP-01 — acesso a dados por conexão direta com RLS efetiva. Experimento descartável.",
+  "scripts": {
+    "setup": "psql \"$DATABASE_URL_MIGRATIONS\" -v ON_ERROR_STOP=1 -f sql/01-setup.sql -f sql/02-seed.sql",
+    "all": "node src/run.ts"
+  },
+  "dependencies": {
+    "jose": "^6.2.12",
+    "pg": "^8.13.1"
+  }
+}

@@ -1,0 +1,105 @@
+# Gates e verificações — Oplyra
+
+## Situação e registro de evidências
+
+Este documento especifica o que verificar. A aplicação não existe e nenhum script, CI ou teste de runtime é apresentado como implementado. Comandos reais serão definidos com a stack aprovada e validados localmente.
+
+Para cada verificação executada, registrar: identificador do gate, cenário, comando ou procedimento real, ambiente, versão/commit ou arquivos verificados, data, resultado e evidência sem dados sensíveis.
+
+Resultados permitidos: `passou`, `falhou`, `não executado`, `não aplicável` com justificativa. Uma revisão documental não comprova isolamento, idempotência ou segurança em execução. Não declarar um gate aprovado se um cenário obrigatório está sem execução.
+
+## Gates por etapa
+
+| Gate | Critério de saída |
+| --- | --- |
+| G0 — Preparação documental | Referências preservadas, links válidos, Supabase local e limite de discovery claros, disponibilidade real das skills e incompatibilidades registradas, estado real documentado. |
+| G1 — Discovery | MVP delimitado; domínio, arquitetura, UX, integrações, RLS, agentes, custos, riscos e plano de testes propostos; evidências de validação separadas de hipóteses; revisão com skills disponíveis e pendências identificadas. Distinguir existência de arquivo, aplicação de skill e verificação executada. |
+| G2 — Autorização estrutural | Aprovação explícita da proposta identificando versão, escopo e pendências aceitas. G1 não concede G2 automaticamente. |
+| G3 — Fundação local | Ambiente reproduzível com Supabase local e cenários de identidade, tenancy, RLS, Storage, entitlements e auditoria aprovados. |
+| G4 — Runtime e integrações | Contratos, isolamento, autorização de ferramentas, aprovações, limites e recuperação testados em ambiente local. |
+| G5 — Incremento Performance | Fluxo do usuário e critérios de aceite do incremento aprovados; Meta/Google em leitura; qualidade dos dados explícita e regressões relevantes verificadas. |
+| G6 — Publicação do incremento | Versão e destino aprovados para deploy, migrations/configurações revisadas, dependências compatíveis e recuperação definida; após deploy, verificações não destrutivas e versão publicada registradas. |
+
+G3–G5 são incrementais: verificar capacidades conforme forem implementadas. Nenhum gate autoriza antecipar o Growth ou dispensa aprovação de ações externas.
+
+## Cenários obrigatórios para a implementação futura
+
+| Área | Cenário e resultado esperado |
+| --- | --- |
+| Domínio | Invariante violada é rejeitada; caminho válido preserva regras sem depender do SDK do fornecedor. |
+| Dependências | Domínio e aplicação não importam SDKs/frameworks de infraestrutura; adapters implementam portas internas. |
+| Auth e tenancy | Sessão inválida, tenant forjado e membership removida não permitem acesso; usuário de dois tenants acessa apenas o contexto autorizado. |
+| RLS | Usuário de A não lê, cria, altera ou remove dados de B; não troca ownership para outro tenant. Caminho legítimo de A funciona com credencial não privilegiada. |
+| Relações e Storage | Relações indevidas entre tenants são rejeitadas; arquivos de B não são listados, lidos ou alterados por A; acesso legítimo funciona. |
+| Entitlements | Capacidade indisponível é negada no backend mesmo com chamada direta; limites são aplicados também em concorrência. |
+| Webhooks | Origem/autenticação inválida é rejeitada; evento duplicado não duplica efeitos; falha tem trilha de recuperação. |
+| Agentes | Memória, recuperação, resultados, caches e jobs não vazam entre tenants; contexto forjado não amplia acesso. |
+| Ferramentas | Ferramenta fora da allowlist é negada pelo executor mesmo que o modelo a solicite; conteúdo malicioso não altera autorização. |
+| Aprovação | Ação crítica sem aprovação é negada; aprovação de uma versão não autoriza payload, destinatário ou orçamento alterado. |
+| Revogação | Membership, integração ou permissão revogada após agendamento impede a ação no momento da execução. |
+| Recuperação | Timeout de ação externa não causa repetição cega; reconciliação ou revisão humana resolve estado incerto. |
+| Concorrência | Entrega duplicada de job, retry e retomada após queda não duplicam efeito; tentativa obsoleta não sobrescreve resultado válido. |
+| Limites | Limite de custo/turnos/tempo bloqueia novas chamadas; kill switch interrompe novos efeitos e registra o motivo. |
+| Dados e UX | Ausência de dados aparece como limitação; rascunho não aparece como publicado; fato e inferência são diferenciados. |
+| Regressão de agentes | Mudança de modelo, prompt, ferramenta ou política reexecuta os cenários afetados, incluindo casos adversariais e revisão humana pertinente. |
+
+## Verificação de publicação incremental
+
+Seguir [PUBLICACAO.md](PUBLICACAO.md). Antes de publicar: conferir destino de produção, versão aprovada, histórico de migrations, compatibilidade com módulos ativos, configurações Auth/Storage, secrets, recuperação e gates locais. Depois: verificar saúde, autenticação, acesso autorizado e negado em contas controladas, fluxo principal e jobs sem disparos reais não autorizados. Não executar reset, seeds de teste nem suítes destrutivas em produção. Falha pós-deploy impede declarar publicação verificada.
+
+## Catálogo de comandos a preencher após o discovery
+
+| Verificação | Comando real | Estado |
+| --- | --- | --- |
+| Inicializar/parar ambiente Supabase local | A definir após aprovação | Não implementado. |
+| Formatação, lint e tipos, conforme stack | A definir após aprovação | Não implementado. |
+| Testes de domínio e casos de uso | A definir após aprovação | Não implementado. |
+| Integração com Auth, PostgreSQL/RLS e Storage | A definir após aprovação | Não implementado. |
+| Reconstruir banco descartável com migrations e seeds | A definir após aprovação | Não implementado. |
+| Contratos de adapters e simulação de falhas | A definir após aprovação | Não implementado. |
+| Avaliações de agentes e limites de ferramentas | A definir após aprovação | Não implementado. |
+| Fluxos de interface e build | A definir após aprovação | Não implementado. |
+| Publicar migrations/componentes e verificar produção sem ações destrutivas | A definir após aprovação, com destino explícito | Não implementado. |
+
+Antes de usar cada comando, inspecionar seu destino e efeitos. Não apontar checks locais para produção. Ao implementar, documentar pré-requisitos, resultado esperado e quais falhas devem bloquear a entrega no CI. Bloqueios obrigatórios incluem vazamento entre tenants, efeitos sem autorização e regressão dos critérios de aceite.
+
+## Cenários adicionais de IA, FinOps e Stripe
+
+Estes são critérios para implementação futura, não testes já executados. Usar os contratos de [PRODUTO](PRODUTO.md) e as decisões/pendências de [ATUALIZACOES](../product/marketing-ops/ATUALIZACOES.md). G4 inclui estes cenários antes da ativação de workflows pagos; os fluxos visuais correspondentes integram G5.
+
+| Área | Cenário e resultado esperado |
+| --- | --- |
+| Registry e roteamento | Modelo sem capacidade, avaliação válida ou autorização é excluído; escolha respeita política versionada e limiar de qualidade, com justificativa registrada. |
+| Escalonamento e fallback | Falha do provedor e qualidade insuficiente seguem políticas distintas; alternativas revalidam dados, prazo e orçamento; ausência de alternativa elegível encerra ou escala sem contornar controles. |
+| Regra determinística | Workflow resolvível pela regra prevista conclui sem chamar LLM e sem lançamento fictício de custo de modelo. |
+| Ledger | Texto, imagens, edições, revisões e retries faturados geram registros rastreáveis; reentrega de evento não duplica custo; custo desconhecido permanece pendente; conciliação preserva histórico. |
+| Budget concorrente | Chamadas simultâneas, subexecuções e retomadas disputam reservas atômicas por workflow e tenant; falta de saldo impede nova chamada; liberação não ocorre enquanto custo/efeito estiver incerto. |
+| Kill switch | Bloqueio por provedor/modelo impede novas chamadas e impede fallback para o alvo bloqueado; chamadas já iniciadas são conciliadas. |
+| Configuração incompleta | Falta de limites numéricos, tarifa ou política válida impede ativação paga; não há default ilimitado. |
+| Eval Engine | Primeiro workflow e mudanças de prompt/modelo/política têm avaliações versionadas; falha de segurança ou limiar obrigatório impede liberação. |
+| Medidores | Reaprovação, retry, edição e adaptação composta seguem regras explícitas sem duplicação; mudança de período/fuso/plano tem resultado definido. Políticas ainda pendentes impedem concluir este cenário. |
+| Check-ins | Mês com cinco ocorrências semanais segue política explicitamente definida frente à franquia; não omite entrega nem excede consumo silenciosamente. |
+| Imagens e UX | Geração, edição, falha, repetição e aprovação preservam versões, revisão e medição; usuário vê consumo da capacidade e estado real da entrega. |
+| Stripe | Webhook com assinatura inválida é rejeitado; evento repetido não duplica efeitos; ordem invertida não regride estado; conciliação resolve divergências. Testar com fixtures/sandbox, sem cobrança real. |
+| Baseline | Cálculo reproduzível separa volumes, tarifas datadas, tentativas, reserva e infraestrutura; não duplica custo fixo/franquias nem apresenta estimativa como medição. |
+| Vídeo como ativo de entrada | Upload e análise respeitam tenant, permissão e limite de formato/tamanho; transcrição, resumo e derivados herdam tenant e retenção do ativo; derivado de um tenant nunca alcança contexto de outro; nenhuma rota de geração/renderização nativa existe; custo de processamento é registrado no Ledger. |
+| Método de campanha | Campanha exige situação, dor, consequência, desejo, mecanismo, prova e oferta antes da produção; teste declara a hipótese e a dimensão variada; resultado sem dado suficiente é reportado como inconclusivo, não como sucesso; aprendizado registrado retorna a Brand OS e personas com versão e evidência. |
+
+Estes cenários são detalhados em [15](../product/marketing-ops/15-test-plan.md), TST-22 a TST-28. Cenário especificado não é teste executado: o runtime não existe.
+
+## Interface baseada no Figma — 15/09/2026
+
+Usar o [Guia de interface](../product/marketing-ops/GUIA-INTERFACE-FIGMA.md) em G1, para especificação de UX, e G5, quando houver implementação autorizada. Estes são critérios futuros, não testes já executados na aplicação.
+
+| Área | Procedimento e resultado esperado |
+| --- | --- |
+| Rastreabilidade | Identificar tela, node, data de inspeção e origem das medidas; marcar propostas e acesso indisponível. |
+| Fidelidade visual | Comparar implementação com frame em 1440 px; conferir composição, paleta, Inter/Manrope, hierarquia, espaçamentos e diferenças intencionais. |
+| Navegação | Verificar sidebar desktop e topbar conforme composição confirmada; registrar eventual divergência no Dashboard. |
+| Responsividade | Verificar larguras menores, páginas longas, conteúdo sem corte, navegação recolhida quando necessária e rolagem localizada de tabelas. |
+| Acessibilidade | Verificar teclado, foco, nomes acessíveis, contraste das combinações reais e status compreensível sem depender só de cor. |
+| Estados e dados | Verificar carregamento, vazio, erro, indisponibilidade, estados desabilitados e dados demonstrativos separados dos reais. |
+| Produto | Controles respeitam autorização, entitlements e aprovação; frame não habilita funcionalidade fora do incremento. |
+| Consistência | Tokens e componentes compartilhados; bibliotecas seguem stack aprovada. |
+
+Registrar evidências por tela e viewport. Sem acesso ao Figma, registrar a limitação e as verificações feitas com a especificação textual; não declarar fidelidade visual aprovada.

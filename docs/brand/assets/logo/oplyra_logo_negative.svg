@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1600"
+   height="430"
+   viewBox="0 0 1600 430"
+   role="img"
+   aria-labelledby="title desc"
+   version="1.1"
+   id="svg12"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <title
+     id="title">Oplyra — logo principal</title>
+  <desc
+     id="desc">Símbolo circular em gradiente violeta, azul e ciano, acompanhado do wordmark Oplyra e slogan.</desc>
+  <defs
+     id="defs10">
+    <linearGradient
+       id="brandGradient"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0"
+         stop-color="#5B3DF5"
+         id="stop1" />
+      <stop
+         offset="0.52"
+         stop-color="#2F7DF6"
+         id="stop2" />
+      <stop
+         offset="1"
+         stop-color="#22D3C5"
+         id="stop3" />
+    </linearGradient>
+    <linearGradient
+       id="underGradient"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0"
+         stop-color="#34268C"
+         id="stop4" />
+      <stop
+         offset="0.55"
+         stop-color="#2539A6"
+         id="stop5" />
+      <stop
+         offset="1"
+         stop-color="#0C6DAF"
+         id="stop6" />
+    </linearGradient>
+    <linearGradient
+       id="frontGradient"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0"
+         stop-color="#673CFA"
+         id="stop7" />
+      <stop
+         offset="0.55"
+         stop-color="#347CF6"
+         id="stop8" />
+      <stop
+         offset="1"
+         stop-color="#22D3C5"
+         id="stop9" />
+    </linearGradient>
+    <mask
+       id="annulusMask">
+      <rect
+         width="520"
+         height="520"
+         fill="black"
+         id="rect9" />
+      <circle
+         cx="250"
+         cy="240"
+         r="164"
+         fill="white"
+         id="circle9" />
+      <circle
+         cx="250"
+         cy="240"
+         r="93"
+         fill="black"
+         id="circle10" />
+    </mask>
+  </defs>
+  <rect
+     x="0"
+     y="0"
+     width="1600"
+     height="430"
+     fill="#0C1023"
+     id="rect10" />
+  <!-- Symbol base -->
+  <g
+     id="symbol"
+     transform="translate(10 20)">
+    <circle
+       cx="250"
+       cy="240"
+       r="128.5"
+       fill="none"
+       stroke="url(#brandGradient)"
+       stroke-width="71"
+       id="circle11" />
+    <!-- Rear ribbon / inner crossover -->
+    <path
+       d="M 120 186 C 170 120, 270 121, 327 166 C 367 198, 376 247, 350 290 C 327 329, 285 357, 244 365"
+       fill="none"
+       stroke="url(#underGradient)"
+       stroke-width="71"
+       stroke-linecap="round"
+       mask="url(#annulusMask)"
+       id="path11" />
+    <!-- Front ribbon reinstatement: gives the upper-right and lower arc a clean leading edge -->
+    <path
+       d="M 112 186 C 130 111, 192 71, 259 76 C 347 82, 409 151, 410 239 C 412 337, 338 409, 245 410 C 174 410, 117 373, 92 316"
+       fill="none"
+       stroke="url(#frontGradient)"
+       stroke-width="71"
+       stroke-linecap="round"
+       mask="url(#annulusMask)"
+       opacity="0.98"
+       id="path12" />
+  </g>
+  <!-- Wordmark -->
+  <path
+     d="m 592.03906,302.32422 c 46.36817,0 82.27735,-31.72559 82.27735,-88.78516 0,-57.17578 -35.90918,-89.01758 -82.27735,-89.01758 -46.60058,0 -82.50976,31.8418 -82.50976,89.01758 0,56.82715 35.90918,88.78516 82.50976,88.78516 z m 0,-36.02539 c -25.21777,0 -40.55761,-18.59375 -40.55761,-52.75977 0,-34.28222 15.33984,-52.99219 40.55761,-52.99219 25.10156,0 40.44141,18.59375 40.44141,52.99219 0,34.16602 -15.33985,52.75977 -40.44141,52.75977 z m 95.28711,82.27734 h 40.55762 v -69.61035 h 0.92969 c 5.11328,11.7373 16.61816,22.89355 36.49023,22.89355 28.82031,0 52.0625,-22.66113 52.0625,-66.70507 0,-45.55469 -24.52051,-66.70508 -51.83008,-66.70508 -20.68554,0 -31.84179,12.20215 -36.72265,23.93945 h -1.39453 v -22.3125 H 687.32617 Z M 751.47461,270.25 c -15.45606,0 -24.52051,-13.8291 -24.52051,-35.0957 0,-21.49903 9.06445,-34.9795 24.52051,-34.9795 15.68848,0 24.17187,13.82911 24.17187,34.9795 0,21.15039 -8.59961,35.0957 -24.17187,35.0957 z M 869.65527,126.8457 H 829.09766 V 300 h 40.55761 z m 19.40137,218.70899 c 6.04297,2.32422 15.80469,3.95117 25.79883,3.95117 29.16894,0 43.34668,-14.75879 51.24902,-35.79297 l 54.50291,-143.63672 h -42.30076 l -20.80176,63.56738 c -3.48633,11.04004 -6.3916,22.08008 -9.06445,33.81739 -2.20801,-11.73731 -4.29981,-22.66114 -7.66992,-33.81739 l -19.40723,-63.56738 h -42.76562 l 48.45996,130.15625 0.11621,5.46192 c 0.58105,10.57519 -9.29688,15.57226 -23.93946,11.62109 l -5.11328,-1.39453 z M 1026.5283,300 h 40.5576 v -70.88867 c 0,-15.57227 11.0401,-26.03125 26.0313,-26.03125 4.8808,0 12.2021,0.81347 16.0371,2.09179 v -35.32812 c -3.3701,-0.81348 -7.6699,-1.39453 -11.5049,-1.39453 -14.2939,0 -25.6826,8.25098 -30.331,25.33398 h -1.3946 v -23.70703 h -39.3955 z m 121.667,2.32422 c 18.0127,0 30.5635,-7.20508 37.6524,-20.56934 h 1.0459 V 300 h 38.1171 v -88.2041 c 0,-27.89063 -25.4502,-43.34668 -57.7568,-43.34668 -32.5391,0 -52.9922,15.22363 -58.1055,37.41992 l 36.7227,4.76465 c 2.208,-8.13477 9.7617,-13.36426 21.0342,-13.36426 11.04,0 17.664,5.11328 17.664,14.06152 v 0.46485 c 0,8.01855 -8.832,9.64551 -30.7959,11.50488 -26.2636,2.20801 -48.3437,11.85352 -48.3437,40.67383 0,25.68262 17.7803,38.34961 42.7656,38.34961 z m 12.3184,-26.84473 c -9.7617,0 -16.7344,-4.64844 -16.7344,-13.36426 0,-8.59961 6.7402,-13.71289 18.71,-15.45605 7.5537,-1.16211 17.7802,-2.90527 22.4287,-5.3457 v 12.43457 c 0,12.7832 -10.8076,21.73144 -24.4043,21.73144 z"
+     id="text12"
+     style="font-weight:800;font-size:238px;font-family:Inter, Arial, sans-serif;letter-spacing:-10;fill:#ffffff"
+     aria-label="Oplyra" />
+</svg>

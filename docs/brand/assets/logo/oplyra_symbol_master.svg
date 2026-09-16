@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">Oplyra — símbolo</title><desc id="desc">Símbolo circular contínuo em gradiente violeta, azul e ciano.</desc>
+<defs>
+  <linearGradient id="brandGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B3DF5"/><stop offset="0.52" stop-color="#2F7DF6"/><stop offset="1" stop-color="#22D3C5"/></linearGradient>
+  <linearGradient id="underGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34268C"/><stop offset="0.55" stop-color="#2539A6"/><stop offset="1" stop-color="#0C6DAF"/></linearGradient>
+  <linearGradient id="frontGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#673CFA"/><stop offset="0.55" stop-color="#347CF6"/><stop offset="1" stop-color="#22D3C5"/></linearGradient>
+  <mask id="annulusMask"><rect width="512" height="512" fill="black"/><circle cx="256" cy="256" r="164" fill="white"/><circle cx="256" cy="256" r="93" fill="black"/></mask>
+</defs>
+<circle cx="256" cy="256" r="128.5" fill="none" stroke="url(#brandGradient)" stroke-width="71"/>
+<path d="M 126 202 C 176 136, 276 137, 333 182 C 373 214, 382 263, 356 306 C 333 345, 291 373, 250 381" fill="none" stroke="url(#underGradient)" stroke-width="71" stroke-linecap="round" mask="url(#annulusMask)"/>
+<path d="M 118 202 C 136 127, 198 87, 265 92 C 353 98, 415 167, 416 255 C 418 353, 344 425, 251 426 C 180 426, 123 389, 98 332" fill="none" stroke="url(#frontGradient)" stroke-width="71" stroke-linecap="round" mask="url(#annulusMask)" opacity="0.98"/>
+</svg>
