@@ -235,6 +235,35 @@ Limitações: dados e empresas fictícios; interações simuladas (troca de tela
 | Viewports pequeno e grande | Parcial: verificado em 1024 px e em 768 px emulados (navegação recolhida em barra rolável, conteúdo em coluna única); não testado em dispositivo real |
 | Análise quadro a quadro | Não realizada |
 
+## 9.1 Checklist `apple-design` — aplicação do I-01 (16/09/2026)
+
+Revisão da aplicação em si, distinta do checklist do protótipo em §9. Verificada
+com 16 testes Playwright sobre o ambiente local.
+
+| Item | Situação |
+| --- | --- |
+| Ação principal evidente | Atendido: um botão primário por cartão |
+| Resposta imediata ao pressionamento | Atendido: `:active` com escala, e nas ações de servidor o botão passa a "Enviando…", com `aria-busy` e envio duplo bloqueado |
+| Arrastes acompanham o ponteiro | Não aplicável: não há arraste neste incremento |
+| Animações gestuais interrompíveis | Não aplicável |
+| Velocidade preservada na soltura | Não aplicável |
+| Entrada e saída no mesmo eixo | Não aplicável: navegação por página inteira |
+| Bounce só com momentum | Atendido: não há bounce |
+| Blur, sombra e transparência com função | Atendido: sem translucidez decorativa; hierarquia por superfície e borda |
+| Tipografia legível em escalas | Atendido: `rem`, Manrope em títulos e Inter no produto |
+| Estados de carregamento, vazio, sucesso e erro | Atendido: os quatro existem e são exercitados por teste |
+| Teclado, foco e leitores de tela | **Parcial**: teclado e foco visíveis verificados; sem teste com leitor de tela real |
+| Redução de movimento, transparência e contraste | Atendido para movimento e contraste; `prefers-reduced-transparency` não se aplica, pois não há translucidez |
+| Viewport pequeno e grande | Atendido: 768 px sem rolagem horizontal; 1280 px como base |
+| Animação quadro a quadro | Não aplicável: só transições curtas de estado |
+
+**Dois itens reprovaram na primeira revisão e foram corrigidos:**
+
+1. **Sem resposta durante o envio.** Ações de servidor levam tempo perceptível e o botão não mudava: a pessoa clicava e a tela ficava parada. Passou a exibir o estado de espera, desabilitar o controle e anunciar a mudança.
+2. **Contraste do texto de erro.** `#e5484d` sobre a superfície escura dá 4,05:1, abaixo do mínimo de 4,5:1 para texto normal. O texto passou a usar `#f26a6e` (5,33:1); a cor original continua na borda, onde o mínimo é 3:1. As demais combinações da paleta foram medidas e passam, de 5,94:1 a 16,86:1.
+
+Pendências: teste com leitor de tela e a inspeção dos frames do Figma (DP-35), que ainda limita qualquer afirmação de fidelidade visual.
+
 ## 10. Validação proposta com usuários
 
 Durante as entrevistas (T-A): tarefas com o protótipo.

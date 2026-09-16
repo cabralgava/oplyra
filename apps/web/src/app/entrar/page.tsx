@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { autenticar, enviarLinkMagico, guardarSessao, claimsAtuais } from "../../lib/session";
+import { BotaoEnviar } from "../../components/botao-enviar";
 
 export default async function Entrar({ searchParams }: { searchParams: Promise<{ erro?: string; enviado?: string }> }) {
   if (await claimsAtuais()) redirect("/empresas");
@@ -32,6 +33,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
       <h1>Entrar</h1>
       {erro === "credenciais" && <p className="erro">E-mail ou senha inválidos.</p>}
       {erro === "link" && <p className="erro">Não foi possível enviar o link agora.</p>}
+      {erro === "link-invalido" && <p className="erro">Este link expirou ou já foi usado. Peça um novo.</p>}
       {enviado && <p className="aviso">Link enviado. No ambiente local ele aparece no Mailpit, em <code>http://127.0.0.1:54424</code>.</p>}
 
       <form action={entrarComSenha} className="card pilha">
@@ -43,7 +45,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
           <label htmlFor="senha">Senha</label>
           <input id="senha" name="senha" type="password" required autoComplete="current-password" />
         </div>
-        <button className="btn" type="submit">Entrar</button>
+        <BotaoEnviar rotuloEmEspera="Entrando…">Entrar</BotaoEnviar>
       </form>
 
       <form action={pedirLink} className="card pilha">
@@ -52,7 +54,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
           <label htmlFor="email-link">E-mail</label>
           <input id="email-link" name="email" type="email" required />
         </div>
-        <button className="btn secundario" type="submit">Enviar link de acesso</button>
+        <BotaoEnviar variante="secundario" rotuloEmEspera="Enviando…">Enviar link de acesso</BotaoEnviar>
       </form>
     </div>
   );

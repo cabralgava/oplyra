@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { inviteMember, removeMember, DomainError } from "@oplyra/core";
 import { lerEquipe } from "../../../../lib/consultas";
 import type { RoleKey, MembershipId } from "@oplyra/core";
+import { BotaoEnviar } from "../../../../components/botao-enviar";
 
 type Props = { params: Promise<{ tenantId: string }>; searchParams: Promise<{ erro?: string; convite?: string }> };
 
@@ -89,7 +90,7 @@ export default async function Equipe({ params, searchParams }: Props) {
                     {podeRemover && m.status === "active" && (
                       <form action={remover}>
                         <input type="hidden" name="vinculo" value={m.id} />
-                        <button className="btn secundario" type="submit">Remover</button>
+                        <BotaoEnviar variante="secundario" rotuloEmEspera="Removendo…">Remover</BotaoEnviar>
                       </form>
                     )}
                   </td>
@@ -117,7 +118,7 @@ export default async function Equipe({ params, searchParams }: Props) {
                 <option value="owner">Owner</option>
               </select>
             </div>
-            <button className="btn" type="submit">Gerar convite</button>
+            <BotaoEnviar rotuloEmEspera="Gerando…">Gerar convite</BotaoEnviar>
           </form>
         ) : (
           <p className="muted">Seu papel não permite convidar pessoas. Peça a quem administra a empresa.</p>

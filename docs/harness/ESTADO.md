@@ -4,7 +4,7 @@ Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivo
 
 ## Situação atual — 15/09/2026
 
-- **Etapa:** incremento **I-01 implementado localmente**, aguardando aceite. Fase 0 concluída antes disso.
+- **Etapa:** incremento **I-01 aceito pelo usuário em 16/09/2026**, com os dezessete critérios atendidos. Fase 0 concluída antes disso.
 - **Autorização vigente:** execução local do I-01 conforme [PREPARACAO-I01](PREPARACAO-I01.md) §5, autorizada em 15/09/2026, começando pelo EXP-01. Publicação, contas externas, APIs pagas, dados reais e cobrança continuam **não autorizados**.
 - **Referência protegida:** [00 — v2.2, de 13/09/2026](../product/marketing-ops/00-documento-transicao.md), SHA-256 `79a251380fe7f596bfeb7b43f5b599d7c441b9aed5a8ad3c6dec368bd7e1435b`.
 - **Repositório:** Git local inicializado; quatro commits do I-01. Sem remoto.
@@ -24,9 +24,11 @@ Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivo
 
 ### Aceite do I-01
 
-Quinze dos dezessete critérios de [PREPARACAO-I01](PREPARACAO-I01.md) §5.9 estão atendidos. Dois ficam **parciais**: A02, em que o login por senha foi verificado no navegador mas a entrega do link mágico não; e A16, em que os estados de erro e de sem permissão foram verificados, faltando a revisão formal com o checklist `apple-design`, o estado vazio exercitado e os testes Playwright.
+**Aceito em 16/09/2026.** Os dezessete critérios de [PREPARACAO-I01](PREPARACAO-I01.md) §5.9 estão atendidos; os dois que estavam parciais foram fechados no mesmo dia: entrega real do link por e-mail, verificada pelo Mailpit, e verificação de interface com 16 testes Playwright mais o checklist `apple-design` aplicado à aplicação ([14 §9.1](../product/marketing-ops/14-ux-flows.md)).
 
-**Pendência de segurança herdada do EXP-01:** a revisão independente do código de conexão não foi feita; a disponível é a do próprio autor. Resolver antes de dados reais.
+Verificação corrente: tipos sem erro, 36 testes de unidade/integração/arquitetura, 19 pgTAP, 16 Playwright, varredura de segredos limpa e build de produção. `pnpm verificar` roda tudo.
+
+**Pendências registradas, não bloqueantes para o I-01:** a revisão de segurança independente do código de conexão herdada do EXP-01 (resolver antes de dados reais); teste com leitor de tela real; e a inspeção dos frames do Figma (DP-35), que limita afirmar fidelidade visual.
 
 ## Reconciliação de 15/09/2026
 
@@ -93,8 +95,8 @@ O [Guia de interface Figma](../product/marketing-ops/GUIA-INTERFACE-FIGMA.md) é
 
 ## Pendências e próximo passo
 
-1. **Aceitar o incremento I-01** ou apontar ajustes. Concluir os dois critérios parciais: entrega do link mágico e revisão de interface com Playwright e o checklist `apple-design`.
-2. Avaliar DP-02b2 (Turborepo) com o tempo de CI agora medível, conforme combinado ao fim do I-01.
+1. Avaliar **DP-02b2 (Turborepo)** com o tempo de execução agora medível, conforme combinado ao fim do I-01.
+2. Autorizar (ou não) o **I-02**, que fecha a Fase 1.
 3. Pendências econômicas e comerciais: medidores e período, quinta ocorrência semanal, COGS e rateio, limites por workflow, cobrança de pilotos. Cada uma bloqueia a capacidade correspondente, não o trabalho local.
 4. Pendências criadas pelo escopo de vídeo: provedor de análise multimodal, medidor e franquia, custo por ativo, limites de formato e retenção dos derivados.
 5. Inspecionar os nodes do Figma quando houver acesso e registrar medidas reais, substituindo as propostas.

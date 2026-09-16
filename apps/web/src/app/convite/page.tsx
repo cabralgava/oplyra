@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { exigirClaims } from "../../lib/session";
 import { deps } from "../../lib/deps";
 import { acceptInvitation, DomainError } from "@oplyra/core";
+import { BotaoEnviar } from "../../components/botao-enviar";
 
 type Props = { searchParams: Promise<{ token?: string; erro?: string }> };
 
@@ -39,7 +40,7 @@ export default async function Convite({ searchParams }: Props) {
         <form action={aceitar} className="card pilha">
           <p>O convite concede acesso a uma empresa com o papel definido por quem convidou.</p>
           <input type="hidden" name="token" value={token} />
-          <button className="btn" type="submit">Aceitar convite</button>
+          <BotaoEnviar rotuloEmEspera="Aceitando…">Aceitar convite</BotaoEnviar>
         </form>
       )}
     </div>

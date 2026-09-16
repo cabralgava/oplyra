@@ -12,7 +12,8 @@
   --accent: #5b3df5;
   --accent-hover: #7c5ff7;
   --ok: #16a36a;
-  --bad: #e5484d;
+  --bad: #e5484d;          /* borda e indicadores: uso não textual */
+  --bad-text: #f26a6e;     /* texto de erro: 5,33:1 sobre as superfícies escuras */
   --warn: #f59e0b;
   --radius: 14px;
   color-scheme: dark;
@@ -48,10 +49,27 @@ input, select {
 .entre { display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
 .pilha > * + * { margin-top: 1rem; }
 .aviso { border-left: 3px solid var(--warn); padding: .6rem .8rem; background: var(--surface-2); border-radius: 8px; }
-.erro { border-left: 3px solid var(--bad); padding: .6rem .8rem; background: var(--surface-2); border-radius: 8px; }
+.erro { border-left: 3px solid var(--bad); color: var(--bad-text); padding: .6rem .8rem; background: var(--surface-2); border-radius: 8px; }
 .vazio { text-align: center; padding: 2rem 1rem; color: var(--text-3); }
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: .6rem .5rem; border-top: 1px solid var(--line); font-size: .92rem; }
 th { color: var(--text-3); font-weight: 600; border-top: 0; }
 .selo { font-size: .75rem; border-radius: 999px; padding: .12rem .55rem; background: var(--elevated); color: var(--text-2); }
 .selo.revogado { color: var(--bad); }
+
+/* O feedback de pressionamento é transformação curta; sem movimento, mantém-se
+   apenas a mudança de opacidade, que não desloca nada na tela. */
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  .btn:active { transform: none; opacity: .86; }
+}
+
+/* Com pedido de mais contraste, as superfícies ganham borda definida e o texto
+   de apoio sobe um nível: estado deixa de depender de tom sutil. */
+@media (prefers-contrast: more) {
+  .card, .aviso, .erro { border: 2px solid var(--text-3); }
+  .muted, .vazio, th { color: var(--text-2); }
+  .selo { border: 1px solid var(--text-3); }
+}
+
+.btn[aria-busy="true"] { opacity: .7; cursor: progress; }

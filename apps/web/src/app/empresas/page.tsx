@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { exigirClaims, encerrarSessao } from "../../lib/session";
 import { deps } from "../../lib/deps";
 import { listMyTenants } from "@oplyra/core";
+import { BotaoEnviar } from "../../components/botao-enviar";
 
 export default async function Empresas({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
   const claims = await exigirClaims();
@@ -19,7 +20,7 @@ export default async function Empresas({ searchParams }: { searchParams: Promise
     <div className="pilha">
       <div className="entre">
         <h1>Suas empresas</h1>
-        <form action={sair}><button className="btn secundario" type="submit">Sair</button></form>
+        <form action={sair}><BotaoEnviar variante="secundario" rotuloEmEspera="Saindo…">Sair</BotaoEnviar></form>
       </div>
 
       {erro === "sem-acesso" && (

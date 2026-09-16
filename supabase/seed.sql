@@ -20,7 +20,9 @@ from (values
   ('a0000003-0000-4000-8000-000000000003'::uuid, 'a-viewer@local.test'),
   ('a0000004-0000-4000-8000-000000000004'::uuid, 'a-removido@local.test'),
   ('ab000005-0000-4000-8000-000000000005'::uuid, 'ab-duas-empresas@local.test'),
-  ('b0000006-0000-4000-8000-000000000006'::uuid, 'b-owner@local.test')
+  ('b0000006-0000-4000-8000-000000000006'::uuid, 'b-owner@local.test'),
+  -- Sem nenhum vínculo: exercita o estado vazio da tela de empresas.
+  ('e0000007-0000-4000-8000-000000000007'::uuid, 'sem-empresa@local.test')
 ) as u(id, email)
 on conflict (id) do nothing;
 

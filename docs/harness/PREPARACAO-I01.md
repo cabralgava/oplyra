@@ -264,7 +264,12 @@ Cada item é verificável e indica como é provado. Item não executado é regis
 | A16 | Telas do incremento com estados vazio, erro e sem permissão, no tema escuro do guia, revisadas com `apple-design` | Revisão de UI + Playwright nos fluxos do incremento |
 | A17 | Toda operação privilegiada gera auditoria na mesma transação do efeito | pgTAP + integração |
 
-**Resultado em 15/09/2026:** A01, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15 e A17 **atendidos**. A02 atendido no login por senha; o link mágico está implementado, mas a entrega pelo Mailpit não foi verificada. A16 atendido nos estados de erro e de sem permissão, verificados no navegador; faltam a revisão formal com o checklist `apple-design`, o estado vazio exercitado e os testes Playwright.
+**Resultado: A01 a A17 atendidos.** Fechados em 16/09/2026 os dois que estavam parciais:
+
+- **A02** — o link por e-mail passou a levar o `token_hash` para uma rota da própria aplicação, que verifica no servidor: nada depende de fragmento de URL e o token não fica exposto ao script da página. Verificado ponta a ponta pelo Mailpit: e-mail entregue, sessão aberta em cookie `httpOnly` e o mesmo link recusado na segunda vez.
+- **A16** — 16 testes Playwright cobrem entrada, estado vazio, duas empresas, equipe, convite com token exibido uma única vez, papel sem permissão, empresa de terceiro na URL, teclado, foco, viewport de 768 px, tema e preferências do sistema. O checklist `apple-design` da aplicação está em [14 §9.1](../product/marketing-ops/14-ux-flows.md), com as duas correções que ele produziu.
+
+Permanecem registrados como não verificados: teste com leitor de tela real e a inspeção dos frames do Figma (DP-35).
 
 **Pronto** significa: A01 a A17 aprovados, evidências associadas à versão entregue, diff revisado, gates de lint, tipos, testes e build verdes e [ESTADO](ESTADO.md) atualizado. Gate correspondente: **G3** de [VERIFICACOES](VERIFICACOES.md).
 
