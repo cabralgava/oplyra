@@ -4,11 +4,29 @@ Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivo
 
 ## Situação atual — 15/09/2026
 
-- **Etapa:** Fase 0 concluída documentalmente; reconciliação documental aplicada após a substituição da referência protegida. **Implementação não iniciada.**
-- **Autorização vigente:** reconciliação documental e realinhamento do protótipo (15/09/2026). Decisões de stack e recorte tomadas em 15/09; a **execução local do I-01 ainda depende de aceite explícito**. Publicação e efeitos externos seguem não autorizados.
-- **Referência protegida:** [00 — Documento de Transição v2.2, de 13/09/2026](../product/marketing-ops/00-documento-transicao.md). SHA-256 `79a251380fe7f596bfeb7b43f5b599d7c441b9aed5a8ad3c6dec368bd7e1435b`, conferido em 15/09/2026. Somente leitura.
-- **Precedência:** [ATUALIZACOES](../product/marketing-ops/ATUALIZACOES.md) registra as decisões posteriores e a regra de ancoragem dos identificadores DEC.
-- **Aprovação de discovery ou de incremento:** nenhuma registrada.
+- **Etapa:** incremento **I-01 implementado localmente**, aguardando aceite. Fase 0 concluída antes disso.
+- **Autorização vigente:** execução local do I-01 conforme [PREPARACAO-I01](PREPARACAO-I01.md) §5, autorizada em 15/09/2026, começando pelo EXP-01. Publicação, contas externas, APIs pagas, dados reais e cobrança continuam **não autorizados**.
+- **Referência protegida:** [00 — v2.2, de 13/09/2026](../product/marketing-ops/00-documento-transicao.md), SHA-256 `79a251380fe7f596bfeb7b43f5b599d7c441b9aed5a8ad3c6dec368bd7e1435b`.
+- **Repositório:** Git local inicializado; quatro commits do I-01. Sem remoto.
+- **Infraestrutura própria:** Supabase local nas portas 544xx e web na 3100. Outro projeto desta máquina ocupa 3000 e 543xx e **não foi tocado**.
+
+### O que existe agora
+
+| Peça | Situação |
+| --- | --- |
+| EXP-01 | Executado e **aprovado**; relatório em [`experiments/exp-01/RESULTADO.md`](../../experiments/exp-01/RESULTADO.md) |
+| Banco | 8 migrations, RLS habilitada e forçada, seeds sintéticos com duas empresas |
+| Domínio e casos de uso | `packages/core`: entidades, invariantes, portas e os oito casos de uso |
+| Infraestrutura | `packages/infra`: wrappers de transação, repositórios, Auth por JWKS, Storage, auditoria |
+| Operação | `apps/ops-cli`: provisionar empresa e primeiro Owner, `--dry-run` padrão, auditado |
+| Interface | `apps/web`: entrada, escolha de empresa, equipe, convite e aceite, no tema escuro do guia |
+| Verificação | 36 testes (unidade, integração, arquitetura), 19 pgTAP, varredura de segredos, tipos e build |
+
+### Aceite do I-01
+
+Quinze dos dezessete critérios de [PREPARACAO-I01](PREPARACAO-I01.md) §5.9 estão atendidos. Dois ficam **parciais**: A02, em que o login por senha foi verificado no navegador mas a entrega do link mágico não; e A16, em que os estados de erro e de sem permissão foram verificados, faltando a revisão formal com o checklist `apple-design`, o estado vazio exercitado e os testes Playwright.
+
+**Pendência de segurança herdada do EXP-01:** a revisão independente do código de conexão não foi feita; a disponível é a do próprio autor. Resolver antes de dados reais.
 
 ## Reconciliação de 15/09/2026
 
@@ -75,11 +93,12 @@ O [Guia de interface Figma](../product/marketing-ops/GUIA-INTERFACE-FIGMA.md) é
 
 ## Pendências e próximo passo
 
-1. **Aceitar o escopo de execução do I-01** ([PREPARACAO-I01](PREPARACAO-I01.md) §8). Stack e recorte já estão decididos: TypeScript, pnpm workspaces, Next.js, Vitest/pgTAP/Playwright, Git local e escopo enxuto; Turborepo adiado. Enquanto o aceite não vier, nenhum scaffold, migration, ambiente, repositório Git ou gasto pode ser criado.
-2. Pendências econômicas e comerciais: medidores e período, quinta ocorrência semanal, COGS e rateio, limites por workflow, cobrança de pilotos. Cada uma bloqueia a capacidade correspondente, não o trabalho local.
-3. Pendências criadas pelo escopo de vídeo: provedor de análise multimodal, medidor e franquia, custo por ativo, limites de formato e retenção dos derivados.
-4. Inspecionar os nodes do Figma quando houver acesso e registrar medidas reais, substituindo as propostas.
-5. Após aprovação do incremento, implementar a fundação e preencher os comandos reais em [VERIFICACOES](VERIFICACOES.md).
+1. **Aceitar o incremento I-01** ou apontar ajustes. Concluir os dois critérios parciais: entrega do link mágico e revisão de interface com Playwright e o checklist `apple-design`.
+2. Avaliar DP-02b2 (Turborepo) com o tempo de CI agora medível, conforme combinado ao fim do I-01.
+3. Pendências econômicas e comerciais: medidores e período, quinta ocorrência semanal, COGS e rateio, limites por workflow, cobrança de pilotos. Cada uma bloqueia a capacidade correspondente, não o trabalho local.
+4. Pendências criadas pelo escopo de vídeo: provedor de análise multimodal, medidor e franquia, custo por ativo, limites de formato e retenção dos derivados.
+5. Inspecionar os nodes do Figma quando houver acesso e registrar medidas reais, substituindo as propostas.
+6. I-02 (ainda Fase 1): filas e runtime com EXP-02, Registry, Router, Cost Ledger, budgets e Stripe em modo teste. Depende de autorização própria.
 
 ## Modelo para próxima atualização
 
