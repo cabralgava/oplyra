@@ -75,14 +75,14 @@
       "database_test": 4,
       "contract_test": 10
     },
-    "aggregateDigest": "0b17dc1487f7141aac69750b0fcdbe503f8949a2e61e187875a532681fe82f54"
+    "aggregateDigest": "1ae1db3c0c5c59b9bfd65ca99f212b87924c36d3e11af210f857753bf0292ec8"
   },
   "artifacts": [
     {
       "path": ".github/workflows/ci.yml",
       "category": "development_tool",
-      "sizeBytes": 1508,
-      "sha256": "11cc78b972f00ee8a75d9e4ffcfbe009df7cce2bd059c75deb8ddadec63d7d04",
+      "sizeBytes": 1509,
+      "sha256": "0b37a4fc62ef49a34d50271e98d95edd6f97f72bf9c9d3730aa8313d8d41ef5b",
       "source": "cr_025"
     },
     {
