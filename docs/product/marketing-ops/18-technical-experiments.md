@@ -32,7 +32,7 @@ Web e worker podem executar consultas e transações atômicas por conexão Post
 
 | Processo | Opção primária | Motivo | Alternativa |
 | --- | --- | --- | --- |
-| Web na Vercel (instâncias efêmeras) | Pooler compartilhado em **modo transação** (porta 6543), prepared statements desligados, pool pequeno por instância | Recomendado para conexões curtas; configurações por transação continuam válidas, pois o modo transação só descarta estado de sessão (FX-12) | Pooler em modo sessão, se houver incompatibilidade |
+| Web no Netlify (instâncias efêmeras) | Pooler compartilhado em **modo transação** (porta 6543), prepared statements desligados, pool pequeno por instância | Recomendado para conexões curtas; configurações por transação continuam válidas, pois o modo transação só descarta estado de sessão (FX-12) | Pooler em modo sessão, se houver incompatibilidade |
 | Worker em container persistente | Conexão direta (recomendada a backends persistentes). **É IPv6 por padrão**: exige saída IPv6 no host ou add-on IPv4 (US$ 4/mês) | Menor latência; permite locks de transação | Pooler em modo sessão (IPv4) |
 | Migrations e CLI | Conexão direta ou pooler em modo sessão, com credencial exclusiva de migrations | Separação de privilégios | — |
 
@@ -103,20 +103,20 @@ pgmq + pg_cron + tabelas próprias de execução atendem ao MVP com entrega ao m
 - Falha funcional (duplicação, perda): corrigir o runtime ou adotar pg-boss (mesmo banco) e repetir.
 - Falha por disputa de recursos: primeiro, ajustar computação e concorrência. Se persistir, **separar o transporte de mensagens do banco da aplicação** (fila gerenciada ou instância dedicada), mantendo a outbox transacional no banco da aplicação como fonte de verdade.
 
-## EXP-03 — Hospedagem, rede e custo ocioso (DP-05/DP-06 · [ADR-0005](../../decisions/ADR-0005-destinos-de-publicacao.md))
+## EXP-03 — Hospedagem, rede e custo ocioso (DP-05/DP-06 · [ADR-0009](../../decisions/ADR-0009-destinos-netlify-supabase-railway-github.md))
 
 **Exige contas e recursos pagos. Não autorizado nesta etapa.** Executar apenas com autorização específica, em projeto de teste, sem dados reais.
 
 | ID | Cenário | Medição / critério |
 | --- | --- | --- |
-| E3-01 | Latência da web em `gru1` → Supabase `sa-east-1` (pooler) | RTT p95 de consulta simples ≤ 15 ms |
-| E3-02 | Latência do worker (Cloud Run worker pool `southamerica-east1`) → Supabase (direta via IPv6, ou IPv4 add-on, ou pooler) | Conectividade IPv6 comprovada ou alternativa escolhida; RTT p95 ≤ 15 ms |
+| E3-01 | Latência da região candidata das Netlify Functions → região candidata do Supabase (API e pooler em modo transação) | Região efetiva registrada; RTT p95 de consulta simples ≤ 15 ms ou orçamento de latência explicitamente revisado |
+| E3-02 | Latência do worker Railway em US East/Virgínia → Supabase `sa-east-1` candidato (direta, pooler sessão ou alternativa compatível) | Caminho de rede comprovado; RTT p95 ≤ 15 ms ou região/arquitetura revisada antes da aprovação |
 | E3-03 | Custo ocioso real: 1 instância do menor tamanho adequado por 7 dias sem carga | Custo extrapolado ao mês dentro do orçamento aprovado |
 | E3-04 | Deploy e rollback de revisão do worker e da web | Procedimento documentado; rollback ≤ 10 min |
-| E3-05 | Credenciais: deploy do CI sem chave de longa duração (federação de identidade) e segredos no gerenciador | Nenhum segredo em repositório, log ou imagem |
+| E3-05 | Credenciais: deploy do CI com integrações nativas/OIDC quando suportado e segredos nos stores dos provedores | Nenhum segredo em repositório, log ou imagem |
 | E3-06 | Observabilidade: traços e logs correlacionados de web e worker no destino de coleta candidato | Correlação ponta a ponta visível; PII redigida |
 
-Alternativa: se custo ocioso, rede ou operação reprovarem, avaliar worker em Fly.io (`gru`) ou AWS ECS Fargate (`sa-east-1`) com os mesmos cenários.
+Alternativa: se custo ocioso, rede ou operação do Railway reprovarem, avaliar um host de container com região na América do Sul usando os mesmos cenários, sem mudar os contratos do worker.
 
 ## EXP-04 — Backup e restauração do banco e do Storage (DP-07)
 

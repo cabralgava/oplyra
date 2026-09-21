@@ -8,7 +8,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (path: string): Record<string, any> => JSON.parse(readFileSync(join(ROOT, path), "utf8"));
 const readText = (path: string): string => readFileSync(join(ROOT, path), "utf8");
 const schema = readJson("docs/product/marketing-ops/contracts/schemas/runtime/production-environment-plan.schema.json");
-const plan = readJson("docs/product/marketing-ops/contracts/fixtures/valid/production-environment-plan-v1.json");
+const plan = readJson("docs/product/marketing-ops/contracts/fixtures/valid/production-environment-plan-v1.1.json");
 const registry = createSchemaRegistry([schema]);
 
 describe("staging and production environment plan", () => {
@@ -52,9 +52,12 @@ describe("staging and production environment plan", () => {
     expect(validateSchema(schema, invalid, registry)).toContainEqual(expect.objectContaining({ path: "$.isolation.separateSecrets", keyword: "const" }));
   });
 
-  it("mantém todos os destinos como propostas condicionadas ou pendentes", () => {
+  it("registra os provedores selecionados sem autorizar provisionamento", () => {
     expect(plan.destinations).toHaveLength(6);
-    expect(plan.destinations.every((item: Record<string, unknown>) => ["proposed_conditioned", "pending_selection"].includes(String(item.status)))).toBe(true);
+    expect(plan.destinations.find((item: Record<string, unknown>) => item.component === "web")).toMatchObject({ proposedProvider: "Netlify", status: "selected_conditioned" });
+    expect(plan.destinations.find((item: Record<string, unknown>) => item.component === "worker")).toMatchObject({ proposedProvider: "Railway", status: "selected_conditioned" });
+    expect(plan.destinations.find((item: Record<string, unknown>) => item.component === "database")).toMatchObject({ proposedProvider: "Supabase", status: "selected_conditioned" });
+    expect(plan.destinations.find((item: Record<string, unknown>) => item.component === "source_control_ci")).toMatchObject({ proposedProvider: "GitHub private + GitHub Actions", status: "selected_active" });
     expect(plan.destinations.find((item: Record<string, unknown>) => item.component === "observability")).toMatchObject({ proposedProvider: null, status: "pending_selection", decisionDependency: "DP-15b" });
     expect(plan.destinations.find((item: Record<string, unknown>) => item.component === "transactional_email")).toMatchObject({ proposedProvider: null, status: "pending_selection", decisionDependency: "DP-08a" });
   });
@@ -82,16 +85,19 @@ describe("staging and production environment plan", () => {
   });
 
   it("mantém decisões e experimentos externos explicitamente pendentes", () => {
-    expect(plan.pendingDecisions).toEqual(expect.arrayContaining(["DP-05a", "DP-06a", "DP-07a", "DP-08a", "DP-14b", "DP-15b", "DP-28b"]));
+    expect(plan.pendingDecisions).toEqual(expect.arrayContaining(["DP-05b", "DP-06b", "DP-07a", "DP-08a", "DP-15b", "DP-28b"]));
+    expect(plan.pendingDecisions).not.toEqual(expect.arrayContaining(["DP-05a", "DP-06a", "DP-14b"]));
     expect(plan.activationGates).toEqual(expect.arrayContaining(["EXP-03_passed", "EXP-04_passed_before_real_data", "E2-09_staging_passed", "explicit_runtime_activation_approved"]));
-    expect(readText("docs/decisions/ADR-0005-destinos-de-publicacao.md")).toContain("não aprovada");
+    expect(readText("docs/decisions/ADR-0009-destinos-netlify-supabase-railway-github.md")).toContain("parcialmente aprovada");
     expect(readText("docs/product/marketing-ops/18-technical-experiments.md")).toContain("EXP-03 a EXP-05 continuam não executados");
   });
 
   it("mantém runtime e recursos externos desativados", () => {
     const validation = readJson("docs/product/marketing-ops/contracts/schemas/runtime/production-environment-plan.validation.json");
     expect(validation.status).toBe("passed_with_external_decisions_pending");
-    expect(validation.externalResourcesCreated).toBe(false);
+    expect(validation.externalResourcesCreated).toBe(true);
+    expect(validation.externalApplicationResourcesCreated).toBe(false);
+    expect(validation.sourceControlRepositoryCreated).toBe(true);
     expect(validation.runtimeDispatchEnabled).toBe(false);
     expect(validation.databaseChanged).toBe(false);
   });

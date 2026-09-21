@@ -228,11 +228,7 @@ importers:
         specifier: ^8.13.1
         version: 8.23.0
 
-  packages/core:
-    devDependencies:
-      '@oplyra/testing':
-        specifier: workspace:*
-        version: link:../testing
+  packages/core: {}
 
   packages/infra:
     dependencies:

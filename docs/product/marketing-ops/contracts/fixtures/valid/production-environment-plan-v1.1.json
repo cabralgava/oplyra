@@ -1,0 +1,22 @@
+{
+  "planVersion": "1.1",
+  "authorization": { "planningApproved": true, "provisioningAuthorized": false, "deploymentAuthorized": false, "realDataAuthorized": false, "runtimeActivationAuthorized": false, "explicitApprovalRequiredForCreation": true },
+  "environments": {
+    "local": { "state": "existing", "remote": false, "dataPolicy": "synthetic_only", "integrationPolicy": "fake_or_replay_by_default" },
+    "staging": { "state": "planned_not_created", "productionEquivalent": true, "dataPolicy": "synthetic_only", "decisionDependency": "DP-28b", "requiredBeforeRuntimeActivation": true },
+    "production": { "state": "planned_not_created", "dataPolicy": "no_real_data_before_readiness_approval", "internalVerificationTenantsRequired": true, "runtimeStartsDisabled": true }
+  },
+  "isolation": { "separateDatabaseProjects": true, "separateCredentials": true, "separateSecrets": true, "separateQueues": true, "crossEnvironmentDataCopyAllowed": false, "productionFallbackFromPreviewAllowed": false },
+  "destinations": [
+    { "component": "database", "proposedProvider": "Supabase", "proposedRegion": "sa-east-1", "status": "selected_conditioned", "decisionDependency": "DP-07a + EXP-03/EXP-04" },
+    { "component": "web", "proposedProvider": "Netlify", "proposedRegion": null, "status": "selected_conditioned", "decisionDependency": "DP-05b + EXP-03" },
+    { "component": "worker", "proposedProvider": "Railway", "proposedRegion": "us-east4-eqdc4a", "status": "selected_conditioned", "decisionDependency": "DP-06b + EXP-03" },
+    { "component": "observability", "proposedProvider": null, "proposedRegion": null, "status": "pending_selection", "decisionDependency": "DP-15b" },
+    { "component": "transactional_email", "proposedProvider": null, "proposedRegion": null, "status": "pending_selection", "decisionDependency": "DP-08a" },
+    { "component": "source_control_ci", "proposedProvider": "GitHub private + GitHub Actions", "proposedRegion": null, "status": "selected_active", "decisionDependency": "DP-14b resolved 2026-09-21" }
+  ],
+  "database": { "migrationsOnly": true, "manualProductionChangesAllowed": false, "expandContractRequired": true, "rlsRequired": true, "directTableAccessForWorkers": false, "backupCapabilityMustBeVerified": true, "restoreExerciseRequiredBeforeRealData": true, "pitrAssumedAvailable": false },
+  "releaseSequence": ["approve_destinations_and_budget", "authorize_resource_creation", "create_isolated_staging", "apply_staging_migrations", "run_staging_security_and_E2-09", "approve_production_creation", "create_production_disabled", "apply_production_migrations", "run_non_destructive_readiness", "separate_runtime_activation_change"],
+  "activationGates": ["EXP-03_passed", "EXP-04_passed_before_real_data", "DP-28b_resolved", "provider_and_region_approved", "budget_approved", "secrets_and_identities_ready", "RLS_negative_isolation_passed", "backup_restore_verified", "E2-09_staging_passed", "rollback_drill_passed", "observability_and_alerting_ready", "explicit_runtime_activation_approved"],
+  "pendingDecisions": ["DP-05b", "DP-06b", "DP-07a", "DP-07b", "DP-08a", "DP-15b", "DP-28b"]
+}

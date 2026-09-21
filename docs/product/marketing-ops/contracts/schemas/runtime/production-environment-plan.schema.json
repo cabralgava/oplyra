@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.oplyra.com/runtime/production-environment-plan/1.0",
+  "$id": "https://schemas.oplyra.com/runtime/production-environment-plan/1.1",
   "title": "Oplyra Staging and Production Environment Plan",
   "type": "object",
   "additionalProperties": false,
   "required": ["planVersion", "authorization", "environments", "isolation", "destinations", "database", "releaseSequence", "activationGates", "pendingDecisions"],
   "properties": {
-    "planVersion": { "const": "1.0" },
+    "planVersion": { "const": "1.1" },
     "authorization": {
       "type": "object",
       "additionalProperties": false,
@@ -86,7 +86,7 @@
           "component": { "enum": ["database", "web", "worker", "observability", "transactional_email", "source_control_ci"] },
           "proposedProvider": { "type": ["string", "null"], "minLength": 1 },
           "proposedRegion": { "type": ["string", "null"], "minLength": 1 },
-          "status": { "enum": ["proposed_conditioned", "pending_selection"] },
+          "status": { "enum": ["selected_conditioned", "selected_active", "pending_selection"] },
           "decisionDependency": { "type": "string", "minLength": 1 }
         }
       }
@@ -121,7 +121,7 @@
     },
     "pendingDecisions": {
       "type": "array",
-      "minItems": 9,
+      "minItems": 7,
       "uniqueItems": true,
       "items": { "enum": ["DP-05a", "DP-05b", "DP-06a", "DP-06b", "DP-07a", "DP-07b", "DP-08a", "DP-14b", "DP-15b", "DP-28b"] }
     }

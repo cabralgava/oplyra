@@ -19,7 +19,7 @@ Probabilidade (P) e impacto (I): B = baixo, M = médio, A = alto, C = crítico.
 | R-09 | Loops ou custo multiagente fora de controle | B | M | Limites por execução, workflow, empresa e plataforma; circuit breakers; kill switch | Alerta de anomalia de custo |
 | R-10 | Jobs duplicados ou agendamentos perdidos | M | M | Enfileiramento transacional; ocorrências únicas; lease com fencing; testes de concorrência | Duplicidade detectada em produção |
 | R-11 | PostgreSQL como fila não escala | B (MVP) | M | Carga sintética no I-02; porta `JobQueue` substituível | Lag > 5 min recorrente |
-| R-12 | Dependência de fornecedores (Supabase, Vercel, Anthropic, host do worker) | M | M | Portas e adapters; containers portáveis; SQL padrão; contratos internos | Mudança de preço ou termos |
+| R-12 | Dependência de fornecedores (Supabase, Netlify, Railway e provedores de IA) | M | M | Portas e adapters; containers portáveis; SQL padrão; contratos internos | Mudança de preço ou termos |
 | R-13 | Documentos jurídicos e LGPD não prontos antes dos pilotos | M | A | Trilha T-C paralela; pilotos com dados reais só após conclusão | T-C incompleta no I-06 |
 | R-14 | Produto percebido como agência em software | M | M | Mensagem de capacidade, governança e inteligência; serviços humanos separados | Feedback de entrevistas |
 | R-15 | Capacidade e tamanho da equipe desconhecidos tornam o roadmap irreal | A | A | Tamanhos relativos; revisão do plano após o I-01 com velocidade real | Após o I-01 |
@@ -32,8 +32,8 @@ Probabilidade (P) e impacto (I): B = baixo, M = médio, A = alto, C = crítico.
 | R-22 | Escopo OAuth do Google Ads permite escrita | M | A | Sem código de escrita; testes de arquitetura; tokens cifrados; revogação ao desconectar | Vazamento de credencial |
 | R-23 | Retirada ou alteração de modelos candidatos (FX-16; datas a revalidar) | M | M | Não usar em rota crítica sem plano de migração; política de modelo por rota; reavaliação no EXP-05 | Aviso de depreciação |
 | R-24 | Backups do banco não incluem objetos do Storage (FX-11) | A | A | Versões imutáveis, exclusão lógica, réplica externa, manifesto; EXP-04 antes de dados reais | Antes de dados reais |
-| R-25 | Região padrão da Vercel é `iad1` (FX-05): latência e processamento fora do Brasil se não configurada | M | M | `gru1` explícita no pacote de publicação e na verificação pós-deploy | Cada publicação da web |
-| R-26 | Custo ocioso contínuo do worker (worker pools sem autoscaling, cobrança por instância; FX-06, FX-15) | A | B | Aceitar como custo fixo; menor instância adequada; EXP-03 mede 7 dias | Fatura acima da estimativa |
+| R-25 | Região das Netlify Functions e do Railway pode ficar distante do Supabase e dos usuários brasileiros | M | M | Região explícita no pacote; EXP-03 mede web→banco e worker→banco antes de produção | EXP-03 e cada mudança de região |
+| R-26 | Custo ocioso contínuo do worker Railway | A | B | Serviço stateless no menor tamanho adequado; EXP-03 mede 7 dias; alertas de custo | Fatura acima da estimativa |
 | R-27 | Inferência de IA fora do Brasil (FX-18) | A | A | DP-09c e DP-22 antes de dados reais; sem PII (DP-27) | Antes dos pilotos |
 | R-28 | Custo da análise de vídeo não dimensionado: cobrança por minuto ou por ativo pode consumir o budget do tenant | A | A | Medidor, franquia e teto próprios antes de ativar (DP-34); adapter fake por padrão; custo por ativo no Ledger | Antes de habilitar a capacidade |
 | R-29 | Transcrição de vídeo reintroduz PII fora da política | M | A | Derivados herdam retenção e permissões do ativo (I-AST); redação antes do contexto do agente; TST-29 | Antes de dados reais |
@@ -89,20 +89,20 @@ EXP-05 compara candidatos de texto e imagem, registrando tarifas datadas, quanti
 
 ## 3. Infraestrutura estimada (produção, antes dos pilotos)
 
-Valores mensais aproximados em US$, herdados do discovery anterior, não revalidados nesta correção; verificar tarifas vigentes antes de contratar. **Não são cotações.** Uso acima dos créditos e impostos não estão incluídos.
+Valores antigos de Vercel e Cloud Run foram retirados porque esses provedores deixaram de ser a direção selecionada. Netlify e Railway devem ser cotados no EXP-03 com o plano e a região efetivamente candidatos. **Nenhum valor abaixo é cotação ou orçamento aprovado.**
 
 | Item | Faixa | Observação |
 | --- | ---: | --- |
 | Supabase Pro + computação | 30–79 | Pro US$ 25 com US$ 10 de crédito; Small US$ 15 (≈ US$ 30 líquido) a Medium US$ 60 (≈ US$ 75); add-on IPv4 US$ 4, se o worker exigir (FX-09, FX-12) |
 | PITR de 7 dias (antes de dados reais, DP-07b) | 0 ou 100 | US$ 100/mês por 7 dias; exige Small ou maior (FX-11) |
-| Vercel Pro | 20–60 | US$ 20 por assento com US$ 20 de crédito de uso; excedente pelas tarifas de `gru1` (FX-14) |
-| Worker em Cloud Run worker pools (1 instância contínua, Tier 2) | 30–90 | **Não cotado na tabela oficial** (FX-15). Instância cobrada mesmo ociosa; confirmar na calculadora e no EXP-03 |
+| Netlify | pendente | Plano, Functions, bandwidth e região a cotar no EXP-03 |
+| Railway worker contínuo | pendente | Medir CPU, memória, egress e custo ocioso real por 7 dias no EXP-03 |
 | Réplica externa do Storage | 1–5 | Volume inicial pequeno (EXP-04) |
 | E-mail transacional | 0–20 | Volume inicial baixo; provedor não escolhido (DP-08a) |
 | Observabilidade | 0–50 | Serviço não escolhido (DP-15b) |
 | Registry, logs, gerenciador de segredos e domínio | 5–20 | — |
-| **Total sem PITR** | **≈ 86–324** | Sem IA |
-| **Total com PITR (7 dias)** | **≈ 186–424** | Sem IA |
+| **Total sem PITR** | **não calculado** | Depende da cotação Netlify/Railway e do plano Supabase |
+| **Total com PITR** | **não calculado** | Depende também da decisão DP-07b |
 
 APIs da Meta e do Google: sem cobrança de uso conhecida para acesso de leitura. Os custos indiretos são de verificação, conformidade e tempo.
 

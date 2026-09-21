@@ -21,8 +21,10 @@ async function seed(suffix: string): Promise<string> {
   await admin.pool.query(
     `insert into content.event_outbox (
        tenant_id, event_transaction_id, event_key, consumer_agent, draft_ref,
-       aggregate_version, source_transaction_id, correlation_id, payload
-     ) values ($1, $2, 'copy.draft_created', 'design-agent', $3, 1, $4, $5, $6::jsonb)`,
+       aggregate_version, source_transaction_id, correlation_id, payload,
+       available_at
+     ) values ($1, $2, 'copy.draft_created', 'design-agent', $3, 1, $4, $5, $6::jsonb,
+       '2026-09-21T18:59:00Z'::timestamptz)`,
     [TENANT, eventTransactionId, draftRef, `${eventTransactionId}_source`, `corr_${suffix}`, JSON.stringify({
       draftRef,
       version: 1,

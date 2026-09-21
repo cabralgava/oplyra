@@ -8,11 +8,11 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | **Desenvolvimento local** | Implementar e validar | Supabase local via Docker (projeto próprio da Oplyra) | `localhost` | Processo local | Fakes por padrão; sandbox só com flag e teto | Seeds sintéticos (2+ empresas) |
 | **CI (efêmero)** | Mesmos gates do local, reproduzíveis | Supabase local no runner, descartado ao fim | Build + E2E local | Processo no runner | Somente fakes e replay | Seeds sintéticos |
-| **Produção** | Incrementos aprovados para publicação | Projeto Supabase próprio em `sa-east-1` | `app.oplyra.io` (Vercel, `gru1`) | Container gerenciado em São Paulo | Reais, com credenciais de produção | Dados reais; empresas internas de verificação |
+| **Produção** | Incrementos aprovados para publicação | Supabase selecionado; região/plano pendentes | `app.oplyra.io` no Netlify; região/plano pendentes | Railway; região/plano pendentes | Reais, com credenciais de produção | Dados reais; empresas internas de verificação |
 
 **Não há ambiente de homologação remoto**, por decisão do projeto (dois ambientes). Riscos e mitigações:
 
-- **Deploys de preview da Vercel não podem apontar para produção.** Recomenda-se desativá-los no projeto de produção ou deixar variáveis de preview vazias para o build falhar, sem fallback.
+- **Deploy Previews do Netlify não podem apontar para produção.** Variáveis de preview devem usar ambiente isolado ou permanecer ausentes para o build falhar, sem fallback.
 - Empresas internas em produção e feature flags de lançamento (`internal`) permitem ativar módulos primeiro para a equipe.
 - **Decisão preservada (DP-28a):** desenvolvimento local via Docker e produção incremental no Supabase.
 - Antes dos pilotos com dados reais, **reavaliar** a necessidade de homologação (R-19, DP-28b). Criá-la exigirá nova decisão do usuário.
@@ -26,12 +26,12 @@
 | Configuração de Auth (SMTP, URLs de redirecionamento, expiração, rate limits, MFA) | Supabase produção | Checklist versionado + aplicação por CLI ou API de gerenciamento quando suportado; senão, manual com evidência | **Não é transportada por migrations** |
 | Schemas expostos pela Data API | Supabase produção | Configuração de projeto | Verificar após cada publicação ([07](07-security-lgpd.md) §5) |
 | Dados de referência (permissões, papéis, planos, tetos, definições de agentes) | Supabase produção | Migration de dados idempotente ou procedimento `ops-cli` revisado | Nunca seeds sintéticos |
-| Web / BFF / API pública v1 | Vercel, projeto de produção, região `gru1` | Build do commit aprovado; promoção para produção | Domínios `app.oplyra.io` e domínio de API |
-| Worker | Container gerenciado em São Paulo (DP-06: Cloud Run worker pools em `southamerica-east1` recomendado; alternativas Fly.io `gru` ou AWS ECS em `sa-east-1`) | Imagem versionada em registry privado; nova revisão | Mínimo de 1 instância; encerramento gracioso |
+| Web / BFF / API pública v1 | Netlify; projeto, plano e região pendentes | Build do commit aprovado; promoção para produção | Domínios `app.oplyra.io` e domínio de API; Functions apenas para a fronteira web |
+| Worker | Railway; US East/Virgínia é candidata condicionada ao EXP-03 | Imagem ou build versionado do mesmo commit; nova revisão | Serviço stateless contínuo; encerramento gracioso e restart policy |
 | `ops-cli` | Job manual do CI com credencial restrita, ou máquina de operador com MFA | Versão do mesmo commit | Toda execução auditada |
 | DNS e e-mail | Provedor do domínio `oplyra.io`; provedor de e-mail (DP-08) | Registros documentados | SPF, DKIM, DMARC |
 | Observabilidade | Fornecedor (DP-15) | Configuração por variáveis | Sem PII |
-| Segredos | Secret stores da Vercel, do host do worker e do Supabase | Alteração manual registrada (sem valores) | Rotação documentada |
+| Segredos | Contextos/secret store do Netlify, variáveis do Railway e secrets do Supabase | Alteração manual registrada (sem valores) | Rotação documentada; preview nunca herda produção |
 
 ## 3. Configuração por ambiente
 
@@ -98,7 +98,7 @@ Segue a lista obrigatória de [PUBLICACAO.md](../../harness/PUBLICACAO.md). Form
 ```text
 Versão / commit / tag:
 Incremento e escopo funcional:
-Destino: projeto Supabase de produção (identificador sem segredo) · projeto Vercel · serviço do worker
+Destino: projeto Supabase de produção (identificador sem segredo) · site Netlify · serviço Railway do worker
 Dependências já publicadas e verificadas:
 Gates locais e de CI (resultado + link para evidência):
 Migrations (lista) e impacto em dados existentes (expand/contract):
@@ -152,7 +152,7 @@ Aprovação solicitada: aceite funcional + publicação desta versão neste dest
 
 | Componente | Estratégia | Observação |
 | --- | --- | --- |
-| Web | Promover o deploy anterior na Vercel | Compatível se o schema seguiu expand/contract |
+| Web | Promover o deploy anterior no Netlify | Compatível se o schema seguiu expand/contract |
 | Worker | Voltar para a revisão anterior da imagem | Idem; jobs de versão N ficam na fila até a correção, se incompatíveis |
 | Migrations | **Correção progressiva** por nova migration | Sem rollback automático; nunca editar migration aplicada |
 | Dados corrompidos | Restauração de backup ou PITR **somente com autorização específica** e avaliação de perda | Exercício de restauração antes dos pilotos |
@@ -175,10 +175,10 @@ Propostas de perda aceitável (RPO) e tempo de recuperação (RTO), estratégia 
 
 Condicionada à aprovação que inclua a publicação do I-01:
 
-1. Criar a organização e o projeto Supabase de produção da Oplyra em `sa-east-1` e registrar o identificador (sem segredos).
+1. Criar a organização e o projeto Supabase de produção da Oplyra na região aprovada pelo EXP-03 e registrar o identificador (sem segredos).
 2. Definir o plano Supabase, a política de backup e a decisão sobre PITR (DP-07).
 3. Configurar SMTP transacional (DP-08), domínio de envio, SPF, DKIM e DMARC.
-4. Criar o projeto Vercel de produção (região `gru1`), desativar previews ligados a produção, configurar domínios.
+4. Criar o site Netlify de produção na configuração aprovada pelo EXP-03, isolar Deploy Previews de produção e configurar domínios.
 5. Configurar segredos nos destinos; registrar nomes e responsáveis.
 6. Aplicar migrations e configurações do I-01 conforme §7.
 7. Criar operadores da plataforma (MFA) e **duas empresas internas de verificação** via `ops-cli`.

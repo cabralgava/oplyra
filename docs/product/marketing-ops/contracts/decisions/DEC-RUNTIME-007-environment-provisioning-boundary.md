@@ -3,6 +3,7 @@
 **Status:** `approved_for_planning`  
 **Approved at:** 2026-09-21  
 **Scope:** local, staging and production environment preparation
+**Updated by:** CR-025 / ADR-0009
 
 ## Decision
 
@@ -12,7 +13,7 @@ Environment creation, software deployment and runtime activation are separate au
 
 ## Provider status
 
-Supabase `sa-east-1`, Vercel `gru1`, Cloud Run worker pools `southamerica-east1` and GitHub private/Actions remain proposals. Observability and transactional email have no selected provider. Historical pricing and capabilities must be revalidated before approval.
+Netlify is selected for web/BFF, Supabase for the managed backend, Railway for the continuous worker and GitHub private/Actions for source control and CI. Provider selection does not authorize provisioning or deployment. Regions, plans, budgets and EXP-03/04 evidence remain pending where applicable. Observability and transactional email have no selected provider.
 
 ## Safety
 
@@ -20,4 +21,4 @@ Environments use separate projects, credentials, secrets, queues and synthetic/r
 
 ## Compatibility
 
-This decision refines planning only and does not override unresolved DPs, ADR-0005 or EXP-03/04. It creates no resource and changes no runtime or database state.
+This decision is refined by ADR-0009 and CR-025. It does not override unresolved region, budget, recovery, staging or activation gates. It creates no application hosting resource and changes no runtime or database state.

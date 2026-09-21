@@ -1,4 +1,4 @@
-# Oplyra Environment Architecture v1
+# Oplyra Environment Architecture v1.1
 
 **Status:** `approved_for_planning`  
 **Provisioning:** `not_authorized`  
@@ -15,18 +15,18 @@
 
 The older two-environment decision remains authoritative until `DP-28b` is explicitly resolved. This document specifies staging because production-equivalent E2-09 evidence is already a runtime activation gate; it does not authorize creating staging.
 
-## Proposed destinations — not approved
+## Selected destinations — provisioning not approved
 
 | Component | Proposed destination | Status and dependency |
 |---|---|---|
-| PostgreSQL, Auth, Storage | Supabase, proposed `sa-east-1` | `DP-07a`, EXP-03 and current capability/cost verification |
-| Web/BFF/API | Vercel, proposed `gru1` | `DP-05a/b`, EXP-03 and current capability/cost verification |
-| Worker | Cloud Run worker pools, proposed `southamerica-east1` | `DP-06a/b`, EXP-03; Fly.io/AWS remain alternatives |
+| PostgreSQL, Auth, Storage | Supabase selected; `sa-east-1` proposed | Provider approved; region, plan, budget, EXP-03/04 pending |
+| Web/BFF/API | Netlify selected; function region pending | `DP-05a` approved; `DP-05b`, EXP-03 and plan/cost verification pending |
+| Worker | Railway selected; US East/Virgínia proposed | `DP-06a` approved; `DP-06b`, EXP-03, region and cost pending |
 | Observability backend | not selected | `DP-15b` |
 | Transactional email | not selected | `DP-08a` |
-| Source control/CI | GitHub private + GitHub Actions proposed | `DP-14b` |
+| Source control/CI | GitHub private + GitHub Actions active | `DP-14b` approved; no production deploy authorization |
 
-No historical price, regional availability or product feature is treated as current evidence. These facts must be revalidated immediately before a provider decision.
+Provider selection is recorded by ADR-0009. No historical price, regional availability or product feature is treated as durable evidence; these facts must be revalidated immediately before provisioning.
 
 ## Isolation
 
