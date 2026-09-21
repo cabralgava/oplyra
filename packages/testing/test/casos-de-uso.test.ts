@@ -3,8 +3,8 @@ import { criarDeps, contexto } from "@oplyra/testing";
 import {
   inviteMember, acceptInvitation, changeMemberRole, removeMember, provisionTenant, listMyTenants,
   normalizarSlug, normalizarEmail, podeConceder,
-} from "../src/index.ts";
-import type { TenantId, UserId, MembershipId } from "../src/index.ts";
+} from "@oplyra/core";
+import type { TenantId, UserId, MembershipId } from "@oplyra/core";
 
 const TA = "11111111-1111-4111-8111-111111111111" as TenantId;
 

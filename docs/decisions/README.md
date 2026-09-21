@@ -23,10 +23,11 @@ A referência protegida é a **v2.2, de 13/09/2026**, que numera **DEC-001 a DEC
 | [ADR-0002](ADR-0002-stack-typescript-monorepo-nextjs.md) | Stack complementar: TypeScript, monorepo, Next.js | Proposta | DP-02, DP-13, DP-14 |
 | [ADR-0003](ADR-0003-tenancy-rls-e-acesso-a-dados.md) | Tenancy com RLS e acesso a dados por conexão direta | Proposta condicionada ao EXP-01 | DP-03, DP-02d |
 | [ADR-0004](ADR-0004-filas-scheduler-postgres.md) | Filas e scheduler no PostgreSQL | Proposta condicionada ao EXP-02 | DP-04 |
-| [ADR-0005](ADR-0005-destinos-de-publicacao.md) | Destinos: Supabase `sa-east-1`, Vercel `gru1`, Cloud Run worker pools | Proposta condicionada ao EXP-03 | DP-05, DP-06, DP-07 |
+| [ADR-0005](ADR-0005-destinos-de-publicacao.md) | Proposta histórica: Supabase, Vercel e Cloud Run | Substituída pela ADR-0009 quanto aos provedores | DP-05, DP-06, DP-07 |
 | [ADR-0006](ADR-0006-runtime-de-agentes.md) | Runtime próprio proposto; arquitetura multimodelo/multiprovedor vigente | Proposta condicionada ao EXP-05 | DP-09, DP-27 |
 | [ADR-0007](ADR-0007-entitlements-e-billing.md) | Entitlements e Stripe na Fundação | Diretriz de fornecedor/fase; detalhes propostos | DP-11 |
 | [ADR-0008](ADR-0008-autorizacao-rbac-por-vinculo.md) | RBAC por vínculo; CLI delimitada; suporte somente leitura | Proposta | DP-20, DP-23 |
+| [ADR-0009](ADR-0009-destinos-netlify-supabase-railway-github.md) | Destinos selecionados: Netlify, Supabase, Railway e GitHub | Parcialmente aprovada; parâmetros condicionados ao EXP-03/04 | DP-05, DP-06, DP-07, DP-14 |
 
 Experimentos especificados: [18-technical-experiments](../product/marketing-ops/18-technical-experiments.md) (EXP-01 a EXP-05). Nenhum foi executado.
 
@@ -66,11 +67,11 @@ Experimentos especificados: [18-technical-experiments](../product/marketing-ops/
 | DP-03a | U | Autorizar o EXP-01 como primeira atividade do I-01 (local, dados sintéticos) | **Concluída**: experimento executado em 15/09/2026 | — | Concluída | [18](../product/marketing-ops/18-technical-experiments.md) EXP-01 |
 | DP-03b | T | Adotar acesso por conexão direta com papéis restritos, claims verificadas e RLS | **Aprovada 15/09/2026 pelo resultado do EXP-01**, com tenant ativo em escopo de transação e política por igualdade | — | Concluída | [ADR-0003](ADR-0003-tenancy-rls-e-acesso-a-dados.md) |
 | DP-04 | T | pgmq + pg_cron + worker Node | Condicionada ao EXP-02; alternativa pg-boss ou transporte separado | L (I-02) | Início do I-02 | [ADR-0004](ADR-0004-filas-scheduler-postgres.md) |
-| DP-05a | U | Vercel (Pro) como destino da web | Recomendação — não aprovada | P (I-01) | Antes de publicar o I-01 | [ADR-0005](ADR-0005-destinos-de-publicacao.md) |
-| DP-05b | T | Região `gru1` explícita (padrão da Vercel é `iad1`) e latência até o banco | Condicionada ao EXP-03 (E3-01) | P (I-01) | Antes de publicar o I-01 | ADR-0005 |
-| DP-06a | U | Google Cloud — Cloud Run worker pools em `southamerica-east1` como destino do worker | Recomendação — não aprovada | P (I-02) | Antes de publicar o I-02 | ADR-0005 |
-| DP-06b | T | Rede (IPv6/IPv4), custo ocioso, credenciais e observabilidade do worker | Condicionada ao EXP-03 | P (I-02) | Antes de publicar o I-02 | [18](../product/marketing-ops/18-technical-experiments.md) EXP-03 |
-| DP-07a | U | Projeto Supabase de produção próprio em `sa-east-1`, plano Pro | Recomendação — não aprovada | P (I-01) | Antes de publicar o I-01 | ADR-0005 |
+| DP-05a | U | Netlify como destino da web | **Decidida 21/09/2026**; provisionamento não autorizado | — | Concluída | [ADR-0009](ADR-0009-destinos-netlify-supabase-railway-github.md) |
+| DP-05b | T | Região/configuração das Netlify Functions e latência até o banco | Condicionada ao EXP-03 (E3-01); nenhuma região presumida | P (I-01) | Antes de publicar o I-01 | ADR-0009 |
+| DP-06a | U | Railway como destino do worker contínuo | **Decidida 21/09/2026**; provisionamento não autorizado | — | Concluída | ADR-0009 |
+| DP-06b | T | Região, rede, custo ocioso, credenciais e observabilidade do Railway | Condicionada ao EXP-03 | P (I-02) | Antes de publicar o I-02 | [18](../product/marketing-ops/18-technical-experiments.md) EXP-03 |
+| DP-07a | U | Supabase como backend gerenciado; região e plano de produção | **Fornecedor decidido 21/09/2026**; `sa-east-1`, plano e orçamento pendentes | P (I-01) | Antes de publicar o I-01 | ADR-0009 |
 | DP-07b | U | Metas de perda aceitável e tempo de recuperação; contratação de PITR | Aberta; proposta em [16](../product/marketing-ops/16-environments-release.md) §8.1 | D | Antes de dados reais | 16 §8 |
 | DP-07c | T | Recuperação de objetos do Storage (não incluídos nos backups do banco) | Condicionada ao EXP-04 | D | Antes de dados reais | EXP-04 |
 | DP-07d | T | Procedimento e teste de restauração (banco + Storage + papéis) | Condicionada ao EXP-04 | D | Antes de dados reais | EXP-04 |
@@ -87,7 +88,7 @@ Experimentos especificados: [18-technical-experiments](../product/marketing-ops/
 | DP-12b | U | Ações que exigem duas pessoas | Aberta; proposta em 11 §12 | L (I-05 e ações futuras) | Antes do I-05 | [11 §12](../product/marketing-ops/11-agent-governance.md#12-autonomia-canônica-e-aprovação-por-versão) |
 | DP-13 | U | Identificadores de código em inglês com glossário PT↔EN | Coberta pelo escopo do I-01; confirmar no aceite | L | No aceite do I-01 | ADR-0002 |
 | DP-14a | U | Inicializar repositório Git local (verificado: o diretório **não é** repositório Git) | **Decidida 15/09/2026**: Git local, sem remoto | — | Concluída | ADR-0002 |
-| DP-14b | U | GitHub privado + GitHub Actions (criação externa) | Recomendação — não criar sem autorização | P (pipeline) | Antes de publicar o I-01 | ADR-0002 |
+| DP-14b | U | GitHub privado + GitHub Actions | **Decidida 21/09/2026**: `cabralgava/oplyra` criado e CI autorizado | — | Concluída | ADR-0009 |
 | DP-15a | T | Instrumentação OpenTelemetry e logs com redação, neutros quanto a fornecedor | Recomendação; verificar no I-02 | L (I-02) | Início do I-02 | [16](../product/marketing-ops/16-environments-release.md) §11 |
 | DP-15b | U | Serviço que recebe telemetria (fornecedor, região, retenção, acesso, custo) | Aberta; critérios em 16 §11 | P (I-02) | Antes de publicar o I-02 | 16 §11 |
 | DP-16a | T | Cifragem envelope na aplicação (alternativa: Supabase Vault) | Recomendação; testes de rotação e recuperação no I-06 | L (I-06) | Início do I-06 | [07](../product/marketing-ops/07-security-lgpd.md) §11.2 |
@@ -123,13 +124,13 @@ Experimentos especificados: [18-technical-experiments](../product/marketing-ops/
 
 | Momento | Itens |
 | --- | --- |
-| **Decididas em 15/09/2026** | DP-01b, DP-02a, DP-02b1, DP-02c, DP-02e, DP-14a; DP-02b2 adiada |
+| **Decididas** | Em 15/09/2026: DP-01b, DP-02a, DP-02b1, DP-02c, DP-02e e DP-14a. Em 21/09/2026: DP-05a, DP-06a e DP-14b; fornecedor de DP-07a selecionado. DP-02b2 adiada |
 | Cobertas pelo escopo do I-01 (§5 da preparação) | DP-03a, DP-13, DP-20, DP-25, DP-33 |
 | Reclassificada | DP-01a, para antes do I-03 |
 | Após experimentos | DP-02d e DP-03b (EXP-01), DP-04 (EXP-02), DP-05b e DP-06b (EXP-03), DP-07c e DP-07d (EXP-04), DP-09b (EXP-05) |
 | Antes do I-02 / fechamento da Fase 1 | DP-01c (I-02), DP-15a, DP-27a |
-| Antes de publicar o I-01 | DP-05a, DP-05b, DP-07a, DP-08a, DP-14b |
-| Antes de publicar o I-02 | DP-06a, DP-06b, DP-15b |
+| Antes de publicar o I-01 | DP-05b, parâmetros restantes de DP-07a e DP-08a |
+| Antes de publicar o I-02 | DP-06b e DP-15b |
 | Antes de incrementos específicos | DP-24 (I-03), DP-12a/b e DP-18 (I-05), DP-16 e DP-19 (I-06), DP-09d (EXP-05) |
 | Antes de dados reais ou pilotos | DP-07b a DP-07d, DP-09a (uso real), DP-09c, DP-22, DP-23, DP-26, DP-28b |
 | Concluídas ou registradas | DP-08b, DP-10, DP-11b, DP-19a, DP-17, DP-21a, DP-21b, DP-21c, DP-28a, DP-28c |

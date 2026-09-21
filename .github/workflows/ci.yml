@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OPLYRA_ENV: ci
+      OPLYRA_ALLOW_REMOTE: "false"
+      SUPABASE_URL: http://127.0.0.1:54421
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54421
+      NEXT_PUBLIC_APP_URL: http://localhost:3100
+      DATABASE_URL_MIGRATIONS: postgresql://postgres:postgres@127.0.0.1:54422/postgres
+      DATABASE_URL_APP: postgresql://oplyra_web_login:local-web-2026@127.0.0.1:54422/postgres
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@v3
+        with:
+          runtime: node@22
+          cache: true
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v2
+        with:
+          version: 2.84.2
+          github-token: ${{ github.token }}
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Start isolated Supabase stack
+        run: pnpm db:start
+
+      - name: Configure local database roles
+        run: pnpm db:roles
+
+      - name: Run complete verification
+        run: pnpm verificar
+
+      - name: Stop isolated Supabase stack
+        if: always()
+        run: pnpm db:stop
