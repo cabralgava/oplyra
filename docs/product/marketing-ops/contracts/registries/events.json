@@ -1,0 +1,3729 @@
+{
+  "registry": "oplyra-events",
+  "registryVersion": "1.2",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-21T20:00:00Z",
+  "status": "active",
+  "rules": {
+    "eventNaming": "<domain>.<event>",
+    "singleCanonicalProducer": true,
+    "consumerMayBeEmpty": true,
+    "selfConsumptionRequiresLoopProtection": true,
+    "payloadSchemas": "pending_event_schemas",
+    "externalProducerTypes": [
+      "service",
+      "integration",
+      "runtime",
+      "scheduler"
+    ]
+  },
+  "collisionResolutions": [
+    {
+      "event": "task.created",
+      "canonicalProducer": {
+        "type": "service",
+        "id": "task-service"
+      },
+      "initiatedByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "reason": "Multiple agents can create tasks; the Task Service is the canonical publisher of the domain event."
+    }
+  ],
+  "entries": [
+    {
+      "event": "agent.escalation_requested",
+      "producer": {
+        "type": "runtime",
+        "id": "agent-runtime"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "orchestrator-agent"
+      ],
+      "category": "runtime",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `agent.escalation_requested`."
+    },
+    {
+      "event": "analysis.completed",
+      "producer": {
+        "type": "agent",
+        "id": "performance-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "reporting-checkins-agent",
+        "strategy-quality-agent"
+      ],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/performance-intelligence.md"
+        },
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "consumes",
+          "source": "../../agents/reporting-checkins.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `analysis.completed`."
+    },
+    {
+      "event": "anomaly.detected",
+      "producer": {
+        "type": "agent",
+        "id": "performance-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/performance-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `anomaly.detected`."
+    },
+    {
+      "event": "approval.granted",
+      "producer": {
+        "type": "service",
+        "id": "approval-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent",
+        "email-marketing-agent",
+        "orchestrator-agent",
+        "paid-media-agent",
+        "reporting-checkins-agent",
+        "social-media-agent"
+      ],
+      "category": "governance",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "email-marketing-agent",
+          "direction": "consumes",
+          "source": "../../agents/email-marketing.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        },
+        {
+          "agent": "paid-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/paid-media.md"
+        },
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "consumes",
+          "source": "../../agents/reporting-checkins.md"
+        },
+        {
+          "agent": "social-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `approval.granted`."
+    },
+    {
+      "event": "approval.pending",
+      "producer": {
+        "type": "agent",
+        "id": "account-projects-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "governance",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        }
+      ],
+      "description": "Evento canônico `approval.pending`."
+    },
+    {
+      "event": "approval.rejected",
+      "producer": {
+        "type": "service",
+        "id": "approval-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "category": "governance",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `approval.rejected`."
+    },
+    {
+      "event": "approval.requested",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "governance",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `approval.requested`."
+    },
+    {
+      "event": "asset.analysis_completed",
+      "producer": {
+        "type": "service",
+        "id": "asset-processing-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "copywriting-agent",
+        "design-agent"
+      ],
+      "category": "asset",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "copywriting-agent",
+          "direction": "consumes",
+          "source": "../../agents/copywriting.md"
+        },
+        {
+          "agent": "design-agent",
+          "direction": "consumes",
+          "source": "../../agents/design.md"
+        }
+      ],
+      "description": "Evento canônico `asset.analysis_completed`."
+    },
+    {
+      "event": "asset.created",
+      "producer": {
+        "type": "service",
+        "id": "asset-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "social-media-agent"
+      ],
+      "category": "asset",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `asset.created`."
+    },
+    {
+      "event": "attribution.analysis_completed",
+      "producer": {
+        "type": "agent",
+        "id": "revenue-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "revenue_intelligence",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `attribution.analysis_completed`."
+    },
+    {
+      "event": "attribution.coverage_issue_detected",
+      "producer": {
+        "type": "agent",
+        "id": "revenue-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "revenue_intelligence",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `attribution.coverage_issue_detected`."
+    },
+    {
+      "event": "attribution.source_conflict_detected",
+      "producer": {
+        "type": "agent",
+        "id": "revenue-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "revenue_intelligence",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `attribution.source_conflict_detected`."
+    },
+    {
+      "event": "attribution.tracking_gap_detected",
+      "producer": {
+        "type": "agent",
+        "id": "revenue-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "revenue_intelligence",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `attribution.tracking_gap_detected`."
+    },
+    {
+      "event": "campaign.brief_approved",
+      "producer": {
+        "type": "service",
+        "id": "campaign-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "copywriting-agent",
+        "design-agent",
+        "paid-media-agent"
+      ],
+      "category": "campaign",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "copywriting-agent",
+          "direction": "consumes",
+          "source": "../../agents/copywriting.md"
+        },
+        {
+          "agent": "design-agent",
+          "direction": "consumes",
+          "source": "../../agents/design.md"
+        },
+        {
+          "agent": "paid-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `campaign.brief_approved`."
+    },
+    {
+      "event": "campaign.completed",
+      "producer": {
+        "type": "service",
+        "id": "campaign-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "performance-intelligence-agent",
+        "revenue-intelligence-agent"
+      ],
+      "category": "campaign",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/performance-intelligence.md"
+        },
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `campaign.completed`."
+    },
+    {
+      "event": "campaign.created",
+      "producer": {
+        "type": "service",
+        "id": "campaign-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "email-marketing-agent",
+        "social-media-agent"
+      ],
+      "category": "campaign",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "consumes",
+          "source": "../../agents/email-marketing.md"
+        },
+        {
+          "agent": "social-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `campaign.created`."
+    },
+    {
+      "event": "campaign.updated",
+      "producer": {
+        "type": "service",
+        "id": "campaign-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "orchestrator-agent"
+      ],
+      "category": "campaign",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `campaign.updated`."
+    },
+    {
+      "event": "checkin.generated",
+      "producer": {
+        "type": "agent",
+        "id": "reporting-checkins-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "emits",
+          "source": "../../agents/reporting-checkins.md"
+        }
+      ],
+      "description": "Evento canônico `checkin.generated`."
+    },
+    {
+      "event": "consent.revoked",
+      "producer": {
+        "type": "service",
+        "id": "consent-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "lifecycle-agent"
+      ],
+      "category": "consent",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `consent.revoked`."
+    },
+    {
+      "event": "contact.unsubscribed",
+      "producer": {
+        "type": "service",
+        "id": "consent-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "lifecycle-agent"
+      ],
+      "category": "customer_data",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `contact.unsubscribed`."
+    },
+    {
+      "event": "contact.updated",
+      "producer": {
+        "type": "service",
+        "id": "contact-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "email-marketing-agent"
+      ],
+      "category": "customer_data",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "consumes",
+          "source": "../../agents/email-marketing.md"
+        }
+      ],
+      "description": "Evento canônico `contact.updated`."
+    },
+    {
+      "event": "content.published",
+      "producer": {
+        "type": "service",
+        "id": "content-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "social-media-agent"
+      ],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `content.published`."
+    },
+    {
+      "event": "context.updated",
+      "producer": {
+        "type": "service",
+        "id": "context-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "copywriting-agent",
+        "design-agent",
+        "email-marketing-agent",
+        "lifecycle-agent",
+        "orchestrator-agent",
+        "paid-media-agent",
+        "performance-intelligence-agent",
+        "revenue-intelligence-agent",
+        "social-media-agent"
+      ],
+      "category": "context",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "copywriting-agent",
+          "direction": "consumes",
+          "source": "../../agents/copywriting.md"
+        },
+        {
+          "agent": "design-agent",
+          "direction": "consumes",
+          "source": "../../agents/design.md"
+        },
+        {
+          "agent": "email-marketing-agent",
+          "direction": "consumes",
+          "source": "../../agents/email-marketing.md"
+        },
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        },
+        {
+          "agent": "paid-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/paid-media.md"
+        },
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/performance-intelligence.md"
+        },
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        },
+        {
+          "agent": "social-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `context.updated`."
+    },
+    {
+      "event": "context_update.proposed",
+      "producer": {
+        "type": "service",
+        "id": "context-update-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `context_update.proposed`."
+    },
+    {
+      "event": "context_update.reviewed",
+      "producer": {
+        "type": "agent",
+        "id": "strategy-quality-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "emits",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `context_update.reviewed`."
+    },
+    {
+      "event": "contract.won",
+      "producer": {
+        "type": "integration",
+        "id": "commercial-adapter"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "lifecycle-agent",
+        "performance-intelligence-agent",
+        "revenue-intelligence-agent"
+      ],
+      "category": "commercial",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        },
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/performance-intelligence.md"
+        },
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `contract.won`."
+    },
+    {
+      "event": "copy.context_missing",
+      "producer": {
+        "type": "agent",
+        "id": "copywriting-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "content",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "copywriting-agent",
+          "direction": "emits",
+          "source": "../../agents/copywriting.md"
+        }
+      ],
+      "description": "Evento canônico `copy.context_missing`."
+    },
+    {
+      "event": "copy.draft_created",
+      "producer": {
+        "type": "agent",
+        "id": "copywriting-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "design-agent"
+      ],
+      "category": "content",
+      "durability": "standard",
+      "payloadSchemaStatus": "bound",
+      "payloadSchema": "../schemas/events/copywriting/copy-draft-created.payload.schema.json",
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "copywriting-agent",
+          "direction": "emits",
+          "source": "../../agents/copywriting.md"
+        },
+        {
+          "agent": "design-agent",
+          "direction": "consumes",
+          "source": "../../agents/design.md"
+        }
+      ],
+      "description": "Evento canônico `copy.draft_created`."
+    },
+    {
+      "event": "copy.experiment_conflict",
+      "producer": {
+        "type": "agent",
+        "id": "copywriting-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "content",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "copywriting-agent",
+          "direction": "emits",
+          "source": "../../agents/copywriting.md"
+        }
+      ],
+      "description": "Evento canônico `copy.experiment_conflict`."
+    },
+    {
+      "event": "copy.review_requested",
+      "producer": {
+        "type": "agent",
+        "id": "copywriting-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "design-agent",
+        "strategy-quality-agent"
+      ],
+      "category": "content",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "copywriting-agent",
+          "direction": "emits",
+          "source": "../../agents/copywriting.md"
+        },
+        {
+          "agent": "design-agent",
+          "direction": "consumes",
+          "source": "../../agents/design.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `copy.review_requested`."
+    },
+    {
+      "event": "copy.version_created",
+      "producer": {
+        "type": "agent",
+        "id": "copywriting-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "content",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "copywriting-agent",
+          "direction": "emits",
+          "source": "../../agents/copywriting.md"
+        }
+      ],
+      "description": "Evento canônico `copy.version_created`."
+    },
+    {
+      "event": "crm.data_updated",
+      "producer": {
+        "type": "integration",
+        "id": "crm-adapter"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "performance-intelligence-agent"
+      ],
+      "category": "commercial",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/performance-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `crm.data_updated`."
+    },
+    {
+      "event": "data_quality.issue_detected",
+      "producer": {
+        "type": "agent",
+        "id": "performance-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/performance-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `data_quality.issue_detected`."
+    },
+    {
+      "event": "design.asset_missing",
+      "producer": {
+        "type": "agent",
+        "id": "design-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "creative",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "design-agent",
+          "direction": "emits",
+          "source": "../../agents/design.md"
+        }
+      ],
+      "description": "Evento canônico `design.asset_missing`."
+    },
+    {
+      "event": "design.asset_rights_missing",
+      "producer": {
+        "type": "agent",
+        "id": "design-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "creative",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "design-agent",
+          "direction": "emits",
+          "source": "../../agents/design.md"
+        }
+      ],
+      "description": "Evento canônico `design.asset_rights_missing`."
+    },
+    {
+      "event": "design.brief_created",
+      "producer": {
+        "type": "agent",
+        "id": "design-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "creative",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "design-agent",
+          "direction": "emits",
+          "source": "../../agents/design.md"
+        }
+      ],
+      "description": "Evento canônico `design.brief_created`."
+    },
+    {
+      "event": "design.draft_created",
+      "producer": {
+        "type": "agent",
+        "id": "design-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "creative",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "design-agent",
+          "direction": "emits",
+          "source": "../../agents/design.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `design.draft_created`."
+    },
+    {
+      "event": "design.experiment_conflict",
+      "producer": {
+        "type": "agent",
+        "id": "design-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "creative",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "design-agent",
+          "direction": "emits",
+          "source": "../../agents/design.md"
+        }
+      ],
+      "description": "Evento canônico `design.experiment_conflict`."
+    },
+    {
+      "event": "design.review_requested",
+      "producer": {
+        "type": "agent",
+        "id": "design-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "creative",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "design-agent",
+          "direction": "emits",
+          "source": "../../agents/design.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `design.review_requested`."
+    },
+    {
+      "event": "design.version_created",
+      "producer": {
+        "type": "agent",
+        "id": "design-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "creative",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "design-agent",
+          "direction": "emits",
+          "source": "../../agents/design.md"
+        }
+      ],
+      "description": "Evento canônico `design.version_created`."
+    },
+    {
+      "event": "email.bounce_detected",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        }
+      ],
+      "description": "Evento canônico `email.bounce_detected`."
+    },
+    {
+      "event": "email.campaign_draft_created",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `email.campaign_draft_created`."
+    },
+    {
+      "event": "email.campaign_scheduled",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        }
+      ],
+      "description": "Evento canônico `email.campaign_scheduled`."
+    },
+    {
+      "event": "email.campaign_sent",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        }
+      ],
+      "description": "Evento canônico `email.campaign_sent`."
+    },
+    {
+      "event": "email.complaint_detected",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        }
+      ],
+      "description": "Evento canônico `email.complaint_detected`."
+    },
+    {
+      "event": "email.delivery_event_received",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "lifecycle-agent"
+      ],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        },
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `email.delivery_event_received`."
+    },
+    {
+      "event": "email.performance_updated",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        }
+      ],
+      "description": "Evento canônico `email.performance_updated`."
+    },
+    {
+      "event": "email.review_requested",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `email.review_requested`."
+    },
+    {
+      "event": "email.send_blocked",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        }
+      ],
+      "description": "Evento canônico `email.send_blocked`."
+    },
+    {
+      "event": "email.unsubscribe_received",
+      "producer": {
+        "type": "agent",
+        "id": "email-marketing-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "email_marketing",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "emits",
+          "source": "../../agents/email-marketing.md"
+        }
+      ],
+      "description": "Evento canônico `email.unsubscribe_received`."
+    },
+    {
+      "event": "experiment.approved",
+      "producer": {
+        "type": "service",
+        "id": "experiment-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "copywriting-agent",
+        "design-agent",
+        "paid-media-agent"
+      ],
+      "category": "experiment",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "copywriting-agent",
+          "direction": "consumes",
+          "source": "../../agents/copywriting.md"
+        },
+        {
+          "agent": "design-agent",
+          "direction": "consumes",
+          "source": "../../agents/design.md"
+        },
+        {
+          "agent": "paid-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `experiment.approved`."
+    },
+    {
+      "event": "experiment.completed",
+      "producer": {
+        "type": "service",
+        "id": "experiment-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "orchestrator-agent",
+        "performance-intelligence-agent"
+      ],
+      "category": "experiment",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        },
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/performance-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `experiment.completed`."
+    },
+    {
+      "event": "experiment.conclusion_proposed",
+      "producer": {
+        "type": "agent",
+        "id": "performance-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "reporting-checkins-agent"
+      ],
+      "category": "experiment",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/performance-intelligence.md"
+        },
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "consumes",
+          "source": "../../agents/reporting-checkins.md"
+        }
+      ],
+      "description": "Evento canônico `experiment.conclusion_proposed`."
+    },
+    {
+      "event": "experiment.ready_for_review",
+      "producer": {
+        "type": "service",
+        "id": "experiment-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "experiment",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `experiment.ready_for_review`."
+    },
+    {
+      "event": "human_escalation.requested",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `human_escalation.requested`."
+    },
+    {
+      "event": "integration.degraded",
+      "producer": {
+        "type": "service",
+        "id": "integration-health-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "performance-intelligence-agent"
+      ],
+      "category": "integration",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/performance-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `integration.degraded`."
+    },
+    {
+      "event": "integration.failed",
+      "producer": {
+        "type": "service",
+        "id": "integration-health-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "orchestrator-agent"
+      ],
+      "category": "integration",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `integration.failed`."
+    },
+    {
+      "event": "integration.recovered",
+      "producer": {
+        "type": "service",
+        "id": "integration-health-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "orchestrator-agent",
+        "paid-media-agent"
+      ],
+      "category": "integration",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        },
+        {
+          "agent": "paid-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `integration.recovered`."
+    },
+    {
+      "event": "journey.activated",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.activated`."
+    },
+    {
+      "event": "journey.conflict_detected",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.conflict_detected`."
+    },
+    {
+      "event": "journey.contact_exited",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "revenue-intelligence-agent"
+      ],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        },
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `journey.contact_exited`."
+    },
+    {
+      "event": "journey.created",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.created`."
+    },
+    {
+      "event": "journey.dropoff_detected",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.dropoff_detected`."
+    },
+    {
+      "event": "journey.email_step_ready",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "email-marketing-agent"
+      ],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "email-marketing-agent",
+          "direction": "consumes",
+          "source": "../../agents/email-marketing.md"
+        },
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.email_step_ready`."
+    },
+    {
+      "event": "journey.enrollment_created",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.enrollment_created`."
+    },
+    {
+      "event": "journey.loop_detected",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.loop_detected`."
+    },
+    {
+      "event": "journey.paused",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.paused`."
+    },
+    {
+      "event": "journey.review_requested",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `journey.review_requested`."
+    },
+    {
+      "event": "journey.simulated",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.simulated`."
+    },
+    {
+      "event": "journey.step_executed",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.step_executed`."
+    },
+    {
+      "event": "journey.version_created",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `journey.version_created`."
+    },
+    {
+      "event": "lead.created",
+      "producer": {
+        "type": "integration",
+        "id": "commercial-adapter"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "lifecycle-agent",
+        "revenue-intelligence-agent"
+      ],
+      "category": "commercial",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        },
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `lead.created`."
+    },
+    {
+      "event": "lead.qualified",
+      "producer": {
+        "type": "integration",
+        "id": "commercial-adapter"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "lifecycle-agent",
+        "revenue-intelligence-agent"
+      ],
+      "category": "commercial",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        },
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `lead.qualified`."
+    },
+    {
+      "event": "learning.proposed",
+      "producer": {
+        "type": "agent",
+        "id": "performance-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/performance-intelligence.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `learning.proposed`."
+    },
+    {
+      "event": "lifecycle.learning_proposed",
+      "producer": {
+        "type": "agent",
+        "id": "lifecycle-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "lifecycle",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "emits",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `lifecycle.learning_proposed`."
+    },
+    {
+      "event": "maturation.insufficient",
+      "producer": {
+        "type": "agent",
+        "id": "performance-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/performance-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `maturation.insufficient`."
+    },
+    {
+      "event": "media.budget_change_requested",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `media.budget_change_requested`."
+    },
+    {
+      "event": "media.campaign_draft_created",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `media.campaign_draft_created`."
+    },
+    {
+      "event": "media.campaign_paused",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `media.campaign_paused`."
+    },
+    {
+      "event": "media.campaign_published",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `media.campaign_published`."
+    },
+    {
+      "event": "media.campaign_resumed",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `media.campaign_resumed`."
+    },
+    {
+      "event": "media.delivery_anomaly_detected",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `media.delivery_anomaly_detected`."
+    },
+    {
+      "event": "media.experiment_distribution_issue",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `media.experiment_distribution_issue`."
+    },
+    {
+      "event": "media.metrics_updated",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "performance-intelligence-agent"
+      ],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        },
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/performance-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `media.metrics_updated`."
+    },
+    {
+      "event": "media.plan_created",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `media.plan_created`."
+    },
+    {
+      "event": "media.publication_ready",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `media.publication_ready`."
+    },
+    {
+      "event": "media.tracking_issue_detected",
+      "producer": {
+        "type": "agent",
+        "id": "paid-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "paid_media",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "paid-media-agent",
+          "direction": "emits",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Evento canônico `media.tracking_issue_detected`."
+    },
+    {
+      "event": "meeting.scheduled",
+      "producer": {
+        "type": "integration",
+        "id": "commercial-adapter"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "lifecycle-agent",
+        "revenue-intelligence-agent"
+      ],
+      "category": "commercial",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        },
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `meeting.scheduled`."
+    },
+    {
+      "event": "operational_escalation.requested",
+      "producer": {
+        "type": "agent",
+        "id": "account-projects-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "orchestrator-agent"
+      ],
+      "category": "runtime",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `operational_escalation.requested`."
+    },
+    {
+      "event": "opportunity.created",
+      "producer": {
+        "type": "integration",
+        "id": "commercial-adapter"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "lifecycle-agent",
+        "revenue-intelligence-agent"
+      ],
+      "category": "commercial",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        },
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `opportunity.created`."
+    },
+    {
+      "event": "opportunity.lost",
+      "producer": {
+        "type": "integration",
+        "id": "commercial-adapter"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "lifecycle-agent"
+      ],
+      "category": "commercial",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        }
+      ],
+      "description": "Evento canônico `opportunity.lost`."
+    },
+    {
+      "event": "orchestration.context_missing",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `orchestration.context_missing`."
+    },
+    {
+      "event": "project.at_risk",
+      "producer": {
+        "type": "agent",
+        "id": "account-projects-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        }
+      ],
+      "description": "Evento canônico `project.at_risk`."
+    },
+    {
+      "event": "proposal.created",
+      "producer": {
+        "type": "integration",
+        "id": "commercial-adapter"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "revenue-intelligence-agent"
+      ],
+      "category": "commercial",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `proposal.created`."
+    },
+    {
+      "event": "quality.blocked",
+      "producer": {
+        "type": "agent",
+        "id": "strategy-quality-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "orchestrator-agent"
+      ],
+      "category": "quality",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "emits",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `quality.blocked`."
+    },
+    {
+      "event": "quality.changes_required",
+      "producer": {
+        "type": "agent",
+        "id": "strategy-quality-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent",
+        "copywriting-agent",
+        "design-agent"
+      ],
+      "category": "quality",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "copywriting-agent",
+          "direction": "consumes",
+          "source": "../../agents/copywriting.md"
+        },
+        {
+          "agent": "design-agent",
+          "direction": "consumes",
+          "source": "../../agents/design.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "emits",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `quality.changes_required`."
+    },
+    {
+      "event": "quality.escalation_required",
+      "producer": {
+        "type": "agent",
+        "id": "strategy-quality-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "orchestrator-agent"
+      ],
+      "category": "quality",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "emits",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `quality.escalation_required`."
+    },
+    {
+      "event": "quality.passed",
+      "producer": {
+        "type": "agent",
+        "id": "strategy-quality-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent",
+        "design-agent",
+        "email-marketing-agent",
+        "paid-media-agent",
+        "reporting-checkins-agent",
+        "social-media-agent"
+      ],
+      "category": "quality",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "design-agent",
+          "direction": "consumes",
+          "source": "../../agents/design.md"
+        },
+        {
+          "agent": "email-marketing-agent",
+          "direction": "consumes",
+          "source": "../../agents/email-marketing.md"
+        },
+        {
+          "agent": "paid-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/paid-media.md"
+        },
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "consumes",
+          "source": "../../agents/reporting-checkins.md"
+        },
+        {
+          "agent": "social-media-agent",
+          "direction": "consumes",
+          "source": "../../agents/social-media.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "emits",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `quality.passed`."
+    },
+    {
+      "event": "quality.passed_with_notes",
+      "producer": {
+        "type": "agent",
+        "id": "strategy-quality-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "quality",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "emits",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `quality.passed_with_notes`."
+    },
+    {
+      "event": "recommendation.created",
+      "producer": {
+        "type": "agent",
+        "id": "performance-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "performance-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/performance-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `recommendation.created`."
+    },
+    {
+      "event": "report.approved",
+      "producer": {
+        "type": "agent",
+        "id": "reporting-checkins-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "reporting",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "emits",
+          "source": "../../agents/reporting-checkins.md"
+        }
+      ],
+      "description": "Evento canônico `report.approved`."
+    },
+    {
+      "event": "report.draft_created",
+      "producer": {
+        "type": "agent",
+        "id": "reporting-checkins-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "reporting",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "emits",
+          "source": "../../agents/reporting-checkins.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `report.draft_created`."
+    },
+    {
+      "event": "report.persisted",
+      "producer": {
+        "type": "agent",
+        "id": "reporting-checkins-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "reporting",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "emits",
+          "source": "../../agents/reporting-checkins.md"
+        }
+      ],
+      "description": "Evento canônico `report.persisted`."
+    },
+    {
+      "event": "report.review_requested",
+      "producer": {
+        "type": "agent",
+        "id": "reporting-checkins-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "reporting",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "emits",
+          "source": "../../agents/reporting-checkins.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `report.review_requested`."
+    },
+    {
+      "event": "report.sent",
+      "producer": {
+        "type": "agent",
+        "id": "reporting-checkins-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "reporting",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "emits",
+          "source": "../../agents/reporting-checkins.md"
+        }
+      ],
+      "description": "Evento canônico `report.sent`."
+    },
+    {
+      "event": "reporting.data_limitation_detected",
+      "producer": {
+        "type": "agent",
+        "id": "reporting-checkins-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "emits",
+          "source": "../../agents/reporting-checkins.md"
+        }
+      ],
+      "description": "Evento canônico `reporting.data_limitation_detected`."
+    },
+    {
+      "event": "revenue.analysis_completed",
+      "producer": {
+        "type": "agent",
+        "id": "revenue-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "revenue_intelligence",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `revenue.analysis_completed`."
+    },
+    {
+      "event": "revenue.learning_proposed",
+      "producer": {
+        "type": "agent",
+        "id": "revenue-intelligence-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "revenue_intelligence",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "emits",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `revenue.learning_proposed`."
+    },
+    {
+      "event": "revenue.recorded",
+      "producer": {
+        "type": "integration",
+        "id": "billing-adapter"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "revenue-intelligence-agent"
+      ],
+      "category": "revenue_intelligence",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `revenue.recorded`."
+    },
+    {
+      "event": "runtime.dead_lettered",
+      "producer": {
+        "type": "runtime",
+        "id": "event-runtime"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "orchestrator-agent"
+      ],
+      "category": "runtime",
+      "durability": "durable",
+      "payloadSchemaStatus": "bound",
+      "payloadSchema": "../schemas/events/runtime/runtime-dead-lettered.payload.schema.json",
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../decisions/DEC-RUNTIME-005-dead-letter-escalation-event.md"
+        }
+      ],
+      "description": "Dead-letter terminal registrado pelo event runtime e escalado ao Orchestrator com provenance preservada."
+    },
+    {
+      "event": "schedule.reporting_due",
+      "producer": {
+        "type": "scheduler",
+        "id": "scheduler"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "reporting-checkins-agent"
+      ],
+      "category": "scheduler",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "consumes",
+          "source": "../../agents/reporting-checkins.md"
+        }
+      ],
+      "description": "Evento canônico `schedule.reporting_due`."
+    },
+    {
+      "event": "scope.changed",
+      "producer": {
+        "type": "service",
+        "id": "initiative-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent"
+      ],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        }
+      ],
+      "description": "Evento canônico `scope.changed`."
+    },
+    {
+      "event": "social.content_draft_created",
+      "producer": {
+        "type": "agent",
+        "id": "social-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "social_media",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "emits",
+          "source": "../../agents/social-media.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `social.content_draft_created`."
+    },
+    {
+      "event": "social.content_published",
+      "producer": {
+        "type": "agent",
+        "id": "social-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "social_media",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "emits",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `social.content_published`."
+    },
+    {
+      "event": "social.content_scheduled",
+      "producer": {
+        "type": "agent",
+        "id": "social-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "social_media",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "emits",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `social.content_scheduled`."
+    },
+    {
+      "event": "social.observation_recorded",
+      "producer": {
+        "type": "agent",
+        "id": "social-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "social_media",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "emits",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `social.observation_recorded`."
+    },
+    {
+      "event": "social.performance_updated",
+      "producer": {
+        "type": "agent",
+        "id": "social-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "social_media",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "emits",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `social.performance_updated`."
+    },
+    {
+      "event": "social.plan_created",
+      "producer": {
+        "type": "agent",
+        "id": "social-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "social_media",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "emits",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `social.plan_created`."
+    },
+    {
+      "event": "social.publication_failed",
+      "producer": {
+        "type": "agent",
+        "id": "social-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "social_media",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "emits",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `social.publication_failed`."
+    },
+    {
+      "event": "social.repurpose_opportunity_identified",
+      "producer": {
+        "type": "agent",
+        "id": "social-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "social_media",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "emits",
+          "source": "../../agents/social-media.md"
+        }
+      ],
+      "description": "Evento canônico `social.repurpose_opportunity_identified`."
+    },
+    {
+      "event": "social.review_requested",
+      "producer": {
+        "type": "agent",
+        "id": "social-media-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "strategy-quality-agent"
+      ],
+      "category": "social_media",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "social-media-agent",
+          "direction": "emits",
+          "source": "../../agents/social-media.md"
+        },
+        {
+          "agent": "strategy-quality-agent",
+          "direction": "consumes",
+          "source": "../../agents/strategy-quality.md"
+        }
+      ],
+      "description": "Evento canônico `social.review_requested`."
+    },
+    {
+      "event": "task.assigned",
+      "producer": {
+        "type": "agent",
+        "id": "account-projects-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        }
+      ],
+      "description": "Evento canônico `task.assigned`."
+    },
+    {
+      "event": "task.blocked",
+      "producer": {
+        "type": "agent",
+        "id": "account-projects-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent",
+        "orchestrator-agent",
+        "reporting-checkins-agent"
+      ],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": true,
+      "selfConsumptionAgents": [
+        "account-projects-agent"
+      ],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        },
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "consumes",
+          "source": "../../agents/reporting-checkins.md"
+        }
+      ],
+      "description": "Evento canônico `task.blocked`."
+    },
+    {
+      "event": "task.completed",
+      "producer": {
+        "type": "agent",
+        "id": "account-projects-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent",
+        "lifecycle-agent",
+        "orchestrator-agent",
+        "reporting-checkins-agent"
+      ],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": true,
+      "selfConsumptionAgents": [
+        "account-projects-agent"
+      ],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "lifecycle-agent",
+          "direction": "consumes",
+          "source": "../../agents/lifecycle.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        },
+        {
+          "agent": "reporting-checkins-agent",
+          "direction": "consumes",
+          "source": "../../agents/reporting-checkins.md"
+        }
+      ],
+      "description": "Evento canônico `task.completed`."
+    },
+    {
+      "event": "task.created",
+      "producer": {
+        "type": "service",
+        "id": "task-service"
+      },
+      "initiatedByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "consumers": [],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `task.created`."
+    },
+    {
+      "event": "task.delegated",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent"
+      ],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `task.delegated`."
+    },
+    {
+      "event": "task.failed",
+      "producer": {
+        "type": "service",
+        "id": "task-service"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "consumes",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `task.failed`."
+    },
+    {
+      "event": "task.overdue",
+      "producer": {
+        "type": "agent",
+        "id": "account-projects-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        }
+      ],
+      "description": "Evento canônico `task.overdue`."
+    },
+    {
+      "event": "task.ready",
+      "producer": {
+        "type": "agent",
+        "id": "account-projects-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        }
+      ],
+      "description": "Evento canônico `task.ready`."
+    },
+    {
+      "event": "task.updated",
+      "producer": {
+        "type": "agent",
+        "id": "account-projects-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "project_management",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "emits",
+          "source": "../../agents/account-projects.md"
+        }
+      ],
+      "description": "Evento canônico `task.updated`."
+    },
+    {
+      "event": "touchpoint.recorded",
+      "producer": {
+        "type": "integration",
+        "id": "touchpoint-ingestion"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "revenue-intelligence-agent"
+      ],
+      "category": "commercial",
+      "durability": "durable",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "revenue-intelligence-agent",
+          "direction": "consumes",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Evento canônico `touchpoint.recorded`."
+    },
+    {
+      "event": "workflow.blocked",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `workflow.blocked`."
+    },
+    {
+      "event": "workflow.cancelled",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `workflow.cancelled`."
+    },
+    {
+      "event": "workflow.completed",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `workflow.completed`."
+    },
+    {
+      "event": "workflow.created",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [
+        "account-projects-agent"
+      ],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "account-projects-agent",
+          "direction": "consumes",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `workflow.created`."
+    },
+    {
+      "event": "workflow.resumed",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `workflow.resumed`."
+    },
+    {
+      "event": "workflow.started",
+      "producer": {
+        "type": "agent",
+        "id": "orchestrator-agent"
+      },
+      "initiatedByAgents": [],
+      "consumers": [],
+      "category": "other",
+      "durability": "standard",
+      "payloadSchemaStatus": "pending_event_schema",
+      "payloadSchema": null,
+      "selfConsumption": false,
+      "selfConsumptionAgents": [],
+      "sourceRefs": [
+        {
+          "agent": "orchestrator-agent",
+          "direction": "emits",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Evento canônico `workflow.started`."
+    }
+  ]
+}

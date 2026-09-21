@@ -1,0 +1,19 @@
+EXP-02 — CPU do container na repetição revisada de E2-09
+
+Ambiente: Supabase local, container supabase_db_Oplyra.
+Nenhum ambiente externo foi criado.
+Configuração: um worker, lote 500, cinco rodadas pareadas.
+Dataset: 50 tenants, 5.000 campanhas e 450.000 snapshots.
+
+Faixa de CPU observada: 0,14% a 71,50%.
+Pico de memória observado: 248,5 MiB de 7,746 GiB.
+Pico de processos observado: 35.
+
+Resultado correlato:
+- baseline p95 agregado: 1,417 ms
+- sob carga p95 agregado: 1,600 ms
+- degradação agregada: 12,92%
+- limite: 20%
+- resultado: APROVADO PARA PLANEJAMENTO
+
+Observação: as amostras cobrem o container completo. O resultado não dimensiona nem autoriza produção; deve ser repetido em homologação equivalente antes da ativação.

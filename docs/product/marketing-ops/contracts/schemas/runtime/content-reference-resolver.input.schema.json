@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/runtime/content-reference-resolver/input/1.0",
+  "title": "Content Reference Resolver — Input",
+  "description": "Input estrutural para resolução tenant-scoped de draftRef e variantRefs no contentRepository. Os campos de acesso são requisitos a verificar, não prova autodeclarada de autorização.",
+  "type": "object",
+  "required": [
+    "tenantId",
+    "requesterAgent",
+    "requiredPermission",
+    "repository",
+    "draftRef",
+    "expectedVersion",
+    "variantRefs"
+  ],
+  "properties": {
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+    },
+    "requesterAgent": {
+      "type": "string",
+      "enum": [
+        "design-agent"
+      ]
+    },
+    "requiredPermission": {
+      "type": "string",
+      "enum": [
+        "read"
+      ]
+    },
+    "repository": {
+      "type": "string",
+      "enum": [
+        "contentRepository"
+      ]
+    },
+    "draftRef": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "expectedVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "variantRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+      }
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "tenantId": "tenant_123",
+      "requesterAgent": "design-agent",
+      "requiredPermission": "read",
+      "repository": "contentRepository",
+      "draftRef": "copy_draft_01",
+      "expectedVersion": 1,
+      "variantRefs": [
+        "var_a_copy_v1",
+        "var_b_copy_v1"
+      ]
+    }
+  ]
+}

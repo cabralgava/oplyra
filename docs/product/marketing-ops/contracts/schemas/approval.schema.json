@@ -1,0 +1,512 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/core/approval/1.0",
+  "title": "Oplyra Approval",
+  "description": "Contrato canônico de aprovação explícita, vinculada a tenant, alvo, versão e escopo.",
+  "$comment": "A regra de staleness por mudança da versão atual do target depende de estado externo e deve ser validada pelo runtime/registry. O JSON Schema valida apenas a estrutura da approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "approvalId",
+    "schemaVersion",
+    "tenantId",
+    "target",
+    "scope",
+    "status",
+    "requestedBy",
+    "requestedAt",
+    "policyRefs"
+  ],
+  "properties": {
+    "approvalId": {
+      "type": "string",
+      "pattern": "^approval_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "schemaVersion": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/schemaVersion"
+    },
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+    },
+    "target": {
+      "$ref": "#/$defs/target"
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "expired",
+        "revoked",
+        "stale"
+      ]
+    },
+    "requestedBy": {
+      "$ref": "#/$defs/actorRef"
+    },
+    "requestedAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    },
+    "decision": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/decision"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "expiresAt": {
+      "oneOf": [
+        {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "revocation": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/revocation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "staleness": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/staleness"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "policyRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+      },
+      "default": []
+    },
+    "correlationId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "workflowId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "taskId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 10000
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "pending"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "type": "null"
+          },
+          "revocation": {
+            "type": "null"
+          },
+          "staleness": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "approved",
+              "rejected"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "decision"
+        ],
+        "properties": {
+          "decision": {
+            "$ref": "#/$defs/decision"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "approved"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "properties": {
+              "outcome": {
+                "const": "approved"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "rejected"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "properties": {
+              "outcome": {
+                "const": "rejected"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "expired"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "expiresAt"
+        ],
+        "properties": {
+          "expiresAt": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "revoked"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "decision",
+          "revocation"
+        ],
+        "properties": {
+          "decision": {
+            "properties": {
+              "outcome": {
+                "const": "approved"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "revocation": {
+            "$ref": "#/$defs/revocation"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "stale"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "staleness"
+        ],
+        "properties": {
+          "staleness": {
+            "$ref": "#/$defs/staleness"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "actorRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "user",
+            "agent",
+            "service",
+            "system"
+          ]
+        },
+        "id": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "role": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "version"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "campaign",
+            "content",
+            "creative",
+            "email_campaign",
+            "social_content",
+            "journey",
+            "experiment",
+            "report",
+            "learning",
+            "context_update",
+            "task",
+            "initiative",
+            "budget_change",
+            "external_action",
+            "other"
+          ]
+        },
+        "id": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "version": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "ownerAgent": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z0-9-]*-agent$"
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "risk"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "risk": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/riskLevel"
+        },
+        "sideEffect": {
+          "type": "boolean",
+          "default": false
+        },
+        "constraints": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "decidedBy",
+        "decidedAt"
+      ],
+      "properties": {
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "approved",
+            "rejected"
+          ]
+        },
+        "decidedBy": {
+          "$ref": "#/$defs/actorRef"
+        },
+        "decidedAt": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5000
+        }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revokedBy",
+        "revokedAt",
+        "reason"
+      ],
+      "properties": {
+        "revokedBy": {
+          "$ref": "#/$defs/actorRef"
+        },
+        "revokedAt": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        },
+        "reason": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "staleness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "detectedAt",
+        "reason"
+      ],
+      "properties": {
+        "detectedAt": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "target_version_changed",
+            "scope_changed",
+            "policy_changed",
+            "context_changed",
+            "other"
+          ]
+        },
+        "currentTargetVersion": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "details": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

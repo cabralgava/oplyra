@@ -1,0 +1,63 @@
+{
+  "validationId": "design-agent-copy-draft-consumer-cr-018",
+  "validatedAt": "2026-09-21T18:50:00Z",
+  "status": "passed_with_notes",
+  "consumer": {
+    "module": "packages/core/src/application/design-agent-copy-draft-consumer.ts",
+    "factory": "createDesignAgentCopyDraftConsumer",
+    "event": "copy.draft_created",
+    "consumerAgent": "design-agent",
+    "sideEffectMode": "intake_acknowledgement_only"
+  },
+  "tenantBoundary": {
+    "explicitTenantIdRequired": true,
+    "deliveryRequestFields": [
+      "tenantId",
+      "dispatcherId",
+      "event"
+    ],
+    "implicitTenantBindingAllowed": false
+  },
+  "resolution": {
+    "requesterAgent": "design-agent",
+    "requiredPermission": "read",
+    "repository": "contentRepository",
+    "exactDraftVersionAndVariantSetRequired": true,
+    "partialResultAllowed": false
+  },
+  "specificTests": {
+    "consumerUnitTestsRun": 8,
+    "consumerUnitTestsPassed": 8,
+    "endToEndPostgresTestsRun": 3,
+    "endToEndPostgresTestsPassed": 3,
+    "updatedCycleTestsRun": 13,
+    "updatedCycleTestsPassed": 13
+  },
+  "behaviorsValidated": [
+    "tenant_scoped_exact_reference_resolution",
+    "variant_order_independent_exact_set",
+    "unsupported_event_terminal",
+    "missing_tenant_terminal",
+    "resolved_content_mismatch_terminal",
+    "deterministic_resolution_failure_terminal",
+    "integration_unavailable_rethrown_for_policy",
+    "no_side_effect_beyond_resolution",
+    "postgres_successful_intake_acknowledgement",
+    "postgres_missing_variant_dead_letter",
+    "postgres_version_mismatch_dead_letter"
+  ],
+  "notImplemented": [
+    "design_task_creation",
+    "visual_brief_creation",
+    "asset_generation",
+    "handoff_creation",
+    "quality_gate_request",
+    "dispatcher_polling_loop",
+    "scheduler_or_daemon",
+    "external_transport"
+  ],
+  "runtimeDispatchEnabled": false,
+  "externalSideEffectsEnabled": false,
+  "databaseChanged": false,
+  "privilegesChanged": false
+}

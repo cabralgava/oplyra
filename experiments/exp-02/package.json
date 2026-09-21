@@ -1,0 +1,14 @@
+{
+  "name": "@oplyra/exp-02",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "EXP-02 — pgmq + pg_cron + tabelas próprias de execução. Experimento descartável.",
+  "scripts": {
+    "setup": "psql \"$DATABASE_URL_MIGRATIONS\" -v ON_ERROR_STOP=1 -f sql/01-setup.sql",
+    "all": "node src/run.ts"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}

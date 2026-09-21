@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/copywriting/create-copy-variants/input/1.0",
+  "title": "Create Copy Variants — Input",
+  "description": "Payload de input da action canônica create_copy_variants. O envelope transacional é validado separadamente por transaction-envelope.schema.json.",
+  "type": "object",
+  "required": [
+    "objective",
+    "quantity"
+  ],
+  "properties": {
+    "objective": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "quantity": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "variantRole": {
+      "type": "string",
+      "enum": [
+        "reference",
+        "challenger"
+      ]
+    },
+    "testedDimension": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "angle": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "channel": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "format": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "language": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "sourceCopyRef": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "assetRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+      },
+      "uniqueItems": true
+    },
+    "supersedesTransactionId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "objectId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "expectedVersion": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "objective": "Create challenger copy variants",
+      "quantity": 3,
+      "variantRole": "challenger",
+      "testedDimension": "angle",
+      "angle": "unattributed_revenue",
+      "channel": "linkedin",
+      "format": "single_image_ad",
+      "language": "pt-BR"
+    }
+  ]
+}

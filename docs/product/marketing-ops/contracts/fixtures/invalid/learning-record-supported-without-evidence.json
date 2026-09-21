@@ -1,0 +1,60 @@
+{
+  "id": "learning_bad_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "source": {
+    "type": "experiment",
+    "ref": "experiment:exp_bad",
+    "experimentId": null,
+    "initiativeId": "cmp_123",
+    "observedAt": "2026-09-17T13:40:00Z"
+  },
+  "context": {
+    "scope": "experiment",
+    "initiativeId": "cmp_123",
+    "experimentId": "exp_bad",
+    "productId": null,
+    "audienceId": null,
+    "channel": "linkedin_ads",
+    "periodStart": null,
+    "periodEnd": null,
+    "contextVersionRefs": []
+  },
+  "evidence": {
+    "refs": [],
+    "dataCoverage": 0.4,
+    "maturationStatus": "immature",
+    "causalSupport": "none"
+  },
+  "conclusion": {
+    "status": "supported",
+    "statement": "A hipótese foi comprovada.",
+    "scope": null,
+    "causalClaim": true
+  },
+  "confidence": {
+    "level": "low",
+    "score": 0.2,
+    "reason": "Poucos dados."
+  },
+  "limitations": [],
+  "decision": {
+    "action": "promote_to_context",
+    "reason": "Promover imediatamente.",
+    "ownerAgent": "performance-intelligence-agent"
+  },
+  "proposedContextUpdateRefs": [],
+  "nextExperiment": null,
+  "reviewStatus": "draft",
+  "review": null,
+  "supersededBy": null,
+  "createdBy": {
+    "type": "agent",
+    "id": "performance-intelligence-agent"
+  },
+  "createdAt": "2026-09-17T13:45:00Z",
+  "updatedAt": null,
+  "correlationId": "corr_bad_01",
+  "workflowId": null,
+  "taskId": "task_bad_01"
+}

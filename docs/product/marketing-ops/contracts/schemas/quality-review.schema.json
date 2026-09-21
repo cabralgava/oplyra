@@ -1,0 +1,555 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/core/quality-review/1.0",
+  "title": "Oplyra Quality Review",
+  "description": "Contrato canônico para quality gates, revisões estratégicas, criativas, analíticas e de governança na Oplyra.",
+  "$comment": "Invariantes cross-field como reviewerAgent != target.ownerAgent para revisão independente e existência do gate no quality-gates registry exigem validação de runtime/registry.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reviewId",
+    "schemaVersion",
+    "tenantId",
+    "reviewerAgent",
+    "target",
+    "gateType",
+    "gateStatus",
+    "findings",
+    "limitations",
+    "evidenceRefs",
+    "requiredChanges",
+    "nextAction",
+    "createdAt"
+  ],
+  "properties": {
+    "reviewId": {
+      "type": "string",
+      "pattern": "^review_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "schemaVersion": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/schemaVersion"
+    },
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+    },
+    "reviewerAgent": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/agentKey"
+    },
+    "workflowId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "taskId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "correlationId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "causationId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "target": {
+      "$ref": "#/$defs/target"
+    },
+    "gateType": {
+      "type": "string",
+      "enum": [
+        "strategy_gate",
+        "brand_gate",
+        "claim_gate",
+        "evidence_gate",
+        "creative_gate",
+        "experiment_gate",
+        "analysis_gate",
+        "reporting_gate",
+        "learning_gate",
+        "publication_gate",
+        "operational_gate"
+      ]
+    },
+    "gateStatus": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ]
+    },
+    "summary": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 5000
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/limitation"
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+      }
+    },
+    "requiredChanges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requiredChange"
+      }
+    },
+    "nextAction": {
+      "$ref": "#/$defs/nextAction"
+    },
+    "escalation": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/escalation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "createdAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    },
+    "completedAt": {
+      "oneOf": [
+        {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "gateStatus": {
+            "const": "passed"
+          }
+        },
+        "required": [
+          "gateStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "findings": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "severity": {
+                    "enum": [
+                      "high",
+                      "blocking"
+                    ]
+                  }
+                },
+                "required": [
+                  "severity"
+                ]
+              }
+            }
+          },
+          "requiredChanges": {
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "gateStatus": {
+            "const": "passed_with_notes"
+          }
+        },
+        "required": [
+          "gateStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "findings": {
+            "minItems": 1,
+            "not": {
+              "contains": {
+                "properties": {
+                  "severity": {
+                    "const": "blocking"
+                  }
+                },
+                "required": [
+                  "severity"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "gateStatus": {
+            "const": "changes_required"
+          }
+        },
+        "required": [
+          "gateStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "requiredChanges": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "gateStatus": {
+            "const": "blocked"
+          }
+        },
+        "required": [
+          "gateStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "findings": {
+            "contains": {
+              "properties": {
+                "severity": {
+                  "const": "blocking"
+                }
+              },
+              "required": [
+                "severity"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "gateStatus": {
+            "const": "escalation_required"
+          }
+        },
+        "required": [
+          "gateStatus"
+        ]
+      },
+      "then": {
+        "required": [
+          "escalation"
+        ],
+        "properties": {
+          "escalation": {
+            "$ref": "#/$defs/escalation"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "version"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "content",
+            "creative",
+            "campaign",
+            "experiment",
+            "analysis",
+            "report",
+            "journey",
+            "email_campaign",
+            "social_content",
+            "learning",
+            "context_update",
+            "initiative",
+            "task",
+            "other"
+          ]
+        },
+        "id": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "version": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "ownerAgent": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z0-9-]*-agent$"
+        },
+        "domain": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z0-9_]*$"
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "category",
+        "severity",
+        "message"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^finding_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "strategy",
+            "brand",
+            "product_truth",
+            "audience",
+            "offer",
+            "claim",
+            "proof",
+            "evidence",
+            "creative",
+            "copy",
+            "experiment",
+            "causality",
+            "data_quality",
+            "analysis",
+            "reporting",
+            "learning",
+            "approval",
+            "permission",
+            "tracking",
+            "consent",
+            "operational",
+            "other"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "info",
+            "low",
+            "medium",
+            "high",
+            "blocking"
+          ]
+        },
+        "message": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        },
+        "fieldRef": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "recommendation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "limitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "description",
+        "impact"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "missing_context",
+            "missing_evidence",
+            "data_quality",
+            "maturation",
+            "attribution",
+            "integration",
+            "sampling",
+            "scope",
+            "other"
+          ]
+        },
+        "description": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "impact": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "blocking"
+          ]
+        },
+        "ref": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        }
+      }
+    },
+    "requiredChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "description",
+        "ownerAgent",
+        "priority"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^change_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "description": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "ownerAgent": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*-agent$"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "low",
+            "normal",
+            "high",
+            "blocking"
+          ]
+        },
+        "findingRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^finding_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "default": []
+        }
+      }
+    },
+    "nextAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "proceed",
+            "revise",
+            "request_evidence",
+            "request_context",
+            "request_approval",
+            "escalate",
+            "stop"
+          ]
+        },
+        "targetAgent": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z0-9-]*-agent$"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason",
+        "target"
+      ],
+      "properties": {
+        "reason": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "target": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "medium",
+            "high",
+            "critical"
+          ],
+          "default": "high"
+        }
+      }
+    }
+  }
+}

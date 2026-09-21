@@ -1,0 +1,16 @@
+{
+  "input": {
+    "objective": "Create challenger copy variants",
+    "quantity": 2
+  },
+  "result": {
+    "variants": [
+      {
+        "id": "var_b_copy_v1",
+        "headline": "Quanto da sua aquisição realmente vira pipeline?",
+        "primaryText": "Conecte investimento, pipeline e receita.",
+        "cta": "request_demo"
+      }
+    ]
+  }
+}

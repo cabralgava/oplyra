@@ -1,0 +1,87 @@
+{
+  "artifact": "oplyra-content-reference-resolver-core-implementation-validation",
+  "artifactVersion": "1.0",
+  "generatedAt": "2026-09-21T13:30:26Z",
+  "status": "passed",
+  "subject": {
+    "component": "content-reference-resolver",
+    "package": "@oplyra/core",
+    "decision": "DEC-RUNTIME-001",
+    "inputSchema": "https://schemas.oplyra.com/runtime/content-reference-resolver/input/1.0",
+    "outputSchema": "https://schemas.oplyra.com/runtime/content-reference-resolver/output/1.0"
+  },
+  "implementation": {
+    "port": "ContentReferenceResolverPort",
+    "repositoryPort": "ContentReferenceRepositoryPort",
+    "authorizationPort": "ContentReferenceAuthorizationPort",
+    "clockPort": "ContentReferenceResolverClockPort",
+    "factory": "createContentReferenceResolver",
+    "purePolicy": "enforceContentReferenceResolution"
+  },
+  "validation": {
+    "typecheck": {
+      "status": "passed",
+      "command": "tsc -p packages/core/tsconfig.json --noEmit",
+      "errors": 0
+    },
+    "unitTests": {
+      "status": "passed",
+      "framework": "vitest",
+      "version": "5.0.0",
+      "command": "vitest run packages/core/test/content-reference-resolver.test.ts",
+      "testFiles": 1,
+      "testsRun": 13,
+      "testsPassed": 13,
+      "testsFailed": 0
+    }
+  },
+  "coverage": {
+    "authorizationBeforeLookup": true,
+    "tenantRequired": true,
+    "inputDefenseInDepth": true,
+    "tenantEquality": true,
+    "draftEquality": true,
+    "optimisticVersion": true,
+    "exactVariantSet": true,
+    "duplicateAdapterResultRejected": true,
+    "canonicalErrorMapping": true,
+    "atomicNoPartialResult": true,
+    "fullPortOrchestration": true
+  },
+  "canonicalErrors": [
+    "TENANT_REQUIRED",
+    "TENANT_MISMATCH",
+    "PERMISSION_DENIED",
+    "REFERENCE_NOT_FOUND",
+    "CONFLICT_VERSION",
+    "TRANSACTION_SCHEMA_INVALID"
+  ],
+  "integrity": {
+    "packages/core/src/domain/errors.ts": "f2871c35f409bb94c0501075358bd931b67817afc059cf02b83c5b6398c1cc8c",
+    "packages/core/src/index.ts": "03db462c00b1aa6b0f699867a3673b15559fefc968de0cbe1ddc5a150007a223",
+    "packages/core/src/application/content-reference-resolver.ts": "fe41d1f9d9fd083aaef56c717bf3d4e935e52c6a9b1da4c8fb70a557922d6eb9",
+    "packages/core/test/content-reference-resolver.test.ts": "60ea030533e235f3e5910fd7bf9e6c38da392fbeeab379cfb45964079a1960b2"
+  },
+  "implementationBoundary": {
+    "corePortImplemented": true,
+    "purePolicyImplemented": true,
+    "repositoryAdapterImplemented": false,
+    "databaseModelImplemented": false,
+    "eventDispatchEnabled": false,
+    "externalEndpointExposed": false
+  },
+  "securityBoundary": {
+    "internalTenantMismatchAuditable": true,
+    "externalResourceExistenceDisclosureAllowed": false,
+    "note": "External adapters must map not-found and unauthorized responses without disclosing foreign resource existence while retaining the internal audit code."
+  },
+  "next": {
+    "action": "implement_content_reference_repository_adapter",
+    "requirements": [
+      "tenant-scoped lookup",
+      "no id-only query",
+      "integration tests against the selected persistence model",
+      "no event dispatch until adapter validation passes"
+    ]
+  }
+}

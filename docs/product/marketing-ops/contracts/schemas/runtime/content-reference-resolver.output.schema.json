@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/runtime/content-reference-resolver/output/1.0",
+  "title": "Content Reference Resolver — Output",
+  "description": "Resultado completo e autorizado da resolução tenant-scoped. O resolver não retorna sucesso parcial.",
+  "type": "object",
+  "required": [
+    "tenantId",
+    "repository",
+    "draftRef",
+    "version",
+    "sourceAction",
+    "content",
+    "resolvedAt"
+  ],
+  "properties": {
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+    },
+    "repository": {
+      "type": "string",
+      "enum": [
+        "contentRepository"
+      ]
+    },
+    "draftRef": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sourceAction": {
+      "type": "string",
+      "enum": [
+        "create_copy_variants"
+      ]
+    },
+    "content": {
+      "$ref": "https://schemas.oplyra.com/copywriting/create-copy-variants/output/1.0"
+    },
+    "resolvedAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "tenantId": "tenant_123",
+      "repository": "contentRepository",
+      "draftRef": "copy_draft_01",
+      "version": 1,
+      "sourceAction": "create_copy_variants",
+      "content": {
+        "variants": [
+          {
+            "id": "var_a_copy_v1",
+            "role": "reference",
+            "angle": "operational_productivity",
+            "headline": "Organize a operação de marketing em um só fluxo.",
+            "primaryText": "Conecte estratégia, execução e aprendizado com governança.",
+            "cta": "request_demo"
+          },
+          {
+            "id": "var_b_copy_v1",
+            "role": "challenger",
+            "angle": "unattributed_revenue",
+            "headline": "Quanto da sua aquisição realmente vira pipeline?",
+            "primaryText": "Conecte investimento, pipeline e receita sem ocultar limitações de atribuição.",
+            "cta": "request_demo"
+          }
+        ]
+      },
+      "resolvedAt": "2026-09-21T13:01:25Z"
+    }
+  ]
+}

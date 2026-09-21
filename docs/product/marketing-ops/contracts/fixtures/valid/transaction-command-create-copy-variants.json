@@ -1,0 +1,80 @@
+{
+  "transaction": {
+    "id": "txn_01JABC123",
+    "schemaVersion": "1.0",
+    "type": "command",
+    "action": "create_copy_variants",
+    "status": "created",
+    "createdAt": "2026-09-16T18:00:00Z",
+    "expiresAt": null
+  },
+  "trace": {
+    "correlationId": "corr_campaign_01",
+    "causationId": "txn_orchestrator_01",
+    "workflowId": "wf_campaign_01",
+    "taskId": "task_copy_01",
+    "parentTransactionId": null
+  },
+  "tenant": {
+    "tenantId": "tenant_123"
+  },
+  "actor": {
+    "type": "agent",
+    "id": "orchestrator-agent",
+    "userId": null,
+    "role": null
+  },
+  "target": {
+    "agent": "copywriting-agent",
+    "domain": "copywriting",
+    "service": null,
+    "adapter": null,
+    "workflow": null
+  },
+  "context": {
+    "contextPackageId": "ctx_copy_91",
+    "contextVersion": 12,
+    "initiativeId": "cmp_123",
+    "experimentId": "exp_091",
+    "hypothesisId": "hyp_091",
+    "taskId": "task_copy_01",
+    "brandTruthVersion": 5,
+    "tenantFoundationVersion": 3
+  },
+  "authorization": {
+    "permissionSet": "marketing_manager",
+    "requiredPermissions": [
+      "content.write"
+    ],
+    "policyRefs": [],
+    "approvalRefs": []
+  },
+  "autonomy": {
+    "level": "draft"
+  },
+  "input": {
+    "objective": "Create challenger copy variants",
+    "quantity": 3
+  },
+  "constraints": {
+    "keepConstant": [
+      "offer",
+      "cta",
+      "format"
+    ]
+  },
+  "evidence": {
+    "requiredRefs": [],
+    "providedRefs": [
+      "brand_claim_14",
+      "proof_09"
+    ]
+  },
+  "expectedOutput": {
+    "schema": "oplyra.copy.variant.v1",
+    "contentType": "application/json"
+  },
+  "idempotency": {
+    "key": "task_copy_01-create-copy-variants-v1"
+  }
+}

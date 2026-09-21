@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/runtime/outbox-retry-policy/1.0",
+  "title": "Oplyra Outbox Retry and Failure Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policyVersion", "maximumDeliveryAttempts", "backoff", "classification", "exhaustion", "uncertainExternalEffect", "settlementFailure"],
+  "properties": {
+    "policyVersion": { "const": "1.0" },
+    "maximumDeliveryAttempts": { "const": 5 },
+    "backoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "secondsByFailedAttempt", "jitter"],
+      "properties": {
+        "strategy": { "const": "exponential" },
+        "secondsByFailedAttempt": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "jitter": { "const": "none" }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retryableErrorCodes", "terminalErrorCodes", "unknownErrorOutcome"],
+      "properties": {
+        "retryableErrorCodes": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "terminalErrorCodes": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "unknownErrorOutcome": { "const": "terminal_failure" }
+      }
+    },
+    "exhaustion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "errorCode", "preserveRootCause"],
+      "properties": {
+        "outcome": { "const": "dead_lettered" },
+        "errorCode": { "const": "RETRY_ATTEMPTS_EXHAUSTED" },
+        "preserveRootCause": { "const": true }
+      }
+    },
+    "uncertainExternalEffect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["automaticRetryAllowed", "workflowState", "reconciliationRequired"],
+      "properties": {
+        "automaticRetryAllowed": { "const": false },
+        "workflowState": { "const": "waiting_human" },
+        "reconciliationRequired": { "const": true }
+      }
+    },
+    "settlementFailure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repeatDeliveryWithinSameCycle", "recoveryAuthority"],
+      "properties": {
+        "repeatDeliveryWithinSameCycle": { "const": false },
+        "recoveryAuthority": { "const": "persistent_lease_and_fencing" }
+      }
+    }
+  }
+}

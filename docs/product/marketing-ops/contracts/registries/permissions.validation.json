@@ -1,0 +1,24 @@
+{
+  "registry": "oplyra-permissions",
+  "registryVersion": "1.0",
+  "entries": 6,
+  "canonicalKeys": [
+    "approve",
+    "execute",
+    "none",
+    "read",
+    "read_write",
+    "write"
+  ],
+  "checks": {
+    "uniqueKeys": true,
+    "canonicalSetExact": true,
+    "semanticMatrixValid": true,
+    "implicationRefsValid": true,
+    "implicationGraphAcyclic": true
+  },
+  "validation": {
+    "status": "passed",
+    "errors": []
+  }
+}

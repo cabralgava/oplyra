@@ -1,0 +1,623 @@
+{
+  "registry": "oplyra-quality-gates",
+  "registryVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-17T20:52:38Z",
+  "status": "active",
+  "entries": [
+    {
+      "key": "strategy_gate",
+      "name": "Strategy Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "campaign",
+        "initiative",
+        "task"
+      ],
+      "applicableScopes": [
+        "strategy",
+        "campaign_strategy",
+        "objective_alignment",
+        "problem_framework"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "provenance_present"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "objective_alignment",
+          "problem_context_coherence",
+          "situation_pain_consequence_desire_mechanism_proof_offer_coherence",
+          "assumptions_and_limitations_explicit"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "brand_gate",
+      "name": "Brand Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "content",
+        "creative",
+        "campaign",
+        "email_campaign",
+        "social_content"
+      ],
+      "applicableScopes": [
+        "brand_alignment",
+        "voice",
+        "product_truth",
+        "brand_os"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "brand_context_present",
+        "provenance_present"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "brand_voice_alignment",
+          "product_truth_preserved",
+          "forbidden_or_future_claims_avoided",
+          "brand_context_version_respected"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "claim_gate",
+      "name": "Claim Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "content",
+        "creative",
+        "campaign"
+      ],
+      "applicableScopes": [
+        "claim",
+        "copy",
+        "email",
+        "social_content"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "claim_evidence_link_present",
+        "provenance_present"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "claim_supported_by_evidence",
+          "claim_scope_matches_evidence",
+          "uncertainty_preserved"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "evidence_gate",
+      "name": "Evidence Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "content",
+        "creative",
+        "analysis",
+        "report",
+        "learning",
+        "context_update"
+      ],
+      "applicableScopes": [
+        "evidence",
+        "provenance",
+        "source_quality",
+        "evidence_scope"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "provenance_present",
+        "evidence_references_resolvable"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "evidence_relevance",
+          "evidence_scope_is_not_overstated",
+          "facts_separated_from_inference",
+          "limitations_preserved"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "creative_gate",
+      "name": "Creative Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "creative",
+        "content",
+        "email_campaign",
+        "social_content"
+      ],
+      "applicableScopes": [
+        "copy",
+        "design",
+        "creative_variant",
+        "asset_usage"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "asset_rights_valid",
+        "provenance_present"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "creative_matches_approved_hypothesis",
+          "changed_and_constant_elements_are_clear",
+          "brand_and_message_coherence",
+          "unsupported_claims_absent"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "experiment_gate",
+      "name": "Experiment Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "experiment",
+        "campaign"
+      ],
+      "applicableScopes": [
+        "experiment_design",
+        "hypothesis",
+        "variant_comparison",
+        "measurement_plan"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "experiment_links_resolvable",
+        "primary_metric_present",
+        "decision_criteria_present"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "hypothesis_is_testable",
+          "comparison_design_matches_claimed_inference",
+          "causal_language_matches_design",
+          "maturation_and_limitations_considered"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "analysis_gate",
+      "name": "Analysis Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "analysis"
+      ],
+      "applicableScopes": [
+        "performance_analysis",
+        "revenue_analysis",
+        "attribution_analysis"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "provenance_present",
+        "null_preserved"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "facts_inferences_hypotheses_recommendations_separated",
+          "attribution_not_presented_as_causality",
+          "data_coverage_and_maturation_considered",
+          "limitations_and_uncertainty_preserved"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "reporting_gate",
+      "name": "Reporting Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "report"
+      ],
+      "applicableScopes": [
+        "weekly_checkin",
+        "monthly_report",
+        "executive_report"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "provenance_present",
+        "report_period_valid"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "reported_results_trace_to_evidence",
+          "limitations_are_visible",
+          "recommendations_follow_supported_findings",
+          "inconclusive_results_remain_inconclusive"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "learning_gate",
+      "name": "Learning Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "learning",
+        "context_update"
+      ],
+      "applicableScopes": [
+        "learning_record",
+        "context_update_candidate",
+        "context_promotion"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "provenance_present",
+        "source_result_present"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "learning_is_supported_by_evidence",
+          "local_result_not_generalized_without_support",
+          "confidence_and_limitations_preserved",
+          "promotion_scope_matches_evidence"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": [
+          "governed_context_promotion",
+          "l1_or_l2_change"
+        ]
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "publication_gate",
+      "name": "Publication Quality Gate",
+      "status": "active",
+      "ownerAgent": "strategy-quality-agent",
+      "ownerService": null,
+      "applicableTargetTypes": [
+        "campaign",
+        "content",
+        "creative",
+        "email_campaign",
+        "social_content"
+      ],
+      "applicableScopes": [
+        "publication_readiness",
+        "send_readiness",
+        "external_distribution"
+      ],
+      "reviewType": "hybrid",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "permission_valid",
+        "entitlement_valid",
+        "approval_or_policy_valid_when_required",
+        "idempotency_present_when_required",
+        "consent_valid_when_applicable",
+        "budget_valid_when_applicable",
+        "asset_rights_valid_when_applicable"
+      ],
+      "agenticReview": {
+        "required": true,
+        "reviewerAgent": "strategy-quality-agent",
+        "selfApprovalAllowed": false,
+        "criteria": [
+          "message_and_asset_are_ready_for_external_use",
+          "quality_findings_resolved_or_explicitly_accepted",
+          "publication_context_matches_approved_version",
+          "no_quality_pass_is_treated_as_execution_authorization"
+        ]
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    },
+    {
+      "key": "operational_gate",
+      "name": "Operational Policy Gate",
+      "status": "active",
+      "ownerAgent": null,
+      "ownerService": "policy-engine",
+      "applicableTargetTypes": [
+        "campaign",
+        "journey",
+        "email_campaign",
+        "social_content",
+        "task",
+        "other"
+      ],
+      "applicableScopes": [
+        "side_effect",
+        "runtime_policy",
+        "execution_readiness"
+      ],
+      "reviewType": "deterministic",
+      "deterministicChecks": [
+        "schema_valid",
+        "tenant_match",
+        "permission_valid",
+        "entitlement_valid",
+        "autonomy_valid",
+        "approval_or_policy_valid_when_required",
+        "idempotency_present_when_required",
+        "budget_valid_when_applicable",
+        "consent_valid_when_applicable",
+        "asset_rights_valid_when_applicable",
+        "audit_context_present"
+      ],
+      "agenticReview": {
+        "required": false,
+        "reviewerAgent": null,
+        "selfApprovalAllowed": false,
+        "criteria": []
+      },
+      "humanApprovalPolicy": {
+        "requiredByGate": false,
+        "deferToActionPolicy": true,
+        "requiredWhen": []
+      },
+      "blockingSeverities": [
+        "blocking"
+      ],
+      "allowedStatuses": [
+        "passed",
+        "passed_with_notes",
+        "changes_required",
+        "blocked",
+        "escalation_required"
+      ],
+      "plans": [
+        "performance",
+        "growth"
+      ]
+    }
+  ]
+}

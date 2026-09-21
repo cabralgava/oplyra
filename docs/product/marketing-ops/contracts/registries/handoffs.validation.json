@@ -1,0 +1,27 @@
+{
+  "registry": "oplyra-handoffs",
+  "registryVersion": "1.0",
+  "canonicalHandoffs": 43,
+  "registeredPairs": 43,
+  "orchestratorRoutes": 11,
+  "nonAgentTransferExclusions": 1,
+  "checks": {
+    "uniqueKeys": true,
+    "uniquePairs": true,
+    "allAgentsRegistered": true,
+    "noSelfTransfer": true,
+    "tenantMatchAlwaysRequired": true,
+    "tracePropagationAlwaysRequired": true,
+    "orchestratorCanRouteToAllSpecialists": true,
+    "compositeLabelsResolved": true
+  },
+  "actionCoverage": {
+    "status": "pending_action_binding",
+    "note": "allowedActions will be populated in the cross-registry binding pass using actions.json."
+  },
+  "validation": {
+    "status": "passed",
+    "errors": [],
+    "warnings": []
+  }
+}

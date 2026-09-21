@@ -1,0 +1,44 @@
+{
+  "id": "ctxupd_brand_claim_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "targetLayer": "L2",
+  "targetRef": "brandTruth:tenant_123:v5",
+  "targetVersion": 5,
+  "targetField": "claims.claim_12.wording",
+  "operation": "replace",
+  "currentValue": "Reduz seu CAC em 30%.",
+  "proposedValue": "Em clientes analisados, a Oplyra esteve associada a reduções de CAC de até 30%, conforme o período e a operação.",
+  "source": {
+    "type": "performance_analysis",
+    "ref": "analysis:perf_2026_q3_01",
+    "observedAt": "2026-09-16T21:05:00Z"
+  },
+  "evidenceRefs": [
+    "proof_09",
+    "analysis:perf_2026_q3_01"
+  ],
+  "confidence": {
+    "level": "high",
+    "score": 0.86,
+    "reason": "Há evidência suficiente para qualificar o claim, mas não para mantê-lo como promessa absoluta."
+  },
+  "reason": "O claim atual é mais absoluto que a evidência disponível e deve ser qualificado.",
+  "requiresApproval": true,
+  "approvalRefs": [],
+  "status": "proposed",
+  "proposedBy": {
+    "type": "agent",
+    "id": "strategy-quality-agent",
+    "role": null
+  },
+  "proposedAt": "2026-09-16T21:10:00Z",
+  "review": null,
+  "decision": null,
+  "appliedAt": null,
+  "appliedBy": null,
+  "resultingVersion": null,
+  "supersededBy": null,
+  "correlationId": "corr_claim_review_01",
+  "taskId": "task_quality_claim_01"
+}

@@ -1,0 +1,12 @@
+{
+  "planVersion": "1.0",
+  "activation": { "enabled": false, "explicitChangeRequired": true, "killSwitchRequired": true, "checkBeforeEachClaim": true },
+  "topology": { "workerRuntime": "node_long_running", "workerCountPerQueue": 1, "processingMode": "sequential_single_cycle", "tenantScheduling": "round_robin", "crossTenantBatchAllowed": false, "dispatcherIdentity": "unique_per_process" },
+  "polling": { "defaultBatchSize": 25, "maximumBatchSize": 500, "leaseDurationSeconds": 120, "idleIntervalMilliseconds": 1000, "failureIntervalMilliseconds": 5000, "emptyCycleConsumesAttempt": false },
+  "transport": { "jobQueue": "pgmq", "eventOutboxSourceOfTruth": "content.event_outbox", "eventOutboxClaimBoundary": "app.claim_outbox_events", "scheduler": "pg_cron", "pgmqIsEventSourceOfTruth": false, "pgCronMayDeliverEvents": false },
+  "scheduler": { "timezone": "UTC", "role": "materialize_and_enqueue_only", "overlapAllowed": false, "misfirePolicy": "catch_up_once", "occurrenceIdempotencyScope": ["tenantId", "scheduleRef", "occurrenceAt"] },
+  "compositionRoot": { "entrypointType": "dedicated_worker_process", "requiredDependencies": ["activationGate", "tenantSchedule", "outboxDispatcher", "consumerRegistry", "deliveryFailurePolicy", "deadLetterPublisher", "clock", "telemetry"], "consumerResolution": "registered_event_key_and_consumer_agent", "configurationSource": "validated_runtime_configuration", "startupWithActivationDisabled": "healthy_idle_no_claim" },
+  "shutdown": { "stopClaimsFirst": true, "inFlightPolicy": "attempt_settlement_without_redelivery", "unsettledRecovery": "lease_expiry_and_fencing", "drainTimeoutSeconds": 30 },
+  "observability": { "requiredMetrics": ["queue_lag", "claim_count", "empty_cycle_count", "delivery_count", "retry_count", "dead_letter_count", "settlement_failure_count", "cycle_duration"], "tenantLabelsAllowed": false, "payloadContentInMetricsAllowed": false },
+  "scaling": { "automaticScaleOutAllowed": false, "workerOrBatchIncreaseRequires": ["explicit_change", "E2-01_retest", "E2-09_retest"], "stagingRevalidationRequired": true }
+}

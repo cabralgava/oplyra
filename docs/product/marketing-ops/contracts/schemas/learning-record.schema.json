@@ -1,0 +1,742 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/core/learning-record/1.0",
+  "title": "Oplyra Learning Record",
+  "description": "Contrato canônico para aprendizados derivados de evidência, experimentos, performance e observações operacionais na Oplyra.",
+  "$comment": "Learning records never directly mutate higher-order context. Context promotion must occur through a valid Context Update Candidate. Registry and tenant cross-reference checks are runtime invariants.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "schemaVersion",
+    "tenantId",
+    "source",
+    "context",
+    "evidence",
+    "conclusion",
+    "confidence",
+    "limitations",
+    "decision",
+    "reviewStatus",
+    "createdBy",
+    "createdAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^learning_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "schemaVersion": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/schemaVersion"
+    },
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "context": {
+      "$ref": "#/$defs/context"
+    },
+    "evidence": {
+      "$ref": "#/$defs/evidence"
+    },
+    "conclusion": {
+      "$ref": "#/$defs/conclusion"
+    },
+    "confidence": {
+      "$ref": "#/$defs/confidence"
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/limitation"
+      }
+    },
+    "decision": {
+      "$ref": "#/$defs/decision"
+    },
+    "proposedContextUpdateRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^ctxupd_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+      },
+      "default": []
+    },
+    "nextExperiment": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nextExperiment"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reviewStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "under_review",
+        "approved",
+        "rejected",
+        "superseded"
+      ]
+    },
+    "review": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/review"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "supersededBy": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^learning_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "createdBy": {
+      "$ref": "#/$defs/actorRef"
+    },
+    "createdAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    },
+    "updatedAt": {
+      "oneOf": [
+        {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "correlationId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "workflowId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "taskId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "properties": {
+              "type": {
+                "const": "experiment"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "required": [
+              "experimentId"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "conclusion": {
+            "properties": {
+              "status": {
+                "const": "supported"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "properties": {
+              "refs": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "properties": {
+              "action": {
+                "const": "promote_to_context"
+              }
+            },
+            "required": [
+              "action"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "proposedContextUpdateRefs": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "reviewStatus": {
+            "const": "under_review"
+          }
+        },
+        "required": [
+          "reviewStatus"
+        ]
+      },
+      "then": {
+        "required": [
+          "review"
+        ],
+        "properties": {
+          "review": {
+            "$ref": "#/$defs/review"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "reviewStatus": {
+            "enum": [
+              "approved",
+              "rejected"
+            ]
+          }
+        },
+        "required": [
+          "reviewStatus"
+        ]
+      },
+      "then": {
+        "required": [
+          "review"
+        ],
+        "properties": {
+          "review": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/review"
+              },
+              {
+                "required": [
+                  "outcome",
+                  "completedAt"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "reviewStatus": {
+            "const": "approved"
+          }
+        },
+        "required": [
+          "reviewStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "review": {
+            "properties": {
+              "outcome": {
+                "const": "approved"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "reviewStatus": {
+            "const": "rejected"
+          }
+        },
+        "required": [
+          "reviewStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "review": {
+            "properties": {
+              "outcome": {
+                "const": "rejected"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "reviewStatus": {
+            "const": "superseded"
+          }
+        },
+        "required": [
+          "reviewStatus"
+        ]
+      },
+      "then": {
+        "required": [
+          "supersededBy"
+        ],
+        "properties": {
+          "supersededBy": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "actorRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "user",
+            "agent",
+            "service",
+            "system"
+          ]
+        },
+        "id": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "role": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "ref"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "experiment",
+            "performance_analysis",
+            "revenue_analysis",
+            "report",
+            "campaign",
+            "journey",
+            "email_campaign",
+            "social_analysis",
+            "manual_observation",
+            "other"
+          ]
+        },
+        "ref": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "experimentId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "initiativeId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "observedAt": {
+          "oneOf": [
+            {
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope"
+      ],
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "tenant",
+            "brand",
+            "product",
+            "audience",
+            "channel",
+            "campaign",
+            "initiative",
+            "experiment",
+            "journey",
+            "email",
+            "social",
+            "revenue",
+            "other"
+          ]
+        },
+        "initiativeId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "experimentId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "productId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "audienceId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "channel": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "periodStart": {
+          "oneOf": [
+            {
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "periodEnd": {
+          "oneOf": [
+            {
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contextVersionRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "refs"
+      ],
+      "properties": {
+        "refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          }
+        },
+        "dataCoverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "maturationStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "immature",
+            "partially_mature",
+            "mature",
+            "not_applicable",
+            null
+          ]
+        },
+        "causalSupport": {
+          "type": "string",
+          "enum": [
+            "none",
+            "observational",
+            "experimental_partial",
+            "experimental_supported"
+          ],
+          "default": "none"
+        }
+      }
+    },
+    "conclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "statement"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "supported",
+            "not_supported",
+            "inconclusive",
+            "invalidated",
+            "observational"
+          ]
+        },
+        "statement": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "scope": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "causalClaim": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level"
+      ],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "confirmed",
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ]
+        },
+        "score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "limitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "description",
+        "impact"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "sample_size",
+            "maturation",
+            "attribution",
+            "coverage",
+            "data_quality",
+            "confounding",
+            "tracking",
+            "scope",
+            "seasonality",
+            "external_factor",
+            "other"
+          ]
+        },
+        "description": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "impact": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "blocking"
+          ]
+        },
+        "evidenceRef": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "retain",
+            "iterate",
+            "stop",
+            "retest",
+            "expand",
+            "promote_to_context",
+            "no_action"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ownerAgent": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z0-9-]*-agent$"
+        }
+      }
+    },
+    "nextExperiment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "question",
+        "hypothesis"
+      ],
+      "properties": {
+        "question": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "hypothesis": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "variable": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "low",
+            "normal",
+            "high",
+            "urgent"
+          ],
+          "default": "normal"
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewedBy",
+        "startedAt"
+      ],
+      "properties": {
+        "reviewedBy": {
+          "$ref": "#/$defs/actorRef"
+        },
+        "startedAt": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        },
+        "completedAt": {
+          "oneOf": [
+            {
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "outcome": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "approved",
+            "rejected",
+            null
+          ]
+        },
+        "reviewRef": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "draftRef": "copy_draft_01",
+  "version": 1,
+  "sourceAction": "create_ad_copy",
+  "variantRefs": [
+    "var_a_copy_v1"
+  ]
+}

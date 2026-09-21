@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/runtime/outbox-dispatcher/settlement-input/1.0",
+  "title": "Outbox Dispatcher Settlement — Input",
+  "description": "Confirmação de entrega ou falha, aceita apenas para o attempt e fencing token atualmente proprietários do lease.",
+  "type": "object",
+  "required": [
+    "tenantId",
+    "dispatcherId",
+    "eventTransactionId",
+    "consumerAgent",
+    "attempt",
+    "fencingToken",
+    "outcome",
+    "settledAt"
+  ],
+  "properties": {
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+    },
+    "dispatcherId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "eventTransactionId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "consumerAgent": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/agentKey"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "fencingToken": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "dispatched",
+        "retryable_failure",
+        "terminal_failure"
+      ]
+    },
+    "settledAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    },
+    "nextAvailableAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    },
+    "error": {
+      "$ref": "#/$defs/error"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "error": {
+      "type": "object",
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "properties": {
+        "code": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "message": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

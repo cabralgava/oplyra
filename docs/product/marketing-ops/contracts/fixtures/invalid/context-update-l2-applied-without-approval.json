@@ -1,0 +1,38 @@
+{
+  "id": "ctxupd_bad_l2_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "targetLayer": "L2",
+  "targetRef": "brandTruth:tenant_123:v5",
+  "targetVersion": 5,
+  "targetField": "audience.primary",
+  "operation": "replace",
+  "currentValue": "VP Marketing",
+  "proposedValue": "Founder",
+  "source": {
+    "type": "agent_inferred",
+    "ref": "conversation:msg_991",
+    "observedAt": "2026-09-16T21:15:00Z"
+  },
+  "evidenceRefs": [],
+  "confidence": {
+    "level": "low",
+    "score": 0.2,
+    "reason": "Inference based on a single conversation."
+  },
+  "reason": "Agent inferred a different primary audience.",
+  "requiresApproval": false,
+  "approvalRefs": [],
+  "status": "applied",
+  "proposedBy": {
+    "type": "agent",
+    "id": "copywriting-agent"
+  },
+  "proposedAt": "2026-09-16T21:16:00Z",
+  "review": null,
+  "decision": null,
+  "appliedAt": null,
+  "appliedBy": null,
+  "resultingVersion": null,
+  "supersededBy": null
+}

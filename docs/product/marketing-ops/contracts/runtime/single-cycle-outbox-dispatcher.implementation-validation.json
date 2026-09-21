@@ -1,0 +1,53 @@
+{
+  "validationId": "single-cycle-outbox-dispatcher-cr-017",
+  "validatedAt": "2026-09-21T18:25:00Z",
+  "status": "passed_with_notes",
+  "core": {
+    "module": "packages/core/src/application/outbox-dispatcher-cycle.ts",
+    "service": "createOutboxDispatcherCycle",
+    "ports": [
+      "ConsumerDeliveryPort",
+      "DeliveryFailurePolicyPort",
+      "OutboxDispatcherCyclePort"
+    ],
+    "processingMode": "sequential_single_cycle"
+  },
+  "specificTests": {
+    "coreTestsRun": 9,
+    "coreTestsPassed": 9,
+    "postgresIntegrationTestsRun": 4,
+    "postgresIntegrationTestsPassed": 4
+  },
+  "behaviorsValidated": [
+    "invalid_command_rejected_before_claim",
+    "empty_batch_no_delivery",
+    "successful_delivery_and_settlement",
+    "retry_outcome_without_internal_backoff_calculation",
+    "terminal_outcome_to_dead_letter",
+    "consumer_exception_classified_by_injected_policy",
+    "invalid_policy_output_rejected_before_settlement",
+    "settlement_failure_explicit_and_batch_continues",
+    "claim_failure_prevents_delivery",
+    "postgres_success_closes_outbox_and_deduplication",
+    "postgres_retry_persists_next_availability",
+    "postgres_terminal_persists_dead_letter"
+  ],
+  "typecheck": {
+    "coreErrors": 0,
+    "infraErrors": 0,
+    "testingErrors": 0
+  },
+  "notImplemented": [
+    "design_agent_event_consumer_adapter",
+    "bounded_parallel_delivery",
+    "dispatcher_polling_loop",
+    "scheduler_or_process_entrypoint",
+    "retry_policy_values",
+    "dead_letter_escalation_event",
+    "external_transport"
+  ],
+  "runtimeDispatchEnabled": false,
+  "externalSideEffectsEnabled": false,
+  "databaseChanged": false,
+  "privilegesChanged": false
+}

@@ -1,0 +1,8 @@
+EXP-02 — segunda execução do harness (preservada)
+
+Resultado: E2-02, E2-03 e E2-04 passaram; o processo encerrou durante a simulação E2-05.
+Código PostgreSQL: 57P01
+Mensagem: terminating connection due to administrator command
+Causa: o teste encerrou via pg_terminate_backend uma conexão emprestada do pool; o pool propagou corretamente o evento fatal, mas isso encerrou o próprio harness.
+Correção aplicada: usar conexão dedicada ao worker simulado e encerrá-la com transação aberta, preservando o comportamento relevante de rollback por desconexão sem contaminar o pool supervisor.
+Interpretação: somente os três cenários emitidos antes da falha tiveram observação nessa rodada; a execução oficial reinicia todos em ambiente limpo.

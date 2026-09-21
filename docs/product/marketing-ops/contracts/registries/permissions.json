@@ -1,0 +1,81 @@
+{
+  "registry": "oplyra-permissions",
+  "registryVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-17T14:40:00Z",
+  "status": "active",
+  "entries": [
+    {
+      "key": "none",
+      "name": "No Access",
+      "description": "Nenhuma permissão sobre a ferramenta, recurso ou capability.",
+      "allowsRead": false,
+      "allowsWrite": false,
+      "allowsExecute": false,
+      "allowsApprove": false,
+      "implies": []
+    },
+    {
+      "key": "read",
+      "name": "Read",
+      "description": "Permite leitura de dados dentro do escopo autorizado, sem alteração.",
+      "allowsRead": true,
+      "allowsWrite": false,
+      "allowsExecute": false,
+      "allowsApprove": false,
+      "implies": []
+    },
+    {
+      "key": "write",
+      "name": "Write",
+      "description": "Permite gravação ou alteração no recurso autorizado sem implicar leitura ampla ou execução externa.",
+      "allowsRead": false,
+      "allowsWrite": true,
+      "allowsExecute": false,
+      "allowsApprove": false,
+      "implies": []
+    },
+    {
+      "key": "read_write",
+      "name": "Read & Write",
+      "description": "Permite leitura e gravação dentro do escopo autorizado.",
+      "allowsRead": true,
+      "allowsWrite": true,
+      "allowsExecute": false,
+      "allowsApprove": false,
+      "implies": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "key": "execute",
+      "name": "Execute",
+      "description": "Permite disparar uma operação ou side effect quando também satisfeitas as políticas de autonomia, approval, entitlement e risco.",
+      "allowsRead": false,
+      "allowsWrite": false,
+      "allowsExecute": true,
+      "allowsApprove": false,
+      "implies": []
+    },
+    {
+      "key": "approve",
+      "name": "Approve",
+      "description": "Permite emitir decisão formal de aprovação quando a função, o escopo e a política autorizarem.",
+      "allowsRead": false,
+      "allowsWrite": false,
+      "allowsExecute": false,
+      "allowsApprove": true,
+      "implies": []
+    }
+  ],
+  "rules": {
+    "permissionIsNotAutonomy": true,
+    "permissionDoesNotBypassApproval": true,
+    "permissionDoesNotBypassEntitlement": true,
+    "permissionDoesNotBypassTenantIsolation": true,
+    "permissionDoesNotBypassRiskPolicy": true,
+    "executeRequiresPolicyEvaluation": true,
+    "approveRequiresScopedAuthority": true
+  }
+}

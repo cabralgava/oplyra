@@ -1,0 +1,22 @@
+{
+  "registry": "oplyra-handoffs",
+  "registryVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-17T22:23:43Z",
+  "status": "recovery_blocked",
+  "entries": [],
+  "recovery": {
+    "installable": false,
+    "canonicalRegistryExpected": true,
+    "expectedEntryCount": 43,
+    "knownOrchestratorRoutes": 11,
+    "knownSelfTransfers": 0,
+    "knownUnboundHandoffs": 32,
+    "reason": "Canonical handoffs.json contents are not available in the current Project/Library surface. This recovery artifact intentionally does not reconstruct or invent handoff keys.",
+    "requiredSourceFiles": [
+      "docs/product/marketing-ops/contracts/registries/handoffs.json",
+      "docs/product/marketing-ops/contracts/registries/actions.json"
+    ],
+    "doNotOverwriteCanonicalRegistry": true
+  }
+}

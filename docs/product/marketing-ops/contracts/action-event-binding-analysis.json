@@ -1,0 +1,150 @@
+{
+  "artifact": "oplyra-action-event-binding-analysis",
+  "artifactVersion": "1.0",
+  "generatedAt": "2026-09-18T16:44:43Z",
+  "status": "passed_with_unresolved_binding",
+  "scope": {
+    "domain": "copywriting",
+    "ownerAgent": "copywriting-agent",
+    "focusAction": "create_copy_variants",
+    "candidateEvent": "copy.draft_created"
+  },
+  "sourceEvidence": [
+    "docs/product/marketing-ops/20-agent-transaction-protocol.md",
+    "docs/product/marketing-ops/agents/README.md",
+    "docs/product/marketing-ops/agents/copywriting.md",
+    "docs/product/marketing-ops/agents/design.md",
+    "docs/product/marketing-ops/contracts/registries/actions.json",
+    "docs/product/marketing-ops/contracts/registries/events.json",
+    "docs/product/marketing-ops/contracts/registries/handoffs.json",
+    "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.output.schema.json"
+  ],
+  "validatedFacts": {
+    "copywritingActions": 15,
+    "copywritingCommands": 10,
+    "copywritingQueries": 5,
+    "copywritingEmittedEvents": 5,
+    "focusAction": {
+      "exists": true,
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "schemaStatus": "bound"
+    },
+    "candidateEvent": {
+      "exists": true,
+      "producer": {
+        "type": "agent",
+        "id": "copywriting-agent"
+      },
+      "consumers": [
+        "design-agent"
+      ],
+      "payloadSchemaStatus": "pending_event_schema"
+    },
+    "agentSpec": {
+      "acceptsFocusAction": true,
+      "emitsCandidateEvent": true,
+      "declaresCausalActionEventMapping": false
+    }
+  },
+  "copywritingActions": [
+    "adapt_copy",
+    "analyze_claim_usage",
+    "analyze_message",
+    "compare_copy_versions",
+    "create_ad_copy",
+    "create_copy_variants",
+    "create_email_copy",
+    "create_landing_page_copy",
+    "create_script",
+    "create_social_copy",
+    "derive_copy_from_asset",
+    "identify_copy_gaps",
+    "revise_copy",
+    "shorten_copy",
+    "suggest_message_angles"
+  ],
+  "copywritingEvents": [
+    "copy.context_missing",
+    "copy.draft_created",
+    "copy.experiment_conflict",
+    "copy.review_requested",
+    "copy.version_created"
+  ],
+  "bindingAssessment": {
+    "directBindingsValidated": 0,
+    "focusBinding": {
+      "action": "create_copy_variants",
+      "event": "copy.draft_created",
+      "classification": "plausible_but_unverified",
+      "evidence": [
+        "Both identities are canonical and owned or produced by copywriting-agent.",
+        "The action has a completed-response example containing copy variants.",
+        "The event is consumed by design-agent."
+      ],
+      "missingEvidence": [
+        "No registry field binds an action to emitted events.",
+        "The Copywriting spec lists accepted actions and emitted events independently.",
+        "No canonical payload fields are specified for copy.draft_created.",
+        "No rule states whether create_copy_variants always, conditionally, or never emits copy.draft_created."
+      ]
+    }
+  },
+  "gaps": [
+    {
+      "id": "AEB-001",
+      "severity": "blocking_for_action_specific_event_binding",
+      "description": "A relação causal create_copy_variants -> copy.draft_created não pode ser validada diretamente com a documentação e os registries atuais.",
+      "impact": "Não é seguro criar um payload schema que presuma campos ou semântica exclusivos de create_copy_variants para um evento compartilhável por outras actions de Copywriting."
+    },
+    {
+      "id": "AEB-002",
+      "severity": "blocking_for_payload_field_selection",
+      "description": "Os campos canônicos do payload de copy.draft_created não estão definidos nas fontes disponíveis.",
+      "impact": "Definir draftId, copyRef, variantIds ou conteúdo inline agora seria uma decisão contratual nova, não uma transcrição de contrato aprovado."
+    }
+  ],
+  "nonGaps": [
+    "A identidade copy.draft_created está registrada.",
+    "O producer copywriting-agent está registrado.",
+    "O consumer design-agent está registrado.",
+    "A action create_copy_variants e seus schemas de input/output estão vinculados."
+  ],
+  "decisionRequired": {
+    "key": "DEC-ACTION-EVENT-001",
+    "question": "Qual é a semântica causal e o payload mínimo de copy.draft_created?",
+    "minimumDecisions": [
+      "Se create_copy_variants emite copy.draft_created sempre, condicionalmente ou nunca.",
+      "Se o payload carrega conteúdo inline, referências persistidas ou ambos.",
+      "Qual identificador canônico representa o draft de copy.",
+      "Quais referências o design-agent precisa obrigatoriamente para consumir o evento."
+    ]
+  },
+  "registryImpact": {
+    "actionsRegistryModified": false,
+    "eventsRegistryModified": false,
+    "schemasModified": false,
+    "freezeBaselineModified": false,
+    "releaseManifestUpdateRequired": false
+  },
+  "next": {
+    "action": "approve_copy_draft_created_contract_decision",
+    "then": [
+      "create copy-draft-created.payload.schema.json",
+      "validate schema and examples",
+      "submit backward-compatible events registry binding change",
+      "add executable contract tests"
+    ]
+  },
+  "unvalidatedReferences": [
+    {
+      "path": "docs/product/marketing-ops/contracts/README.md",
+      "reason": "Referenced as a priority document in project instructions but not present in the current Oplyra repository."
+    },
+    {
+      "path": "docs/product/marketing-ops/OPLYRA-MIGRATION-PACK/06-OPEN-ITEMS.md",
+      "reason": "Referenced as a priority document in project instructions but not present in the current Oplyra repository; the synchronized project mirror was used only as historical supporting evidence."
+    }
+  ]
+}

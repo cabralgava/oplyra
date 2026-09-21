@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/core/common-definitions/1.0",
+  "title": "Oplyra Common Definitions",
+  "description": "Definições primitivas e cross-cutting compartilhadas pelos contratos universais da Oplyra.",
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nullableNonEmptyString": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "agentKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*-agent$"
+    },
+    "domainKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "actionKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "eventKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+    },
+    "autonomyLevel": {
+      "type": "string",
+      "enum": [
+        "recommend",
+        "draft",
+        "approval_required",
+        "policy_execute"
+      ]
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "tenantId": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

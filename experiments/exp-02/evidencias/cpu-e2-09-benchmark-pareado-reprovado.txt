@@ -1,0 +1,19 @@
+EXP-02 — CPU do container no benchmark pareado final de E2-09
+
+Ambiente: supabase_db_Oplyra
+Configuração: um worker, lote 500, cinco rodadas pareadas.
+Método: docker stats contínuo, iniciado antes do harness e encerrado após a execução.
+Faixa de CPU observada: 0,12% a 27,92%.
+Pico de memória observado: 181,8 MiB de 7,746 GiB.
+Pico de processos observado: 37.
+
+Resultado correlato no harness:
+- amostras por braço: 1.500
+- baseline p95 agregado: 0,410 ms
+- sob carga p95 agregado: 0,509 ms
+- degradação agregada: 23,95%
+- degradações por rodada: -49,59%; 13,11%; 29,16%; 113,22%; 31,68%
+- limite: 20%
+- resultado: REPROVADO
+
+Observação: as amostras são do container completo e não atribuem CPU a uma consulta individual.

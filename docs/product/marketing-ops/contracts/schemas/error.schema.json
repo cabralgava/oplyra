@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/core/error/1.0",
+  "title": "Oplyra Error",
+  "description": "Contrato canônico de erro estruturado da Oplyra.",
+  "$comment": "A existência do error code em registries/errors.json e a coerência entre retryable, defaultNextAction e políticas operacionais exigem validação adicional de registry/runtime.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "category",
+    "severity",
+    "retryable",
+    "message",
+    "occurredAt"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$",
+      "minLength": 3
+    },
+    "category": {
+      "$ref": "#/$defs/errorCategory"
+    },
+    "severity": {
+      "$ref": "#/$defs/errorSeverity"
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 5000
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "defaultNextAction": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nextAction"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "retryPolicy": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/retryPolicy"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/source"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cause": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/cause"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tenantId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "transactionId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^txn_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "correlationId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "taskId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "occurredAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "retryable": {
+            "const": true
+          }
+        },
+        "required": [
+          "retryable"
+        ]
+      },
+      "then": {
+        "required": [
+          "retryPolicy"
+        ],
+        "properties": {
+          "retryPolicy": {
+            "$ref": "#/$defs/retryPolicy"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "retryable": {
+            "const": false
+          }
+        },
+        "required": [
+          "retryable"
+        ]
+      },
+      "then": {
+        "properties": {
+          "retryPolicy": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "severity": {
+            "const": "critical"
+          }
+        },
+        "required": [
+          "severity"
+        ]
+      },
+      "then": {
+        "required": [
+          "defaultNextAction"
+        ],
+        "properties": {
+          "defaultNextAction": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/nextAction"
+              },
+              {
+                "properties": {
+                  "action": {
+                    "enum": [
+                      "escalate",
+                      "stop",
+                      "request_approval",
+                      "request_human_intervention"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "errorCategory": {
+      "type": "string",
+      "enum": [
+        "validation",
+        "context",
+        "governance",
+        "permission",
+        "entitlement",
+        "integration",
+        "asset",
+        "tracking",
+        "budget",
+        "consent",
+        "journey",
+        "analytics",
+        "runtime",
+        "external",
+        "rate_limit",
+        "timeout",
+        "conflict",
+        "idempotency",
+        "external_provider",
+        "system",
+        "unknown"
+      ]
+    },
+    "errorSeverity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "nextAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "retry",
+            "request_context",
+            "request_approval",
+            "request_permission",
+            "request_entitlement",
+            "request_human_intervention",
+            "refresh_integration",
+            "rebuild_segment",
+            "revise_input",
+            "revise_journey",
+            "resolve_conflict",
+            "escalate",
+            "stop",
+            "none"
+          ]
+        },
+        "target": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5000
+        }
+      }
+    },
+    "retryPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy",
+        "maxAttempts"
+      ],
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "immediate",
+            "fixed",
+            "exponential_backoff",
+            "provider_hint"
+          ]
+        },
+        "maxAttempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "initialDelaySeconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "maxDelaySeconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "retryAfterSeconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "agent",
+            "service",
+            "integration",
+            "provider",
+            "runtime",
+            "validator",
+            "policy",
+            "unknown"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "cause": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5000
+        },
+        "sourceRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "transactionError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "category",
+        "retryable",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "category": {
+          "$ref": "#/$defs/errorCategory"
+        },
+        "severity": {
+          "$ref": "#/$defs/errorSeverity"
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "object"
+        },
+        "defaultNextAction": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/nextAction"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retryPolicy": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/retryPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/source"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cause": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/cause"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "occurredAt": {
+          "oneOf": [
+            {
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "retryable": {
+                "const": true
+              }
+            },
+            "required": [
+              "retryable"
+            ]
+          },
+          "then": {
+            "required": [
+              "retryPolicy"
+            ],
+            "properties": {
+              "retryPolicy": {
+                "$ref": "#/$defs/retryPolicy"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "retryable": {
+                "const": false
+              }
+            },
+            "required": [
+              "retryable"
+            ]
+          },
+          "then": {
+            "properties": {
+              "retryPolicy": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "reviewId": "review_copy_001",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "reviewerAgent": "strategy-quality-agent",
+  "workflowId": "wf_campaign_01",
+  "taskId": "task_quality_copy_01",
+  "correlationId": "corr_campaign_01",
+  "causationId": "txn_copy_review_request_01",
+  "target": {
+    "type": "content",
+    "id": "copy_variant_b",
+    "version": 4,
+    "ownerAgent": "copywriting-agent",
+    "domain": "copywriting"
+  },
+  "gateType": "claim_gate",
+  "gateStatus": "changes_required",
+  "summary": "A mensagem está alinhada à estratégia, mas um claim precisa ser qualificado pela evidência disponível.",
+  "findings": [
+    {
+      "id": "finding_01",
+      "category": "claim",
+      "severity": "high",
+      "message": "O claim usa linguagem absoluta não sustentada pela prova disponível.",
+      "evidenceRefs": [
+        "claim_12",
+        "proof_09"
+      ],
+      "fieldRef": "body.claim_primary",
+      "recommendation": "Qualificar a formulação para refletir o escopo real da evidência."
+    }
+  ],
+  "limitations": [],
+  "evidenceRefs": [
+    "claim_12",
+    "proof_09"
+  ],
+  "requiredChanges": [
+    {
+      "id": "change_01",
+      "description": "Reescrever o claim principal sem linguagem absoluta.",
+      "ownerAgent": "copywriting-agent",
+      "priority": "high",
+      "findingRefs": [
+        "finding_01"
+      ]
+    }
+  ],
+  "nextAction": {
+    "action": "revise",
+    "targetAgent": "copywriting-agent",
+    "reason": "Correção necessária antes de liberar a versão para downstream."
+  },
+  "escalation": null,
+  "createdAt": "2026-09-16T20:20:00Z",
+  "completedAt": "2026-09-16T20:22:00Z"
+}

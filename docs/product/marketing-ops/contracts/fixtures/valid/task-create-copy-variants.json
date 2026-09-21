@@ -1,0 +1,55 @@
+{
+  "id": "task_copy_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "type": "create_copy_variants",
+  "title": "Criar três variações challenger para LinkedIn",
+  "description": "Produzir três variações mantendo offer, CTA e formato constantes.",
+  "status": "in_progress",
+  "priority": "high",
+  "owner": {
+    "type": "team",
+    "id": "marketing"
+  },
+  "assignedAgent": "copywriting-agent",
+  "initiativeId": "cmp_123",
+  "experimentId": "exp_091",
+  "workflowId": "wf_campaign_01",
+  "parentTaskId": null,
+  "contextPackageId": "ctx_copy_91",
+  "dependencies": [
+    {
+      "taskId": "task_strategy_01",
+      "type": "requires",
+      "requiredStatus": "completed"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "ac_01",
+      "description": "Gerar exatamente três variações.",
+      "status": "pending",
+      "evidenceRefs": []
+    },
+    {
+      "id": "ac_02",
+      "description": "Manter offer, CTA e formato constantes.",
+      "status": "pending",
+      "evidenceRefs": []
+    }
+  ],
+  "approvals": [],
+  "blockedBy": [],
+  "outputRefs": [],
+  "risk": "low",
+  "sideEffect": false,
+  "requiresApproval": false,
+  "requiresIdempotency": false,
+  "idempotencyKey": null,
+  "dueAt": "2026-09-17T18:00:00Z",
+  "createdAt": "2026-09-16T19:40:00Z",
+  "updatedAt": "2026-09-16T19:45:00Z",
+  "startedAt": "2026-09-16T19:45:00Z",
+  "completedAt": null,
+  "failure": null
+}

@@ -1,0 +1,40 @@
+{
+  "variants": [
+    {
+      "id": "var_a_copy_v1",
+      "role": "reference",
+      "angle": "operational_productivity",
+      "headline": "Transforme operação em aprendizado",
+      "primaryText": "Organize hipóteses, execução e evidências em um fluxo rastreável.",
+      "cta": "request_demo",
+      "changedElements": [
+        "angle",
+        "headline",
+        "primaryText"
+      ],
+      "constantElements": [
+        "offer",
+        "cta",
+        "format"
+      ]
+    },
+    {
+      "id": "var_b_copy_v1",
+      "role": "challenger",
+      "angle": "unattributed_revenue",
+      "headline": "Quanto da sua aquisição realmente vira pipeline?",
+      "primaryText": "Conecte investimento, pipeline e receita sem perder as limitações da atribuição.",
+      "cta": "request_demo",
+      "changedElements": [
+        "angle",
+        "headline",
+        "primaryText"
+      ],
+      "constantElements": [
+        "offer",
+        "cta",
+        "format"
+      ]
+    }
+  ]
+}

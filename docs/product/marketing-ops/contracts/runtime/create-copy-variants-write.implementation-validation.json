@@ -1,0 +1,88 @@
+{
+  "artifact": "oplyra-create-copy-variants-atomic-write-validation",
+  "artifactVersion": "1.0",
+  "generatedAt": "2026-09-21T15:45:00Z",
+  "status": "passed_with_notes",
+  "subject": {
+    "action": "create_copy_variants",
+    "writer": "CreateCopyVariantsWriterPort",
+    "repository": "CreateCopyVariantsWriteRepositoryPort",
+    "migration": "20260921000010_create_copy_variants_write.sql",
+    "idempotencyDecision": "DEC-RUNTIME-002",
+    "eventDecision": "DEC-ACTION-EVENT-001"
+  },
+  "validation": {
+    "typecheck": {
+      "packages": [
+        "@oplyra/core",
+        "@oplyra/infra",
+        "@oplyra/testing"
+      ],
+      "errors": 0
+    },
+    "vitest": {
+      "testFiles": 12,
+      "testsRun": 112,
+      "testsPassed": 112,
+      "testsFailed": 0,
+      "writerCoreTests": 8,
+      "writerIntegrationTests": 10
+    },
+    "databaseTests": {
+      "framework": "pgTAP",
+      "testFiles": 3,
+      "testsRun": 47,
+      "testsPassed": 47,
+      "testsFailed": 0,
+      "writeBoundaryChecks": 16
+    },
+    "secretScanFindings": 0,
+    "localMigrationApplied": true
+  },
+  "coverage": {
+    "atomicDraftVariantsIdempotencyOutbox": true,
+    "forcedRls": true,
+    "tenantScopedKey": true,
+    "canonicalSha256Fingerprint": true,
+    "identicalReplay": true,
+    "conflictingReplay": true,
+    "concurrentReplay": true,
+    "crossTenantKeyIndependence": true,
+    "duplicateDraftRollback": true,
+    "resolverRoundTrip": true,
+    "exactEventPayload": true,
+    "outboxDispatchPrivilegeAbsent": true
+  },
+  "integrity": {
+    "packages/core/src/application/create-copy-variants-writer.ts": "8281b1507bec9ec41ca06e75a44e789b669391419a0a41a36f4854300487668e",
+    "packages/core/src/index.ts": "9daf9eed4b712f5d3637183eae7f826750844052005683afa0cc560f997cdd18",
+    "packages/core/test/create-copy-variants-writer.test.ts": "2a1d3639f41e02f93dc40abca5faea88425773e31187614614285dadec7b0f97",
+    "packages/infra/src/create-copy-variants-write.ts": "eb0e48f9faf2fd6adbc67ebb022fbcf4c58d4fce7d3c4525aa27a283364650e0",
+    "packages/infra/src/index.ts": "79aa140d58f391027ede6d812b1de16297d12c6b15de0f50068923a8c3a05edc",
+    "packages/infra/test/create-copy-variants-write.test.ts": "3ee4ce63e99096ff138d379485186fb77c42fc5f1a115c2ec1997682dde67b4b",
+    "supabase/migrations/20260921000010_create_copy_variants_write.sql": "2ecd7570da525f772364cb4077e37f9ff88b5deb08fef11cac315d59a67e9ff5",
+    "supabase/tests/create_copy_variants_write.test.sql": "6ea13848d9f6c5f706d9a84faf1710fff27ebe6e0af82833205ad965339ec22b",
+    "supabase/tests/content_repository.test.sql": "0409773792dc28e34c1af2e6478206a8e01673dcc4612ba868d6e545872c966e"
+  },
+  "implementationBoundary": {
+    "writeTransactionImplemented": true,
+    "idempotencyStorageImplemented": true,
+    "outboxPendingPersistenceImplemented": true,
+    "eventDispatchEnabled": false,
+    "outboxDispatcherImplemented": false,
+    "consumerDeduplicationImplemented": false,
+    "externalEndpointExposed": false,
+    "existingDraftUpdateImplemented": false
+  },
+  "explicitLimits": [
+    "Creation only: expectedVersion absent or zero",
+    "No idempotency TTL",
+    "No outbox dispatcher or transport selection",
+    "No production database validation"
+  ],
+  "next": {
+    "action": "define_outbox_dispatcher_boundary",
+    "requiresExp02BeforeTransportSelection": true,
+    "eventDispatchRemainsDisabled": true
+  }
+}

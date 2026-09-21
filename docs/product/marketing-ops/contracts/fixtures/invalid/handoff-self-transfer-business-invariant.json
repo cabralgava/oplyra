@@ -1,0 +1,22 @@
+{
+  "id": "handoff_self_transfer_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "fromAgent": "copywriting-agent",
+  "toAgent": "copywriting-agent",
+  "taskId": "task_copy_02",
+  "objective": "Transferir a task para o mesmo agente.",
+  "status": "created",
+  "inputRefs": [],
+  "decisionsMade": [],
+  "constraints": [],
+  "openQuestions": [],
+  "expectedOutput": {
+    "action": "revise_copy",
+    "description": "Revisar a copy."
+  },
+  "createdAt": "2026-09-16T20:01:00Z",
+  "acceptedAt": null,
+  "completedAt": null,
+  "rejection": null
+}

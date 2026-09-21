@@ -1,0 +1,384 @@
+{
+  "registry": "oplyra-errors",
+  "registryVersion": "1.3",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-21T19:00:00Z",
+  "status": "active",
+  "rules": {
+    "codeNaming": "UPPER_SNAKE_CASE",
+    "allRuntimeErrorsMustBeRegistered": true,
+    "retryableFalseMeansNoAutomaticRetry": true,
+    "retryableTrueRequiresRuntimeRetryPolicy": true,
+    "criticalErrorsRequireExplicitStopOrEscalation": true
+  },
+  "entries": [
+    {
+      "code": "ACTION_NOT_FOUND",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Action inexistente no Action Registry."
+    },
+    {
+      "code": "AGENT_NOT_FOUND",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Agent key inexistente no Agent Registry."
+    },
+    {
+      "code": "APPROVAL_SCOPE_MISMATCH",
+      "category": "governance",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_approval",
+      "description": "Approval não cobre a action solicitada."
+    },
+    {
+      "code": "ASSET_RIGHTS_UNCONFIRMED",
+      "category": "asset",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_approval",
+      "description": "Direitos de uso do asset não confirmados."
+    },
+    {
+      "code": "ATTRIBUTION_DATA_INSUFFICIENT",
+      "category": "analytics",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_context",
+      "description": "Dados insuficientes para atribuição."
+    },
+    {
+      "code": "BUDGET_LIMIT_EXCEEDED",
+      "category": "budget",
+      "severity": "critical",
+      "retryable": false,
+      "defaultNextAction": "request_approval",
+      "description": "Operação excede budget autorizado."
+    },
+    {
+      "code": "CAUSAL_CLAIM_UNSUPPORTED",
+      "category": "analytics",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "revise_input",
+      "description": "Linguagem causal não suportada pela evidência/desenho."
+    },
+    {
+      "code": "CONFLICT_VERSION",
+      "category": "validation",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "resolve_conflict",
+      "description": "Versão persistida do recurso diverge da versão esperada pela operação."
+    },
+    {
+      "code": "CONTEXT_CONFLICT",
+      "category": "context",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "resolve_conflict",
+      "description": "Fontes contextuais relevantes estão em conflito."
+    },
+    {
+      "code": "CONTEXT_MISSING",
+      "category": "context",
+      "severity": "medium",
+      "retryable": false,
+      "defaultNextAction": "request_context",
+      "description": "Contexto necessário não está disponível."
+    },
+    {
+      "code": "CONTEXT_PROMOTION_NOT_ALLOWED",
+      "category": "governance",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_approval",
+      "description": "Promoção direta de contexto não autorizada."
+    },
+    {
+      "code": "CONTEXT_UPDATE_TARGET_STALE",
+      "category": "context",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "revise_input",
+      "description": "Context Update Candidate aponta para versão anterior."
+    },
+    {
+      "code": "CROSS_TENANT_EVIDENCE_FORBIDDEN",
+      "category": "permission",
+      "severity": "critical",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Evidence de outro tenant foi referenciada."
+    },
+    {
+      "code": "CROSS_TENANT_HANDOFF_FORBIDDEN",
+      "category": "permission",
+      "severity": "critical",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Handoff tentou atravessar tenants."
+    },
+    {
+      "code": "CURRENCY_REQUIRED",
+      "category": "analytics",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_context",
+      "description": "Agregação monetária exige moeda ou política de conversão."
+    },
+    {
+      "code": "DUPLICATE_ENROLLMENT",
+      "category": "journey",
+      "severity": "medium",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Enrollment duplicado ou incompatível."
+    },
+    {
+      "code": "ENTITLEMENT_REQUIRED",
+      "category": "entitlement",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_entitlement",
+      "description": "Plano ou entitlement necessário ausente."
+    },
+    {
+      "code": "ERROR_CODE_NOT_REGISTERED",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Erro emitido com código inexistente no Error Registry."
+    },
+    {
+      "code": "EVENT_NOT_REGISTERED",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Event key inexistente no Event Registry."
+    },
+    {
+      "code": "HANDOFF_SELF_TRANSFER_FORBIDDEN",
+      "category": "governance",
+      "severity": "medium",
+      "retryable": false,
+      "defaultNextAction": "revise_input",
+      "description": "Handoff não pode transferir task ao mesmo agente."
+    },
+    {
+      "code": "IDEMPOTENCY_CONFLICT",
+      "category": "idempotency",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "resolve_conflict",
+      "description": "A mesma chave de idempotência foi reutilizada no mesmo tenant e action para uma requisição materialmente diferente."
+    },
+    {
+      "code": "INTEGRATION_UNAVAILABLE",
+      "category": "integration",
+      "severity": "high",
+      "retryable": true,
+      "defaultNextAction": "retry",
+      "description": "Integração necessária temporariamente indisponível."
+    },
+    {
+      "code": "INVALID_STATE_TRANSITION",
+      "category": "validation",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "revise_input",
+      "description": "Transição de estado não permitida."
+    },
+    {
+      "code": "JOURNEY_DEAD_END_DETECTED",
+      "category": "journey",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "revise_journey",
+      "description": "Journey contém branch sem próximo passo ou exit válido."
+    },
+    {
+      "code": "MISSING_APPROVAL",
+      "category": "governance",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_approval",
+      "description": "Approval válida é obrigatória."
+    },
+    {
+      "code": "MISSING_SEND_APPROVAL",
+      "category": "governance",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_approval",
+      "description": "Envio externo exige approval específica."
+    },
+    {
+      "code": "PERMISSION_DENIED",
+      "category": "permission",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_permission",
+      "description": "Permissão necessária ausente."
+    },
+    {
+      "code": "PROVIDER_RATE_LIMITED",
+      "category": "rate_limit",
+      "severity": "medium",
+      "retryable": true,
+      "defaultNextAction": "retry",
+      "description": "Provider rejeitou a operação por rate limit."
+    },
+    {
+      "code": "PROVIDER_TIMEOUT",
+      "category": "timeout",
+      "severity": "medium",
+      "retryable": true,
+      "defaultNextAction": "retry",
+      "description": "Operação no provider excedeu o timeout."
+    },
+    {
+      "code": "QUALITY_SELF_APPROVAL_FORBIDDEN",
+      "category": "governance",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "escalate",
+      "description": "Owner do output não pode aprovar independentemente o próprio trabalho."
+    },
+    {
+      "code": "RECIPIENT_ELIGIBILITY_FAILED",
+      "category": "consent",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "rebuild_segment",
+      "description": "Um ou mais recipients falharam na elegibilidade."
+    },
+    {
+      "code": "RECIPIENT_NOT_ELIGIBLE",
+      "category": "consent",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "rebuild_segment",
+      "description": "Recipient não elegível."
+    },
+    {
+      "code": "REFERENCE_NOT_FOUND",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Referência solicitada não foi encontrada no escopo autorizado do tenant."
+    },
+    {
+      "code": "RETRY_ATTEMPTS_EXHAUSTED",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "escalate",
+      "description": "Uma operação retryable atingiu o máximo canônico de entregas e deve ser movida para dead-letter sem nova tentativa automática."
+    },
+    {
+      "code": "REVENUE_DEFINITION_REQUIRED",
+      "category": "analytics",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_context",
+      "description": "Análise monetária exige definição explícita de revenue."
+    },
+    {
+      "code": "SOURCE_CONFLICT",
+      "category": "analytics",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "resolve_conflict",
+      "description": "Fontes confiáveis apresentam valores incompatíveis."
+    },
+    {
+      "code": "STALE_APPROVAL",
+      "category": "governance",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_approval",
+      "description": "Approval foi emitida para outra versão ou escopo."
+    },
+    {
+      "code": "SUPPRESSED_RECIPIENT",
+      "category": "consent",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "rebuild_segment",
+      "description": "Recipient está suprimido."
+    },
+    {
+      "code": "SUPPRESSION_REQUIRED",
+      "category": "consent",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "rebuild_segment",
+      "description": "Suppression não foi aplicada corretamente."
+    },
+    {
+      "code": "TENANT_MISMATCH",
+      "category": "permission",
+      "severity": "critical",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Referência pertence a tenant diferente."
+    },
+    {
+      "code": "TENANT_REQUIRED",
+      "category": "validation",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "revise_input",
+      "description": "Operação tenant-scoped sem tenantId."
+    },
+    {
+      "code": "TRACKING_NOT_READY",
+      "category": "tracking",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Tracking necessário não está pronto."
+    },
+    {
+      "code": "TRANSACTION_SCHEMA_INVALID",
+      "category": "validation",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "revise_input",
+      "description": "Transação não atende ao schema esperado."
+    },
+    {
+      "code": "TRANSACTION_SCHEMA_VERSION_UNSUPPORTED",
+      "category": "validation",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "revise_input",
+      "description": "Versão do schema transacional não suportada."
+    },
+    {
+      "code": "UNBOUNDED_LOOP_DETECTED",
+      "category": "journey",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "revise_journey",
+      "description": "Journey contém loop sem saída ou limite."
+    },
+    {
+      "code": "UPSTREAM_SERVICE_UNAVAILABLE",
+      "category": "external",
+      "severity": "high",
+      "retryable": true,
+      "defaultNextAction": "retry",
+      "description": "Serviço upstream temporariamente indisponível."
+    }
+  ]
+}

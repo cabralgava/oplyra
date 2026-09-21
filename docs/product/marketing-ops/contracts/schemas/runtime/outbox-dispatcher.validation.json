@@ -1,0 +1,77 @@
+{
+  "validationId": "outbox-dispatcher-contract-1.4",
+  "validatedAt": "2026-09-21T22:00:00Z",
+  "status": "passed_with_notes",
+  "schemas": [
+    "outbox-dispatcher-claim.input.schema.json",
+    "outbox-dispatcher-claim.output.schema.json",
+    "outbox-dispatcher-settlement.input.schema.json",
+    "outbox-dispatcher-settlement.output.schema.json",
+    "outbox-retry-policy.schema.json",
+    "outbox-dispatcher-runtime-plan.schema.json",
+    "production-environment-plan.schema.json"
+  ],
+  "directReferencesValidated": [
+    "common-definitions.schema.json 1.0",
+    "copy-draft-created.payload.schema.json 1.0",
+    "Events Registry 1.2: copy.draft_created",
+    "Errors Registry 1.3: INVALID_STATE_TRANSITION",
+    "Errors Registry 1.3: INTEGRATION_UNAVAILABLE",
+    "Errors Registry 1.3: PROVIDER_RATE_LIMITED",
+    "Errors Registry 1.3: PROVIDER_TIMEOUT",
+    "Errors Registry 1.3: UPSTREAM_SERVICE_UNAVAILABLE",
+    "Errors Registry 1.3: EVENT_NOT_REGISTERED",
+    "Errors Registry 1.3: RETRY_ATTEMPTS_EXHAUSTED",
+    "Events Registry 1.2: runtime.dead_lettered",
+    "runtime.dead_lettered payload schema 1.0",
+    "ADR-0004: pgmq + pg_cron selected for MVP planning",
+    "EXP-02: E2-01 through E2-09 passed",
+    "Dispatcher polling and composition-root plan 1.0",
+    "Staging and production environment plan 1.0"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "validFixtures": "passed",
+    "invalidStructuralFixtures": "passed",
+    "tenantScopedClaims": "passed",
+    "leaseAndFencingInvariants": "passed",
+    "retryAndDeadLetterInvariants": "passed",
+    "consumerDeduplicationInvariants": "passed",
+    "canonicalEventAndErrorReferences": "passed",
+    "retryPolicyBinding": "passed",
+    "deadLetterEscalationEventBinding": "passed",
+    "pollingAndCompositionRootPlanBinding": "passed",
+    "outboxPgmqPgCronResponsibilitySeparation": "passed",
+    "environmentPlanningBoundary": "passed",
+    "transportSelection": "passed",
+    "runtimeActivationProhibited": "passed"
+  },
+  "unvalidatedImplementationReferences": [
+    {
+      "reference": "DeliveryFailurePolicy runtime implementation",
+      "reason": "the port exists but no canonical implementation applies this policy"
+    },
+    {
+      "reference": "OutboxDeliveryError TypeScript union",
+      "reason": "PROVIDER_RATE_LIMITED and RETRY_ATTEMPTS_EXHAUSTED are not yet accepted by the runtime type"
+    },
+    {
+      "reference": "outbox settlement SQL",
+      "reason": "the current function does not yet enforce the five-delivery limit or canonical exhaustion semantics"
+    },
+    {
+      "reference": "runtime.dead_lettered emission and Orchestrator consumption",
+      "reason": "identity and payload are contracted, but publisher and consumer runtime implementations do not exist"
+    },
+    {
+      "reference": "dispatcher polling and composition-root implementation",
+      "reason": "the executable plan is approved, but activation gate, tenant scheduler, worker entrypoint, pgmq adapter and pg_cron materializer do not exist"
+    },
+    {
+      "reference": "external environment decisions and evidence",
+      "reason": "providers, regions, budget, staging authorization, EXP-03, EXP-04, RPO/RTO, observability and email remain pending"
+    }
+  ],
+  "runtimeDispatchEnabled": false,
+  "databaseChanged": false
+}

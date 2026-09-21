@@ -1,0 +1,251 @@
+{
+  "artifact": "oplyra-content-reference-resolver-schema-validation",
+  "artifactVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-21T13:01:25Z",
+  "status": "passed_with_pending_contract_tests",
+  "subject": {
+    "component": "content-reference-resolver",
+    "inputSchema": "content-reference-resolver.input.schema.json",
+    "outputSchema": "content-reference-resolver.output.schema.json",
+    "decision": "DEC-RUNTIME-001"
+  },
+  "sourceEvidence": [
+    "docs/product/marketing-ops/20-agent-transaction-protocol.md",
+    "docs/product/marketing-ops/agents/copywriting.md",
+    "docs/product/marketing-ops/agents/design.md",
+    "docs/product/marketing-ops/contracts/contracts-README.md",
+    "docs/product/marketing-ops/contracts/decisions/DEC-RUNTIME-001-content-reference-resolver-prerequisites.md",
+    "docs/product/marketing-ops/contracts/registries/errors.json",
+    "docs/product/marketing-ops/contracts/registries/tools.json",
+    "docs/product/marketing-ops/contracts/schemas/common-definitions.schema.json",
+    "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.output.schema.json"
+  ],
+  "checksRun": 18,
+  "checksPassed": 18,
+  "checksFailed": 0,
+  "checks": [
+    {
+      "id": "CRR-001",
+      "name": "JSON parse dos dois schemas",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "id": "CRR-002",
+      "name": "JSON Schema Draft 2020-12",
+      "status": "passed",
+      "details": {
+        "input": "https://json-schema.org/draft/2020-12/schema",
+        "output": "https://json-schema.org/draft/2020-12/schema"
+      }
+    },
+    {
+      "id": "CRR-003",
+      "name": "$id canônicos e versionados",
+      "status": "passed",
+      "details": {
+        "input": "https://schemas.oplyra.com/runtime/content-reference-resolver/input/1.0",
+        "output": "https://schemas.oplyra.com/runtime/content-reference-resolver/output/1.0"
+      }
+    },
+    {
+      "id": "CRR-004",
+      "name": "$id únicos",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "id": "CRR-005",
+      "name": "Todos os $ref resolvidos",
+      "status": "passed",
+      "details": {
+        "unresolved": []
+      }
+    },
+    {
+      "id": "CRR-006",
+      "name": "Nenhuma keyword sem suporte no harness estrito",
+      "status": "passed",
+      "details": {
+        "input": [],
+        "output": []
+      }
+    },
+    {
+      "id": "CRR-007",
+      "name": "Input exige tenant, requester, permission, repository, version e refs",
+      "status": "passed",
+      "details": {
+        "required": [
+          "tenantId",
+          "requesterAgent",
+          "requiredPermission",
+          "repository",
+          "draftRef",
+          "expectedVersion",
+          "variantRefs"
+        ]
+      }
+    },
+    {
+      "id": "CRR-008",
+      "name": "tenantId usa definição canônica",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "id": "CRR-009",
+      "name": "Requester inicial restrito a design-agent",
+      "status": "passed",
+      "details": {
+        "enum": [
+          "design-agent"
+        ]
+      }
+    },
+    {
+      "id": "CRR-010",
+      "name": "Permissão requerida restrita a read",
+      "status": "passed",
+      "details": {
+        "enum": [
+          "read"
+        ]
+      }
+    },
+    {
+      "id": "CRR-011",
+      "name": "Repository restrito a contentRepository",
+      "status": "passed",
+      "details": {
+        "enum": [
+          "contentRepository"
+        ]
+      }
+    },
+    {
+      "id": "CRR-012",
+      "name": "Expected version é inteiro positivo",
+      "status": "passed",
+      "details": {
+        "minimum": 1
+      }
+    },
+    {
+      "id": "CRR-013",
+      "name": "variantRefs é não vazio e único",
+      "status": "passed",
+      "details": {
+        "minItems": 1,
+        "uniqueItems": true
+      }
+    },
+    {
+      "id": "CRR-014",
+      "name": "Output exige resultado completo e timestamp",
+      "status": "passed",
+      "details": {
+        "required": [
+          "tenantId",
+          "repository",
+          "draftRef",
+          "version",
+          "sourceAction",
+          "content",
+          "resolvedAt"
+        ]
+      }
+    },
+    {
+      "id": "CRR-015",
+      "name": "Output reutiliza create_copy_variants output 1.0",
+      "status": "passed",
+      "details": {
+        "$ref": "https://schemas.oplyra.com/copywriting/create-copy-variants/output/1.0"
+      }
+    },
+    {
+      "id": "CRR-016",
+      "name": "Schemas são estritos",
+      "status": "passed",
+      "details": {
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "CRR-017",
+      "name": "Exemplos válidos aceitos",
+      "status": "passed",
+      "details": {
+        "inputErrors": [],
+        "outputErrors": []
+      }
+    },
+    {
+      "id": "CRR-018",
+      "name": "Cenários estruturais inválidos rejeitados",
+      "status": "passed",
+      "details": {
+        "inputScenarios": 9,
+        "outputScenarios": 8,
+        "zeroErrorScenarios": 0
+      }
+    }
+  ],
+  "integrity": {
+    "inputSchemaSha256": "75acccd7a8545efbf59bd5a64e9db1b328d0fb9da55a77e0bb50f431d61a8cfe",
+    "outputSchemaSha256": "25e1471303d65688760e5aa88459e1139b32bb4c195d70892b1134166ba461e6"
+  },
+  "canonicalDependencies": {
+    "tool": "contentRepository",
+    "requiredPermission": "read",
+    "requesterAgent": "design-agent",
+    "errorCodes": [
+      "TENANT_REQUIRED",
+      "TENANT_MISMATCH",
+      "PERMISSION_DENIED",
+      "REFERENCE_NOT_FOUND",
+      "CONFLICT_VERSION",
+      "TRANSACTION_SCHEMA_INVALID"
+    ]
+  },
+  "pendingBusinessInvariants": [
+    {
+      "id": "CRR-BI-001",
+      "rule": "output.tenantId = input.tenantId"
+    },
+    {
+      "id": "CRR-BI-002",
+      "rule": "output.draftRef = input.draftRef and output.version = input.expectedVersion"
+    },
+    {
+      "id": "CRR-BI-003",
+      "rule": "set(output.content.variants[*].id) = set(input.variantRefs)"
+    },
+    {
+      "id": "CRR-BI-004",
+      "rule": "resolution is atomic; any unresolved or unauthorized reference returns no partial content"
+    }
+  ],
+  "registryImpact": {
+    "registriesModified": false,
+    "freezeBaselineModified": false,
+    "releaseManifestUpdateRequired": true
+  },
+  "implementationBoundary": {
+    "runtimeImplemented": false,
+    "repositoryAdapterImplemented": false,
+    "eventDispatchEnabled": false
+  },
+  "next": {
+    "action": "add_content_reference_resolver_contract_tests",
+    "requiredCoverage": [
+      "valid and invalid fixtures",
+      "cross-payload invariants",
+      "canonical dependency resolution",
+      "failure-code mapping",
+      "atomic no-partial-result behavior"
+    ]
+  }
+}

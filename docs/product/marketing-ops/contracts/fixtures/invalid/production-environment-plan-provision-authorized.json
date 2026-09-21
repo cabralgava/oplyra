@@ -1,0 +1,4 @@
+{
+  "planVersion": "1.0",
+  "authorization": { "planningApproved": true, "provisioningAuthorized": true, "deploymentAuthorized": false, "realDataAuthorized": false, "runtimeActivationAuthorized": false, "explicitApprovalRequiredForCreation": true }
+}

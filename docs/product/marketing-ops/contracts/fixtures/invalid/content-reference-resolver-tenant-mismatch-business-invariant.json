@@ -1,0 +1,31 @@
+{
+  "input": {
+    "tenantId": "tenant_123",
+    "requesterAgent": "design-agent",
+    "requiredPermission": "read",
+    "repository": "contentRepository",
+    "draftRef": "copy_draft_01",
+    "expectedVersion": 1,
+    "variantRefs": [
+      "var_a_copy_v1"
+    ]
+  },
+  "output": {
+    "tenantId": "tenant_999",
+    "repository": "contentRepository",
+    "draftRef": "copy_draft_01",
+    "version": 1,
+    "sourceAction": "create_copy_variants",
+    "content": {
+      "variants": [
+        {
+          "id": "var_a_copy_v1",
+          "headline": "Copy válida isoladamente.",
+          "primaryText": "O tenant divergente viola a invariante cruzada.",
+          "cta": "request_demo"
+        }
+      ]
+    },
+    "resolvedAt": "2026-09-21T13:01:25Z"
+  }
+}

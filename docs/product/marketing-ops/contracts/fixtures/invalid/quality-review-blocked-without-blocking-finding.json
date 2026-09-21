@@ -1,0 +1,36 @@
+{
+  "reviewId": "review_bad_001",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "reviewerAgent": "strategy-quality-agent",
+  "target": {
+    "type": "campaign",
+    "id": "cmp_123",
+    "version": 3,
+    "ownerAgent": "paid-media-agent",
+    "domain": "paid_media"
+  },
+  "gateType": "publication_gate",
+  "gateStatus": "blocked",
+  "summary": "Campanha bloqueada.",
+  "findings": [
+    {
+      "id": "finding_bad_01",
+      "category": "approval",
+      "severity": "medium",
+      "message": "Approval ainda não foi anexada.",
+      "evidenceRefs": []
+    }
+  ],
+  "limitations": [],
+  "evidenceRefs": [],
+  "requiredChanges": [],
+  "nextAction": {
+    "action": "stop",
+    "targetAgent": "paid-media-agent",
+    "reason": "Aguardar aprovação."
+  },
+  "escalation": null,
+  "createdAt": "2026-09-16T20:25:00Z",
+  "completedAt": "2026-09-16T20:25:30Z"
+}

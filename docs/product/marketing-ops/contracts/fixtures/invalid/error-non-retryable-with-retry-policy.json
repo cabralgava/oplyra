@@ -1,0 +1,29 @@
+{
+  "code": "MISSING_APPROVAL",
+  "category": "governance",
+  "severity": "high",
+  "retryable": false,
+  "message": "Approval is required before publishing.",
+  "defaultNextAction": {
+    "action": "request_approval",
+    "target": "approval-service",
+    "reason": "Obtain a valid approval for the current target version."
+  },
+  "retryPolicy": {
+    "strategy": "fixed",
+    "maxAttempts": 3,
+    "initialDelaySeconds": 10,
+    "maxDelaySeconds": 30,
+    "retryAfterSeconds": null
+  },
+  "source": {
+    "type": "policy",
+    "id": "publication-policy"
+  },
+  "cause": null,
+  "tenantId": "tenant_123",
+  "transactionId": "txn_publish_001",
+  "correlationId": "corr_campaign_01",
+  "taskId": "task_publish_01",
+  "occurredAt": "2026-09-16T20:56:00Z"
+}

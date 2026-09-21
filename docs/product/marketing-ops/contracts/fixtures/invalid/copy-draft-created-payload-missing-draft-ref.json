@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "sourceAction": "create_copy_variants",
+  "variantRefs": [
+    "var_a_copy_v1"
+  ]
+}

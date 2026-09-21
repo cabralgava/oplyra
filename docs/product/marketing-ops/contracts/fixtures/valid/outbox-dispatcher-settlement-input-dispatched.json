@@ -1,0 +1,10 @@
+{
+  "tenantId": "tenant_acme",
+  "dispatcherId": "outbox-worker-01",
+  "eventTransactionId": "tx_event_copy_01",
+  "consumerAgent": "design-agent",
+  "attempt": 1,
+  "fencingToken": "fence_01",
+  "outcome": "dispatched",
+  "settledAt": "2026-09-21T16:00:05Z"
+}

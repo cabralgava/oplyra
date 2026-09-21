@@ -1,0 +1,1362 @@
+{
+  "manifest": "oplyra-contract-registry-release",
+  "manifestVersion": "2.3",
+  "schemaVersion": "1.0",
+  "releaseVersion": "2.3",
+  "generatedAt": "2026-09-21T16:41:00Z",
+  "status": "active",
+  "baseRelease": {
+    "version": "2.2",
+    "manifestPath": "docs/product/marketing-ops/contracts/contract-registry-manifest-v2.2.json",
+    "manifestSha256": "298c88c9990aee6727d0b20689c906dde6bac25b87471d78b87a2e278b480d7c",
+    "aggregateDigest": "2d20727caf3fbb14154cb82a661159da71e9a6c345e418b6ac4f20106a022538"
+  },
+  "baseFreeze": {
+    "version": "1.0",
+    "manifestPath": "docs/product/marketing-ops/contracts/contract-registry-manifest.json",
+    "manifestSha256": "a1b3f1eebb8d8398fb3f6af2d48212c974211fabcbf366c3a0d2d9f05a7c0ced",
+    "aggregateDigest": "488515133dd352efb6eddccf7bf239bdb7090eb2c3b221f269a11aaa047e2cb3"
+  },
+  "changeSet": {
+    "id": "CR-013",
+    "path": "docs/product/marketing-ops/contracts/changes/CR-013-outbox-dispatcher-contract.md",
+    "classification": "backward_compatible",
+    "registriesModified": [],
+    "schemasAdded": 4,
+    "fixturesAdded": 8,
+    "contractDecisionsAdded": 1,
+    "contractTestFilesAdded": 1,
+    "runtimeComponentsAdded": 0,
+    "migrationsAdded": 0,
+    "databaseTablesAdded": 0,
+    "privilegesModified": false
+  },
+  "registryVersions": {
+    "agents": "1.0",
+    "permissions": "1.0",
+    "tools": "1.0",
+    "actions": "2.0",
+    "events": "1.1",
+    "errors": "1.2",
+    "handoffs": "1.0",
+    "qualityGates": "1.0"
+  },
+  "artifactSummary": {
+    "total": 161,
+    "byCategory": {
+      "change_proposal": 13,
+      "contract_decision": 4,
+      "contract_documentation": 8,
+      "contract_test": 6,
+      "contract_test_validation": 3,
+      "database_migration": 2,
+      "database_test": 2,
+      "fixture": 62,
+      "freeze_declaration": 1,
+      "integration_test": 2,
+      "registry": 8,
+      "registry_documentation": 4,
+      "registry_validation": 8,
+      "runtime_component": 7,
+      "runtime_test": 3,
+      "runtime_validation": 4,
+      "schema": 20,
+      "schema_validation": 4
+    },
+    "aggregateDigest": "f13d0d51915114370c1b88b2f3af7e9044cd119c02831ccccd65a135788af8dd"
+  },
+  "artifacts": [
+    {
+      "path": "docs/product/marketing-ops/contracts/action-event-binding-analysis.json",
+      "category": "contract_documentation",
+      "sizeBytes": 5727,
+      "sha256": "104e001ba00db6eedf7964a11c5dfc3773f339fb91931d3ed25cebe2a121d593",
+      "source": "cr_003"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/ACTION-EVENT-BINDING-ANALYSIS.md",
+      "category": "contract_documentation",
+      "sizeBytes": 3565,
+      "sha256": "27e2ed84331b4a096f2c8bb5967f778226808a3e800ed5e820ffe5ac40088423",
+      "source": "cr_003"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-001-create-copy-variants-schema-binding.md",
+      "category": "change_proposal",
+      "sizeBytes": 2763,
+      "sha256": "45d6e9e17c03a1164013b72cca0eeea9f4582dcdb6ca07fe61e6df7f9be1f265",
+      "source": "cr_001"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-002-create-copy-variants-contract-tests.md",
+      "category": "change_proposal",
+      "sizeBytes": 1725,
+      "sha256": "78c62546155ffc559aa0182cfb6229ea1ac602cc7ac01926def55a80ce090d78",
+      "source": "cr_002"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-003-copy-draft-created-event-schema-binding.md",
+      "category": "change_proposal",
+      "sizeBytes": 3384,
+      "sha256": "9a9e9229faa3e45cd3f05502c160ba5ed303ce6238d3e1e4a2b8b0175e658ad3",
+      "source": "cr_003"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-004-copy-draft-created-contract-tests.md",
+      "category": "change_proposal",
+      "sizeBytes": 2083,
+      "sha256": "869532bc773c19d094ca9fa10a4a218de4b606a2156f33028783b347ee9fd163",
+      "source": "cr_004"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-005-content-reference-resolver-error-codes.md",
+      "category": "change_proposal",
+      "sizeBytes": 2600,
+      "sha256": "11bd64971a1fb5fc60f7608c05748d68eff4b7a7c43a5d87828d5871f34cb757",
+      "source": "cr_005"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-006-content-reference-resolver-schemas.md",
+      "category": "change_proposal",
+      "sizeBytes": 2585,
+      "sha256": "8b9018935c76b9e7ddc6814035ceeac63e61bd70abd83bd093ccd2be55a532f3",
+      "source": "cr_006"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-007-content-reference-resolver-contract-tests.md",
+      "category": "change_proposal",
+      "sizeBytes": 2324,
+      "sha256": "99f8f72f921a4daa04abca519770ae3d999654f91149f64bf7b242815894c7d6",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-008-content-reference-resolver-core.md",
+      "category": "change_proposal",
+      "sizeBytes": 2807,
+      "sha256": "19ad8edd4327411ba08e93fc7758d3f673234419ce42fe560ef57eed0011ba2e",
+      "source": "cr_008"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-009-content-reference-repository-adapter.md",
+      "category": "change_proposal",
+      "sizeBytes": 3424,
+      "sha256": "50e3e14187fbb9a7bd86ba2c6aa4fb6fa4d6a6d5f01e86cb0273034e6aae7d1f",
+      "source": "cr_009"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-010-create-copy-variants-persistence-semantics.md",
+      "category": "change_proposal",
+      "sizeBytes": 3533,
+      "sha256": "036bc087226ba7ae97b86641afd2be493493a1d457b1d76e87b80eaef9ab90b1",
+      "source": "cr_010"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-011-idempotency-conflict-error.md",
+      "category": "change_proposal",
+      "sizeBytes": 2543,
+      "sha256": "f816d67870a473d001541c8037bc664190e371810b9cec963d8f231ec8a23669",
+      "source": "cr_011"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-012-create-copy-variants-atomic-write.md",
+      "category": "change_proposal",
+      "sizeBytes": 4299,
+      "sha256": "8b375e336764a92b4d6b642450ff68d1151ce5bd92a7509d37b251134d2172da",
+      "source": "cr_012"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-013-outbox-dispatcher-contract.md",
+      "category": "change_proposal",
+      "sizeBytes": 3190,
+      "sha256": "ab0d5da79c3a5de573145a07ef07deed8ae42399bab6f74c8f691fb5f21ea6fa",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/CONTRACT-REGISTRY-FREEZE-v1.md",
+      "category": "freeze_declaration",
+      "sizeBytes": 4485,
+      "sha256": "e0c5acc806b154ad875a1c6acd36abb9d9f69d81f3376f1f8ffef77d0ac3c8b1",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contracts-README.md",
+      "category": "contract_documentation",
+      "sizeBytes": 23984,
+      "sha256": "29b9472072c183c297ed4d21971f8800a03f91f4526a7e8d21ce35bcadf69671",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/cross-registry-validation.json",
+      "category": "contract_documentation",
+      "sizeBytes": 22785,
+      "sha256": "0d9e17e4edd5f373c7d21ca1e9f8a0371f59983b89dc309faa0f668158781fb3",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/CROSS-REGISTRY-VALIDATION.md",
+      "category": "contract_documentation",
+      "sizeBytes": 4266,
+      "sha256": "f27a5964f3b527863b4569e6826d32c38b64caa2136b040699120aa126ebb983",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/decisions/DEC-ACTION-EVENT-001-copy-draft-created.md",
+      "category": "contract_decision",
+      "sizeBytes": 2941,
+      "sha256": "e48458032af922a0426648b87a2392cb79eda14235c80b16e29db59390478ab2",
+      "source": "cr_003"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/decisions/DEC-RUNTIME-001-content-reference-resolver-prerequisites.md",
+      "category": "contract_decision",
+      "sizeBytes": 2856,
+      "sha256": "7e50e5fe9dccd94e97ae0c9e5435ee1382c8290a06d04471f422a12845a0dc32",
+      "source": "cr_005"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/decisions/DEC-RUNTIME-002-idempotency-conflict.md",
+      "category": "contract_decision",
+      "sizeBytes": 2370,
+      "sha256": "e5dd4fd190ff6e74f2999d78053aab0e648f670a13a669fcb990ca868a58b340",
+      "source": "cr_011"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/decisions/DEC-RUNTIME-003-outbox-dispatcher-boundary.md",
+      "category": "contract_decision",
+      "sizeBytes": 3751,
+      "sha256": "08afaf786c090a2b9f7714b7b2aa89cf7ef92ba1b1f0a2a3e462271c15632d25",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/approval-approved-without-decision.json",
+      "category": "fixture",
+      "sizeBytes": 623,
+      "sha256": "7fd9d1e313a4355bd9437cbcbbbfe32b4fab176cb833fbeb070f6b9877eeed68",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/approval-stale-target-version-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 1015,
+      "sha256": "83308044cd393efb4da41e1d1ec80f5bf850e0af10adbe791a7d124b8b7c3c9f",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-draft-version-mismatch-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 768,
+      "sha256": "6659cf45bd6a4cf1b358bb68b14cfe1fb4f1e87540237bb0683433d53f6dd292",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-duplicate-variant-refs.json",
+      "category": "fixture",
+      "sizeBytes": 256,
+      "sha256": "ce00c9f8aff55f9c510aafc50fc624e7d79879a02f73cec22aa02ca9bff42f37",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-missing-tenant.json",
+      "category": "fixture",
+      "sizeBytes": 207,
+      "sha256": "d3ea7a9238cb264c7476887c05e16fc469201d77cd8e66ad9dc164e4296c45ef",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-version-zero.json",
+      "category": "fixture",
+      "sizeBytes": 235,
+      "sha256": "76764bb096b628cde6ec5c1544721f513ed051a1eb78519321ef4cea97087427",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-write-permission.json",
+      "category": "fixture",
+      "sizeBytes": 236,
+      "sha256": "b8cbebcd2970919f0f3cb13cd5a2b808a82a734a162ee9a9a34afa69621510f8",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-tenant-mismatch-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 759,
+      "sha256": "bb67be344752a22e901f863b128d27699f17072146ee50b8352d6d41f29becf1",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-variant-set-mismatch-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 811,
+      "sha256": "a8f90609ac6369f6d392436e97ecca602b3fc2b69d5cbd44c44fd51fac81122f",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/context-package-invalid-autonomy-and-empty-l0.json",
+      "category": "fixture",
+      "sizeBytes": 430,
+      "sha256": "e16ec67261d6c18216e1d722b002e423c49e72402bdd02e9731d0fd3a44622bc",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/context-update-l2-applied-without-approval.json",
+      "category": "fixture",
+      "sizeBytes": 946,
+      "sha256": "c704b50caa0fda92265ddf5a144f8ea2738d49ed9b0120b22eb0d5ddb76d6501",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/context-update-stale-target-version-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 1400,
+      "sha256": "5c7f2958258501bee6975cea151240b19a0f4182265149c92d936a6ceba76a97",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-additional-property.json",
+      "category": "fixture",
+      "sizeBytes": 220,
+      "sha256": "c5e15a482dbd7c2e23691a04c7e9096dd4e2f18e1ce06600665a159969d1f80e",
+      "source": "cr_004"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-duplicate-variant-refs.json",
+      "category": "fixture",
+      "sizeBytes": 157,
+      "sha256": "4a7c084b1bd3120f37f26360ccb2578642dd0593a49c6ff7fe2886af1e62f675",
+      "source": "cr_004"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-empty-variant-refs.json",
+      "category": "fixture",
+      "sizeBytes": 113,
+      "sha256": "64dfb13f4ebd7dcdb767c6fe60f9c1a04a76c60754021cec70c6ee7a08893a0c",
+      "source": "cr_004"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-missing-draft-ref.json",
+      "category": "fixture",
+      "sizeBytes": 105,
+      "sha256": "4d8dcf9edb038a0a5423fe5a3d1f02eb18b95119c732da8fdb9275ebb4308433",
+      "source": "cr_004"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-unsupported-source-action.json",
+      "category": "fixture",
+      "sizeBytes": 130,
+      "sha256": "84447fd43a1ce62eb3fbf3a6a7546c6f26154388cb4b5ffdea06254981935da8",
+      "source": "cr_004"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-version-zero.json",
+      "category": "fixture",
+      "sizeBytes": 136,
+      "sha256": "4d42caf9eaef752f200b114524847979304ea5b22e831813e11e0473ce2c752e",
+      "source": "cr_004"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-input-missing-objective.json",
+      "category": "fixture",
+      "sizeBytes": 51,
+      "sha256": "dd611d3f56a3f80c66816fcd7d6db3a22e651e174c4e23121e9f188b40e785ce",
+      "source": "cr_002"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-input-quantity-zero.json",
+      "category": "fixture",
+      "sizeBytes": 70,
+      "sha256": "03a2af56f66a27114c4afad530f35254309ba87967f26e5aa6e7ee95bdb6613b",
+      "source": "cr_002"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-output-empty-variants.json",
+      "category": "fixture",
+      "sizeBytes": 21,
+      "sha256": "db46633e695c06dde9b83faa95c45a20021a1371a42181f72c7d7f3c3b421522",
+      "source": "cr_002"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-output-missing-cta.json",
+      "category": "fixture",
+      "sizeBytes": 202,
+      "sha256": "760c807600ba22f4195630c725d2d46cbbc1c60c28a853747b6d6494a7528128",
+      "source": "cr_002"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-quantity-mismatch-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 353,
+      "sha256": "9ea8b917afe9737a996eb2beaa6d0db5bc0253dc36217ba718621936d985649c",
+      "source": "cr_002"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/error-non-retryable-with-retry-policy.json",
+      "category": "fixture",
+      "sizeBytes": 755,
+      "sha256": "97342640553215c3d4663ed0df8f5b37373f4c730ac94eda44cf639a1b085827",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/error-unregistered-code-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 1422,
+      "sha256": "5aeb6738f4db7de9f5528ec849ac0f018dc9c84db77c4634ce1c1fd2faa56ebd",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/handoff-rejected-without-rejection.json",
+      "category": "fixture",
+      "sizeBytes": 476,
+      "sha256": "e94b0108907a528acbbaecb585faa8d65e1a25c3d730f76a4e82f41bdfada5de",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/handoff-self-transfer-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 555,
+      "sha256": "e963be85543ea8cd161cb7a0ff580055b75fd8fbeadce5f65d6f6085564496dc",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/learning-record-cross-tenant-evidence-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 2255,
+      "sha256": "1afd79cc111d0e17075d3d48f96a2611f1421ab32717e0c654eca73c1938689c",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/learning-record-supported-without-evidence.json",
+      "category": "fixture",
+      "sizeBytes": 1411,
+      "sha256": "c60923c8c648ee1ca93f2f4c162799160a3893dec7a9a9d0218fc0138809a897",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/outbox-dispatcher-claim-input-batch-zero.json",
+      "category": "fixture",
+      "sizeBytes": 160,
+      "sha256": "97e924261aa7c4e071d6eac8ce96c4a10e5f40a6f31a4eca2bf4fda477a6a4bd",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/outbox-dispatcher-claim-output-attempt-zero.json",
+      "category": "fixture",
+      "sizeBytes": 725,
+      "sha256": "1070bb4de9d250c9db2063e71993714091584bfc07df9a52997be3636aa2ef41",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/outbox-dispatcher-stale-settlement-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 538,
+      "sha256": "e092c026cbf4acc13732ba63aa24f9dfd5f90094cfa9f2928458826f90b28035",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/quality-review-blocked-without-blocking-finding.json",
+      "category": "fixture",
+      "sizeBytes": 869,
+      "sha256": "92bc2a57c4d0d4d059f79268b8807b4a178005fef2c879b6bc4f1b3e1baf1fa0",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/quality-review-self-approval-business-invariant.json",
+      "category": "fixture",
+      "sizeBytes": 704,
+      "sha256": "cb7d5cb990a52a9bc48df237169e43d821de483479557e6569632d948e87d5db",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/task-waiting-approval-without-approval.json",
+      "category": "fixture",
+      "sizeBytes": 687,
+      "sha256": "ed5135c328879ca6591a02c61cb7d5d43c1ca85f33ba2afadeff3db0b016260a",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/transaction-command-create-copy-variants-without-idempotency.json",
+      "category": "fixture",
+      "sizeBytes": 1615,
+      "sha256": "77331cee6c905902901626923c3194b89cb8670397a5944572d207c163e5ca4a",
+      "source": "cr_010"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/transaction-event-with-action.json",
+      "category": "fixture",
+      "sizeBytes": 395,
+      "sha256": "8a45e466572d5fc88e8ffec8b2a3a388fca41f806e0345d27edbe3b1099881e7",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/transaction-response-error-invalid-retry-policy.json",
+      "category": "fixture",
+      "sizeBytes": 1049,
+      "sha256": "1ee4a2bfd8a944823b48a0840f5ee617c6ccca038fe06cb0e92f69ad7b377e1f",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/agent-definition-copywriting.json",
+      "category": "fixture",
+      "sizeBytes": 1195,
+      "sha256": "8cd6f76759ef490a90db3fc2d7c5f1c0e9a861c2b54ae500f602ec1a967d3d40",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/approval-publish-campaign.json",
+      "category": "fixture",
+      "sizeBytes": 1246,
+      "sha256": "88ba6c6b76ae41bfe419f14be9887bb064b5ba808c833f0da7cf031f44ee0789",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/content-reference-resolver-failure-policy.json",
+      "category": "fixture",
+      "sizeBytes": 742,
+      "sha256": "6008fd8c7c055705f1ead2869b3f7b64483a967f528b7cdbc3bfd9815d687896",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/content-reference-resolver-input.json",
+      "category": "fixture",
+      "sizeBytes": 256,
+      "sha256": "83d69c59f4c4c3857259db82b12cfa74d4ba23bc08238bd31a28d0b1fb439735",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/content-reference-resolver-output.json",
+      "category": "fixture",
+      "sizeBytes": 888,
+      "sha256": "dd475644b16722187751b8cb20039782cc91f32aa43946414dfa7f8a1a140891",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/context-package-copywriting.json",
+      "category": "fixture",
+      "sizeBytes": 4733,
+      "sha256": "9a6daaf9aba164e1003deb039a05049324298412e4c6df9bb1ecdc64040394e1",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/context-update-candidate-brand-claim.json",
+      "category": "fixture",
+      "sizeBytes": 1339,
+      "sha256": "dde8fe9d262f1995e8da1a4240731b4371980fa44dcf84f008120e2375bf10d9",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/copy-draft-created-payload.json",
+      "category": "fixture",
+      "sizeBytes": 157,
+      "sha256": "67084e450daca64ceb4daa86037096685bfd7da8f7a4a102fc8ca2dde8585b50",
+      "source": "cr_004"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/create-copy-variants-idempotency-policy.json",
+      "category": "fixture",
+      "sizeBytes": 1277,
+      "sha256": "c273bd7f3c63e83d462b24c25f680009e6bc22d975f22c2b1b970b9424aa358e",
+      "source": "cr_011"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/create-copy-variants-input.json",
+      "category": "fixture",
+      "sizeBytes": 245,
+      "sha256": "173050878f352e06aeb8b2142d757bd67e887b0e39860c2f2fd275da6a07fea7",
+      "source": "cr_002"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/create-copy-variants-output.json",
+      "category": "fixture",
+      "sizeBytes": 996,
+      "sha256": "76423bad4586bd4d916dbc067c2b72ed1e433ec96114b633c0dd2dad77afced3",
+      "source": "cr_002"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/error-retryable-integration-unavailable.json",
+      "category": "fixture",
+      "sizeBytes": 1124,
+      "sha256": "09bb834453d36f3504fad19186b768b0cd2885dea864da70f4b26e7096550e57",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/handoff-copy-to-design.json",
+      "category": "fixture",
+      "sizeBytes": 2276,
+      "sha256": "3652f4a8262afc3237cecd038a9d1bb5fb46e484543e68bb3461d7c6e5b81de4",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/learning-record-experiment-supported.json",
+      "category": "fixture",
+      "sizeBytes": 2734,
+      "sha256": "09a94ff6bac28660934562eac285334f236a0fd12e1af58dd300143bcb638588",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/outbox-dispatcher-claim-input.json",
+      "category": "fixture",
+      "sizeBytes": 161,
+      "sha256": "17ca58d75cce887372b32849a06a2d3a5d3e9e9eb157aa0eff51d443b4db370e",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/outbox-dispatcher-claim-output.json",
+      "category": "fixture",
+      "sizeBytes": 930,
+      "sha256": "822e767cf55b023a9ca909a7ee73092d7738e07292cc4ff3724419c5293f8c63",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/outbox-dispatcher-policy.json",
+      "category": "fixture",
+      "sizeBytes": 1976,
+      "sha256": "8d89c83fb8a3dce85b0f403420aa7a07f5b03d5efb9dba8e6fb4156d922153fe",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/outbox-dispatcher-settlement-input-dispatched.json",
+      "category": "fixture",
+      "sizeBytes": 261,
+      "sha256": "21952cb1c557f44393ec9ce228a2950b42a4fac4c545cd34c9a3cb5c0a9bca7b",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/outbox-dispatcher-settlement-output.json",
+      "category": "fixture",
+      "sizeBytes": 192,
+      "sha256": "90f5e6486f858d3e261546d2d5d94e565dd799b0738e99e6fd5b569c9fce99c3",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/quality-review-changes-required.json",
+      "category": "fixture",
+      "sizeBytes": 1654,
+      "sha256": "88e74f8134baa1fe398b7682fa818309f55d4b4bfab440dae96d78c39ce43cf8",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/task-create-copy-variants.json",
+      "category": "fixture",
+      "sizeBytes": 1409,
+      "sha256": "e60efb012b4172b362e0a959edad5878f624ee5f64830dfd83996be38c6eb302",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/transaction-command-create-copy-variants.json",
+      "category": "fixture",
+      "sizeBytes": 1689,
+      "sha256": "aac3dbd7c0f51b3ae3acad29cbb41b680c85957ba9b47aabe81b2f7b06129eab",
+      "source": "cr_010"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/transaction-event-quality-passed.json",
+      "category": "fixture",
+      "sizeBytes": 579,
+      "sha256": "b804769510453f3102a025dba489e61b722164134a8e03e48a382e63170d7c68",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/transaction-response-error-canonical.json",
+      "category": "fixture",
+      "sizeBytes": 1044,
+      "sha256": "82d6f3fadaad1bc08df936681597f96b2f43ac7de4cf9acbf469c6863939c351",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/handoff-action-binding-analysis.json",
+      "category": "contract_documentation",
+      "sizeBytes": 28060,
+      "sha256": "6042bcb69b308513690e0b23860ddb26e18caa850cb5c4c09941f07ad07561e2",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/ACTIONS-COLLISION-RESOLUTION.md",
+      "category": "registry_documentation",
+      "sizeBytes": 1035,
+      "sha256": "2b24513008cced00942b411d851fdc701828915ae8cc7b614f0ced3d667c7d60",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/actions.json",
+      "category": "registry",
+      "sizeBytes": 134975,
+      "sha256": "5c5ee83217cb1b023de222e20b7997df3568de3be22948c527f414032116a4a7",
+      "source": "cr_010"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/actions.validation.json",
+      "category": "registry_validation",
+      "sizeBytes": 2216,
+      "sha256": "cb6c9e0cc875d453d1b6462382282cd7913890ef774dceefb279fddf539f4a1c",
+      "source": "cr_010"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/agents.json",
+      "category": "registry",
+      "sizeBytes": 6103,
+      "sha256": "52d9cdc5b1c2f54ad022a345778be2e08e53acd2a3fa67664008fbfa9cce26fe",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/agents.validation.json",
+      "category": "registry_validation",
+      "sizeBytes": 387,
+      "sha256": "57cc57f9846c5928b91f72a1bac7172a4bafe70658d3c507662b7a5d83322ef0",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/ERROR-REGISTRY-README.md",
+      "category": "registry_documentation",
+      "sizeBytes": 743,
+      "sha256": "1fd50fb521502d9eb852dc4e18051a5a0158cf7d3a1440be777341855ae35470",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/errors.json",
+      "category": "registry",
+      "sizeBytes": 11671,
+      "sha256": "f88a0a04671a7df59bd312c503c84487b11c6ae761ac65c643c996e9f8d51c8a",
+      "source": "cr_011"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/errors.validation.json",
+      "category": "registry_validation",
+      "sizeBytes": 1057,
+      "sha256": "59c37b7be0cf19c001bc55f92abfcd8a17cd35faf1f85e4a3aaf2754b865011b",
+      "source": "cr_011"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/EVENTS-EXTERNAL-PRODUCERS.md",
+      "category": "registry_documentation",
+      "sizeBytes": 2739,
+      "sha256": "5bbc27b7656130f8b13c87da5f5b794f55eadb03ef1fa80ab09295625f0d3ceb",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/events.json",
+      "category": "registry",
+      "sizeBytes": 105003,
+      "sha256": "3ebfac7437beec0673d1fe6fd6fc6220a4c3ef8a63e1ffb40c3531ceb23d6bc8",
+      "source": "cr_003"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/events.validation.json",
+      "category": "registry_validation",
+      "sizeBytes": 3796,
+      "sha256": "41d7818d41e1307833456982b32681b92ff00d234128b7b73e248b69f3d3ace6",
+      "source": "cr_003"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/HANDOFF-REGISTRY-README.md",
+      "category": "registry_documentation",
+      "sizeBytes": 982,
+      "sha256": "5291898fec087c359ce3ccc71a93d7d6a4526247e0e5fad470aa3a473c324312",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/handoffs.json",
+      "category": "registry",
+      "sizeBytes": 47025,
+      "sha256": "9b5f777d7147c5506ed9691769de7241adec1707af4488b73b145d4b8e4f3061",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/handoffs.validation.json",
+      "category": "registry_validation",
+      "sizeBytes": 730,
+      "sha256": "efc3cfa1896cb0a9dc12bc8a4fae96f03440ce6b635f6487b2fb9ce3935ede92",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/permissions.json",
+      "category": "registry",
+      "sizeBytes": 2397,
+      "sha256": "38ff5cf89e23fb4e66c0798fe1ea6537d94f9813ecc4074c90a50ef4bac5329e",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/permissions.validation.json",
+      "category": "registry_validation",
+      "sizeBytes": 434,
+      "sha256": "d1f012dfba2bdbb345b1ff86f78ea965c31a70a3134389ca30706b3590ffc9f5",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/quality-gates.json",
+      "category": "registry",
+      "sizeBytes": 15843,
+      "sha256": "9d12baad514abe25b323f568c7b0e63d294863fa5ba8db697e001bb18fe7430d",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/quality-gates.validation.json",
+      "category": "registry_validation",
+      "sizeBytes": 6418,
+      "sha256": "52e551258ae84c94634183d9d8ebdcbf5f84dd986eea49c3a04b1eba017b0059",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/tools.json",
+      "category": "registry",
+      "sizeBytes": 35609,
+      "sha256": "36cf3acc8b69ea0f33a801eae6ca8c2b8a170c9aa7f8002082d364d61a2ed226",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/tools.validation.json",
+      "category": "registry_validation",
+      "sizeBytes": 1119,
+      "sha256": "6fb286131c69f09bf391e4e5cb260756e912e0cd605c99dd16c0f6fcd0a8fee8",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/runtime/content-reference-repository.implementation-validation.json",
+      "category": "runtime_validation",
+      "sizeBytes": 3748,
+      "sha256": "1f63dc8078be0c3fcbe9ddf989269c5ef76a3121d46b644df2e85396f4cd239f",
+      "source": "cr_009"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/runtime/content-reference-resolver.implementation-validation.json",
+      "category": "runtime_validation",
+      "sizeBytes": 3190,
+      "sha256": "5da67ca9e028c496dfc028b69edefc9b02cb16cf737ea683ca75d5a29f7634bb",
+      "source": "cr_008"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/runtime/create-copy-variants-write.implementation-validation.json",
+      "category": "runtime_validation",
+      "sizeBytes": 3387,
+      "sha256": "53ab9cbb07e6a949962a99b28c2c68010ec67abaed37725acc7faf79d2d188a0",
+      "source": "cr_012"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/runtime/idempotency-conflict.validation.json",
+      "category": "runtime_validation",
+      "sizeBytes": 2727,
+      "sha256": "09b295dfa5036121bfd65f45939152a187ac06821b62f2dec0d3bb99341c566b",
+      "source": "cr_011"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schema-integration-manifest.json",
+      "category": "contract_documentation",
+      "sizeBytes": 1964,
+      "sha256": "31aaec113812ce082e62d1d26257086e2f362c9f62a5601f933c5a89017ae8bd",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/SCHEMA-INTEGRATION-REVIEW.md",
+      "category": "contract_documentation",
+      "sizeBytes": 3201,
+      "sha256": "952a538d01c184dc9c58a14e583f9435d808fb8fbebba0226c425e6bbd9dcf79",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/agent-definition.schema.json",
+      "category": "schema",
+      "sizeBytes": 4284,
+      "sha256": "d14b18fe859c87d97f3906cbcf3db6d62b06b2ec406a54d99977e75f1623597c",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/approval.schema.json",
+      "category": "schema",
+      "sizeBytes": 10957,
+      "sha256": "5f4268f1142fc6a8aa3bf9ce1d2facb8fdf48916ec9f9425113c9c22c1f9fc73",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/common-definitions.schema.json",
+      "category": "schema",
+      "sizeBytes": 1416,
+      "sha256": "25456132041bf1affbd09210921b12d7b2555d15269adbe45f6f203eac5c2a2d",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/context-package.schema.json",
+      "category": "schema",
+      "sizeBytes": 15521,
+      "sha256": "6247fa11c34b8d36744c4f881523898587f9bbe88a1d7a5bf972eb901e0c0097",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/context-update-candidate.schema.json",
+      "category": "schema",
+      "sizeBytes": 13033,
+      "sha256": "5c0f22127a18d9591346f49784eaa8652612a5c1568dc1c6232a2e9093578260",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.contract-tests.json",
+      "category": "contract_test_validation",
+      "sizeBytes": 4775,
+      "sha256": "df87505d54c30a9528f241f9486d522e7284610567ba406f57348427bedecd4e",
+      "source": "cr_010"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.input.schema.json",
+      "category": "schema",
+      "sizeBytes": 2385,
+      "sha256": "529dae1ded9c6255ab6fa39a45d198e743450dfbdb99ea5181f87839c176c66b",
+      "source": "cr_001"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.output.schema.json",
+      "category": "schema",
+      "sizeBytes": 2910,
+      "sha256": "634ad7e48ec9b947d5c8ca7bb6909a90e42e921ad72d1f8e336b07e4d3c0c412",
+      "source": "cr_001"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.validation.json",
+      "category": "schema_validation",
+      "sizeBytes": 5019,
+      "sha256": "101cfd384459fb6348967234bed5dcc25882b12169f5f8519a0aa1e513406977",
+      "source": "cr_001"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/error.schema.json",
+      "category": "schema",
+      "sizeBytes": 10182,
+      "sha256": "b354c4aa8214878ee7d08be7027b02a4e9eceafa34f814d15db87f538e3b32e8",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/events/copywriting/copy-draft-created.contract-tests.json",
+      "category": "contract_test_validation",
+      "sizeBytes": 4226,
+      "sha256": "2bab2d3bab434dfb9a362589477bae05cb660136075eef80b809f1420ec7a5c7",
+      "source": "cr_004"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/events/copywriting/copy-draft-created.payload.schema.json",
+      "category": "schema",
+      "sizeBytes": 1313,
+      "sha256": "e6d66e1d023836e8428dc16f90daf1e3435a759bb1a663997377e517f8817e79",
+      "source": "cr_003"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/events/copywriting/copy-draft-created.validation.json",
+      "category": "schema_validation",
+      "sizeBytes": 6145,
+      "sha256": "308776a3d8aa42f659909aa26c3b3e689845af5699532d4cb22368da9cd8ebd9",
+      "source": "cr_003"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/handoff.schema.json",
+      "category": "schema",
+      "sizeBytes": 11504,
+      "sha256": "b89c84f22c1040b6dde20457594a54c0c0d170a5fd7b04c20d92771fcbb164e4",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/learning-record.schema.json",
+      "category": "schema",
+      "sizeBytes": 16808,
+      "sha256": "0381d9b397a41c95370d8cb15e15b7014b41746128e9b27011fc74e10e1146d1",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/quality-review.schema.json",
+      "category": "schema",
+      "sizeBytes": 12723,
+      "sha256": "c6bbbb836ed41af9c951d28abaa6c863ea0ad5927ae0e7d89e9b8b078771e96b",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/content-reference-resolver.contract-tests.json",
+      "category": "contract_test_validation",
+      "sizeBytes": 5305,
+      "sha256": "252dc13148d517e21e24771523d8a7bb99470f7e54bae7c823731b2fe356a42e",
+      "source": "cr_007"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/content-reference-resolver.input.schema.json",
+      "category": "schema",
+      "sizeBytes": 1845,
+      "sha256": "75acccd7a8545efbf59bd5a64e9db1b328d0fb9da55a77e0bb50f431d61a8cfe",
+      "source": "cr_006"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/content-reference-resolver.output.schema.json",
+      "category": "schema",
+      "sizeBytes": 2343,
+      "sha256": "25e1471303d65688760e5aa88459e1139b32bb4c195d70892b1134166ba461e6",
+      "source": "cr_006"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/content-reference-resolver.validation.json",
+      "category": "schema_validation",
+      "sizeBytes": 6688,
+      "sha256": "c5728ef602ff4baa56f654f97907d5880bc316ddb81469e159d79e461c5290fb",
+      "source": "cr_006"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-claim.input.schema.json",
+      "category": "schema",
+      "sizeBytes": 1017,
+      "sha256": "1aa81f7c740e1c406797416fbf4899cc2bbf113c086707d5a11a8294f2a60f94",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-claim.output.schema.json",
+      "category": "schema",
+      "sizeBytes": 3313,
+      "sha256": "f515113aea963bd050ab99bb2ef27910606e8f5543122e946ff3bfee44c8c8c6",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-settlement.input.schema.json",
+      "category": "schema",
+      "sizeBytes": 2219,
+      "sha256": "99b370013b1cf3fcb505da47daf990b8f320be333beccc80a204609cd34183a9",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-settlement.output.schema.json",
+      "category": "schema",
+      "sizeBytes": 1313,
+      "sha256": "6bccf143ee733a4a19c91d42d4bfc516202579e1a6a018c1ceae4de800450f47",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher.validation.json",
+      "category": "schema_validation",
+      "sizeBytes": 1972,
+      "sha256": "e7fd4b4d6a06025025c2181ecbe752c37e2d6283b768abb9d5aee0e899a66841",
+      "source": "cr_013"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/task.schema.json",
+      "category": "schema",
+      "sizeBytes": 12128,
+      "sha256": "7a4fcea73356995ecd75e67ed14ed1d98fe93e093b7cc7c216e86e25395c3ee7",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/transaction-envelope.schema.json",
+      "category": "schema",
+      "sizeBytes": 15337,
+      "sha256": "f412c547f76b9cc26b1870fc683d32a1deb38bdbe8afb4b2b9764beed65c61e8",
+      "source": "base_freeze_v1"
+    },
+    {
+      "path": "packages/core/src/application/content-reference-resolver.ts",
+      "category": "runtime_component",
+      "sizeBytes": 5677,
+      "sha256": "fe41d1f9d9fd083aaef56c717bf3d4e935e52c6a9b1da4c8fb70a557922d6eb9",
+      "source": "cr_008"
+    },
+    {
+      "path": "packages/core/src/application/create-copy-variants-writer.ts",
+      "category": "runtime_component",
+      "sizeBytes": 8455,
+      "sha256": "8281b1507bec9ec41ca06e75a44e789b669391419a0a41a36f4854300487668e",
+      "source": "cr_012"
+    },
+    {
+      "path": "packages/core/src/domain/errors.ts",
+      "category": "runtime_component",
+      "sizeBytes": 2830,
+      "sha256": "92f8560ea635d04392ee1d8ca02a50cbaec2b872c66ffbe863f977400bfe0fbb",
+      "source": "cr_011"
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "category": "runtime_component",
+      "sizeBytes": 591,
+      "sha256": "9daf9eed4b712f5d3637183eae7f826750844052005683afa0cc560f997cdd18",
+      "source": "cr_012"
+    },
+    {
+      "path": "packages/core/test/content-reference-resolver.test.ts",
+      "category": "runtime_test",
+      "sizeBytes": 5398,
+      "sha256": "60ea030533e235f3e5910fd7bf9e6c38da392fbeeab379cfb45964079a1960b2",
+      "source": "cr_008"
+    },
+    {
+      "path": "packages/core/test/create-copy-variants-writer.test.ts",
+      "category": "runtime_test",
+      "sizeBytes": 5028,
+      "sha256": "2a1d3639f41e02f93dc40abca5faea88425773e31187614614285dadec7b0f97",
+      "source": "cr_012"
+    },
+    {
+      "path": "packages/core/test/idempotency-conflict.test.ts",
+      "category": "runtime_test",
+      "sizeBytes": 716,
+      "sha256": "00bb3fa7bcd3da579bbeaefe5750b22b374aad912395f2a14eb7bdca943c3bdb",
+      "source": "cr_011"
+    },
+    {
+      "path": "packages/infra/src/content-reference-repository.ts",
+      "category": "runtime_component",
+      "sizeBytes": 3148,
+      "sha256": "aafd43b58424c663ca0d051b8035b6a0add8834e95e8a603eb245b18407c34b5",
+      "source": "cr_009"
+    },
+    {
+      "path": "packages/infra/src/create-copy-variants-write.ts",
+      "category": "runtime_component",
+      "sizeBytes": 6599,
+      "sha256": "eb0e48f9faf2fd6adbc67ebb022fbcf4c58d4fce7d3c4525aa27a283364650e0",
+      "source": "cr_012"
+    },
+    {
+      "path": "packages/infra/src/index.ts",
+      "category": "runtime_component",
+      "sizeBytes": 216,
+      "sha256": "79aa140d58f391027ede6d812b1de16297d12c6b15de0f50068923a8c3a05edc",
+      "source": "cr_012"
+    },
+    {
+      "path": "packages/infra/test/content-reference-repository.test.ts",
+      "category": "integration_test",
+      "sizeBytes": 3920,
+      "sha256": "31aeb0daa6c26e8fa13ca6f78912545aa152379b407ecb9c73a460b728345ce8",
+      "source": "cr_009"
+    },
+    {
+      "path": "packages/infra/test/create-copy-variants-write.test.ts",
+      "category": "integration_test",
+      "sizeBytes": 10123,
+      "sha256": "3ee4ce63e99096ff138d379485186fb77c42fc5f1a115c2ec1997682dde67b4b",
+      "source": "cr_012"
+    },
+    {
+      "path": "supabase/migrations/20260921000009_content_repository.sql",
+      "category": "database_migration",
+      "sizeBytes": 3519,
+      "sha256": "0dd867a5d73194e685b11ae33434baace98038de9cca1431f141de8df5a94c88",
+      "source": "cr_009"
+    },
+    {
+      "path": "supabase/migrations/20260921000010_create_copy_variants_write.sql",
+      "category": "database_migration",
+      "sizeBytes": 6155,
+      "sha256": "2ecd7570da525f772364cb4077e37f9ff88b5deb08fef11cac315d59a67e9ff5",
+      "source": "cr_012"
+    },
+    {
+      "path": "supabase/tests/content_repository.test.sql",
+      "category": "database_test",
+      "sizeBytes": 3273,
+      "sha256": "0409773792dc28e34c1af2e6478206a8e01673dcc4612ba868d6e545872c966e",
+      "source": "cr_012"
+    },
+    {
+      "path": "supabase/tests/create_copy_variants_write.test.sql",
+      "category": "database_test",
+      "sizeBytes": 3205,
+      "sha256": "6ea13848d9f6c5f706d9a84faf1710fff27ebe6e0af82833205ad965339ec22b",
+      "source": "cr_012"
+    },
+    {
+      "path": "test/contracts/content-reference-resolver.contract.test.ts",
+      "category": "contract_test",
+      "sizeBytes": 6383,
+      "sha256": "88e900cd93d627a26d3c54c74e38436e0948a66d7dba779a69ba335a220c3b3f",
+      "source": "cr_007"
+    },
+    {
+      "path": "test/contracts/copy-draft-created.contract.test.ts",
+      "category": "contract_test",
+      "sizeBytes": 4930,
+      "sha256": "e7ac760ab6822802f6721458ceb0c5b88f92205437e04f34f148b8a7130ec0f7",
+      "source": "cr_004"
+    },
+    {
+      "path": "test/contracts/create-copy-variants.contract.test.ts",
+      "category": "contract_test",
+      "sizeBytes": 5040,
+      "sha256": "059afde1742582252e62b79dc83363de94548f974c55af77492605f86a7a3bb0",
+      "source": "cr_010"
+    },
+    {
+      "path": "test/contracts/idempotency-conflict.contract.test.ts",
+      "category": "contract_test",
+      "sizeBytes": 2313,
+      "sha256": "b56482c6e4dcd038b5f37ab642cb682f3f5ae107bee4b853b3b5ac1155bce2e6",
+      "source": "cr_011"
+    },
+    {
+      "path": "test/contracts/json-schema-subset.ts",
+      "category": "contract_test",
+      "sizeBytes": 6889,
+      "sha256": "3bf437a110ad6ef95a7aaaa304f948f16f1cb4e533f9a3b3da827f098c07cccc",
+      "source": "cr_002"
+    },
+    {
+      "path": "test/contracts/outbox-dispatcher.contract.test.ts",
+      "category": "contract_test",
+      "sizeBytes": 6859,
+      "sha256": "d953c46f1dccdbe2cf27823d0d65a0e802f64244702bc4b27d25c725350099aa",
+      "source": "cr_013"
+    }
+  ],
+  "validation": {
+    "status": "passed_with_notes",
+    "contractTestFiles": 5,
+    "contractTestsRun": 48,
+    "contractTestsPassed": 48,
+    "outboxDispatcherContractTests": 11,
+    "coreUnitTestFiles": 4,
+    "coreUnitTestsRun": 41,
+    "coreUnitTestsPassed": 41,
+    "infraTestFiles": 3,
+    "infraTestsRun": 29,
+    "infraTestsPassed": 29,
+    "architectureTestFiles": 1,
+    "architectureTestsRun": 5,
+    "architectureTestsPassed": 5,
+    "fullVitestFiles": 13,
+    "fullVitestTestsRun": 123,
+    "fullVitestTestsPassed": 123,
+    "databaseTestFiles": 3,
+    "databaseTestsRun": 47,
+    "databaseTestsPassed": 47,
+    "typecheckErrors": 0,
+    "secretScanFindings": 0,
+    "artifactHashMismatches": 0
+  },
+  "compatibility": {
+    "classification": "backward_compatible",
+    "registryVersionBumpRequired": false,
+    "schemaVersionBumpRequired": false,
+    "callerMigrationRequired": false,
+    "existingExportsRemoved": 0
+  },
+  "exclusions": [
+    {
+      "path": "docs/product/marketing-ops/contracts/handoffs.recovery.json",
+      "reason": "recovery_artifact"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/handoffs.recovery.json",
+      "reason": "recovery_artifact"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/handoff-action-binding-analysis.json",
+      "reason": "stale_noncanonical_duplicate"
+    },
+    {
+      "pattern": "**/.DS_Store",
+      "reason": "operating_system_metadata"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.1.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.2.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.3.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.4.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.5.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.6.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.7.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.8.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.9.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v2.0.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v2.1.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v2.2.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v2.3.json",
+      "reason": "manifest_self_reference_is_not_hashed"
+    }
+  ],
+  "implementationBoundary": {
+    "runtimeImplemented": false,
+    "executableActions": [
+      "create_copy_variants"
+    ],
+    "executableEventPayloads": [
+      "copy.draft_created"
+    ],
+    "eventRuntimeDispatchEnabled": false,
+    "eventRuntimeDispatchBlockedBy": [
+      "outbox_dispatcher_persistence_migration",
+      "consumer_deduplication_persistence",
+      "retry_policy_values",
+      "dead_letter_escalation_event_identity",
+      "EXP_02_transport_decision"
+    ],
+    "remainingActionsWithoutExecutableContractTests": 170,
+    "remainingEventsWithoutPayloadSchema": 135,
+    "contentReferenceResolverContractStatus": "executable_contract_complete",
+    "contentReferenceResolverImplemented": true,
+    "contentReferenceRepositoryAdapterImplemented": true,
+    "structuralRuntimeStarted": true,
+    "contentReferenceResolverCoreImplemented": true,
+    "databaseModelImplemented": true,
+    "externalEndpointExposed": false,
+    "contentReferenceRepositoryWorkerWriteEnabled": true,
+    "createCopyVariantsWriteTransactionImplemented": true,
+    "createCopyVariantsPersistenceSemanticsAligned": true,
+    "createCopyVariantsIdempotencyRequired": true,
+    "idempotencyConflictErrorMappingResolved": true,
+    "idempotencyConflictErrorCode": "IDEMPOTENCY_CONFLICT",
+    "idempotencyScopeDefined": true,
+    "idempotencyFingerprintBoundaryDefined": true,
+    "idempotencyStorageImplemented": true,
+    "createCopyVariantsRuntimeSliceImplemented": true,
+    "canonicalRequestFingerprintImplemented": true,
+    "concurrentIdempotentReplayValidated": true,
+    "outboxPendingPersistenceImplemented": true,
+    "outboxDispatcherImplemented": false,
+    "outboxWriterReadOrUpdatePrivilege": false,
+    "consumerDeduplicationImplemented": false,
+    "existingDraftUpdateImplemented": false,
+    "outboxDispatcherContractStatus": "executable_contract_complete",
+    "consumerDeduplicationContractStatus": "defined",
+    "deliveryGuarantee": "at_least_once",
+    "transportSelected": false,
+    "databaseChangedByRelease": false,
+    "privilegesChangedByRelease": false
+  },
+  "explicitValidationLimits": [
+    "No outbox dispatcher, transport or event delivery was enabled",
+    "Current content.event_outbox has no persisted lease owner, fencing token, lease expiry or dead_lettered state",
+    "No persistent consumer-deduplication store exists",
+    "Maximum attempts and backoff values are not approved",
+    "No canonical dead-letter escalation event is registered",
+    "ADR-0004 transport selection remains conditional on EXP-02",
+    "Root pnpm typecheck currently reports a workspace task cycle; all three packages passed isolated TypeScript checks",
+    "Database behavior was not re-tested because CR-013 adds no migration or runtime code; CR-012 database evidence remains 47/47"
+  ]
+}

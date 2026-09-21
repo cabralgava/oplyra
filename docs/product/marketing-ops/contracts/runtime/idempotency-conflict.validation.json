@@ -1,0 +1,77 @@
+{
+  "artifact": "oplyra-idempotency-conflict-validation",
+  "artifactVersion": "1.0",
+  "generatedAt": "2026-09-21T15:32:00Z",
+  "status": "passed",
+  "subject": {
+    "errorCode": "IDEMPOTENCY_CONFLICT",
+    "errorsRegistryVersion": "1.2",
+    "decision": "DEC-RUNTIME-002",
+    "action": "create_copy_variants"
+  },
+  "semantics": {
+    "scope": [
+      "tenantId",
+      "action",
+      "idempotency.key"
+    ],
+    "sameFingerprint": "return_canonical_stored_result",
+    "differentFingerprint": "IDEMPOTENCY_CONFLICT",
+    "missingRequiredKey": "TRANSACTION_SCHEMA_INVALID",
+    "retryable": false,
+    "defaultNextAction": "resolve_conflict"
+  },
+  "validation": {
+    "targeted": {
+      "testFiles": 2,
+      "testsRun": 6,
+      "testsPassed": 6,
+      "testsFailed": 0
+    },
+    "contractTests": {
+      "testFiles": 4,
+      "testsRun": 37,
+      "testsPassed": 37
+    },
+    "coreTests": {
+      "testFiles": 3,
+      "testsRun": 33,
+      "testsPassed": 33
+    },
+    "fullVitest": {
+      "testFiles": 10,
+      "testsRun": 94,
+      "testsPassed": 94,
+      "testsFailed": 0
+    },
+    "coreTypecheckErrors": 0,
+    "secretScanFindings": 0,
+    "release20InverseHashMatches": true
+  },
+  "integrity": {
+    "docs/product/marketing-ops/contracts/registries/errors.json": "f88a0a04671a7df59bd312c503c84487b11c6ae761ac65c643c996e9f8d51c8a",
+    "docs/product/marketing-ops/contracts/registries/errors.validation.json": "59c37b7be0cf19c001bc55f92abfcd8a17cd35faf1f85e4a3aaf2754b865011b",
+    "packages/core/src/domain/errors.ts": "92f8560ea635d04392ee1d8ca02a50cbaec2b872c66ffbe863f977400bfe0fbb",
+    "docs/product/marketing-ops/contracts/decisions/DEC-RUNTIME-002-idempotency-conflict.md": "e5dd4fd190ff6e74f2999d78053aab0e648f670a13a669fcb990ca868a58b340",
+    "docs/product/marketing-ops/contracts/fixtures/valid/create-copy-variants-idempotency-policy.json": "c273bd7f3c63e83d462b24c25f680009e6bc22d975f22c2b1b970b9424aa358e",
+    "test/contracts/idempotency-conflict.contract.test.ts": "b56482c6e4dcd038b5f37ab642cb682f3f5ae107bee4b853b3b5ac1155bce2e6",
+    "packages/core/test/idempotency-conflict.test.ts": "00bb3fa7bcd3da579bbeaefe5750b22b374aad912395f2a14eb7bdca943c3bdb"
+  },
+  "implementationBoundary": {
+    "canonicalErrorRegistered": true,
+    "domainErrorImplemented": true,
+    "writeTransactionImplemented": false,
+    "idempotencyStorageImplemented": false,
+    "outboxImplemented": false,
+    "eventDispatchEnabled": false
+  },
+  "explicitLimits": [
+    "No retention TTL is approved",
+    "No HTTP status mapping is selected",
+    "No queue technology is selected"
+  ],
+  "next": {
+    "action": "implement_create_copy_variants_write_transaction",
+    "eventDispatchRemainsBlocked": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "objective": "Create challenger copy variants",
+  "quantity": 2,
+  "variantRole": "challenger",
+  "testedDimension": "angle",
+  "angle": "unattributed_revenue",
+  "channel": "linkedin",
+  "format": "single_image_ad",
+  "language": "pt-BR"
+}

@@ -1,0 +1,68 @@
+{
+  "integrationVersion": "1.0",
+  "status": "approved",
+  "schemaDraft": "2020-12",
+  "schemas": [
+    {
+      "file": "common-definitions.schema.json",
+      "id": "https://schemas.oplyra.com/core/common-definitions/1.0",
+      "role": "shared_definitions"
+    },
+    {
+      "file": "agent-definition.schema.json",
+      "id": "https://schemas.oplyra.com/core/agent-definition/1.0",
+      "role": "universal_contract"
+    },
+    {
+      "file": "approval.schema.json",
+      "id": "https://schemas.oplyra.com/core/approval/1.0",
+      "role": "universal_contract"
+    },
+    {
+      "file": "context-package.schema.json",
+      "id": "https://schemas.oplyra.com/core/context-package/1.0",
+      "role": "universal_contract"
+    },
+    {
+      "file": "context-update-candidate.schema.json",
+      "id": "https://schemas.oplyra.com/core/context-update-candidate/1.0",
+      "role": "universal_contract"
+    },
+    {
+      "file": "error.schema.json",
+      "id": "https://schemas.oplyra.com/core/error/1.0",
+      "role": "universal_contract"
+    },
+    {
+      "file": "handoff.schema.json",
+      "id": "https://schemas.oplyra.com/core/handoff/1.0",
+      "role": "universal_contract"
+    },
+    {
+      "file": "learning-record.schema.json",
+      "id": "https://schemas.oplyra.com/core/learning-record/1.0",
+      "role": "universal_contract"
+    },
+    {
+      "file": "quality-review.schema.json",
+      "id": "https://schemas.oplyra.com/core/quality-review/1.0",
+      "role": "universal_contract"
+    },
+    {
+      "file": "task.schema.json",
+      "id": "https://schemas.oplyra.com/core/task/1.0",
+      "role": "universal_contract"
+    },
+    {
+      "file": "transaction-envelope.schema.json",
+      "id": "https://schemas.oplyra.com/core/transaction-envelope/1.0",
+      "role": "universal_contract"
+    }
+  ],
+  "validation": {
+    "totalChecks": 32,
+    "failedChecks": 0,
+    "formatCheckerEnabled": true,
+    "externalRefResolution": true
+  }
+}

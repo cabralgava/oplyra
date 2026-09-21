@@ -1,0 +1,8 @@
+{
+  "tenantId": "tenant_acme",
+  "eventTransactionId": "tx_event_copy_01",
+  "consumerAgent": "design-agent",
+  "status": "dispatched",
+  "attempt": 1,
+  "settledAt": "2026-09-21T16:00:05Z"
+}

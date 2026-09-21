@@ -1,0 +1,12 @@
+{
+  "deadLetterRef": "dlq_missing_source",
+  "sourceEventKey": "copy.draft_created",
+  "consumerAgent": "design-agent",
+  "attempt": 5,
+  "terminalReason": "retry_exhausted",
+  "terminalErrorCode": "RETRY_ATTEMPTS_EXHAUSTED",
+  "rootCause": { "code": "PROVIDER_TIMEOUT", "message": "timeout", "retryable": true },
+  "deadLetteredAt": "2026-09-21T20:00:00Z",
+  "humanEscalationRequired": true,
+  "reprocessing": { "automaticAllowed": false, "authorizationRevalidationRequired": true, "preservesSourceLink": true }
+}

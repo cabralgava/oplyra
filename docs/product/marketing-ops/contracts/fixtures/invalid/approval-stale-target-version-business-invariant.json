@@ -1,0 +1,44 @@
+{
+  "approval": {
+    "approvalId": "approval_stale_runtime_01",
+    "schemaVersion": "1.0",
+    "tenantId": "tenant_123",
+    "target": {
+      "type": "campaign",
+      "id": "campaign_meta_001",
+      "version": 7,
+      "ownerAgent": "paid-media-agent"
+    },
+    "scope": {
+      "action": "publish_campaign",
+      "risk": "high",
+      "sideEffect": true
+    },
+    "status": "approved",
+    "requestedBy": {
+      "type": "agent",
+      "id": "paid-media-agent"
+    },
+    "requestedAt": "2026-09-16T20:40:00Z",
+    "decision": {
+      "outcome": "approved",
+      "decidedBy": {
+        "type": "user",
+        "id": "user_marketing_lead_01"
+      },
+      "decidedAt": "2026-09-16T20:45:00Z",
+      "reason": "Versão 7 aprovada."
+    },
+    "expiresAt": null,
+    "revocation": null,
+    "staleness": null,
+    "policyRefs": [
+      "policy:paid-media-publication-v1"
+    ],
+    "evidenceRefs": []
+  },
+  "runtimeContext": {
+    "currentTargetVersion": 8,
+    "requestedAction": "publish_campaign"
+  }
+}

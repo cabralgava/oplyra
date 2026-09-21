@@ -1,0 +1,187 @@
+{
+  "artifact": "oplyra-create-copy-variants-schema-validation",
+  "artifactVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-18T13:04:26Z",
+  "status": "passed",
+  "subject": {
+    "action": "create_copy_variants",
+    "inputSchema": "create-copy-variants.input.schema.json",
+    "outputSchema": "create-copy-variants.output.schema.json"
+  },
+  "sourceEvidence": [
+    "docs/product/marketing-ops/20-agent-transaction-protocol.md",
+    "docs/product/marketing-ops/agents/copywriting.md",
+    "docs/product/marketing-ops/contracts/contracts-README.md",
+    "docs/product/marketing-ops/contracts/registries/actions.json",
+    "docs/product/marketing-ops/contracts/schemas/common-definitions.schema.json"
+  ],
+  "checksRun": 16,
+  "checksPassed": 16,
+  "checksFailed": 0,
+  "checks": [
+    {
+      "id": "CCV-001",
+      "name": "JSON parse dos dois schemas",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "id": "CCV-002",
+      "name": "JSON Schema Draft 2020-12",
+      "status": "passed",
+      "details": {
+        "input": "https://json-schema.org/draft/2020-12/schema",
+        "output": "https://json-schema.org/draft/2020-12/schema"
+      }
+    },
+    {
+      "id": "CCV-003",
+      "name": "$id canônicos e versionados",
+      "status": "passed",
+      "details": {
+        "input": "https://schemas.oplyra.com/copywriting/create-copy-variants/input/1.0",
+        "output": "https://schemas.oplyra.com/copywriting/create-copy-variants/output/1.0"
+      }
+    },
+    {
+      "id": "CCV-004",
+      "name": "$id únicos",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "id": "CCV-005",
+      "name": "Todos os $ref resolvidos",
+      "status": "passed",
+      "details": {
+        "unresolved": []
+      }
+    },
+    {
+      "id": "CCV-006",
+      "name": "Input exige objective e quantity",
+      "status": "passed",
+      "details": {
+        "required": [
+          "objective",
+          "quantity"
+        ]
+      }
+    },
+    {
+      "id": "CCV-007",
+      "name": "Quantity é inteiro positivo",
+      "status": "passed",
+      "details": {
+        "quantity": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    {
+      "id": "CCV-008",
+      "name": "Output exige variants não vazio",
+      "status": "passed",
+      "details": {
+        "required": [
+          "variants"
+        ],
+        "minItems": 1
+      }
+    },
+    {
+      "id": "CCV-009",
+      "name": "Variant exige id, headline, primaryText e cta",
+      "status": "passed",
+      "details": {
+        "required": [
+          "id",
+          "headline",
+          "primaryText",
+          "cta"
+        ]
+      }
+    },
+    {
+      "id": "CCV-010",
+      "name": "Schemas e variant são estritos",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "id": "CCV-011",
+      "name": "Exemplos de input são válidos",
+      "status": "passed",
+      "details": {
+        "errors": []
+      }
+    },
+    {
+      "id": "CCV-012",
+      "name": "Exemplos de output são válidos",
+      "status": "passed",
+      "details": {
+        "errors": []
+      }
+    },
+    {
+      "id": "CCV-013",
+      "name": "Action canônica existe e pertence ao Copywriting",
+      "status": "passed",
+      "details": {
+        "action": {
+          "action": "create_copy_variants",
+          "ownerAgent": "copywriting-agent",
+          "type": "command",
+          "domain": "copywriting"
+        }
+      }
+    },
+    {
+      "id": "CCV-014",
+      "name": "Action congelada ainda não foi alterada",
+      "status": "passed",
+      "details": {
+        "inputSchema": null,
+        "outputSchema": null,
+        "schemaStatus": "pending_domain_schema"
+      }
+    },
+    {
+      "id": "CCV-015",
+      "name": "Envelope permanece fora do payload específico",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "id": "CCV-016",
+      "name": "Invariante input.quantity = output.variants.length registrada como contract test",
+      "status": "passed",
+      "details": {
+        "enforcement": "cross-payload contract test; not expressible by isolated JSON Schema documents"
+      }
+    }
+  ],
+  "integrity": {
+    "inputSchemaSha256": "529dae1ded9c6255ab6fa39a45d198e743450dfbdb99ea5181f87839c176c66b",
+    "outputSchemaSha256": "634ad7e48ec9b947d5c8ca7bb6909a90e42e921ad72d1f8e336b07e4d3c0c412"
+  },
+  "registryImpact": {
+    "actionsRegistryModified": false,
+    "freezeBaselineModified": false,
+    "bindingStatus": "pending_change_proposal_and_compatibility_assessment",
+    "recommendedRegistryVersionAfterBinding": "1.1"
+  },
+  "next": {
+    "action": "bind_action_schemas",
+    "target": "docs/product/marketing-ops/contracts/registries/actions.json",
+    "requiredChanges": {
+      "inputSchema": "../schemas/copywriting/create-copy-variants.input.schema.json",
+      "outputSchema": "../schemas/copywriting/create-copy-variants.output.schema.json",
+      "schemaStatus": "bound"
+    },
+    "freezeManifestUpdateRequired": true
+  }
+}

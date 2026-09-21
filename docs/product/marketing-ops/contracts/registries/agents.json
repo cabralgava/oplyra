@@ -1,0 +1,215 @@
+{
+  "registry": "oplyra-agents",
+  "registryVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-17T14:00:00Z",
+  "status": "active",
+  "entries": [
+    {
+      "key": "orchestrator-agent",
+      "name": "Agente Orquestrador",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "orchestration",
+      "qualityGate": {
+        "primary": "strategy-quality-agent",
+        "operational": "orchestrator-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/orchestrator.md"
+    },
+    {
+      "key": "strategy-quality-agent",
+      "name": "Agente de Estratégia e Qualidade",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "strategy_quality",
+      "qualityGate": {
+        "primary": "strategy-quality-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/strategy-quality.md"
+    },
+    {
+      "key": "account-projects-agent",
+      "name": "Agente de Account e Projetos",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "project_management",
+      "qualityGate": {
+        "primary": "strategy-quality-agent",
+        "operational": "orchestrator-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/account-projects.md"
+    },
+    {
+      "key": "copywriting-agent",
+      "name": "Agente de Copywriting",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "copywriting",
+      "qualityGate": {
+        "primary": "strategy-quality-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/copywriting.md"
+    },
+    {
+      "key": "design-agent",
+      "name": "Agente de Design",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "design",
+      "qualityGate": {
+        "primary": "strategy-quality-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/design.md"
+    },
+    {
+      "key": "paid-media-agent",
+      "name": "Agente de Mídia Paga",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "paid_media",
+      "qualityGate": {
+        "primary": "strategy-quality-agent",
+        "operational": "orchestrator-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/paid-media.md"
+    },
+    {
+      "key": "performance-intelligence-agent",
+      "name": "Agente de Performance e Inteligência",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "performance",
+      "qualityGate": {
+        "primary": "strategy-quality-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/performance-intelligence.md"
+    },
+    {
+      "key": "reporting-checkins-agent",
+      "name": "Agente de Relatórios e Check-ins",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "reporting",
+      "qualityGate": {
+        "primary": "strategy-quality-agent",
+        "operational": "orchestrator-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/reporting-checkins.md"
+    },
+    {
+      "key": "social-media-agent",
+      "name": "Agente de Social Media",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "social_media",
+      "qualityGate": {
+        "primary": "strategy-quality-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/social-media.md"
+    },
+    {
+      "key": "email-marketing-agent",
+      "name": "Agente de E-mail Marketing",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "email_marketing",
+      "qualityGate": {
+        "primary": "strategy-quality-agent",
+        "operational": "orchestrator-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/email-marketing.md"
+    },
+    {
+      "key": "lifecycle-agent",
+      "name": "Agente de Lifecycle",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "lifecycle",
+      "qualityGate": {
+        "primary": "strategy-quality-agent",
+        "operational": "orchestrator-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/lifecycle.md"
+    },
+    {
+      "key": "revenue-intelligence-agent",
+      "name": "Agente de Revenue Intelligence",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "version": 1,
+      "status": "active",
+      "ownerDomain": "revenue_intelligence",
+      "qualityGate": {
+        "primary": "strategy-quality-agent"
+      },
+      "definitionSchema": "../schemas/agent-definition.schema.json",
+      "documentationRef": "../../agents/revenue-intelligence.md"
+    }
+  ]
+}

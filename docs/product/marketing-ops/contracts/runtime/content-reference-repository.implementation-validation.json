@@ -1,0 +1,114 @@
+{
+  "artifact": "oplyra-content-reference-repository-implementation-validation",
+  "artifactVersion": "1.0",
+  "generatedAt": "2026-09-21T13:54:00Z",
+  "status": "passed_with_notes",
+  "subject": {
+    "component": "content-reference-repository",
+    "port": "ContentReferenceRepositoryPort",
+    "package": "@oplyra/infra",
+    "databaseSchema": "content",
+    "decision": "DEC-RUNTIME-001"
+  },
+  "validation": {
+    "typecheck": {
+      "status": "passed",
+      "method": "three package-local tsc executions",
+      "packages": [
+        "@oplyra/core",
+        "@oplyra/infra",
+        "@oplyra/testing"
+      ],
+      "errors": 0,
+      "aggregateScript": {
+        "status": "blocked_by_pre_existing_workspace_cycle",
+        "command": "pnpm typecheck",
+        "error": "ERR_PNPM_TASK_CYCLE: packages/core#tsc -> packages/testing#tsc -> packages/core#tsc"
+      }
+    },
+    "vitest": {
+      "status": "passed",
+      "testFiles": 8,
+      "testsRun": 87,
+      "testsPassed": 87,
+      "testsFailed": 0,
+      "contractTests": {
+        "testFiles": 3,
+        "testsRun": 32,
+        "testsPassed": 32
+      },
+      "coreTests": {
+        "testFiles": 2,
+        "testsRun": 31,
+        "testsPassed": 31
+      },
+      "infraTests": {
+        "testFiles": 2,
+        "testsRun": 19,
+        "testsPassed": 19
+      },
+      "repositoryAdapterIntegration": {
+        "testFiles": 1,
+        "testsRun": 6,
+        "testsPassed": 6
+      }
+    },
+    "databaseTests": {
+      "status": "passed",
+      "framework": "pgTAP",
+      "testFiles": 2,
+      "testsRun": 31,
+      "testsPassed": 31,
+      "contentRepositoryBoundaryTests": 12
+    },
+    "secretScan": {
+      "status": "passed",
+      "findings": 0
+    }
+  },
+  "coverage": {
+    "explicitTenantFilter": true,
+    "forcedRls": true,
+    "workerTransactionOnly": true,
+    "activeTenantRequired": true,
+    "crossTenantNonDisclosure": true,
+    "requestedVariantsOnly": true,
+    "persistedOrderPreserved": true,
+    "readOnlyWorkerPrivilege": true
+  },
+  "implementationBoundary": {
+    "repositoryAdapterImplemented": true,
+    "databaseModelImplemented": true,
+    "contentWritePathImplemented": false,
+    "eventDispatchEnabled": false,
+    "externalEndpointExposed": false
+  },
+  "integrity": {
+    "packages/infra/src/content-reference-repository.ts": "aafd43b58424c663ca0d051b8035b6a0add8834e95e8a603eb245b18407c34b5",
+    "packages/infra/src/index.ts": "5c601552ea069ded3b8668add80602008c5e7a09a03fde397115838f7ab9818c",
+    "packages/infra/test/content-reference-repository.test.ts": "31aeb0daa6c26e8fa13ca6f78912545aa152379b407ecb9c73a460b728345ce8",
+    "supabase/migrations/20260921000009_content_repository.sql": "0dd867a5d73194e685b11ae33434baace98038de9cca1431f141de8df5a94c88",
+    "supabase/tests/content_repository.test.sql": "d989d86d064cdc6a1e0bc9f591cefb4b1a105601024737afe7b3ef38973a3e2d"
+  },
+  "unvalidatedReferences": [
+    {
+      "reference": "tenantId JSON Schema allows any non-empty string",
+      "status": "not_directly_validated",
+      "reason": "Approved PostgreSQL tenancy and current core identity implementation use UUID; adapter tests cover UUID-backed tenants only."
+    },
+    {
+      "reference": "independent security review of direct database connection",
+      "status": "pending",
+      "reason": "Pre-existing ADR-0003 pendency; CR-009 validation is not an independent security review."
+    },
+    {
+      "reference": "production or remote persistence",
+      "status": "not_tested",
+      "reason": "Validation is restricted to the isolated local Supabase project with synthetic tenant data."
+    }
+  ],
+  "next": {
+    "action": "implement_create_copy_variants_write_transaction",
+    "eventDispatchRemainsBlocked": true
+  }
+}

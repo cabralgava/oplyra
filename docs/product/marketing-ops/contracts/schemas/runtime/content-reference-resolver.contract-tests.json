@@ -1,0 +1,89 @@
+{
+  "artifact": "oplyra-content-reference-resolver-contract-tests",
+  "artifactVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-21T13:01:25Z",
+  "status": "passed",
+  "subject": {
+    "component": "content-reference-resolver",
+    "inputSchema": "content-reference-resolver.input.schema.json",
+    "outputSchema": "content-reference-resolver.output.schema.json",
+    "decision": "DEC-RUNTIME-001"
+  },
+  "runner": {
+    "framework": "vitest",
+    "version": "5.0.0",
+    "command": "vitest run test/contracts/content-reference-resolver.contract.test.ts",
+    "testFiles": 1,
+    "testsRun": 12,
+    "testsPassed": 12,
+    "testsFailed": 0
+  },
+  "coverage": {
+    "schemaKeywordGuard": true,
+    "validInputAndOutput": true,
+    "tenantRequired": true,
+    "readPermissionOnly": true,
+    "positiveExpectedVersion": true,
+    "uniqueVariantRefs": true,
+    "tenantEqualityInvariant": true,
+    "draftAndVersionEqualityInvariant": true,
+    "exactVariantSetInvariant": true,
+    "canonicalToolAndPermissionResolution": true,
+    "canonicalFailureCodeMapping": true,
+    "atomicNoPartialResult": true
+  },
+  "fixtures": {
+    "schemaValid": 2,
+    "policyValid": 1,
+    "structuralInvalid": 4,
+    "businessInvariantInvalid": 3,
+    "total": 10,
+    "paths": [
+      "docs/product/marketing-ops/contracts/fixtures/valid/content-reference-resolver-input.json",
+      "docs/product/marketing-ops/contracts/fixtures/valid/content-reference-resolver-output.json",
+      "docs/product/marketing-ops/contracts/fixtures/valid/content-reference-resolver-failure-policy.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-missing-tenant.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-write-permission.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-version-zero.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-duplicate-variant-refs.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-tenant-mismatch-business-invariant.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-draft-version-mismatch-business-invariant.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-variant-set-mismatch-business-invariant.json"
+    ]
+  },
+  "failurePolicy": {
+    "allCodesRegistered": true,
+    "partialResultsAllowed": false,
+    "mappings": {
+      "tenant_omitted": "TENANT_REQUIRED",
+      "cross_tenant_reference": "TENANT_MISMATCH",
+      "read_permission_missing": "PERMISSION_DENIED",
+      "reference_absent_in_authorized_scope": "REFERENCE_NOT_FOUND",
+      "persisted_version_differs": "CONFLICT_VERSION",
+      "schema_invalid": "TRANSACTION_SCHEMA_INVALID"
+    }
+  },
+  "integrity": {
+    "docs/product/marketing-ops/contracts/fixtures/valid/content-reference-resolver-input.json": "83d69c59f4c4c3857259db82b12cfa74d4ba23bc08238bd31a28d0b1fb439735",
+    "docs/product/marketing-ops/contracts/fixtures/valid/content-reference-resolver-output.json": "dd475644b16722187751b8cb20039782cc91f32aa43946414dfa7f8a1a140891",
+    "docs/product/marketing-ops/contracts/fixtures/valid/content-reference-resolver-failure-policy.json": "6008fd8c7c055705f1ead2869b3f7b64483a967f528b7cdbc3bfd9815d687896",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-missing-tenant.json": "d3ea7a9238cb264c7476887c05e16fc469201d77cd8e66ad9dc164e4296c45ef",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-write-permission.json": "b8cbebcd2970919f0f3cb13cd5a2b808a82a734a162ee9a9a34afa69621510f8",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-version-zero.json": "76764bb096b628cde6ec5c1544721f513ed051a1eb78519321ef4cea97087427",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-input-duplicate-variant-refs.json": "ce00c9f8aff55f9c510aafc50fc624e7d79879a02f73cec22aa02ca9bff42f37",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-tenant-mismatch-business-invariant.json": "bb67be344752a22e901f863b128d27699f17072146ee50b8352d6d41f29becf1",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-draft-version-mismatch-business-invariant.json": "6659cf45bd6a4cf1b358bb68b14cfe1fb4f1e87540237bb0683433d53f6dd292",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/content-reference-resolver-variant-set-mismatch-business-invariant.json": "a8f90609ac6369f6d392436e97ecca602b3fc2b69d5cbd44c44fd51fac81122f",
+    "test/contracts/content-reference-resolver.contract.test.ts": "88e900cd93d627a26d3c54c74e38436e0948a66d7dba779a69ba335a220c3b3f",
+    "test/contracts/json-schema-subset.ts": "3bf437a110ad6ef95a7aaaa304f948f16f1cb4e533f9a3b3da827f098c07cccc"
+  },
+  "result": {
+    "contractExecutable": true,
+    "allPendingBusinessInvariantsCovered": true,
+    "runtimeImplemented": false,
+    "repositoryAdapterImplemented": false,
+    "eventDispatchEnabled": false,
+    "next": "implement_content_reference_resolver_core_port_and_policy"
+  }
+}

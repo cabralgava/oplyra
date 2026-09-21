@@ -1,0 +1,19 @@
+{
+  "registry": "oplyra-agents",
+  "registryVersion": "1.0",
+  "entries": 12,
+  "uniqueAgentKeys": 12,
+  "uniqueDomains": 12,
+  "performancePlanAgents": 8,
+  "growthPlanAgents": 12,
+  "growthOnlyAgents": [
+    "email-marketing-agent",
+    "lifecycle-agent",
+    "revenue-intelligence-agent",
+    "social-media-agent"
+  ],
+  "validation": {
+    "status": "passed",
+    "errors": []
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "validationId": "outbox-dispatcher-sql-boundary-cr-015",
+  "validatedAt": "2026-09-21T17:30:00Z",
+  "status": "passed_with_notes",
+  "migration": {
+    "path": "supabase/migrations/20260921000012_outbox_dispatcher_functions.sql",
+    "version": "20260921000012",
+    "appliedLocally": true
+  },
+  "roles": {
+    "login": "oplyra_dispatcher_login",
+    "execution": "oplyra_dispatcher_exec",
+    "bypassRls": false,
+    "directContentSchemaUsage": false,
+    "directTablePrivileges": false
+  },
+  "functions": [
+    "app.claim_outbox_events(uuid,text,integer,integer,timestamptz)",
+    "app.settle_outbox_event(uuid,text,text,text,integer,text,text,timestamptz,timestamptz,jsonb)"
+  ],
+  "databaseTests": {
+    "files": 5,
+    "assertionsRun": 87,
+    "assertionsPassed": 87,
+    "cr015PrivilegeAssertions": 19
+  },
+  "integrationTests": {
+    "file": "packages/infra/test/outbox-dispatcher-functions.test.ts",
+    "testsRun": 9,
+    "testsPassed": 9,
+    "realPostgreSqlConcurrency": true
+  },
+  "behaviorsValidated": [
+    "no_direct_table_access",
+    "tenant_scoped_claim",
+    "consumer_claim_before_side_effect",
+    "skip_locked_single_winner",
+    "active_lease_not_reclaimed",
+    "expired_lease_attempt_increment",
+    "fencing_token_rotation",
+    "stale_settlement_rejected",
+    "retry_delay_enforced",
+    "successful_duplicate_deduplicated",
+    "terminal_failure_dead_lettered",
+    "cross_tenant_request_rejected"
+  ],
+  "notImplemented": [
+    "typed_core_port",
+    "infrastructure_adapter",
+    "dispatcher_polling_loop",
+    "retry_policy_values",
+    "dead_letter_escalation_event",
+    "transport"
+  ],
+  "runtimeDispatchEnabled": false,
+  "transportSelected": false,
+  "environment": "isolated_local_supabase"
+}

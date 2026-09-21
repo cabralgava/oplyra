@@ -1,0 +1,11 @@
+PASS E2-02 redelivery detectada; o segundo efeito foi bloqueado pela chave idempotente {"messageId":1,"deliveries":2,"duplicateEffects":0}
+PASS E2-03 quatro workers disputaram o run; só o lease owner gravou e a tentativa antiga foi rejeitada {"contenders":4,"leaseWinners":1}
+PASS E2-04 30% de falhas transitórias respeitaram backoff crescente com invisibilidade real no pgmq; erro determinístico não repetiu; exaustão ocorreu em 5 {"jobs":10,"transientJobs":3,"retries":6,"deterministicAttempts":1,"exhaustedAttempts":5,"experimentalMaxAttempts":5,"pgmqDelaySecondsTested":"1,2","queueBackoffWorked":true}
+PASS E2-05 crash com transação aberta fez rollback; crash após commit preservou checkpoint; ambos recuperaram após lease sem repetir passo concluído {"recoverySecondsOpenTransaction":1.15,"recoverySecondsAfterCommit":1.15,"requiredMaximumSeconds":180,"lostMessages":0,"repeatedCompletedSteps":0}
+PASS E2-06 efeito aplicado seguido de timeout entrou em waiting_human, não foi reenviado e foi localizado pela reconciliação {"automaticResends":0,"reconciledEffects":1}
+PASS E2-07 falha antes do commit reverteu estado e enqueue na mesma transação {"persistedStates":0,"persistedMessages":0}
+PASS E2-08 ticks concorrentes, timezone/DST, misfire de 30h, quinto Monday e ciclo pg_cron foram exercitados sem duplicar ocorrência {"concurrentTicks":4,"uniqueOccurrences":1,"march2026Mondays":5,"paidCalls":4,"cronJobId":8}
+PASS E2-01 cinco rodadas de um worker drenaram burst de 1.000 + carga equivalente a 5.000 jobs/h dentro do limite de lag p95 {"tenants":50,"jobsPerTrial":6000,"trials":5,"workers":1,"queueLagP95Seconds":0.167,"throughputPerSecond":28698.2}
+FAIL E2-09 p95 agregado de cinco rodadas pareadas, conexões, locks, crescimento por job e vacuum foram medidos; CPU é evidência externa correlata {"trials":5,"samplesPerArm":1500,"baselineP95Ms":0.41,"underLoadP95Ms":0.509,"degradationPct":23.95,"trialDegradationPct":[-49.59,13.11,29.16,113.22,31.68],"activeConnections":15,"waitingLocks":0,"emptyQueueBytes":24576,"loadedQueueBytes":1138688,"bytesPerJob":185.69,"projectedSevenDayBytes":155975680,"deadTuplesBeforeVacuum":0,"deadTuplesAfterVacuum":0}
+PASS E2-10 mensagem venenosa foi isolada após cinco entregas e gerou alerta ligado ao run original {"deliveries":5,"alerts":1,"archived":true}
+9/10 aprovados

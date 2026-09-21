@@ -1,0 +1,213 @@
+{
+  "artifact": "oplyra-copy-draft-created-payload-schema-validation",
+  "artifactVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-18T16:44:43Z",
+  "status": "passed_with_runtime_dependency",
+  "subject": {
+    "event": "copy.draft_created",
+    "payloadSchema": "copy-draft-created.payload.schema.json",
+    "decision": "DEC-ACTION-EVENT-001"
+  },
+  "sourceEvidence": [
+    "docs/product/marketing-ops/20-agent-transaction-protocol.md",
+    "docs/product/marketing-ops/agents/README.md",
+    "docs/product/marketing-ops/agents/copywriting.md",
+    "docs/product/marketing-ops/agents/design.md",
+    "docs/product/marketing-ops/contracts/ACTION-EVENT-BINDING-ANALYSIS.md",
+    "docs/product/marketing-ops/contracts/action-event-binding-analysis.json",
+    "docs/product/marketing-ops/contracts/decisions/DEC-ACTION-EVENT-001-copy-draft-created.md",
+    "docs/product/marketing-ops/contracts/registries/actions.json",
+    "docs/product/marketing-ops/contracts/registries/events.json",
+    "docs/product/marketing-ops/contracts/schemas/common-definitions.schema.json",
+    "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.output.schema.json"
+  ],
+  "checksRun": 15,
+  "checksPassed": 15,
+  "checksFailed": 0,
+  "checks": [
+    {
+      "id": "CDC-001",
+      "name": "JSON parse do payload schema",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "id": "CDC-002",
+      "name": "JSON Schema Draft 2020-12",
+      "status": "passed",
+      "details": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      }
+    },
+    {
+      "id": "CDC-003",
+      "name": "$id canônico e versionado",
+      "status": "passed",
+      "details": {
+        "$id": "https://schemas.oplyra.com/events/copywriting/copy-draft-created/payload/1.0"
+      }
+    },
+    {
+      "id": "CDC-004",
+      "name": "Todos os $ref resolvidos",
+      "status": "passed",
+      "details": {
+        "unresolved": []
+      }
+    },
+    {
+      "id": "CDC-005",
+      "name": "Nenhuma keyword de validação sem suporte no harness estrito",
+      "status": "passed",
+      "details": {
+        "unsupportedKeywords": []
+      }
+    },
+    {
+      "id": "CDC-006",
+      "name": "Payload exige referências persistidas e versão",
+      "status": "passed",
+      "details": {
+        "required": [
+          "draftRef",
+          "version",
+          "sourceAction",
+          "variantRefs"
+        ]
+      }
+    },
+    {
+      "id": "CDC-007",
+      "name": "Versão é inteiro positivo",
+      "status": "passed",
+      "details": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    {
+      "id": "CDC-008",
+      "name": "Primeiro sourceAction permitido é create_copy_variants",
+      "status": "passed",
+      "details": {
+        "enum": [
+          "create_copy_variants"
+        ]
+      }
+    },
+    {
+      "id": "CDC-009",
+      "name": "variantRefs é não vazio e único",
+      "status": "passed",
+      "details": {
+        "minItems": 1,
+        "uniqueItems": true
+      }
+    },
+    {
+      "id": "CDC-010",
+      "name": "Payload é estrito",
+      "status": "passed",
+      "details": {
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "CDC-011",
+      "name": "Exemplo válido aceito",
+      "status": "passed",
+      "details": {
+        "errors": []
+      }
+    },
+    {
+      "id": "CDC-012",
+      "name": "Seis cenários inválidos rejeitados",
+      "status": "passed",
+      "details": {
+        "errorCounts": [
+          4,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "scenarios": [
+          "required fields absent",
+          "version below minimum",
+          "sourceAction outside enum",
+          "empty variantRefs",
+          "duplicate variantRefs",
+          "additional property"
+        ]
+      }
+    },
+    {
+      "id": "CDC-013",
+      "name": "Evento canônico, producer e consumer confirmados",
+      "status": "passed",
+      "details": {
+        "event": "copy.draft_created",
+        "producer": "copywriting-agent",
+        "consumers": [
+          "design-agent"
+        ]
+      }
+    },
+    {
+      "id": "CDC-014",
+      "name": "Envelope transacional permanece fora do payload",
+      "status": "passed",
+      "details": {
+        "separateEnvelopeSchema": "https://schemas.oplyra.com/core/transaction-envelope/1.0"
+      }
+    },
+    {
+      "id": "CDC-015",
+      "name": "Events Registry congelado não foi alterado",
+      "status": "passed",
+      "details": {
+        "payloadSchema": null,
+        "payloadSchemaStatus": "pending_event_schema"
+      }
+    }
+  ],
+  "integrity": {
+    "payloadSchemaSha256": "e6d66e1d023836e8428dc16f90daf1e3435a759bb1a663997377e517f8817e79",
+    "decisionSha256": "e48458032af922a0426648b87a2392cb79eda14235c80b16e29db59390478ab2"
+  },
+  "registryImpact": {
+    "eventsRegistryModified": false,
+    "freezeBaselineModified": false,
+    "bindingStatus": "pending_change_proposal_and_compatibility_assessment",
+    "recommendedRegistryVersionAfterBinding": "1.1"
+  },
+  "runtimeDependency": {
+    "status": "not_implemented",
+    "requirement": "An authorized tenant-scoped resolver for draftRef and variantRefs must exist before dispatch to design-agent is enabled.",
+    "blockingForSchemaPublication": false,
+    "blockingForRuntimeDispatch": true
+  },
+  "unvalidatedReferences": [
+    {
+      "path": "docs/product/marketing-ops/contracts/README.md",
+      "reason": "Referenced by project instructions but absent from the current repository."
+    },
+    {
+      "path": "docs/product/marketing-ops/OPLYRA-MIGRATION-PACK/06-OPEN-ITEMS.md",
+      "reason": "Referenced by project instructions but absent from the current repository."
+    }
+  ],
+  "next": {
+    "action": "bind_event_payload_schema",
+    "target": "docs/product/marketing-ops/contracts/registries/events.json",
+    "requiredChanges": {
+      "payloadSchema": "../schemas/events/copywriting/copy-draft-created.payload.schema.json",
+      "payloadSchemaStatus": "bound"
+    },
+    "changeProposalRequired": true,
+    "releaseManifestUpdateRequired": true
+  }
+}

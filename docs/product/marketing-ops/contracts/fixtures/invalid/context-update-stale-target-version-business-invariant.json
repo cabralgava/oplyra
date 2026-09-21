@@ -1,0 +1,55 @@
+{
+  "candidate": {
+    "id": "ctxupd_stale_target_01",
+    "schemaVersion": "1.0",
+    "tenantId": "tenant_123",
+    "targetLayer": "L2",
+    "targetRef": "brandTruth:tenant_123:v5",
+    "targetVersion": 5,
+    "targetField": "offers.enterprise_demo.cta",
+    "operation": "replace",
+    "currentValue": "Solicite uma demo",
+    "proposedValue": "Agende uma demonstração",
+    "source": {
+      "type": "user_declared",
+      "ref": "decision:dec_301",
+      "observedAt": "2026-09-16T21:20:00Z"
+    },
+    "evidenceRefs": [
+      "decision:dec_301"
+    ],
+    "confidence": {
+      "level": "confirmed",
+      "score": 1.0,
+      "reason": "Explicit user decision."
+    },
+    "reason": "Update CTA per approved commercial decision.",
+    "requiresApproval": true,
+    "approvalRefs": [
+      "approval_ctx_01"
+    ],
+    "status": "approved",
+    "proposedBy": {
+      "type": "user",
+      "id": "user_marketing_lead_01"
+    },
+    "proposedAt": "2026-09-16T21:21:00Z",
+    "review": null,
+    "decision": {
+      "outcome": "approved",
+      "decidedBy": {
+        "type": "user",
+        "id": "user_marketing_lead_01"
+      },
+      "decidedAt": "2026-09-16T21:22:00Z",
+      "reason": "Approved for Brand Truth update."
+    },
+    "appliedAt": null,
+    "appliedBy": null,
+    "resultingVersion": null,
+    "supersededBy": null
+  },
+  "runtimeContext": {
+    "currentTargetVersion": 6
+  }
+}

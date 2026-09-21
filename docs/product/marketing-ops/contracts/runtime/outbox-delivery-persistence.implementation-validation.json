@@ -1,0 +1,49 @@
+{
+  "validationId": "outbox-delivery-persistence-cr-014",
+  "validatedAt": "2026-09-21T17:05:00Z",
+  "status": "passed_with_notes",
+  "migration": {
+    "path": "supabase/migrations/20260921000011_outbox_delivery_persistence.sql",
+    "version": "20260921000011",
+    "appliedLocally": true
+  },
+  "databaseTests": {
+    "files": 4,
+    "assertionsRun": 68,
+    "assertionsPassed": 68,
+    "cr014AssertionsRun": 21,
+    "cr014AssertionsPassed": 21
+  },
+  "directCatalogEvidence": {
+    "migrationRecorded": true,
+    "outboxColumns": [
+      "dead_lettered_at",
+      "fencing_token",
+      "lease_expires_at",
+      "lease_owner"
+    ],
+    "consumerDeduplicationForcedRls": true,
+    "consumerDeduplicationPolicyCount": 0,
+    "workerOutboxUpdatePrivilege": false
+  },
+  "implemented": {
+    "outboxLeasePersistence": true,
+    "outboxFencingPersistence": true,
+    "deadLetterPersistence": true,
+    "consumerDeduplicationPersistence": true,
+    "tenantImmutableConsumerClaims": true,
+    "consumerIdentityForeignKey": true
+  },
+  "notImplemented": [
+    "dispatcher_execution_role",
+    "atomic_claim_or_reclaim_function",
+    "fenced_settlement_function",
+    "retry_policy_values",
+    "dead_letter_escalation_event",
+    "transport",
+    "dispatcher_runtime"
+  ],
+  "runtimeDispatchEnabled": false,
+  "newRuntimePrivilegesGranted": false,
+  "environment": "isolated_local_supabase"
+}

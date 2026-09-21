@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/runtime/outbox-dispatcher/claim-input/1.0",
+  "title": "Outbox Dispatcher Claim — Input",
+  "description": "Pedido tenant-scoped para reivindicar eventos elegíveis da outbox sem selecionar tecnologia de transporte.",
+  "type": "object",
+  "required": [
+    "tenantId",
+    "dispatcherId",
+    "batchSize",
+    "leaseDurationSeconds",
+    "requestedAt"
+  ],
+  "properties": {
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+    },
+    "dispatcherId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "batchSize": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "leaseDurationSeconds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "requestedAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    }
+  },
+  "additionalProperties": false
+}

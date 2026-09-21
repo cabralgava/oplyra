@@ -1,0 +1,635 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/core/transaction-envelope/1.0",
+  "title": "Oplyra Agent Transaction Envelope",
+  "description": "Envelope transacional canônico para comunicação entre agentes, runtime, workflows, serviços e integrações internas da Oplyra.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "transaction",
+    "trace",
+    "tenant",
+    "actor"
+  ],
+  "properties": {
+    "transaction": {
+      "$ref": "#/$defs/transaction"
+    },
+    "trace": {
+      "$ref": "#/$defs/trace"
+    },
+    "tenant": {
+      "$ref": "#/$defs/tenant"
+    },
+    "actor": {
+      "$ref": "#/$defs/actor"
+    },
+    "target": {
+      "$ref": "#/$defs/target"
+    },
+    "context": {
+      "$ref": "#/$defs/context"
+    },
+    "authorization": {
+      "$ref": "#/$defs/authorization"
+    },
+    "autonomy": {
+      "$ref": "#/$defs/autonomy"
+    },
+    "input": {
+      "type": "object"
+    },
+    "constraints": {
+      "type": "object"
+    },
+    "evidence": {
+      "$ref": "#/$defs/evidence"
+    },
+    "expectedOutput": {
+      "$ref": "#/$defs/expectedOutput"
+    },
+    "result": {},
+    "error": {
+      "$ref": "https://schemas.oplyra.com/core/error/1.0#/$defs/transactionError"
+    },
+    "next": {
+      "$ref": "#/$defs/next"
+    },
+    "audit": {
+      "$ref": "#/$defs/audit"
+    },
+    "idempotency": {
+      "$ref": "#/$defs/idempotency"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "transaction": {
+            "properties": {
+              "type": {
+                "const": "event"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "transaction": {
+            "required": [
+              "event"
+            ],
+            "not": {
+              "required": [
+                "action"
+              ]
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "transaction": {
+            "required": [
+              "action"
+            ],
+            "not": {
+              "required": [
+                "event"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transaction": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "command",
+                  "query"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "target",
+          "input",
+          "expectedOutput"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transaction": {
+            "properties": {
+              "type": {
+                "const": "response"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "result"
+            ]
+          },
+          {
+            "required": [
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transaction": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "failed",
+                  "rejected"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "error"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transaction": {
+            "properties": {
+              "status": {
+                "const": "completed"
+              },
+              "type": {
+                "const": "response"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "result"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "transaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "schemaVersion",
+        "type",
+        "status",
+        "createdAt"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^txn_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "schemaVersion": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/schemaVersion"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "command",
+            "query",
+            "event",
+            "response"
+          ]
+        },
+        "action": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/actionKey"
+        },
+        "event": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/eventKey"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "created",
+            "accepted",
+            "in_progress",
+            "waiting",
+            "completed",
+            "failed",
+            "rejected",
+            "cancelled",
+            "superseded"
+          ]
+        },
+        "createdAt": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        },
+        "expiresAt": {
+          "oneOf": [
+            {
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correlationId"
+      ],
+      "properties": {
+        "correlationId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "causationId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "workflowId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "taskId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "parentTransactionId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        }
+      }
+    },
+    "tenant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenantId"
+      ],
+      "properties": {
+        "tenantId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "user",
+            "agent",
+            "system",
+            "workflow",
+            "schedule",
+            "integration",
+            "service"
+          ]
+        },
+        "id": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "userId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "role": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "agent": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z0-9-]*-agent$"
+        },
+        "domain": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "service": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "adapter": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "workflow": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "agent"
+          ],
+          "properties": {
+            "agent": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "required": [
+            "domain"
+          ],
+          "properties": {
+            "domain": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "required": [
+            "service"
+          ],
+          "properties": {
+            "service": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "required": [
+            "adapter"
+          ],
+          "properties": {
+            "adapter": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "required": [
+            "workflow"
+          ],
+          "properties": {
+            "workflow": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contextPackageId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "contextVersion": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "initiativeId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "experimentId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "hypothesisId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "taskId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "brandTruthVersion": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "tenantFoundationVersion": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "operationalContextVersion": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "initiativeVersion": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "experimentVersion": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "permissionSet": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "requiredPermissions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          }
+        },
+        "policyRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          }
+        },
+        "approvalRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "autonomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level"
+      ],
+      "properties": {
+        "level": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/autonomyLevel"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requiredRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          }
+        },
+        "providedRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "expectedOutput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema"
+      ],
+      "properties": {
+        "schema": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": [
+            "application/json",
+            "text/plain",
+            "text/markdown"
+          ],
+          "default": "application/json"
+        }
+      }
+    },
+    "next": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recommendedAction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "targetAgent": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z][a-z0-9-]*-agent$"
+        },
+        "reason": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requestedBy": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "approvedBy": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "executedBy": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "recordRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "idempotency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    }
+  },
+  "$comment": "O payload de erro usa o perfil canônico transactionError de error.schema.json. Ownership, approval, entitlement e idempotency continuam invariantes de runtime/registry."
+}

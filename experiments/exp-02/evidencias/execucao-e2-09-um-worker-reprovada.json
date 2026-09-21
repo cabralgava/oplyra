@@ -1,0 +1,131 @@
+{
+  "experiment": "EXP-02",
+  "startedAt": "2026-09-21T17:51:55.515Z",
+  "finishedAt": "2026-09-21T17:51:58.173Z",
+  "environment": {
+    "database": "Supabase local",
+    "pgmq": "1.5.1",
+    "pgCron": "1.6.4",
+    "syntheticData": true
+  },
+  "checks": [
+    {
+      "id": "E2-02",
+      "pass": true,
+      "detail": "redelivery detectada; o segundo efeito foi bloqueado pela chave idempotente",
+      "metrics": {
+        "messageId": 1,
+        "deliveries": 2,
+        "duplicateEffects": 0
+      }
+    },
+    {
+      "id": "E2-03",
+      "pass": true,
+      "detail": "quatro workers disputaram o run; só o lease owner gravou e a tentativa antiga foi rejeitada",
+      "metrics": {
+        "contenders": 4,
+        "leaseWinners": 1
+      }
+    },
+    {
+      "id": "E2-04",
+      "pass": true,
+      "detail": "30% de falhas transitórias respeitaram backoff; erro determinístico não repetiu; exaustão ocorreu no limite experimental de 5",
+      "metrics": {
+        "jobs": 10,
+        "transientJobs": 3,
+        "retries": 6,
+        "deterministicAttempts": 1,
+        "exhaustedAttempts": 5,
+        "experimentalMaxAttempts": 5
+      }
+    },
+    {
+      "id": "E2-05",
+      "pass": true,
+      "detail": "conexão foi terminada no meio da transação; rollback, recuperação após lease e checkpoint único foram confirmados",
+      "metrics": {
+        "recoverySeconds": 1.15,
+        "requiredMaximumSeconds": 180,
+        "lostMessages": 0,
+        "repeatedCompletedSteps": 0
+      }
+    },
+    {
+      "id": "E2-06",
+      "pass": true,
+      "detail": "efeito aplicado seguido de timeout entrou em waiting_human, não foi reenviado e foi localizado pela reconciliação",
+      "metrics": {
+        "automaticResends": 0,
+        "reconciledEffects": 1
+      }
+    },
+    {
+      "id": "E2-07",
+      "pass": true,
+      "detail": "falha antes do commit reverteu estado e enqueue na mesma transação",
+      "metrics": {
+        "persistedStates": 0,
+        "persistedMessages": 0
+      }
+    },
+    {
+      "id": "E2-08",
+      "pass": true,
+      "detail": "ticks concorrentes, timezone/DST, misfire de 30h, quinto Monday e ciclo pg_cron foram exercitados sem duplicar ocorrência",
+      "metrics": {
+        "concurrentTicks": 4,
+        "uniqueOccurrences": 1,
+        "march2026Mondays": 5,
+        "paidCalls": 4,
+        "cronJobId": 5
+      }
+    },
+    {
+      "id": "E2-01",
+      "pass": true,
+      "detail": "um worker drenou burst de 1.000 + carga equivalente a 5.000 jobs/h dentro do limite de lag p95",
+      "metrics": {
+        "tenants": 50,
+        "jobs": 6000,
+        "workers": 1,
+        "queueLagP95Seconds": 0.165,
+        "throughputPerSecond": 36369.6
+      }
+    },
+    {
+      "id": "E2-09",
+      "pass": false,
+      "detail": "latência, conexões, locks, crescimento por job e vacuum foram medidos; CPU do container é registrada como evidência externa da mesma rodada",
+      "metrics": {
+        "baselineP95Ms": 0.542,
+        "underLoadP95Ms": 0.655,
+        "degradationPct": 20.94,
+        "activeConnections": 15,
+        "waitingLocks": 0,
+        "emptyQueueBytes": 24576,
+        "loadedQueueBytes": 1138688,
+        "bytesPerJob": 185.69,
+        "projectedSevenDayBytes": 155975680,
+        "deadTuplesBeforeVacuum": 0,
+        "deadTuplesAfterVacuum": 0
+      }
+    },
+    {
+      "id": "E2-10",
+      "pass": true,
+      "detail": "mensagem venenosa foi isolada após cinco entregas e gerou alerta ligado ao run original",
+      "metrics": {
+        "deliveries": 5,
+        "alerts": 1,
+        "archived": true
+      }
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "total": 10,
+    "approved": false
+  }
+}

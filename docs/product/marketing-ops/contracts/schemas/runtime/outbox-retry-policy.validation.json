@@ -1,0 +1,43 @@
+{
+  "validationId": "outbox-retry-policy-1.0",
+  "validatedAt": "2026-09-21T19:00:00Z",
+  "status": "passed_with_notes",
+  "schema": "outbox-retry-policy.schema.json",
+  "validFixture": "../../fixtures/valid/outbox-retry-policy-v1.json",
+  "invalidFixtures": [
+    "../../fixtures/invalid/outbox-retry-policy-max-attempts-zero.json",
+    "../../fixtures/invalid/outbox-retry-policy-uncertain-auto-retry.json",
+    "../../fixtures/invalid/outbox-retry-policy-overlapping-codes-business-invariant.json"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "canonicalFixtureAccepted": "passed",
+    "maximumDeliveryAttemptsIsFive": "passed",
+    "backoffSequenceIsOneTwoFourEight": "passed",
+    "jitterDisabled": "passed",
+    "retryableCodesRegistered": "passed",
+    "terminalCodesRegistered": "passed",
+    "classificationSetsDisjoint": "passed",
+    "unknownErrorsAreTerminal": "passed",
+    "uncertainExternalEffectRequiresHumanReconciliation": "passed",
+    "exhaustionErrorRegisteredAndTerminal": "passed",
+    "sameCycleRedeliveryAfterSettlementFailureProhibited": "passed",
+    "dispatcherPolicyBinding": "passed",
+    "runtimeActivationProhibited": "passed"
+  },
+  "directReferencesValidated": [
+    "Errors Registry 1.3",
+    "DEC-RUNTIME-003 outbox dispatcher boundary",
+    "ADR-0004 pgmq + pg_cron planning selection",
+    "EXP-02 E2-09 planning-phase retest"
+  ],
+  "unvalidatedImplementationReferences": [
+    "DeliveryFailurePolicy runtime implementation",
+    "OutboxDeliveryError TypeScript alignment",
+    "outbox settlement SQL alignment",
+    "dead-letter escalation event identity and payload",
+    "polling scheduler and composition root"
+  ],
+  "runtimeDispatchEnabled": false,
+  "databaseChanged": false
+}

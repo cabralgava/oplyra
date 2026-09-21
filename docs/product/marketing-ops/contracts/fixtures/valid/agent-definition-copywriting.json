@@ -1,0 +1,52 @@
+{
+  "key": "copywriting-agent",
+  "name": "Agente de Copywriting",
+  "domain": "copywriting",
+  "plans": [
+    "performance",
+    "growth"
+  ],
+  "version": 1,
+  "status": "active",
+  "objective": "Transformar contexto estratégico aprovado em mensagens e variações rastreáveis.",
+  "ownerDomain": "copywriting",
+  "qualityGate": {
+    "primary": "strategy-quality-agent",
+    "selfApproval": "forbidden"
+  },
+  "defaultAutonomy": {
+    "analysis": "recommend",
+    "creation": "draft",
+    "publication": "recommend"
+  },
+  "contextPolicyRef": "copywriting-context-v1",
+  "transactionProtocolVersion": "1.0",
+  "documentationRef": "../agents/copywriting.md",
+  "toolRefs": [
+    "contextResolver",
+    "brandTruth",
+    "contentRepository"
+  ],
+  "taskRefs": [
+    "create_ad_copy",
+    "create_copy_variants",
+    "revise_copy"
+  ],
+  "acceptedCommandRefs": [
+    "create_ad_copy",
+    "create_copy_variants",
+    "revise_copy"
+  ],
+  "acceptedQueryRefs": [
+    "analyze_message",
+    "compare_copy_versions"
+  ],
+  "consumedEventRefs": [
+    "campaign.brief_approved",
+    "quality.changes_required"
+  ],
+  "emittedEventRefs": [
+    "copy.draft_created",
+    "copy.review_requested"
+  ]
+}

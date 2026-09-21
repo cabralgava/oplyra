@@ -18,6 +18,7 @@ export interface UnitOfWork {
    */
   withIdentityTransaction<T>(userId: UserId, fn: (tx: Tx) => Promise<T>): Promise<T>;
   withWorkerTransaction<T>(tenantId: TenantId, jobRef: string, fn: (tx: Tx) => Promise<T>): Promise<T>;
+  withDispatcherTransaction<T>(tenantId: TenantId, dispatcherId: string, fn: (tx: Tx) => Promise<T>): Promise<T>;
   withOperatorTransaction<T>(operadorId: UserId, motivo: string, fn: (tx: Tx) => Promise<T>): Promise<T>;
 }
 

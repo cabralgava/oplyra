@@ -1,0 +1,90 @@
+{
+  "artifact": "oplyra-copy-draft-created-contract-tests",
+  "artifactVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-21T12:49:58Z",
+  "status": "passed",
+  "subject": {
+    "event": "copy.draft_created",
+    "eventsRegistryVersion": "1.1",
+    "payloadSchema": "copy-draft-created.payload.schema.json"
+  },
+  "runner": {
+    "framework": "vitest",
+    "version": "5.0.0",
+    "command": "vitest run test/contracts/copy-draft-created.contract.test.ts",
+    "testFiles": 1,
+    "testsRun": 11,
+    "testsPassed": 11,
+    "testsFailed": 0
+  },
+  "coverage": {
+    "schemaKeywordGuard": true,
+    "externalRefResolution": true,
+    "eventRegistryBinding": true,
+    "canonicalProducerAndConsumer": true,
+    "sourceActionRegistryBinding": true,
+    "validReferencePayload": true,
+    "missingDraftRef": true,
+    "minimumVersion": true,
+    "unsupportedSourceAction": true,
+    "minimumVariantRefs": true,
+    "uniqueVariantRefs": true,
+    "inlineContentRejected": true
+  },
+  "fixtures": {
+    "valid": 1,
+    "invalid": 6,
+    "paths": [
+      "docs/product/marketing-ops/contracts/fixtures/valid/copy-draft-created-payload.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-missing-draft-ref.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-version-zero.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-unsupported-source-action.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-empty-variant-refs.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-duplicate-variant-refs.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-additional-property.json"
+    ]
+  },
+  "harness": {
+    "path": "test/contracts/json-schema-subset.ts",
+    "supportedDraft": "2020-12 subset required by the bound schema",
+    "failOnUnsupportedKeyword": true,
+    "supportedKeywords": [
+      "$ref",
+      "type",
+      "required",
+      "properties",
+      "additionalProperties",
+      "items",
+      "minItems",
+      "uniqueItems",
+      "minimum",
+      "enum",
+      "minLength",
+      "pattern",
+      "format:date-time"
+    ]
+  },
+  "integrity": {
+    "docs/product/marketing-ops/contracts/fixtures/valid/copy-draft-created-payload.json": "67084e450daca64ceb4daa86037096685bfd7da8f7a4a102fc8ca2dde8585b50",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-missing-draft-ref.json": "4d8dcf9edb038a0a5423fe5a3d1f02eb18b95119c732da8fdb9275ebb4308433",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-version-zero.json": "4d42caf9eaef752f200b114524847979304ea5b22e831813e11e0473ce2c752e",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-unsupported-source-action.json": "84447fd43a1ce62eb3fbf3a6a7546c6f26154388cb4b5ffdea06254981935da8",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-empty-variant-refs.json": "64dfb13f4ebd7dcdb767c6fe60f9c1a04a76c60754021cec70c6ee7a08893a0c",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-duplicate-variant-refs.json": "4a7c084b1bd3120f37f26360ccb2578642dd0593a49c6ff7fe2886af1e62f675",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/copy-draft-created-payload-additional-property.json": "c5e15a482dbd7c2e23691a04c7e9096dd4e2f18e1ce06600665a159969d1f80e",
+    "test/contracts/json-schema-subset.ts": "3bf437a110ad6ef95a7aaaa304f948f16f1cb4e533f9a3b3da827f098c07cccc",
+    "test/contracts/copy-draft-created.contract.test.ts": "e7ac760ab6822802f6721458ceb0c5b88f92205437e04f34f148b8a7130ec0f7"
+  },
+  "result": {
+    "contractExecutable": true,
+    "runtimeImplemented": false,
+    "registryModified": false,
+    "runtimeDispatchEnabled": false,
+    "next": "define_authorized_tenant_scoped_reference_resolver_contract"
+  },
+  "runtimeDependency": {
+    "status": "not_implemented",
+    "requirement": "Resolve draftRef and variantRefs with tenant isolation and authorization before delivery to design-agent."
+  }
+}

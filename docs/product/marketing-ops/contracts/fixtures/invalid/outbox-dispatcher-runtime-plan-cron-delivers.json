@@ -1,0 +1,4 @@
+{
+  "planVersion": "1.0",
+  "transport": { "jobQueue": "pgmq", "eventOutboxSourceOfTruth": "content.event_outbox", "eventOutboxClaimBoundary": "app.claim_outbox_events", "scheduler": "pg_cron", "pgmqIsEventSourceOfTruth": false, "pgCronMayDeliverEvents": true }
+}

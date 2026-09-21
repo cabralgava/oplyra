@@ -1,0 +1,28 @@
+{
+  "reviewId": "review_self_001",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "reviewerAgent": "copywriting-agent",
+  "target": {
+    "type": "content",
+    "id": "copy_variant_c",
+    "version": 2,
+    "ownerAgent": "copywriting-agent",
+    "domain": "copywriting"
+  },
+  "gateType": "claim_gate",
+  "gateStatus": "passed",
+  "summary": "Auto-revisão do próprio output.",
+  "findings": [],
+  "limitations": [],
+  "evidenceRefs": [],
+  "requiredChanges": [],
+  "nextAction": {
+    "action": "proceed",
+    "targetAgent": "design-agent",
+    "reason": "Gate marcado como aprovado."
+  },
+  "escalation": null,
+  "createdAt": "2026-09-16T20:30:00Z",
+  "completedAt": "2026-09-16T20:31:00Z"
+}

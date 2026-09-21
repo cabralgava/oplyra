@@ -1,0 +1,21 @@
+{
+  "transaction": {
+    "id": "txn_BAD001",
+    "schemaVersion": "1.0",
+    "type": "event",
+    "action": "quality_passed",
+    "status": "completed",
+    "createdAt": "2026-09-16T18:02:00Z"
+  },
+  "trace": {
+    "correlationId": "corr_campaign_01"
+  },
+  "tenant": {
+    "tenantId": "tenant_123"
+  },
+  "actor": {
+    "type": "agent",
+    "id": "strategy-quality-agent"
+  },
+  "result": {}
+}

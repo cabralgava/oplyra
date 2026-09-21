@@ -1,0 +1,20 @@
+{
+  "currentClaim": {
+    "tenantId": "tenant_acme",
+    "eventTransactionId": "tx_event_copy_01",
+    "consumerAgent": "design-agent",
+    "attempt": 2,
+    "fencingToken": "fence_02"
+  },
+  "settlement": {
+    "tenantId": "tenant_acme",
+    "dispatcherId": "outbox-worker-01",
+    "eventTransactionId": "tx_event_copy_01",
+    "consumerAgent": "design-agent",
+    "attempt": 1,
+    "fencingToken": "fence_01",
+    "outcome": "dispatched",
+    "settledAt": "2026-09-21T16:03:00Z"
+  },
+  "expectedErrorCode": "INVALID_STATE_TRANSITION"
+}

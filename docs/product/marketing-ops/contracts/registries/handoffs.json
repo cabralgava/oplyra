@@ -1,0 +1,1614 @@
+{
+  "registry": "oplyra-handoffs",
+  "registryVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-17T23:11:22Z",
+  "status": "active",
+  "rules": {
+    "selfTransferForbidden": true,
+    "tenantMatchRequired": true,
+    "tracePropagationRequired": true,
+    "contextPackageRequiredByDefault": true,
+    "handoffMustReferenceRegisteredAgents": true,
+    "handoffPairMustBeRegistered": true
+  },
+  "entries": [
+    {
+      "key": "account-projects-agent__to__orchestrator-agent",
+      "fromAgent": "account-projects-agent",
+      "toAgent": "orchestrator-agent",
+      "status": "active",
+      "purpose": "Escalar blocker, risco, atraso ou conflito de execução.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId"
+      ],
+      "allowedActions": [
+        "active_blockers",
+        "next_action",
+        "operation_status",
+        "workflow_status"
+      ],
+      "expectedOutput": "workflow_decision_or_escalation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "copywriting-agent__to__design-agent",
+      "fromAgent": "copywriting-agent",
+      "toAgent": "design-agent",
+      "status": "active",
+      "purpose": "Transferir mensagem/copy aprovada para execução visual.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "adapt_visual",
+        "create_visual_brief",
+        "create_visual_concept",
+        "create_visual_variants",
+        "derive_visual_direction_from_asset",
+        "revise_visual_brief"
+      ],
+      "expectedOutput": "design_output",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/copywriting.md"
+      ],
+      "observedPayloadHints": [
+        "CTA",
+        "angle",
+        "approved message",
+        "constraints",
+        "hypothesis",
+        "message hierarchy",
+        "proof refs",
+        "visual intent"
+      ]
+    },
+    {
+      "key": "copywriting-agent__to__paid-media-agent",
+      "fromAgent": "copywriting-agent",
+      "toAgent": "paid-media-agent",
+      "status": "active",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "create_media_plan",
+        "map_experiment_variants",
+        "prepare_ad",
+        "prepare_campaign",
+        "publication_readiness"
+      ],
+      "expectedOutput": "media_plan_or_operation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/copywriting.md"
+      ],
+      "observedPayloadHints": [
+        "approved copy refs",
+        "experiment refs",
+        "variant refs"
+      ]
+    },
+    {
+      "key": "copywriting-agent__to__strategy-quality-agent",
+      "fromAgent": "copywriting-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "quality_status",
+        "review_copy"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/copywriting.md"
+      ],
+      "observedPayloadHints": [
+        "changedElements:",
+        "constantElements:",
+        "contentRef:",
+        "evidenceRefs:",
+        "expectedOutput: quality_review",
+        "experimentId:",
+        "fromAgent: copywriting-agent",
+        "handoff:",
+        "hypothesisId:",
+        "initiativeId:",
+        "task: review_copy",
+        "toAgent: strategy-quality-agent",
+        "version:"
+      ]
+    },
+    {
+      "key": "design-agent__to__paid-media-agent",
+      "fromAgent": "design-agent",
+      "toAgent": "paid-media-agent",
+      "status": "active",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "create_media_plan",
+        "map_experiment_variants",
+        "prepare_ad",
+        "prepare_campaign",
+        "publication_readiness"
+      ],
+      "expectedOutput": "media_plan_or_operation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/design.md"
+      ],
+      "observedPayloadHints": [
+        "approved design refs",
+        "asset refs",
+        "experiment refs",
+        "format refs",
+        "variant refs"
+      ]
+    },
+    {
+      "key": "design-agent__to__strategy-quality-agent",
+      "fromAgent": "design-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Solicitar quality review do conceito ou output visual.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "quality_status",
+        "review_design"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/design.md"
+      ],
+      "observedPayloadHints": [
+        "assetRefs:",
+        "changedElements:",
+        "constantElements:",
+        "designRef:",
+        "expectedOutput: quality_review",
+        "experimentId:",
+        "fromAgent: design-agent",
+        "handoff:",
+        "initiativeId:",
+        "task: review_design",
+        "toAgent: strategy-quality-agent",
+        "version:"
+      ]
+    },
+    {
+      "key": "email-marketing-agent__to__copywriting-agent",
+      "fromAgent": "email-marketing-agent",
+      "toAgent": "copywriting-agent",
+      "status": "active",
+      "purpose": "Solicitar subject, preheader, body, CTA ou variants.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "adapt_copy",
+        "create_copy_variants",
+        "create_email_copy",
+        "revise_copy",
+        "shorten_copy",
+        "suggest_message_angles"
+      ],
+      "expectedOutput": "copy_output",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/email-marketing.md"
+      ],
+      "observedPayloadHints": [
+        "audience",
+        "constraints",
+        "experiment variable",
+        "format",
+        "objective",
+        "offer"
+      ]
+    },
+    {
+      "key": "email-marketing-agent__to__lifecycle-agent",
+      "fromAgent": "email-marketing-agent",
+      "toAgent": "lifecycle-agent",
+      "status": "active",
+      "purpose": "Devolver eventos/resultados de delivery a uma journey.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "contact_journey_history",
+        "enrollment_status",
+        "journey_performance",
+        "journey_status",
+        "revise_journey"
+      ],
+      "expectedOutput": "journey_or_lifecycle_operation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/email-marketing.md"
+      ],
+      "observedPayloadHints": [
+        "conversion events",
+        "email delivery result",
+        "recipient events"
+      ]
+    },
+    {
+      "key": "email-marketing-agent__to__performance-intelligence-agent",
+      "fromAgent": "email-marketing-agent",
+      "toAgent": "performance-intelligence-agent",
+      "status": "active",
+      "purpose": "Transferir métricas e resultados de e-mail para análise.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_funnel",
+        "compare_periods",
+        "compare_variants",
+        "data_health",
+        "performance_status",
+        "propose_learning"
+      ],
+      "expectedOutput": "performance_analysis",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/email-marketing.md"
+      ],
+      "observedPayloadHints": [
+        "campaign refs",
+        "click metrics",
+        "conversion metrics",
+        "delivery metrics",
+        "experiment mapping",
+        "segment"
+      ]
+    },
+    {
+      "key": "email-marketing-agent__to__strategy-quality-agent",
+      "fromAgent": "email-marketing-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Solicitar review da campanha de e-mail.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "quality_status",
+        "review_email_campaign"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/email-marketing.md"
+      ],
+      "observedPayloadHints": [
+        "campaign draft",
+        "claims",
+        "copy refs",
+        "experiment",
+        "proof",
+        "segment logic"
+      ]
+    },
+    {
+      "key": "lifecycle-agent__to__account-projects-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "account-projects-agent",
+      "status": "active",
+      "purpose": "Criar tarefas humanas derivadas de journey.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective"
+      ],
+      "allowedActions": [
+        "assign_task",
+        "create_task",
+        "project_status",
+        "register_blocker",
+        "register_dependency",
+        "task_status",
+        "update_deadline",
+        "update_task"
+      ],
+      "expectedOutput": "operational_task_or_status",
+      "requiresContextPackage": false,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/lifecycle.md"
+      ],
+      "observedPayloadHints": [
+        "context",
+        "deadline",
+        "owner",
+        "task step"
+      ]
+    },
+    {
+      "key": "lifecycle-agent__to__email-marketing-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "email-marketing-agent",
+      "status": "active",
+      "purpose": "Executar um email step dentro de uma journey.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "create_email_campaign",
+        "deliverability_status",
+        "prepare_email_ab_test",
+        "prepare_email_campaign",
+        "schedule_email",
+        "send_email_campaign",
+        "send_readiness"
+      ],
+      "expectedOutput": "email_campaign_or_delivery",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/lifecycle.md"
+      ],
+      "observedPayloadHints": [
+        "audience:",
+        "contactState:",
+        "expectedOutput: email_delivery",
+        "experimentId:",
+        "fromAgent: lifecycle-agent",
+        "handoff:",
+        "journeyId:",
+        "journeyVersion:",
+        "objective:",
+        "offer:",
+        "stepId:",
+        "timing:",
+        "toAgent: email-marketing-agent"
+      ]
+    },
+    {
+      "key": "lifecycle-agent__to__performance-intelligence-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "performance-intelligence-agent",
+      "status": "active",
+      "purpose": "Transferir progression, drop-off e conversion de journeys para análise de performance.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId"
+      ],
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_funnel",
+        "analyze_lead_quality",
+        "assess_maturation",
+        "compare_variants",
+        "data_health",
+        "performance_status",
+        "propose_learning"
+      ],
+      "expectedOutput": "performance_analysis",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/lifecycle.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "lifecycle-agent__to__revenue-intelligence-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "revenue-intelligence-agent",
+      "status": "active",
+      "purpose": "Transferir progression/conversion para análise comercial.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable"
+      ],
+      "allowedActions": [
+        "analyze_pipeline_contribution",
+        "analyze_revenue_attribution",
+        "analyze_unattributed_revenue",
+        "assess_attribution_coverage",
+        "confidence_status",
+        "coverage_status",
+        "pipeline_status",
+        "propose_revenue_learning",
+        "revenue_status"
+      ],
+      "expectedOutput": "revenue_analysis",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/lifecycle.md"
+      ],
+      "observedPayloadHints": [
+        "conversion",
+        "dropoff",
+        "enrollment stats",
+        "journey refs",
+        "progression",
+        "timing"
+      ]
+    },
+    {
+      "key": "lifecycle-agent__to__strategy-quality-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Solicitar review de journey, regras, offer ou experimento.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "experiment_integrity",
+        "quality_status",
+        "review_experiment",
+        "review_journey",
+        "review_learning",
+        "review_strategy"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/lifecycle.md"
+      ],
+      "observedPayloadHints": [
+        "claims",
+        "entry/exit rules",
+        "experiment",
+        "journey draft",
+        "offer",
+        "risks",
+        "simulation result",
+        "steps"
+      ]
+    },
+    {
+      "key": "orchestrator-agent__to__account-projects-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "account-projects-agent",
+      "status": "active",
+      "purpose": "Operacionalizar plano, tasks, owners, dependências, deadlines e status.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective"
+      ],
+      "allowedActions": [
+        "assign_task",
+        "blocked_tasks",
+        "create_task",
+        "initiative_progress",
+        "overdue_tasks",
+        "owner_workload",
+        "pending_approvals",
+        "prepare_checkin",
+        "project_status",
+        "register_approval",
+        "register_blocker",
+        "register_decision",
+        "register_dependency",
+        "register_risk",
+        "resolve_blocker",
+        "task_dependencies",
+        "task_status",
+        "update_deadline",
+        "update_task"
+      ],
+      "expectedOutput": "operational_task_or_status",
+      "requiresContextPackage": false,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__copywriting-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "copywriting-agent",
+      "status": "active",
+      "purpose": "Delegar criação ou revisão de copy.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "adapt_copy",
+        "analyze_claim_usage",
+        "analyze_message",
+        "compare_copy_versions",
+        "create_ad_copy",
+        "create_copy_variants",
+        "create_email_copy",
+        "create_landing_page_copy",
+        "create_script",
+        "create_social_copy",
+        "derive_copy_from_asset",
+        "identify_copy_gaps",
+        "revise_copy",
+        "shorten_copy",
+        "suggest_message_angles"
+      ],
+      "expectedOutput": "copy_output",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__design-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "design-agent",
+      "status": "active",
+      "purpose": "Delegar conceito visual, brief ou variação criativa.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "adapt_visual",
+        "analyze_asset_fit",
+        "analyze_brand_alignment",
+        "analyze_visual_consistency",
+        "compare_visual_variants",
+        "create_static_variation",
+        "create_visual_brief",
+        "create_visual_concept",
+        "create_visual_variants",
+        "derive_visual_direction_from_asset",
+        "identify_visual_gaps",
+        "revise_visual_brief"
+      ],
+      "expectedOutput": "design_output",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__email-marketing-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "email-marketing-agent",
+      "status": "active",
+      "purpose": "Delegar campanha, segmentação ou operação de e-mail.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "create_email_campaign",
+        "create_segment",
+        "deliverability_status",
+        "email_campaign_status",
+        "email_performance",
+        "prepare_email_ab_test",
+        "prepare_email_campaign",
+        "schedule_email",
+        "segment_status",
+        "send_email_campaign",
+        "send_readiness",
+        "suppression_status"
+      ],
+      "expectedOutput": "email_campaign_or_delivery",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__lifecycle-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "lifecycle-agent",
+      "status": "active",
+      "purpose": "Delegar jornada, nurture, reativação ou automação de lifecycle.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "activate_journey",
+        "contact_journey_history",
+        "create_journey",
+        "create_journey_version",
+        "create_nurture_flow",
+        "create_reactivation_flow",
+        "enroll_contact",
+        "enrollment_status",
+        "journey_conflicts",
+        "journey_performance",
+        "journey_readiness",
+        "journey_status",
+        "pause_journey",
+        "revise_journey",
+        "simulate_journey"
+      ],
+      "expectedOutput": "journey_or_lifecycle_operation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__paid-media-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "paid-media-agent",
+      "status": "active",
+      "purpose": "Delegar planejamento, preparação ou operação de mídia paga.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "budget_status",
+        "create_media_plan",
+        "delivery_status",
+        "experiment_distribution",
+        "map_experiment_variants",
+        "media_campaign_status",
+        "media_performance",
+        "pause_campaign",
+        "prepare_ad",
+        "prepare_campaign",
+        "prepare_tracking",
+        "publication_readiness",
+        "publish_campaign",
+        "resume_campaign",
+        "tracking_status",
+        "update_budget"
+      ],
+      "expectedOutput": "media_plan_or_operation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__performance-intelligence-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "performance-intelligence-agent",
+      "status": "active",
+      "purpose": "Delegar análise de performance, experimento, funil ou anomalia.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_funnel",
+        "analyze_lead_quality",
+        "anomaly_status",
+        "assess_maturation",
+        "compare_periods",
+        "compare_variants",
+        "data_health",
+        "experiment_status",
+        "funnel_status",
+        "identify_anomaly",
+        "maturation_status",
+        "performance_attribution_status",
+        "performance_status",
+        "propose_learning"
+      ],
+      "expectedOutput": "performance_analysis",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__reporting-checkins-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "reporting-checkins-agent",
+      "status": "active",
+      "purpose": "Delegar relatório, check-in ou síntese executiva.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable"
+      ],
+      "allowedActions": [
+        "generate_executive_summary",
+        "generate_monthly_report",
+        "generate_weekly_checkin",
+        "latest_report",
+        "pending_reporting_decisions",
+        "persist_report",
+        "prepare_report_delivery",
+        "report_status",
+        "reporting_period_status",
+        "send_report"
+      ],
+      "expectedOutput": "report_or_checkin",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__revenue-intelligence-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "revenue-intelligence-agent",
+      "status": "active",
+      "purpose": "Delegar análise avançada de pipeline, atribuição e receita.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable"
+      ],
+      "allowedActions": [
+        "analyze_pipeline_contribution",
+        "analyze_revenue_attribution",
+        "analyze_unattributed_revenue",
+        "assess_attribution_coverage",
+        "compare_attribution_models",
+        "confidence_status",
+        "coverage_status",
+        "identify_tracking_gap",
+        "pipeline_status",
+        "propose_revenue_learning",
+        "revenue_attribution_status",
+        "revenue_status",
+        "source_conflicts",
+        "unattributed_revenue_status"
+      ],
+      "expectedOutput": "revenue_analysis",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__social-media-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "social-media-agent",
+      "status": "active",
+      "purpose": "Delegar operação orgânica de social media.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable"
+      ],
+      "allowedActions": [
+        "adapt_content_by_channel",
+        "calendar_status",
+        "content_status",
+        "create_content_calendar",
+        "create_editorial_plan",
+        "organic_performance",
+        "prepare_social_post",
+        "publication_status",
+        "publish_post",
+        "repurpose_content",
+        "repurpose_opportunities",
+        "schedule_post"
+      ],
+      "expectedOutput": "social_operation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "orchestrator-agent__to__strategy-quality-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Solicitar revisão estratégica, quality gate ou avaliação independente.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "experiment_integrity",
+        "quality_status",
+        "review_analysis",
+        "review_campaign",
+        "review_context_update",
+        "review_copy",
+        "review_design",
+        "review_email_campaign",
+        "review_experiment",
+        "review_journey",
+        "review_learning",
+        "review_report",
+        "review_social_content",
+        "review_strategy",
+        "strategic_alignment"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/orchestrator.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "paid-media-agent__to__account-projects-agent",
+      "fromAgent": "paid-media-agent",
+      "toAgent": "account-projects-agent",
+      "status": "active",
+      "purpose": "Transferir dependências, blockers, deadlines e tarefas operacionais de mídia.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective"
+      ],
+      "allowedActions": [
+        "assign_task",
+        "create_task",
+        "project_status",
+        "register_blocker",
+        "register_dependency",
+        "task_status",
+        "update_deadline",
+        "update_task"
+      ],
+      "expectedOutput": "operational_task_or_status",
+      "requiresContextPackage": false,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/paid-media.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "paid-media-agent__to__orchestrator-agent",
+      "fromAgent": "paid-media-agent",
+      "toAgent": "orchestrator-agent",
+      "status": "active",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId"
+      ],
+      "allowedActions": [
+        "active_blockers",
+        "next_action",
+        "operation_status",
+        "workflow_status"
+      ],
+      "expectedOutput": "workflow_decision_or_escalation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/paid-media.md"
+      ],
+      "observedPayloadHints": [
+        "approvals",
+        "blockers",
+        "execution result",
+        "external ids",
+        "publication status"
+      ]
+    },
+    {
+      "key": "paid-media-agent__to__performance-intelligence-agent",
+      "fromAgent": "paid-media-agent",
+      "toAgent": "performance-intelligence-agent",
+      "status": "active",
+      "purpose": "Transferir campanhas, métricas e experiment mapping para análise.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_funnel",
+        "analyze_lead_quality",
+        "assess_maturation",
+        "compare_periods",
+        "compare_variants",
+        "data_health",
+        "experiment_status",
+        "maturation_status",
+        "performance_attribution_status",
+        "propose_learning"
+      ],
+      "expectedOutput": "performance_analysis",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/paid-media.md"
+      ],
+      "observedPayloadHints": [
+        "campaign refs",
+        "data quality notes",
+        "delivery",
+        "external ids",
+        "spend",
+        "tracking state",
+        "variant mapping"
+      ]
+    },
+    {
+      "key": "paid-media-agent__to__strategy-quality-agent",
+      "fromAgent": "paid-media-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Solicitar quality review antes de publicação ou decisão crítica.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "experiment_integrity",
+        "quality_status",
+        "review_campaign",
+        "review_experiment",
+        "review_strategy"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/paid-media.md"
+      ],
+      "observedPayloadHints": [
+        "audience setup",
+        "budget setup",
+        "campaign draft",
+        "experiment mapping",
+        "media plan",
+        "risks",
+        "tracking setup"
+      ]
+    },
+    {
+      "key": "performance-intelligence-agent__to__orchestrator-agent",
+      "fromAgent": "performance-intelligence-agent",
+      "toAgent": "orchestrator-agent",
+      "status": "active",
+      "purpose": "Escalar findings, riscos, decisões e próximos passos para coordenação do workflow.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId"
+      ],
+      "allowedActions": [
+        "active_blockers",
+        "next_action",
+        "operation_status",
+        "workflow_status"
+      ],
+      "expectedOutput": "workflow_decision_or_escalation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/performance-intelligence.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "performance-intelligence-agent__to__paid-media-agent",
+      "fromAgent": "performance-intelligence-agent",
+      "toAgent": "paid-media-agent",
+      "status": "active",
+      "purpose": "Devolver findings e recomendações acionáveis para otimização de mídia paga.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId"
+      ],
+      "allowedActions": [
+        "budget_status",
+        "create_media_plan",
+        "map_experiment_variants",
+        "prepare_ad",
+        "prepare_campaign",
+        "prepare_tracking",
+        "publication_readiness",
+        "update_budget"
+      ],
+      "expectedOutput": "media_plan_or_operation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/performance-intelligence.md"
+      ],
+      "observedPayloadHints": []
+    },
+    {
+      "key": "performance-intelligence-agent__to__reporting-checkins-agent",
+      "fromAgent": "performance-intelligence-agent",
+      "toAgent": "reporting-checkins-agent",
+      "status": "active",
+      "purpose": "Transferir fatos, findings e limitações para reporting.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable"
+      ],
+      "allowedActions": [
+        "generate_executive_summary",
+        "generate_monthly_report",
+        "generate_weekly_checkin",
+        "latest_report",
+        "pending_reporting_decisions",
+        "persist_report",
+        "prepare_report_delivery",
+        "report_status",
+        "reporting_period_status"
+      ],
+      "expectedOutput": "report_or_checkin",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/performance-intelligence.md"
+      ],
+      "observedPayloadHints": [
+        "decision points",
+        "facts",
+        "inferences",
+        "limitations",
+        "recommendations"
+      ]
+    },
+    {
+      "key": "performance-intelligence-agent__to__strategy-quality-agent",
+      "fromAgent": "performance-intelligence-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Submeter conclusões, learnings ou análises críticas para revisão.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "evidence_sufficiency",
+        "experiment_integrity",
+        "quality_status",
+        "review_analysis",
+        "review_experiment",
+        "review_learning"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/performance-intelligence.md"
+      ],
+      "observedPayloadHints": [
+        "analysis",
+        "evidence",
+        "experiment conclusion",
+        "learning proposal",
+        "limitations"
+      ]
+    },
+    {
+      "key": "reporting-checkins-agent__to__strategy-quality-agent",
+      "fromAgent": "reporting-checkins-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Solicitar revisão de relatório ou narrativa executiva quando aplicável.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "evidence_sufficiency",
+        "quality_status",
+        "review_analysis",
+        "review_report"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/reporting-checkins.md"
+      ],
+      "observedPayloadHints": [
+        "experiment summaries",
+        "limitations",
+        "recommendations",
+        "report draft",
+        "source refs"
+      ]
+    },
+    {
+      "key": "revenue-intelligence-agent__to__performance-intelligence-agent",
+      "fromAgent": "revenue-intelligence-agent",
+      "toAgent": "performance-intelligence-agent",
+      "status": "active",
+      "purpose": "Transferir findings avançados de revenue/attribution para performance.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_funnel",
+        "analyze_lead_quality",
+        "assess_maturation",
+        "compare_periods",
+        "data_health",
+        "performance_attribution_status",
+        "propose_learning"
+      ],
+      "expectedOutput": "performance_analysis",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/revenue-intelligence.md"
+      ],
+      "observedPayloadHints": [
+        "advanced revenue findings",
+        "attribution findings",
+        "tracking gaps"
+      ]
+    },
+    {
+      "key": "revenue-intelligence-agent__to__reporting-checkins-agent",
+      "fromAgent": "revenue-intelligence-agent",
+      "toAgent": "reporting-checkins-agent",
+      "status": "active",
+      "purpose": "Transferir facts de pipeline/receita para reporting.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable"
+      ],
+      "allowedActions": [
+        "generate_executive_summary",
+        "generate_monthly_report",
+        "generate_weekly_checkin",
+        "latest_report",
+        "persist_report",
+        "prepare_report_delivery",
+        "report_status",
+        "reporting_period_status"
+      ],
+      "expectedOutput": "report_or_checkin",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/revenue-intelligence.md"
+      ],
+      "observedPayloadHints": [
+        "attributed revenue",
+        "confidence",
+        "confirmed facts",
+        "coverage",
+        "limitations",
+        "model",
+        "period",
+        "unattributed revenue"
+      ]
+    },
+    {
+      "key": "revenue-intelligence-agent__to__strategy-quality-agent",
+      "fromAgent": "revenue-intelligence-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Submeter análise de atribuição/receita e causal boundary para revisão.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "evidence_sufficiency",
+        "quality_status",
+        "review_analysis",
+        "review_learning",
+        "review_report"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/revenue-intelligence.md"
+      ],
+      "observedPayloadHints": [
+        "attribution analysis",
+        "causal boundary",
+        "confidence",
+        "coverage",
+        "learning proposal",
+        "limitations"
+      ]
+    },
+    {
+      "key": "social-media-agent__to__copywriting-agent",
+      "fromAgent": "social-media-agent",
+      "toAgent": "copywriting-agent",
+      "status": "active",
+      "purpose": "Solicitar copy especializada para conteúdo social.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "adapt_copy",
+        "create_copy_variants",
+        "create_social_copy",
+        "revise_copy",
+        "shorten_copy",
+        "suggest_message_angles"
+      ],
+      "expectedOutput": "copy_output",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/social-media.md"
+      ],
+      "observedPayloadHints": [
+        "audience",
+        "channel",
+        "constraints",
+        "format",
+        "message",
+        "objective"
+      ]
+    },
+    {
+      "key": "social-media-agent__to__design-agent",
+      "fromAgent": "social-media-agent",
+      "toAgent": "design-agent",
+      "status": "active",
+      "purpose": "Solicitar assets e adaptação visual para social.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "adapt_visual",
+        "create_static_variation",
+        "create_visual_brief",
+        "create_visual_concept",
+        "create_visual_variants",
+        "revise_visual_brief"
+      ],
+      "expectedOutput": "design_output",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/social-media.md"
+      ],
+      "observedPayloadHints": [
+        "asset requirements",
+        "channel",
+        "format",
+        "message",
+        "visual objective"
+      ]
+    },
+    {
+      "key": "social-media-agent__to__performance-intelligence-agent",
+      "fromAgent": "social-media-agent",
+      "toAgent": "performance-intelligence-agent",
+      "status": "active",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "initiativeId_when_applicable",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_lead_quality",
+        "compare_periods",
+        "compare_variants",
+        "data_health",
+        "performance_status",
+        "propose_learning"
+      ],
+      "expectedOutput": "performance_analysis",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/social-media.md"
+      ],
+      "observedPayloadHints": [
+        "channel",
+        "content refs",
+        "metrics",
+        "observational notes",
+        "period"
+      ]
+    },
+    {
+      "key": "social-media-agent__to__strategy-quality-agent",
+      "fromAgent": "social-media-agent",
+      "toAgent": "strategy-quality-agent",
+      "status": "active",
+      "purpose": "Solicitar review de conteúdo social.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId",
+        "experimentId_when_applicable"
+      ],
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "quality_status",
+        "review_social_content"
+      ],
+      "expectedOutput": "quality_review",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [
+        "../../agents/social-media.md"
+      ],
+      "observedPayloadHints": [
+        "asset refs",
+        "campaign refs",
+        "claims",
+        "content draft",
+        "proof refs"
+      ]
+    },
+    {
+      "key": "strategy-quality-agent__to__orchestrator-agent",
+      "fromAgent": "strategy-quality-agent",
+      "toAgent": "orchestrator-agent",
+      "status": "active",
+      "purpose": "Escalar bloqueio, changes required ou decisão de workflow.",
+      "requiredRefs": [
+        "taskId",
+        "tenantId",
+        "objective",
+        "contextPackageId"
+      ],
+      "allowedActions": [
+        "active_blockers",
+        "next_action",
+        "operation_status",
+        "workflow_status"
+      ],
+      "expectedOutput": "workflow_decision_or_escalation",
+      "requiresContextPackage": true,
+      "requiresTenantMatch": true,
+      "requiresTracePropagation": true,
+      "sourceRefs": [],
+      "observedPayloadHints": []
+    }
+  ],
+  "nonAgentTransferExclusions": [
+    {
+      "sourceAgent": "reporting-checkins-agent",
+      "label": "Delivery",
+      "reason": "External report delivery is a service/tool execution, not an agent-to-agent handoff.",
+      "sourceRef": "../../agents/reporting-checkins.md"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "handoff_bad_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "fromAgent": "copywriting-agent",
+  "toAgent": "design-agent",
+  "taskId": "task_design_01",
+  "objective": "",
+  "status": "rejected",
+  "inputRefs": [],
+  "decisionsMade": [],
+  "constraints": [],
+  "openQuestions": [],
+  "expectedOutput": {
+    "action": "create_static_variations",
+    "description": "Criar variações."
+  },
+  "createdAt": "2026-09-16T20:00:00Z",
+  "rejection": null
+}

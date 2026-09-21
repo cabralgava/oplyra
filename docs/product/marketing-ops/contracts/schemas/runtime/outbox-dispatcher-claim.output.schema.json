@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/runtime/outbox-dispatcher/claim-output/1.0",
+  "title": "Outbox Dispatcher Claim — Output",
+  "description": "Lote tenant-scoped de eventos reivindicados com lease, attempt e fencing token. O lote pode ser vazio.",
+  "type": "object",
+  "required": [
+    "tenantId",
+    "dispatcherId",
+    "claimedAt",
+    "claims"
+  ],
+  "properties": {
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+    },
+    "dispatcherId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "claimedAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "claim": {
+      "type": "object",
+      "required": [
+        "eventTransactionId",
+        "eventKey",
+        "schemaVersion",
+        "producerAgent",
+        "consumerAgent",
+        "payload",
+        "trace",
+        "context",
+        "attempt",
+        "fencingToken",
+        "leaseExpiresAt"
+      ],
+      "properties": {
+        "eventTransactionId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "eventKey": {
+          "type": "string",
+          "enum": [
+            "copy.draft_created"
+          ]
+        },
+        "schemaVersion": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/schemaVersion"
+        },
+        "producerAgent": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/agentKey"
+        },
+        "consumerAgent": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/agentKey"
+        },
+        "payload": {
+          "$ref": "https://schemas.oplyra.com/events/copywriting/copy-draft-created/payload/1.0"
+        },
+        "trace": {
+          "$ref": "#/$defs/trace"
+        },
+        "context": {
+          "type": "object"
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fencingToken": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "leaseExpiresAt": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "trace": {
+      "type": "object",
+      "required": [
+        "correlationId"
+      ],
+      "properties": {
+        "correlationId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "causationId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "workflowId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "taskId": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

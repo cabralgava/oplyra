@@ -1,0 +1,11 @@
+{
+  "tenantId": "tenant_123",
+  "requesterAgent": "design-agent",
+  "requiredPermission": "write",
+  "repository": "contentRepository",
+  "draftRef": "copy_draft_01",
+  "expectedVersion": 1,
+  "variantRefs": [
+    "var_a_copy_v1"
+  ]
+}

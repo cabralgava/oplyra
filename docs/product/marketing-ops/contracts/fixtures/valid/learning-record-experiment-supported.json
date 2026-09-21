@@ -1,0 +1,91 @@
+{
+  "id": "learning_exp_091_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "source": {
+    "type": "experiment",
+    "ref": "experiment:exp_091:v2",
+    "experimentId": "exp_091",
+    "initiativeId": "cmp_123",
+    "observedAt": "2026-09-17T13:20:00Z"
+  },
+  "context": {
+    "scope": "experiment",
+    "initiativeId": "cmp_123",
+    "experimentId": "exp_091",
+    "productId": "prd_001",
+    "audienceId": "vp_marketing",
+    "channel": "linkedin_ads",
+    "periodStart": "2026-09-01T00:00:00Z",
+    "periodEnd": "2026-09-15T23:59:59Z",
+    "contextVersionRefs": [
+      "brandTruth:tenant_123:v5",
+      "initiative:cmp_123:v4",
+      "experiment:exp_091:v2"
+    ]
+  },
+  "evidence": {
+    "refs": [
+      "analysis:perf_exp_091",
+      "dataset:exp_091_results_v1"
+    ],
+    "dataCoverage": 0.96,
+    "maturationStatus": "mature",
+    "causalSupport": "experimental_supported"
+  },
+  "conclusion": {
+    "status": "supported",
+    "statement": "Para a audiência e período testados, o ângulo orientado a pipeline superou o ângulo orientado a eficiência na métrica primária definida pelo experimento.",
+    "scope": "VP Marketing em LinkedIn Ads, experimento exp_091.",
+    "causalClaim": true
+  },
+  "confidence": {
+    "level": "high",
+    "score": 0.91,
+    "reason": "Distribuição controlada, boa cobertura e maturação concluída."
+  },
+  "limitations": [
+    {
+      "type": "scope",
+      "description": "O resultado é específico da audiência, canal e período testados.",
+      "impact": "medium",
+      "evidenceRef": "experiment:exp_091:v2"
+    }
+  ],
+  "decision": {
+    "action": "iterate",
+    "reason": "Manter o ângulo de pipeline como base e testar variações de proof.",
+    "ownerAgent": "strategy-quality-agent"
+  },
+  "proposedContextUpdateRefs": [],
+  "nextExperiment": {
+    "question": "Qual proof fortalece melhor o ângulo de pipeline?",
+    "hypothesis": "Proof com resultado comercial concreto aumentará a progressão para reunião.",
+    "variable": "proof",
+    "priority": "high"
+  },
+  "reviewStatus": "approved",
+  "review": {
+    "reviewedBy": {
+      "type": "agent",
+      "id": "strategy-quality-agent",
+      "role": null
+    },
+    "startedAt": "2026-09-17T13:30:00Z",
+    "completedAt": "2026-09-17T13:35:00Z",
+    "outcome": "approved",
+    "reviewRef": "review_learning_01",
+    "notes": "Learning aprovado dentro do escopo do experimento."
+  },
+  "supersededBy": null,
+  "createdBy": {
+    "type": "agent",
+    "id": "performance-intelligence-agent",
+    "role": null
+  },
+  "createdAt": "2026-09-17T13:25:00Z",
+  "updatedAt": "2026-09-17T13:35:00Z",
+  "correlationId": "corr_exp_091",
+  "workflowId": "wf_experiment_091",
+  "taskId": "task_analyze_exp_091"
+}

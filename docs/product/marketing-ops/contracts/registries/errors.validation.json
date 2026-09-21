@@ -1,0 +1,27 @@
+{
+  "registry": "oplyra-errors",
+  "registryVersion": "1.3",
+  "canonicalErrors": 46,
+  "categories": ["analytics", "asset", "budget", "consent", "context", "entitlement", "external", "governance", "idempotency", "integration", "journey", "permission", "rate_limit", "runtime", "timeout", "tracking", "validation"],
+  "retryableErrors": 4,
+  "criticalErrors": 4,
+  "addedCodes": ["RETRY_ATTEMPTS_EXHAUSTED"],
+  "checks": {
+    "uniqueCodes": true,
+    "categoriesValid": true,
+    "severityValid": true,
+    "nextActionsValid": true,
+    "retrySemanticsValid": true,
+    "criticalBehaviorValid": true,
+    "retryExhaustionIsTerminal": true
+  },
+  "validation": { "status": "passed", "errors": [], "warnings": [] },
+  "generatedAt": "2026-09-21T19:00:00Z",
+  "compatibility": {
+    "changeProposal": "../changes/CR-021-outbox-retry-failure-policy.md",
+    "classification": "backward_compatible",
+    "baseRegistryVersion": "1.2",
+    "currentRegistryVersion": "1.3",
+    "schemaVersionChanged": false
+  }
+}

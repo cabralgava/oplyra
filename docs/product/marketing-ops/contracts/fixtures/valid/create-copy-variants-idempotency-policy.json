@@ -1,0 +1,56 @@
+{
+  "artifact": "create-copy-variants-idempotency-policy",
+  "version": "1.0",
+  "scope": [
+    "tenantId",
+    "action",
+    "idempotency.key"
+  ],
+  "action": "create_copy_variants",
+  "fingerprint": {
+    "algorithm": "sha256",
+    "serialization": "canonical_json",
+    "includes": [
+      "validated_action_input"
+    ],
+    "excludes": [
+      "transaction_id",
+      "timestamps",
+      "trace",
+      "retry_attempt",
+      "transport_metadata",
+      "non_material_actor_session_metadata"
+    ]
+  },
+  "cases": [
+    {
+      "condition": "required_key_missing",
+      "result": "error",
+      "errorCode": "TRANSACTION_SCHEMA_INVALID",
+      "writeAllowed": false
+    },
+    {
+      "condition": "scoped_key_absent",
+      "result": "execute_once",
+      "errorCode": null,
+      "writeAllowed": true
+    },
+    {
+      "condition": "same_scoped_key_same_fingerprint",
+      "result": "return_canonical_stored_result",
+      "errorCode": null,
+      "writeAllowed": false
+    },
+    {
+      "condition": "same_scoped_key_different_fingerprint",
+      "result": "error",
+      "errorCode": "IDEMPOTENCY_CONFLICT",
+      "writeAllowed": false
+    }
+  ],
+  "retention": {
+    "automaticExpiryApproved": false,
+    "behavior": "retain_until_governed_policy_exists"
+  }
+}
+

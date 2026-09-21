@@ -1,0 +1,221 @@
+{
+  "registry": "oplyra-quality-gates-validation",
+  "registryVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-17T20:52:38Z",
+  "status": "active",
+  "subject": "quality-gates.json",
+  "validationStatus": "passed",
+  "checksRun": 15,
+  "checksPassed": 15,
+  "checksFailed": 0,
+  "notes": [
+    "Validation reflects the updated conditional deterministic checks in publication_gate and operational_gate.",
+    "Validation used the canonical contract fixed in this conversation and Project continuity artifacts.",
+    "Direct bytes for agents.json and quality-review.schema.json were not exposed in the current Project file surface; agent IDs and schema enums were cross-checked against canonical Project snapshots/instructions instead.",
+    "ownerService=policy-engine is an explicitly allowed service ID exception until services.json exists.",
+    "No handoff/action binding or Contract Registry Freeze was performed."
+  ],
+  "checks": [
+    {
+      "id": "QG-VAL-001",
+      "name": "registry = \"oplyra-quality-gates\"",
+      "status": "passed",
+      "details": {
+        "actual": "oplyra-quality-gates",
+        "expected": "oplyra-quality-gates"
+      },
+      "evidenceBasis": "generated_registry"
+    },
+    {
+      "id": "QG-VAL-002",
+      "name": "registryVersion = \"1.0\"",
+      "status": "passed",
+      "details": {
+        "actual": "1.0",
+        "expected": "1.0"
+      },
+      "evidenceBasis": "generated_registry"
+    },
+    {
+      "id": "QG-VAL-003",
+      "name": "schemaVersion = \"1.0\"",
+      "status": "passed",
+      "details": {
+        "actual": "1.0",
+        "expected": "1.0"
+      },
+      "evidenceBasis": "generated_registry"
+    },
+    {
+      "id": "QG-VAL-004",
+      "name": "entries contém exatamente 11 gates",
+      "status": "passed",
+      "details": {
+        "actual": 11,
+        "expected": 11
+      },
+      "evidenceBasis": "generated_registry"
+    },
+    {
+      "id": "QG-VAL-005",
+      "name": "gate keys são únicos",
+      "status": "passed",
+      "details": {
+        "duplicates": []
+      },
+      "evidenceBasis": "generated_registry"
+    },
+    {
+      "id": "QG-VAL-006",
+      "name": "todos os gate keys existem no enum canônico de quality-review.schema.json",
+      "status": "passed",
+      "details": {
+        "actual": [
+          "strategy_gate",
+          "brand_gate",
+          "claim_gate",
+          "evidence_gate",
+          "creative_gate",
+          "experiment_gate",
+          "analysis_gate",
+          "reporting_gate",
+          "learning_gate",
+          "publication_gate",
+          "operational_gate"
+        ],
+        "expected": [
+          "strategy_gate",
+          "brand_gate",
+          "claim_gate",
+          "evidence_gate",
+          "creative_gate",
+          "experiment_gate",
+          "analysis_gate",
+          "reporting_gate",
+          "learning_gate",
+          "publication_gate",
+          "operational_gate"
+        ]
+      },
+      "evidenceBasis": "project_continuity_artifacts_plus_user_fixed_canonical_contract"
+    },
+    {
+      "id": "QG-VAL-007",
+      "name": "todo ownerAgent existe no Agent Registry canônico",
+      "status": "passed",
+      "details": {
+        "ownerAgents": [
+          "strategy-quality-agent"
+        ],
+        "missing": []
+      },
+      "evidenceBasis": "canonical_agent_snapshot_and_project_instructions; direct agents.json bytes unavailable in current Project surface"
+    },
+    {
+      "id": "QG-VAL-008",
+      "name": "strategy-quality-agent é owner/reviewer dos gates agentic",
+      "status": "passed",
+      "details": {
+        "agenticGateCount": 10
+      },
+      "evidenceBasis": "generated_registry_plus_canonical_strategy_quality_ownership"
+    },
+    {
+      "id": "QG-VAL-009",
+      "name": "operational_gate usa ownerService = \"policy-engine\"",
+      "status": "passed",
+      "details": {
+        "ownerAgent": null,
+        "ownerService": "policy-engine"
+      },
+      "evidenceBasis": "generated_registry_plus_user_fixed_canonical_contract"
+    },
+    {
+      "id": "QG-VAL-010",
+      "name": "selfApprovalAllowed = false em todos os gates agentic",
+      "status": "passed",
+      "details": {
+        "agenticGateCount": 10
+      },
+      "evidenceBasis": "generated_registry_plus_DEC-010"
+    },
+    {
+      "id": "QG-VAL-011",
+      "name": "applicableTargetTypes usa apenas target types canônicos",
+      "status": "passed",
+      "details": {
+        "used": [
+          "analysis",
+          "campaign",
+          "content",
+          "context_update",
+          "creative",
+          "email_campaign",
+          "experiment",
+          "initiative",
+          "journey",
+          "learning",
+          "other",
+          "report",
+          "social_content",
+          "task"
+        ],
+        "invalid": []
+      },
+      "evidenceBasis": "user_fixed_canonical_quality_review_target_types"
+    },
+    {
+      "id": "QG-VAL-012",
+      "name": "blockingSeverities = [\"blocking\"]",
+      "status": "passed",
+      "details": {
+        "gateCount": 11
+      },
+      "evidenceBasis": "generated_registry_plus_user_fixed_canonical_quality_severity"
+    },
+    {
+      "id": "QG-VAL-013",
+      "name": "allowedStatuses coincide com os statuses canônicos",
+      "status": "passed",
+      "details": {
+        "expected": [
+          "passed",
+          "passed_with_notes",
+          "changes_required",
+          "blocked",
+          "escalation_required"
+        ]
+      },
+      "evidenceBasis": "generated_registry_plus_user_fixed_canonical_quality_statuses"
+    },
+    {
+      "id": "QG-VAL-014",
+      "name": "plans usa apenas performance/growth",
+      "status": "passed",
+      "details": {
+        "invalid": [],
+        "allowed": [
+          "growth",
+          "performance"
+        ]
+      },
+      "evidenceBasis": "generated_registry_plus_project_plan_state"
+    },
+    {
+      "id": "QG-VAL-015",
+      "name": "nenhuma referência cross-registry fica órfã",
+      "status": "passed",
+      "details": {
+        "orphanReferences": [],
+        "validatedReferenceTypes": [
+          "ownerAgent"
+        ],
+        "serviceIdsExplicitlyAllowedWithoutServicesRegistry": [
+          "policy-engine"
+        ]
+      },
+      "evidenceBasis": "canonical_agent_snapshot_and_user_fixed_service_id_exception; direct agents.json bytes unavailable in current Project surface"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "planVersion": "1.0",
+  "polling": { "defaultBatchSize": 501, "maximumBatchSize": 500, "leaseDurationSeconds": 120, "idleIntervalMilliseconds": 1000, "failureIntervalMilliseconds": 5000, "emptyCycleConsumesAttempt": false }
+}

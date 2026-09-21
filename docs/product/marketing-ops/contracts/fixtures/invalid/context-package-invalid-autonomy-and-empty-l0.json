@@ -1,0 +1,23 @@
+{
+  "id": "ctx_bad_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "agentKey": "copywriting-agent",
+  "generatedAt": "2026-09-16T19:30:00Z",
+  "layers": {
+    "l0": {
+      "status": "included"
+    }
+  },
+  "sourceVersions": {},
+  "permissions": {
+    "permissionSetRefs": [],
+    "effectivePermissions": []
+  },
+  "autonomy": {
+    "level": "full"
+  },
+  "missingContext": [],
+  "conflicts": [],
+  "freshness": []
+}

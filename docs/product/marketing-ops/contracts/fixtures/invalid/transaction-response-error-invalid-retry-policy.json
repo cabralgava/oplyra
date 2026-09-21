@@ -1,0 +1,43 @@
+{
+  "transaction": {
+    "id": "txn_error_response_bad_001",
+    "schemaVersion": "1.0",
+    "type": "response",
+    "action": "send_email_campaign",
+    "status": "failed",
+    "createdAt": "2026-09-17T14:00:00Z"
+  },
+  "trace": {
+    "correlationId": "corr_email_01",
+    "causationId": "txn_email_send_001",
+    "taskId": "task_email_send_01"
+  },
+  "tenant": {
+    "tenantId": "tenant_123"
+  },
+  "actor": {
+    "type": "agent",
+    "id": "email-marketing-agent"
+  },
+  "error": {
+    "code": "INTEGRATION_UNAVAILABLE",
+    "category": "integration",
+    "severity": "high",
+    "retryable": false,
+    "message": "Email provider is temporarily unavailable.",
+    "retryPolicy": {
+      "strategy": "exponential_backoff",
+      "maxAttempts": 4,
+      "initialDelaySeconds": 30,
+      "maxDelaySeconds": 900,
+      "retryAfterSeconds": null
+    },
+    "source": {
+      "type": "integration",
+      "id": "email-provider-adapter",
+      "operation": "send_email_campaign"
+    },
+    "cause": null,
+    "occurredAt": "2026-09-17T14:00:00Z"
+  }
+}

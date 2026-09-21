@@ -1,0 +1,136 @@
+{
+  "registry": "oplyra-events",
+  "registryVersion": "1.2",
+  "canonicalEvents": 137,
+  "consumedEventNames": 63,
+  "agentProducedEvents": 101,
+  "externalProducedEvents": 36,
+  "selfConsumedEvents": [
+    "task.blocked",
+    "task.completed"
+  ],
+  "unconsumedAgentOriginatedEvents": [
+    "anomaly.detected",
+    "approval.pending",
+    "approval.requested",
+    "attribution.analysis_completed",
+    "attribution.coverage_issue_detected",
+    "attribution.source_conflict_detected",
+    "attribution.tracking_gap_detected",
+    "checkin.generated",
+    "context_update.reviewed",
+    "copy.context_missing",
+    "copy.experiment_conflict",
+    "copy.version_created",
+    "data_quality.issue_detected",
+    "design.asset_missing",
+    "design.asset_rights_missing",
+    "design.brief_created",
+    "design.experiment_conflict",
+    "design.version_created",
+    "email.bounce_detected",
+    "email.campaign_scheduled",
+    "email.campaign_sent",
+    "email.complaint_detected",
+    "email.performance_updated",
+    "email.send_blocked",
+    "email.unsubscribe_received",
+    "human_escalation.requested",
+    "journey.activated",
+    "journey.conflict_detected",
+    "journey.created",
+    "journey.dropoff_detected",
+    "journey.enrollment_created",
+    "journey.loop_detected",
+    "journey.paused",
+    "journey.simulated",
+    "journey.step_executed",
+    "journey.version_created",
+    "lifecycle.learning_proposed",
+    "maturation.insufficient",
+    "media.budget_change_requested",
+    "media.campaign_paused",
+    "media.campaign_published",
+    "media.campaign_resumed",
+    "media.delivery_anomaly_detected",
+    "media.experiment_distribution_issue",
+    "media.plan_created",
+    "media.publication_ready",
+    "media.tracking_issue_detected",
+    "orchestration.context_missing",
+    "project.at_risk",
+    "quality.passed_with_notes",
+    "recommendation.created",
+    "report.approved",
+    "report.persisted",
+    "report.sent",
+    "reporting.data_limitation_detected",
+    "revenue.analysis_completed",
+    "revenue.learning_proposed",
+    "social.content_published",
+    "social.content_scheduled",
+    "social.observation_recorded",
+    "social.performance_updated",
+    "social.plan_created",
+    "social.publication_failed",
+    "social.repurpose_opportunity_identified",
+    "task.assigned",
+    "task.overdue",
+    "task.ready",
+    "task.updated",
+    "workflow.blocked",
+    "workflow.cancelled",
+    "workflow.completed",
+    "workflow.resumed",
+    "workflow.started"
+  ],
+  "producerCollisionsResolved": 1,
+  "producerFixes": {
+    "agent.escalation_requested": {
+      "type": "runtime",
+      "id": "agent-runtime"
+    },
+    "content.published": {
+      "type": "service",
+      "id": "content-service"
+    },
+    "context_update.proposed": {
+      "type": "service",
+      "id": "context-update-service"
+    },
+    "scope.changed": {
+      "type": "service",
+      "id": "initiative-service"
+    }
+  },
+  "checks": {
+    "uniqueEventNames": true,
+    "allConsumedEventsHaveProducer": true,
+    "allProducersResolved": true,
+    "allAgentConsumersRegistered": true,
+    "singleCanonicalProducer": true,
+    "eventNamingValid": true,
+    "deadLetterEventIdentityUnique": true,
+    "deadLetterPayloadSchemaResolved": true,
+    "deadLetterProducerAndConsumerBound": true
+  },
+  "schemaCoverage": {
+    "status": "partial_event_schema_coverage",
+    "bound": 2,
+    "pending": 135,
+    "boundEvents": [
+      "copy.draft_created",
+      "runtime.dead_lettered"
+    ],
+    "note": "copy.draft_created and runtime.dead_lettered have resolved payload schemas; the remaining 135 canonical events remain pending event-specific schemas."
+  },
+  "validation": {
+    "status": "passed",
+    "errors": [],
+    "warnings": [
+      "73 agent-originated events currently have no agent consumer; they are valid for runtime/UI/audit/future subscribers.",
+      "135 canonical events still have payloadSchemaStatus=pending_event_schema.",
+      "runtime.dead_lettered is contractually bound but not emitted until runtime activation is explicitly approved."
+    ]
+  }
+}

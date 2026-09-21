@@ -1,0 +1,29 @@
+{
+  "transaction": {
+    "id": "txn_EVT001",
+    "schemaVersion": "1.0",
+    "type": "event",
+    "event": "quality.passed",
+    "status": "completed",
+    "createdAt": "2026-09-16T18:01:00Z"
+  },
+  "trace": {
+    "correlationId": "corr_campaign_01",
+    "causationId": "txn_quality_001"
+  },
+  "tenant": {
+    "tenantId": "tenant_123"
+  },
+  "actor": {
+    "type": "agent",
+    "id": "strategy-quality-agent"
+  },
+  "context": {
+    "initiativeId": "cmp_123",
+    "taskId": "task_quality_01"
+  },
+  "result": {
+    "targetRef": "copy_var_b_v4",
+    "gateStatus": "passed"
+  }
+}

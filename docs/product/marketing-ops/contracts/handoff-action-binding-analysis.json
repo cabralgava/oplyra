@@ -1,0 +1,845 @@
+{
+  "artifact": "oplyra-handoff-action-binding-analysis",
+  "artifactVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-17T23:11:22Z",
+  "status": "passed",
+  "subject": "registries/handoffs.json",
+  "bindingPolicy": {
+    "actions.callableByAgents": "direct/global callers; preserved without modification",
+    "handoffs.allowedActions": "relationship-scoped routing authorization",
+    "selectionRule": "least-privilege subset of actions owned by toAgent and consistent with handoff purpose and expectedOutput",
+    "orchestratorRoutes": "full target-agent action catalog, preserving the previously documented direct/global orchestration surface"
+  },
+  "sourceCounts": {
+    "agents": 12,
+    "actions": 171,
+    "handoffs": 43
+  },
+  "result": {
+    "handoffsBound": 43,
+    "handoffsUnbound": 0,
+    "totalAllowedActionBindings": 364,
+    "orphanActionReferences": 0,
+    "targetOwnerMismatches": 0,
+    "unknownAgentReferences": 0,
+    "selfTransfers": 0,
+    "duplicateAllowedActions": 0,
+    "actionsRegistryModified": false,
+    "callableByAgentsModified": false
+  },
+  "invariants": {
+    "allHandoffKeysPreserved": true,
+    "allActionKeysPreserved": true,
+    "everyAllowedActionExistsInActionsRegistry": true,
+    "everyAllowedActionOwnedByToAgent": true,
+    "tenantMatchRequiredOnEveryHandoff": true,
+    "tracePropagationRequiredOnEveryHandoff": true,
+    "contextPackageRequirementPreserved": true
+  },
+  "outputIntegrity": {
+    "handoffsSha256": "9b5f777d7147c5506ed9691769de7241adec1707af4488b73b145d4b8e4f3061"
+  },
+  "handoffs": [
+    {
+      "handoffKey": "account-projects-agent__to__orchestrator-agent",
+      "fromAgent": "account-projects-agent",
+      "toAgent": "orchestrator-agent",
+      "purpose": "Escalar blocker, risco, atraso ou conflito de execução.",
+      "expectedOutput": "workflow_decision_or_escalation",
+      "allowedActions": [
+        "active_blockers",
+        "next_action",
+        "operation_status",
+        "workflow_status"
+      ],
+      "allowedActionCount": 4
+    },
+    {
+      "handoffKey": "copywriting-agent__to__design-agent",
+      "fromAgent": "copywriting-agent",
+      "toAgent": "design-agent",
+      "purpose": "Transferir mensagem/copy aprovada para execução visual.",
+      "expectedOutput": "design_output",
+      "allowedActions": [
+        "adapt_visual",
+        "create_visual_brief",
+        "create_visual_concept",
+        "create_visual_variants",
+        "derive_visual_direction_from_asset",
+        "revise_visual_brief"
+      ],
+      "allowedActionCount": 6
+    },
+    {
+      "handoffKey": "copywriting-agent__to__paid-media-agent",
+      "fromAgent": "copywriting-agent",
+      "toAgent": "paid-media-agent",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "expectedOutput": "media_plan_or_operation",
+      "allowedActions": [
+        "create_media_plan",
+        "map_experiment_variants",
+        "prepare_ad",
+        "prepare_campaign",
+        "publication_readiness"
+      ],
+      "allowedActionCount": 5
+    },
+    {
+      "handoffKey": "copywriting-agent__to__strategy-quality-agent",
+      "fromAgent": "copywriting-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "quality_status",
+        "review_copy"
+      ],
+      "allowedActionCount": 5
+    },
+    {
+      "handoffKey": "design-agent__to__paid-media-agent",
+      "fromAgent": "design-agent",
+      "toAgent": "paid-media-agent",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "expectedOutput": "media_plan_or_operation",
+      "allowedActions": [
+        "create_media_plan",
+        "map_experiment_variants",
+        "prepare_ad",
+        "prepare_campaign",
+        "publication_readiness"
+      ],
+      "allowedActionCount": 5
+    },
+    {
+      "handoffKey": "design-agent__to__strategy-quality-agent",
+      "fromAgent": "design-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Solicitar quality review do conceito ou output visual.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "quality_status",
+        "review_design"
+      ],
+      "allowedActionCount": 4
+    },
+    {
+      "handoffKey": "email-marketing-agent__to__copywriting-agent",
+      "fromAgent": "email-marketing-agent",
+      "toAgent": "copywriting-agent",
+      "purpose": "Solicitar subject, preheader, body, CTA ou variants.",
+      "expectedOutput": "copy_output",
+      "allowedActions": [
+        "adapt_copy",
+        "create_copy_variants",
+        "create_email_copy",
+        "revise_copy",
+        "shorten_copy",
+        "suggest_message_angles"
+      ],
+      "allowedActionCount": 6
+    },
+    {
+      "handoffKey": "email-marketing-agent__to__lifecycle-agent",
+      "fromAgent": "email-marketing-agent",
+      "toAgent": "lifecycle-agent",
+      "purpose": "Devolver eventos/resultados de delivery a uma journey.",
+      "expectedOutput": "journey_or_lifecycle_operation",
+      "allowedActions": [
+        "contact_journey_history",
+        "enrollment_status",
+        "journey_performance",
+        "journey_status",
+        "revise_journey"
+      ],
+      "allowedActionCount": 5
+    },
+    {
+      "handoffKey": "email-marketing-agent__to__performance-intelligence-agent",
+      "fromAgent": "email-marketing-agent",
+      "toAgent": "performance-intelligence-agent",
+      "purpose": "Transferir métricas e resultados de e-mail para análise.",
+      "expectedOutput": "performance_analysis",
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_funnel",
+        "compare_periods",
+        "compare_variants",
+        "data_health",
+        "performance_status",
+        "propose_learning"
+      ],
+      "allowedActionCount": 8
+    },
+    {
+      "handoffKey": "email-marketing-agent__to__strategy-quality-agent",
+      "fromAgent": "email-marketing-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Solicitar review da campanha de e-mail.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "quality_status",
+        "review_email_campaign"
+      ],
+      "allowedActionCount": 5
+    },
+    {
+      "handoffKey": "lifecycle-agent__to__account-projects-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "account-projects-agent",
+      "purpose": "Criar tarefas humanas derivadas de journey.",
+      "expectedOutput": "operational_task_or_status",
+      "allowedActions": [
+        "assign_task",
+        "create_task",
+        "project_status",
+        "register_blocker",
+        "register_dependency",
+        "task_status",
+        "update_deadline",
+        "update_task"
+      ],
+      "allowedActionCount": 8
+    },
+    {
+      "handoffKey": "lifecycle-agent__to__email-marketing-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "email-marketing-agent",
+      "purpose": "Executar um email step dentro de uma journey.",
+      "expectedOutput": "email_campaign_or_delivery",
+      "allowedActions": [
+        "create_email_campaign",
+        "deliverability_status",
+        "prepare_email_ab_test",
+        "prepare_email_campaign",
+        "schedule_email",
+        "send_email_campaign",
+        "send_readiness"
+      ],
+      "allowedActionCount": 7
+    },
+    {
+      "handoffKey": "lifecycle-agent__to__performance-intelligence-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "performance-intelligence-agent",
+      "purpose": "Transferir progression, drop-off e conversion de journeys para análise de performance.",
+      "expectedOutput": "performance_analysis",
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_funnel",
+        "analyze_lead_quality",
+        "assess_maturation",
+        "compare_variants",
+        "data_health",
+        "performance_status",
+        "propose_learning"
+      ],
+      "allowedActionCount": 9
+    },
+    {
+      "handoffKey": "lifecycle-agent__to__revenue-intelligence-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "revenue-intelligence-agent",
+      "purpose": "Transferir progression/conversion para análise comercial.",
+      "expectedOutput": "revenue_analysis",
+      "allowedActions": [
+        "analyze_pipeline_contribution",
+        "analyze_revenue_attribution",
+        "analyze_unattributed_revenue",
+        "assess_attribution_coverage",
+        "confidence_status",
+        "coverage_status",
+        "pipeline_status",
+        "propose_revenue_learning",
+        "revenue_status"
+      ],
+      "allowedActionCount": 9
+    },
+    {
+      "handoffKey": "lifecycle-agent__to__strategy-quality-agent",
+      "fromAgent": "lifecycle-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Solicitar review de journey, regras, offer ou experimento.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "experiment_integrity",
+        "quality_status",
+        "review_experiment",
+        "review_journey",
+        "review_learning",
+        "review_strategy"
+      ],
+      "allowedActionCount": 6
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__account-projects-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "account-projects-agent",
+      "purpose": "Operacionalizar plano, tasks, owners, dependências, deadlines e status.",
+      "expectedOutput": "operational_task_or_status",
+      "allowedActions": [
+        "assign_task",
+        "blocked_tasks",
+        "create_task",
+        "initiative_progress",
+        "overdue_tasks",
+        "owner_workload",
+        "pending_approvals",
+        "prepare_checkin",
+        "project_status",
+        "register_approval",
+        "register_blocker",
+        "register_decision",
+        "register_dependency",
+        "register_risk",
+        "resolve_blocker",
+        "task_dependencies",
+        "task_status",
+        "update_deadline",
+        "update_task"
+      ],
+      "allowedActionCount": 19
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__copywriting-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "copywriting-agent",
+      "purpose": "Delegar criação ou revisão de copy.",
+      "expectedOutput": "copy_output",
+      "allowedActions": [
+        "adapt_copy",
+        "analyze_claim_usage",
+        "analyze_message",
+        "compare_copy_versions",
+        "create_ad_copy",
+        "create_copy_variants",
+        "create_email_copy",
+        "create_landing_page_copy",
+        "create_script",
+        "create_social_copy",
+        "derive_copy_from_asset",
+        "identify_copy_gaps",
+        "revise_copy",
+        "shorten_copy",
+        "suggest_message_angles"
+      ],
+      "allowedActionCount": 15
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__design-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "design-agent",
+      "purpose": "Delegar conceito visual, brief ou variação criativa.",
+      "expectedOutput": "design_output",
+      "allowedActions": [
+        "adapt_visual",
+        "analyze_asset_fit",
+        "analyze_brand_alignment",
+        "analyze_visual_consistency",
+        "compare_visual_variants",
+        "create_static_variation",
+        "create_visual_brief",
+        "create_visual_concept",
+        "create_visual_variants",
+        "derive_visual_direction_from_asset",
+        "identify_visual_gaps",
+        "revise_visual_brief"
+      ],
+      "allowedActionCount": 12
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__email-marketing-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "email-marketing-agent",
+      "purpose": "Delegar campanha, segmentação ou operação de e-mail.",
+      "expectedOutput": "email_campaign_or_delivery",
+      "allowedActions": [
+        "create_email_campaign",
+        "create_segment",
+        "deliverability_status",
+        "email_campaign_status",
+        "email_performance",
+        "prepare_email_ab_test",
+        "prepare_email_campaign",
+        "schedule_email",
+        "segment_status",
+        "send_email_campaign",
+        "send_readiness",
+        "suppression_status"
+      ],
+      "allowedActionCount": 12
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__lifecycle-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "lifecycle-agent",
+      "purpose": "Delegar jornada, nurture, reativação ou automação de lifecycle.",
+      "expectedOutput": "journey_or_lifecycle_operation",
+      "allowedActions": [
+        "activate_journey",
+        "contact_journey_history",
+        "create_journey",
+        "create_journey_version",
+        "create_nurture_flow",
+        "create_reactivation_flow",
+        "enroll_contact",
+        "enrollment_status",
+        "journey_conflicts",
+        "journey_performance",
+        "journey_readiness",
+        "journey_status",
+        "pause_journey",
+        "revise_journey",
+        "simulate_journey"
+      ],
+      "allowedActionCount": 15
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__paid-media-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "paid-media-agent",
+      "purpose": "Delegar planejamento, preparação ou operação de mídia paga.",
+      "expectedOutput": "media_plan_or_operation",
+      "allowedActions": [
+        "budget_status",
+        "create_media_plan",
+        "delivery_status",
+        "experiment_distribution",
+        "map_experiment_variants",
+        "media_campaign_status",
+        "media_performance",
+        "pause_campaign",
+        "prepare_ad",
+        "prepare_campaign",
+        "prepare_tracking",
+        "publication_readiness",
+        "publish_campaign",
+        "resume_campaign",
+        "tracking_status",
+        "update_budget"
+      ],
+      "allowedActionCount": 16
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__performance-intelligence-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "performance-intelligence-agent",
+      "purpose": "Delegar análise de performance, experimento, funil ou anomalia.",
+      "expectedOutput": "performance_analysis",
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_funnel",
+        "analyze_lead_quality",
+        "anomaly_status",
+        "assess_maturation",
+        "compare_periods",
+        "compare_variants",
+        "data_health",
+        "experiment_status",
+        "funnel_status",
+        "identify_anomaly",
+        "maturation_status",
+        "performance_attribution_status",
+        "performance_status",
+        "propose_learning"
+      ],
+      "allowedActionCount": 16
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__reporting-checkins-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "reporting-checkins-agent",
+      "purpose": "Delegar relatório, check-in ou síntese executiva.",
+      "expectedOutput": "report_or_checkin",
+      "allowedActions": [
+        "generate_executive_summary",
+        "generate_monthly_report",
+        "generate_weekly_checkin",
+        "latest_report",
+        "pending_reporting_decisions",
+        "persist_report",
+        "prepare_report_delivery",
+        "report_status",
+        "reporting_period_status",
+        "send_report"
+      ],
+      "allowedActionCount": 10
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__revenue-intelligence-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "revenue-intelligence-agent",
+      "purpose": "Delegar análise avançada de pipeline, atribuição e receita.",
+      "expectedOutput": "revenue_analysis",
+      "allowedActions": [
+        "analyze_pipeline_contribution",
+        "analyze_revenue_attribution",
+        "analyze_unattributed_revenue",
+        "assess_attribution_coverage",
+        "compare_attribution_models",
+        "confidence_status",
+        "coverage_status",
+        "identify_tracking_gap",
+        "pipeline_status",
+        "propose_revenue_learning",
+        "revenue_attribution_status",
+        "revenue_status",
+        "source_conflicts",
+        "unattributed_revenue_status"
+      ],
+      "allowedActionCount": 14
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__social-media-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "social-media-agent",
+      "purpose": "Delegar operação orgânica de social media.",
+      "expectedOutput": "social_operation",
+      "allowedActions": [
+        "adapt_content_by_channel",
+        "calendar_status",
+        "content_status",
+        "create_content_calendar",
+        "create_editorial_plan",
+        "organic_performance",
+        "prepare_social_post",
+        "publication_status",
+        "publish_post",
+        "repurpose_content",
+        "repurpose_opportunities",
+        "schedule_post"
+      ],
+      "allowedActionCount": 12
+    },
+    {
+      "handoffKey": "orchestrator-agent__to__strategy-quality-agent",
+      "fromAgent": "orchestrator-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Solicitar revisão estratégica, quality gate ou avaliação independente.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "experiment_integrity",
+        "quality_status",
+        "review_analysis",
+        "review_campaign",
+        "review_context_update",
+        "review_copy",
+        "review_design",
+        "review_email_campaign",
+        "review_experiment",
+        "review_journey",
+        "review_learning",
+        "review_report",
+        "review_social_content",
+        "review_strategy",
+        "strategic_alignment"
+      ],
+      "allowedActionCount": 18
+    },
+    {
+      "handoffKey": "paid-media-agent__to__account-projects-agent",
+      "fromAgent": "paid-media-agent",
+      "toAgent": "account-projects-agent",
+      "purpose": "Transferir dependências, blockers, deadlines e tarefas operacionais de mídia.",
+      "expectedOutput": "operational_task_or_status",
+      "allowedActions": [
+        "assign_task",
+        "create_task",
+        "project_status",
+        "register_blocker",
+        "register_dependency",
+        "task_status",
+        "update_deadline",
+        "update_task"
+      ],
+      "allowedActionCount": 8
+    },
+    {
+      "handoffKey": "paid-media-agent__to__orchestrator-agent",
+      "fromAgent": "paid-media-agent",
+      "toAgent": "orchestrator-agent",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "expectedOutput": "workflow_decision_or_escalation",
+      "allowedActions": [
+        "active_blockers",
+        "next_action",
+        "operation_status",
+        "workflow_status"
+      ],
+      "allowedActionCount": 4
+    },
+    {
+      "handoffKey": "paid-media-agent__to__performance-intelligence-agent",
+      "fromAgent": "paid-media-agent",
+      "toAgent": "performance-intelligence-agent",
+      "purpose": "Transferir campanhas, métricas e experiment mapping para análise.",
+      "expectedOutput": "performance_analysis",
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_funnel",
+        "analyze_lead_quality",
+        "assess_maturation",
+        "compare_periods",
+        "compare_variants",
+        "data_health",
+        "experiment_status",
+        "maturation_status",
+        "performance_attribution_status",
+        "propose_learning"
+      ],
+      "allowedActionCount": 12
+    },
+    {
+      "handoffKey": "paid-media-agent__to__strategy-quality-agent",
+      "fromAgent": "paid-media-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Solicitar quality review antes de publicação ou decisão crítica.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "experiment_integrity",
+        "quality_status",
+        "review_campaign",
+        "review_experiment",
+        "review_strategy"
+      ],
+      "allowedActionCount": 8
+    },
+    {
+      "handoffKey": "performance-intelligence-agent__to__orchestrator-agent",
+      "fromAgent": "performance-intelligence-agent",
+      "toAgent": "orchestrator-agent",
+      "purpose": "Escalar findings, riscos, decisões e próximos passos para coordenação do workflow.",
+      "expectedOutput": "workflow_decision_or_escalation",
+      "allowedActions": [
+        "active_blockers",
+        "next_action",
+        "operation_status",
+        "workflow_status"
+      ],
+      "allowedActionCount": 4
+    },
+    {
+      "handoffKey": "performance-intelligence-agent__to__paid-media-agent",
+      "fromAgent": "performance-intelligence-agent",
+      "toAgent": "paid-media-agent",
+      "purpose": "Devolver findings e recomendações acionáveis para otimização de mídia paga.",
+      "expectedOutput": "media_plan_or_operation",
+      "allowedActions": [
+        "budget_status",
+        "create_media_plan",
+        "map_experiment_variants",
+        "prepare_ad",
+        "prepare_campaign",
+        "prepare_tracking",
+        "publication_readiness",
+        "update_budget"
+      ],
+      "allowedActionCount": 8
+    },
+    {
+      "handoffKey": "performance-intelligence-agent__to__reporting-checkins-agent",
+      "fromAgent": "performance-intelligence-agent",
+      "toAgent": "reporting-checkins-agent",
+      "purpose": "Transferir fatos, findings e limitações para reporting.",
+      "expectedOutput": "report_or_checkin",
+      "allowedActions": [
+        "generate_executive_summary",
+        "generate_monthly_report",
+        "generate_weekly_checkin",
+        "latest_report",
+        "pending_reporting_decisions",
+        "persist_report",
+        "prepare_report_delivery",
+        "report_status",
+        "reporting_period_status"
+      ],
+      "allowedActionCount": 9
+    },
+    {
+      "handoffKey": "performance-intelligence-agent__to__strategy-quality-agent",
+      "fromAgent": "performance-intelligence-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Submeter conclusões, learnings ou análises críticas para revisão.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "evidence_sufficiency",
+        "experiment_integrity",
+        "quality_status",
+        "review_analysis",
+        "review_experiment",
+        "review_learning"
+      ],
+      "allowedActionCount": 6
+    },
+    {
+      "handoffKey": "reporting-checkins-agent__to__strategy-quality-agent",
+      "fromAgent": "reporting-checkins-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Solicitar revisão de relatório ou narrativa executiva quando aplicável.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "evidence_sufficiency",
+        "quality_status",
+        "review_analysis",
+        "review_report"
+      ],
+      "allowedActionCount": 4
+    },
+    {
+      "handoffKey": "revenue-intelligence-agent__to__performance-intelligence-agent",
+      "fromAgent": "revenue-intelligence-agent",
+      "toAgent": "performance-intelligence-agent",
+      "purpose": "Transferir findings avançados de revenue/attribution para performance.",
+      "expectedOutput": "performance_analysis",
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_funnel",
+        "analyze_lead_quality",
+        "assess_maturation",
+        "compare_periods",
+        "data_health",
+        "performance_attribution_status",
+        "propose_learning"
+      ],
+      "allowedActionCount": 8
+    },
+    {
+      "handoffKey": "revenue-intelligence-agent__to__reporting-checkins-agent",
+      "fromAgent": "revenue-intelligence-agent",
+      "toAgent": "reporting-checkins-agent",
+      "purpose": "Transferir facts de pipeline/receita para reporting.",
+      "expectedOutput": "report_or_checkin",
+      "allowedActions": [
+        "generate_executive_summary",
+        "generate_monthly_report",
+        "generate_weekly_checkin",
+        "latest_report",
+        "persist_report",
+        "prepare_report_delivery",
+        "report_status",
+        "reporting_period_status"
+      ],
+      "allowedActionCount": 8
+    },
+    {
+      "handoffKey": "revenue-intelligence-agent__to__strategy-quality-agent",
+      "fromAgent": "revenue-intelligence-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Submeter análise de atribuição/receita e causal boundary para revisão.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "evidence_sufficiency",
+        "quality_status",
+        "review_analysis",
+        "review_learning",
+        "review_report"
+      ],
+      "allowedActionCount": 5
+    },
+    {
+      "handoffKey": "social-media-agent__to__copywriting-agent",
+      "fromAgent": "social-media-agent",
+      "toAgent": "copywriting-agent",
+      "purpose": "Solicitar copy especializada para conteúdo social.",
+      "expectedOutput": "copy_output",
+      "allowedActions": [
+        "adapt_copy",
+        "create_copy_variants",
+        "create_social_copy",
+        "revise_copy",
+        "shorten_copy",
+        "suggest_message_angles"
+      ],
+      "allowedActionCount": 6
+    },
+    {
+      "handoffKey": "social-media-agent__to__design-agent",
+      "fromAgent": "social-media-agent",
+      "toAgent": "design-agent",
+      "purpose": "Solicitar assets e adaptação visual para social.",
+      "expectedOutput": "design_output",
+      "allowedActions": [
+        "adapt_visual",
+        "create_static_variation",
+        "create_visual_brief",
+        "create_visual_concept",
+        "create_visual_variants",
+        "revise_visual_brief"
+      ],
+      "allowedActionCount": 6
+    },
+    {
+      "handoffKey": "social-media-agent__to__performance-intelligence-agent",
+      "fromAgent": "social-media-agent",
+      "toAgent": "performance-intelligence-agent",
+      "purpose": "Transferência estruturada de trabalho entre agentes Oplyra.",
+      "expectedOutput": "performance_analysis",
+      "allowedActions": [
+        "analyze_campaign_performance",
+        "analyze_experiment",
+        "analyze_lead_quality",
+        "compare_periods",
+        "compare_variants",
+        "data_health",
+        "performance_status",
+        "propose_learning"
+      ],
+      "allowedActionCount": 8
+    },
+    {
+      "handoffKey": "social-media-agent__to__strategy-quality-agent",
+      "fromAgent": "social-media-agent",
+      "toAgent": "strategy-quality-agent",
+      "purpose": "Solicitar review de conteúdo social.",
+      "expectedOutput": "quality_review",
+      "allowedActions": [
+        "brand_alignment",
+        "claim_validity",
+        "evidence_sufficiency",
+        "quality_status",
+        "review_social_content"
+      ],
+      "allowedActionCount": 5
+    },
+    {
+      "handoffKey": "strategy-quality-agent__to__orchestrator-agent",
+      "fromAgent": "strategy-quality-agent",
+      "toAgent": "orchestrator-agent",
+      "purpose": "Escalar bloqueio, changes required ou decisão de workflow.",
+      "expectedOutput": "workflow_decision_or_escalation",
+      "allowedActions": [
+        "active_blockers",
+        "next_action",
+        "operation_status",
+        "workflow_status"
+      ],
+      "allowedActionCount": 4
+    }
+  ],
+  "decision": {
+    "bindingCompleted": true,
+    "eligibleForFinalCrossRegistryValidation": true,
+    "freezeAuthorized": false,
+    "reason": "Handoff/action binding is complete, but Final Cross-Registry Validation must still run before Contract Registry Freeze v1."
+  }
+}

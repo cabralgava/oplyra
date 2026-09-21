@@ -1,0 +1,1382 @@
+{
+  "registry": "oplyra-tools",
+  "registryVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-17T14:50:00Z",
+  "status": "active",
+  "entries": [
+    {
+      "key": "CRMData",
+      "name": "CRM Data",
+      "category": "commercial_data",
+      "description": "Consulta dados comerciais, leads, reuniões, oportunidades e estágios autorizados.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "high",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "email-marketing",
+        "lifecycle",
+        "paid-media",
+        "performance-intelligence",
+        "reporting-checkins",
+        "revenue-intelligence"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "agentRuntime",
+      "name": "Agent Runtime",
+      "category": "runtime",
+      "description": "Consulta ou dispara agentes especializados através do runtime.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "orchestrator"
+      ],
+      "observedPermissions": [
+        "execute",
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "approvalService",
+      "name": "Approval Service",
+      "category": "governance_service",
+      "description": "Consulta, solicita, registra e decide approvals dentro da autoridade permitida.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write",
+        "approve"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "email-marketing",
+        "lifecycle",
+        "orchestrator",
+        "paid-media",
+        "reporting-checkins",
+        "social-media",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read",
+        "read_write",
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "assetAnalysis",
+      "name": "Asset Analysis",
+      "category": "analysis_service",
+      "description": "Consulta análises derivadas de imagens, documentos e vídeos usados como input.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "low",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "copywriting",
+        "design"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "assetLibrary",
+      "name": "Asset Library",
+      "category": "asset_repository",
+      "description": "Consulta metadados e referências de assets do tenant.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "copywriting",
+        "design",
+        "orchestrator",
+        "paid-media",
+        "social-media",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "assetRights",
+      "name": "Asset Rights",
+      "category": "governance_service",
+      "description": "Consulta direitos, permissões e restrições de uso de assets.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "medium",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "design",
+        "social-media"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "attributionRepository",
+      "name": "Attribution Repository",
+      "category": "analytics_repository",
+      "description": "Consulta e persiste resultados e modelos de atribuição.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "performance-intelligence",
+        "revenue-intelligence"
+      ],
+      "observedPermissions": [
+        "read",
+        "read_write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "auditLog",
+      "name": "Audit Log",
+      "category": "audit",
+      "description": "Registra eventos auditáveis e ações relevantes do runtime.",
+      "status": "active",
+      "allowedPermissions": [
+        "write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "copywriting",
+        "design",
+        "email-marketing",
+        "lifecycle",
+        "orchestrator",
+        "paid-media",
+        "performance-intelligence",
+        "reporting-checkins",
+        "revenue-intelligence",
+        "social-media",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "billingData",
+      "name": "Billing Data",
+      "category": "commercial_data",
+      "description": "Consulta contratos, billing e receita disponível para análise.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "high",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "performance-intelligence",
+        "reporting-checkins",
+        "revenue-intelligence"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "brandTruth",
+      "name": "Brand Truth Store",
+      "category": "context",
+      "description": "Consulta Brand & Business Truth versionada do tenant.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "low",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "copywriting",
+        "design",
+        "email-marketing",
+        "orchestrator",
+        "social-media",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "calendarOrScheduler",
+      "name": "Calendar or Scheduler",
+      "category": "scheduler",
+      "description": "Compatibilidade com a nomenclatura operacional do Account & Projects Agent; deve convergir para scheduler na implementação.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects"
+      ],
+      "observedPermissions": [
+        "read_write"
+      ],
+      "observedConditions": [],
+      "aliasOf": "scheduler"
+    },
+    {
+      "key": "calendarRepository",
+      "name": "Editorial Calendar Repository",
+      "category": "domain_repository",
+      "description": "Consulta e persiste calendário editorial e publicações planejadas.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "social-media"
+      ],
+      "observedPermissions": [
+        "read_write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "campaignRepository",
+      "name": "Campaign Repository",
+      "category": "domain_repository",
+      "description": "Armazena e consulta campanhas/iniciativas de marketing e suas versões.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "copywriting",
+        "design",
+        "orchestrator",
+        "paid-media",
+        "performance-intelligence",
+        "reporting-checkins",
+        "revenue-intelligence",
+        "social-media",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read",
+        "read_write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "consentRepository",
+      "name": "Consent Repository",
+      "category": "consent_governance",
+      "description": "Consulta e mantém estados de consentimento e revogação.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "email-marketing",
+        "lifecycle"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "contactRepository",
+      "name": "Contact Repository",
+      "category": "customer_data",
+      "description": "Consulta contatos do tenant dentro do escopo autorizado.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "email-marketing",
+        "lifecycle"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "contentRepository",
+      "name": "Content Repository",
+      "category": "domain_repository",
+      "description": "Armazena e consulta copy, conteúdo e versões produzidas.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "copywriting",
+        "design",
+        "paid-media",
+        "social-media"
+      ],
+      "observedPermissions": [
+        "read",
+        "read_write",
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "contextResolver",
+      "name": "Context Resolver",
+      "category": "context",
+      "description": "Monta Context Packages seletivos e resolve referências do Context Stack.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "low",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "copywriting",
+        "design",
+        "email-marketing",
+        "lifecycle",
+        "orchestrator",
+        "paid-media",
+        "performance-intelligence",
+        "reporting-checkins",
+        "revenue-intelligence",
+        "social-media",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "contextUpdateRepository",
+      "name": "Context Update Repository",
+      "category": "context_repository",
+      "description": "Armazena e consulta Context Update Candidates.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "performance-intelligence",
+        "revenue-intelligence",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "creativeSystem",
+      "name": "Creative System",
+      "category": "context",
+      "description": "Consulta regras criativas, formatos, identidade visual e constraints aprovadas.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "low",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "design"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "designRepository",
+      "name": "Design Repository",
+      "category": "domain_repository",
+      "description": "Armazena conceitos, briefs e outputs de design versionados.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "design"
+      ],
+      "observedPermissions": [
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "emailAgentRuntime",
+      "name": "Email Agent Runtime",
+      "category": "runtime",
+      "description": "Dispara o Email Marketing Agent como step de Lifecycle.",
+      "status": "active",
+      "allowedPermissions": [
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "lifecycle"
+      ],
+      "observedPermissions": [
+        "execute"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "emailCampaignRepository",
+      "name": "Email Campaign Repository",
+      "category": "domain_repository",
+      "description": "Consulta e persiste campanhas de e-mail e suas versões.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "email-marketing"
+      ],
+      "observedPermissions": [
+        "read_write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "emailData",
+      "name": "Email Analytics Data",
+      "category": "analytics_data",
+      "description": "Consulta eventos e métricas consolidadas de e-mail.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "medium",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "revenue-intelligence"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "emailDelivery",
+      "name": "Email Delivery Service",
+      "category": "external_integration",
+      "description": "Serviço de entrega externa usado por relatórios/check-ins quando autorizado.",
+      "status": "active",
+      "allowedPermissions": [
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": false,
+      "referencedByAgents": [
+        "reporting-checkins"
+      ],
+      "observedPermissions": [
+        "execute"
+      ],
+      "observedConditions": [
+        "approval_or_policy_and_recipient_valid"
+      ]
+    },
+    {
+      "key": "emailProvider",
+      "name": "Email Provider Adapter",
+      "category": "external_integration",
+      "description": "Adapter de provider de e-mail para recursos e envios autorizados.",
+      "status": "active",
+      "allowedPermissions": [
+        "none",
+        "read",
+        "write",
+        "read_write",
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": false,
+      "referencedByAgents": [
+        "account-projects",
+        "copywriting",
+        "email-marketing",
+        "orchestrator",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "none",
+        "read_write"
+      ],
+      "observedConditions": [
+        "integration_enabled_and_task_authorized"
+      ]
+    },
+    {
+      "key": "emailTemplateRepository",
+      "name": "Email Template Repository",
+      "category": "domain_repository",
+      "description": "Consulta templates de e-mail aprovados.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "email-marketing"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "enrollmentRepository",
+      "name": "Enrollment Repository",
+      "category": "lifecycle_repository",
+      "description": "Consulta e persiste enrollments e estado de progressão em jornadas.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "lifecycle"
+      ],
+      "observedPermissions": [
+        "read_write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "entitlementService",
+      "name": "Entitlement Service",
+      "category": "governance_service",
+      "description": "Consulta planos, features e entitlements efetivos do tenant.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "low",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "orchestrator",
+        "paid-media"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "eventRepository",
+      "name": "Event Repository",
+      "category": "event_store",
+      "description": "Consulta eventos de domínio usados por Lifecycle.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "lifecycle"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "evidenceRepository",
+      "name": "Evidence Repository",
+      "category": "evidence_repository",
+      "description": "Consulta evidências, provas e referências usadas por claims e análises.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "copywriting",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "experimentRepository",
+      "name": "Experiment Repository",
+      "category": "domain_repository",
+      "description": "Consulta e persiste experimentos, hipóteses, variantes e resultados estruturados.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "copywriting",
+        "design",
+        "orchestrator",
+        "paid-media",
+        "performance-intelligence",
+        "reporting-checkins",
+        "revenue-intelligence",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "externalAction",
+      "name": "Generic External Action",
+      "category": "external_action",
+      "description": "Placeholder de negação explícita; agentes analíticos não executam ação externa por esta interface.",
+      "status": "active",
+      "allowedPermissions": [
+        "none"
+      ],
+      "risk": "critical",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "performance-intelligence",
+        "revenue-intelligence"
+      ],
+      "observedPermissions": [
+        "none"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "googleAds",
+      "name": "Google Ads Adapter",
+      "category": "external_integration",
+      "description": "Adapter para leitura e operação autorizada em contas Google Ads.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write",
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": false,
+      "referencedByAgents": [
+        "paid-media"
+      ],
+      "observedPermissions": [
+        "read_write"
+      ],
+      "observedConditions": [
+        "integration_enabled_and_task_authorized"
+      ]
+    },
+    {
+      "key": "initiativeRepository",
+      "name": "Initiative Repository",
+      "category": "domain_repository",
+      "description": "Consulta iniciativas e seus metadados/versionamento.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "integrationHealth",
+      "name": "Integration Health",
+      "category": "integration_service",
+      "description": "Consulta conexão, disponibilidade e health de integrações.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "low",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "lifecycle",
+        "orchestrator",
+        "paid-media",
+        "social-media"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "journeyRepository",
+      "name": "Journey Repository",
+      "category": "lifecycle_repository",
+      "description": "Consulta e persiste jornadas e versões de Lifecycle.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "lifecycle"
+      ],
+      "observedPermissions": [
+        "read_write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "learningRepository",
+      "name": "Learning Repository",
+      "category": "learning_repository",
+      "description": "Armazena e consulta Learning Records governados.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "performance-intelligence",
+        "revenue-intelligence"
+      ],
+      "observedPermissions": [
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "lifecycleRepository",
+      "name": "Lifecycle Read Model",
+      "category": "analytics_repository",
+      "description": "Consulta dados consolidados de jornadas para análise de receita.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "low",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "revenue-intelligence"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "metaAds",
+      "name": "Meta Ads Adapter",
+      "category": "external_integration",
+      "description": "Adapter para leitura e operação autorizada em contas Meta Ads.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write",
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": false,
+      "referencedByAgents": [
+        "paid-media"
+      ],
+      "observedPermissions": [
+        "read_write"
+      ],
+      "observedConditions": [
+        "integration_enabled_and_task_authorized"
+      ]
+    },
+    {
+      "key": "notificationService",
+      "name": "Notification Service",
+      "category": "external_action",
+      "description": "Envia notificações internas/externas permitidas por política.",
+      "status": "active",
+      "allowedPermissions": [
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "lifecycle"
+      ],
+      "observedPermissions": [
+        "execute"
+      ],
+      "observedConditions": [
+        "integration_enabled_and_task_authorized"
+      ]
+    },
+    {
+      "key": "paidMedia",
+      "name": "Paid Media Read Interface",
+      "category": "integration_facade",
+      "description": "Interface genérica de leitura de mídia paga; mutações devem preferir adapters específicos.",
+      "status": "active",
+      "allowedPermissions": [
+        "none",
+        "read"
+      ],
+      "risk": "medium",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "copywriting",
+        "design",
+        "orchestrator",
+        "performance-intelligence",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "none",
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "performanceData",
+      "name": "Performance Data",
+      "category": "analytics_data",
+      "description": "Consulta métricas de mídia, campanhas, variantes e funil.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "low",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "email-marketing",
+        "paid-media",
+        "performance-intelligence",
+        "reporting-checkins",
+        "social-media",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "productTruth",
+      "name": "Product Truth Store",
+      "category": "context",
+      "description": "Consulta fatos aprovados de produto, capacidades, limitações e claims relacionados.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "low",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "copywriting",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "projectRepository",
+      "name": "Project Repository",
+      "category": "project_repository",
+      "description": "Consulta e persiste projetos, workstreams e estado operacional.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "reporting-checkins"
+      ],
+      "observedPermissions": [
+        "read",
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "qualityReviewRepository",
+      "name": "Quality Review Repository",
+      "category": "governance_repository",
+      "description": "Armazena e consulta Quality Reviews e seus findings.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "copywriting",
+        "design",
+        "strategy-quality"
+      ],
+      "observedPermissions": [
+        "read",
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "reportingRepository",
+      "name": "Reporting Repository",
+      "category": "domain_repository",
+      "description": "Armazena e consulta relatórios, check-ins e versões persistidas.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "performance-intelligence",
+        "reporting-checkins"
+      ],
+      "observedPermissions": [
+        "read",
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "scheduler",
+      "name": "Scheduler",
+      "category": "scheduler",
+      "description": "Consulta e persiste agendamentos internos.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write",
+        "execute"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "reporting-checkins"
+      ],
+      "observedPermissions": [
+        "read_write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "segmentRepository",
+      "name": "Segment Repository",
+      "category": "customer_data",
+      "description": "Consulta e persiste definições auditáveis de segmentos.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "email-marketing"
+      ],
+      "observedPermissions": [
+        "read_write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "socialData",
+      "name": "Social Analytics Data",
+      "category": "analytics_data",
+      "description": "Consulta métricas e eventos sociais disponíveis.",
+      "status": "active",
+      "allowedPermissions": [
+        "read"
+      ],
+      "risk": "medium",
+      "sideEffects": false,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "revenue-intelligence"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "socialPublisher",
+      "name": "Social Publisher Adapter",
+      "category": "external_integration",
+      "description": "Adapter para leitura, preparação e publicação orgânica autorizada.",
+      "status": "active",
+      "allowedPermissions": [
+        "none",
+        "read",
+        "write",
+        "read_write",
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": false,
+      "referencedByAgents": [
+        "copywriting",
+        "social-media"
+      ],
+      "observedPermissions": [
+        "none",
+        "read_write"
+      ],
+      "observedConditions": [
+        "integration_enabled_and_task_authorized"
+      ]
+    },
+    {
+      "key": "staticImageGeneration",
+      "name": "Static Image Generation",
+      "category": "generation",
+      "description": "Gera imagens estáticas quando a capability estiver disponível e autorizada.",
+      "status": "active",
+      "allowedPermissions": [
+        "execute"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": false,
+      "referencedByAgents": [
+        "design"
+      ],
+      "observedPermissions": [
+        "execute"
+      ],
+      "observedConditions": [
+        "supported_and_task_authorized"
+      ]
+    },
+    {
+      "key": "suppressionRepository",
+      "name": "Suppression Repository",
+      "category": "consent_governance",
+      "description": "Consulta e mantém listas de suppression do tenant.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "email-marketing",
+        "lifecycle"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "taskManager",
+      "name": "Task Manager",
+      "category": "workflow",
+      "description": "Consulta e altera tasks operacionais e seus estados.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "lifecycle",
+        "orchestrator",
+        "reporting-checkins"
+      ],
+      "observedPermissions": [
+        "read",
+        "write"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "touchpointRepository",
+      "name": "Touchpoint Repository",
+      "category": "analytics_repository",
+      "description": "Consulta touchpoints de marketing e comerciais.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "write",
+        "read_write"
+      ],
+      "risk": "medium",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "revenue-intelligence"
+      ],
+      "observedPermissions": [
+        "read"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "videoEditing",
+      "name": "Video Editing",
+      "category": "generation",
+      "description": "Capability reservada; edição/renderização nativa de vídeo não faz parte do escopo inicial.",
+      "status": "disabled",
+      "allowedPermissions": [
+        "none"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": false,
+      "referencedByAgents": [
+        "design"
+      ],
+      "observedPermissions": [
+        "none"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "videoGeneration",
+      "name": "Video Generation",
+      "category": "generation",
+      "description": "Capability reservada; geração nativa de vídeo não faz parte do escopo inicial.",
+      "status": "disabled",
+      "allowedPermissions": [
+        "none"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": false,
+      "referencedByAgents": [
+        "design"
+      ],
+      "observedPermissions": [
+        "none"
+      ],
+      "observedConditions": []
+    },
+    {
+      "key": "webhookService",
+      "name": "Webhook Service",
+      "category": "external_action",
+      "description": "Dispara webhooks allowlisted com idempotência e retry governados.",
+      "status": "active",
+      "allowedPermissions": [
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "lifecycle"
+      ],
+      "observedPermissions": [
+        "execute"
+      ],
+      "observedConditions": [
+        "integration_enabled_and_task_authorized"
+      ]
+    },
+    {
+      "key": "workflowEngine",
+      "name": "Workflow Engine",
+      "category": "runtime",
+      "description": "Consulta e executa workflows agentic governados.",
+      "status": "active",
+      "allowedPermissions": [
+        "read",
+        "execute"
+      ],
+      "risk": "high",
+      "sideEffects": true,
+      "providerIndependent": true,
+      "referencedByAgents": [
+        "account-projects",
+        "orchestrator"
+      ],
+      "observedPermissions": [
+        "execute",
+        "read"
+      ],
+      "observedConditions": []
+    }
+  ]
+}

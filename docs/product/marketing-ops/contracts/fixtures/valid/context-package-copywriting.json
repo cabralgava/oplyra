@@ -1,0 +1,203 @@
+{
+  "id": "ctx_copy_91",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "agentKey": "copywriting-agent",
+  "taskId": "task_copy_01",
+  "workflowId": "wf_campaign_01",
+  "transactionId": "txn_01JABC123",
+  "generatedAt": "2026-09-16T19:30:00Z",
+  "validUntil": "2026-09-16T20:30:00Z",
+  "layers": {
+    "l0": {
+      "status": "included",
+      "ref": "oplyra-constitution-v1",
+      "version": "1.0",
+      "summary": "Global Oplyra governance, tenant isolation, autonomy and evidence rules.",
+      "sourceRefs": [
+        "doc:19-context-stack#L0"
+      ],
+      "evidenceRefs": []
+    },
+    "l1": {
+      "status": "included",
+      "ref": "tenant-foundation-v3",
+      "version": 3,
+      "data": {
+        "businessModel": "B2B SaaS",
+        "salesMotion": "sales_led"
+      },
+      "sourceRefs": [
+        "tenantFoundation:tenant_123:v3"
+      ],
+      "evidenceRefs": []
+    },
+    "l2": {
+      "status": "included",
+      "ref": "brand-truth-v5",
+      "version": 5,
+      "data": {
+        "productId": "prd_001",
+        "personaId": "vp_marketing",
+        "offerId": "enterprise_demo"
+      },
+      "sourceRefs": [
+        "brandTruth:tenant_123:v5"
+      ],
+      "evidenceRefs": [
+        "claim_12",
+        "proof_09"
+      ]
+    },
+    "l3": {
+      "status": "included",
+      "ref": "operational-context-v8",
+      "version": 8,
+      "data": {
+        "objectiveId": "obj_q4_pipeline",
+        "priority": "enterprise"
+      },
+      "sourceRefs": [
+        "operationalContext:tenant_123:v8"
+      ],
+      "evidenceRefs": []
+    },
+    "l4": {
+      "status": "included",
+      "ref": "copywriting-context-policy-v1",
+      "version": 1,
+      "summary": "Copywriting domain context selected for this task.",
+      "sourceRefs": [
+        "domainContext:copywriting:v1"
+      ],
+      "evidenceRefs": []
+    },
+    "l5": {
+      "status": "included",
+      "ref": "cmp_123:v4",
+      "version": 4,
+      "data": {
+        "initiativeId": "cmp_123",
+        "objective": "qualified_meetings",
+        "channel": "linkedin_ads"
+      },
+      "sourceRefs": [
+        "initiative:cmp_123:v4"
+      ],
+      "evidenceRefs": []
+    },
+    "l6": {
+      "status": "included",
+      "ref": "exp_091:v2",
+      "version": 2,
+      "data": {
+        "hypothesisId": "hyp_091",
+        "variable": "angle",
+        "constantElements": [
+          "offer",
+          "cta",
+          "format"
+        ]
+      },
+      "sourceRefs": [
+        "experiment:exp_091:v2"
+      ],
+      "evidenceRefs": []
+    },
+    "l7": {
+      "status": "included",
+      "ref": "task_copy_01:v3",
+      "version": 3,
+      "data": {
+        "taskId": "task_copy_01",
+        "expectedOutput": "ad_copy_variants",
+        "constraints": [
+          "Do not mention automation"
+        ]
+      },
+      "sourceRefs": [
+        "task:task_copy_01:v3"
+      ],
+      "evidenceRefs": []
+    },
+    "l8": {
+      "status": "included",
+      "data": {
+        "rawRequest": "Crie três variações mais diretas.",
+        "action": "create_copy_variants",
+        "quantity": 3
+      },
+      "sourceRefs": [
+        "message:msg_151"
+      ],
+      "evidenceRefs": []
+    }
+  },
+  "sourceVersions": {
+    "tenantFoundation": 3,
+    "brandTruth": 5,
+    "operationalContext": 8,
+    "initiative": 4,
+    "experiment": 2,
+    "task": 3
+  },
+  "permissions": {
+    "permissionSetRefs": [
+      "role:marketing_manager"
+    ],
+    "effectivePermissions": [
+      "content.read",
+      "content.write"
+    ],
+    "deniedPermissions": [
+      "media.publish"
+    ]
+  },
+  "autonomy": {
+    "level": "draft",
+    "policyRefs": [
+      "policy:copywriting-default"
+    ],
+    "reason": "Content creation produces a draft and requires quality review before downstream execution."
+  },
+  "evidence": {
+    "providedRefs": [
+      "claim_12",
+      "proof_09"
+    ],
+    "requiredRefs": []
+  },
+  "missingContext": [],
+  "conflicts": [],
+  "freshness": [
+    {
+      "key": "brandTruth",
+      "status": "fresh",
+      "observedAt": "2026-09-16T19:20:00Z",
+      "updatedAt": "2026-09-16T18:00:00Z",
+      "maxAgeSeconds": 2592000,
+      "sourceRef": "brandTruth:tenant_123:v5"
+    },
+    {
+      "key": "operationalContext",
+      "status": "fresh",
+      "observedAt": "2026-09-16T19:20:00Z",
+      "updatedAt": "2026-09-16T19:00:00Z",
+      "maxAgeSeconds": 86400,
+      "sourceRef": "operationalContext:tenant_123:v8"
+    }
+  ],
+  "retrieval": {
+    "requestId": "ctxreq_001",
+    "strategy": "required_plus_enrichment",
+    "queryRefs": [
+      "query:copywriting-context-001"
+    ],
+    "retrievedAt": "2026-09-16T19:29:50Z"
+  },
+  "contextBudget": {
+    "maxTokens": 12000,
+    "usedTokens": 7400,
+    "compressionApplied": true
+  }
+}

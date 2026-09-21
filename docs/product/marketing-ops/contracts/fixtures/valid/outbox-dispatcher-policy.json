@@ -1,0 +1,86 @@
+{
+  "policyVersion": "1.1",
+  "deliveryGuarantee": "at_least_once",
+  "tenantIsolation": {
+    "claimScope": "tenantId",
+    "crossTenantBatchAllowed": false
+  },
+  "claim": {
+    "eligibleStates": [
+      "pending",
+      "failed",
+      "dispatching_lease_expired"
+    ],
+    "activeLeaseReclaimAllowed": false,
+    "expiredLeaseReclaim": {
+      "required": true,
+      "incrementAttempt": true,
+      "rotateFencingToken": true
+    }
+  },
+  "stateMachine": {
+    "pending": [
+      "dispatching"
+    ],
+    "dispatching": [
+      "dispatching",
+      "dispatched",
+      "failed",
+      "dead_lettered"
+    ],
+    "failed": [
+      "dispatching",
+      "dead_lettered"
+    ],
+    "dispatched": [],
+    "dead_lettered": []
+  },
+  "settlement": {
+    "requiresCurrentAttempt": true,
+    "requiresCurrentFencingToken": true,
+    "staleSettlementErrorCode": "INVALID_STATE_TRANSITION",
+    "dispatchedIsTerminal": true,
+    "deadLetteredIsTerminal": true
+  },
+  "retry": {
+    "configurationSource": "outbox-retry-policy-v1",
+    "hardcodedScheduleAllowed": false,
+    "maximumDeliveryAttempts": 5,
+    "backoffSecondsByFailedAttempt": [1, 2, 4, 8],
+    "jitter": "none",
+    "retryableFailureRequiresNextAvailableAt": true,
+    "deterministicFailureRetryAllowed": false,
+    "attemptsExhaustedOutcome": "dead_lettered",
+    "attemptsExhaustedErrorCode": "RETRY_ATTEMPTS_EXHAUSTED",
+    "retryableErrorCodes": [
+      "INTEGRATION_UNAVAILABLE",
+      "PROVIDER_RATE_LIMITED",
+      "PROVIDER_TIMEOUT",
+      "UPSTREAM_SERVICE_UNAVAILABLE"
+    ],
+    "terminalErrorCodes": [
+      "EVENT_NOT_REGISTERED",
+      "INVALID_STATE_TRANSITION"
+    ]
+  },
+  "consumerDeduplication": {
+    "scope": [
+      "tenantId",
+      "eventTransactionId",
+      "consumerAgent"
+    ],
+    "persistentClaimRequiredBeforeSideEffect": true,
+    "completedDuplicateOutcome": "duplicate",
+    "completedDuplicateMayRepeatSideEffect": false,
+    "activeLeaseConcurrentProcessingAllowed": false,
+    "expiredLeaseReclaimRequiresNewFencingToken": true,
+    "settlementRequiresCurrentFencingToken": true
+  },
+  "transport": {
+    "selected": true,
+    "queue": "pgmq",
+    "scheduler": "pg_cron",
+    "decision": "ADR-0004",
+    "activationAllowed": false
+  }
+}

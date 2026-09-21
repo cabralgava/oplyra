@@ -1,0 +1,42 @@
+{
+  "code": "INTEGRATION_UNAVAILABLE",
+  "category": "integration",
+  "severity": "high",
+  "retryable": true,
+  "message": "The email provider is temporarily unavailable.",
+  "details": {
+    "provider": "email_provider",
+    "operation": "send_email_campaign",
+    "httpStatus": 503
+  },
+  "defaultNextAction": {
+    "action": "retry",
+    "target": "email-provider",
+    "reason": "Retry according to provider availability policy."
+  },
+  "retryPolicy": {
+    "strategy": "exponential_backoff",
+    "maxAttempts": 4,
+    "initialDelaySeconds": 30,
+    "maxDelaySeconds": 900,
+    "retryAfterSeconds": null
+  },
+  "source": {
+    "type": "integration",
+    "id": "email-provider-adapter",
+    "operation": "send_email_campaign"
+  },
+  "cause": {
+    "code": "UPSTREAM_SERVICE_UNAVAILABLE",
+    "message": "Provider returned HTTP 503.",
+    "sourceRef": "provider_response:req_981"
+  },
+  "tenantId": "tenant_123",
+  "transactionId": "txn_email_send_001",
+  "correlationId": "corr_email_01",
+  "taskId": "task_email_send_01",
+  "occurredAt": "2026-09-16T20:55:00Z",
+  "metadata": {
+    "providerRequestId": "req_981"
+  }
+}

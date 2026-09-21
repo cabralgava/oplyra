@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/core/agent-definition/1.0",
+  "title": "Oplyra Agent Definition",
+  "description": "Contrato canônico de definição de um agente Oplyra.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "key",
+    "name",
+    "domain",
+    "plans",
+    "version",
+    "status",
+    "objective",
+    "ownerDomain",
+    "qualityGate",
+    "defaultAutonomy",
+    "contextPolicyRef",
+    "transactionProtocolVersion",
+    "documentationRef"
+  ],
+  "properties": {
+    "key": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/agentKey"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/domainKey"
+    },
+    "plans": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "performance",
+          "growth",
+          "custom"
+        ]
+      }
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "beta",
+        "deprecated",
+        "disabled"
+      ]
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ownerDomain": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/domainKey"
+    },
+    "qualityGate": {
+      "$ref": "#/$defs/qualityGate"
+    },
+    "defaultAutonomy": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/autonomyLevel"
+      },
+      "propertyNames": {
+        "pattern": "^[a-z][A-Za-z0-9_]*$"
+      },
+      "description": "Autonomia padrão por capability. Valores efetivos continuam sujeitos a tenant policy, task policy, actor permission e risk."
+    },
+    "contextPolicyRef": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transactionProtocolVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "documentationRef": {
+      "type": "string",
+      "minLength": 1
+    },
+    "toolRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+      },
+      "default": []
+    },
+    "taskRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "default": []
+    },
+    "acceptedCommandRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "default": []
+    },
+    "acceptedQueryRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "default": []
+    },
+    "consumedEventRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+      },
+      "default": []
+    },
+    "emittedEventRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+      },
+      "default": []
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "qualityGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary"
+      ],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Agent key, service key ou policy key responsável pelo quality gate primário."
+        },
+        "operational": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "selfApproval": {
+          "type": "string",
+          "enum": [
+            "forbidden",
+            "forbidden_for_critical_review",
+            "policy_controlled"
+          ],
+          "default": "forbidden"
+        }
+      }
+    }
+  }
+}

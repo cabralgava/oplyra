@@ -1,0 +1,34 @@
+{
+  "cases": [
+    {
+      "condition": "tenant_omitted",
+      "errorCode": "TENANT_REQUIRED",
+      "result": null
+    },
+    {
+      "condition": "cross_tenant_reference",
+      "errorCode": "TENANT_MISMATCH",
+      "result": null
+    },
+    {
+      "condition": "read_permission_missing",
+      "errorCode": "PERMISSION_DENIED",
+      "result": null
+    },
+    {
+      "condition": "reference_absent_in_authorized_scope",
+      "errorCode": "REFERENCE_NOT_FOUND",
+      "result": null
+    },
+    {
+      "condition": "persisted_version_differs",
+      "errorCode": "CONFLICT_VERSION",
+      "result": null
+    },
+    {
+      "condition": "schema_invalid",
+      "errorCode": "TRANSACTION_SCHEMA_INVALID",
+      "result": null
+    }
+  ]
+}

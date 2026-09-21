@@ -1,0 +1,8 @@
+EXP-02 — terceira execução do harness (preservada)
+
+Resultado observado antes da interrupção: E2-01 a E2-09 emitiram PASS; E2-10 chegou à etapa de arquivamento e a chamada falhou antes da asserção final.
+Código PostgreSQL: 42725
+Mensagem: function pgmq.archive(unknown, unknown) is not unique
+Causa: pgmq 1.5.1 sobrecarrega archive para bigint e bigint[]; a chamada não tipava o identificador.
+Correção aplicada: casts explícitos para text e bigint.
+Interpretação: esta rodada não constitui aprovação final, pois E2-10 não concluiu e o arquivo consolidado não foi emitido. A execução oficial reinicia todos os cenários em ambiente limpo.

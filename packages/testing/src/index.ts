@@ -30,6 +30,7 @@ export function criarDeps(inicial?: Partial<Estado>): Deps & { estado: Estado } 
     withUserTransaction: (_ctx, fn) => fn(TX),
     withIdentityTransaction: (u, fn) => { identidadeAtual = u; return fn(TX); },
     withWorkerTransaction: (_t, _j, fn) => fn(TX),
+    withDispatcherTransaction: (_t, _d, fn) => fn(TX),
     withOperatorTransaction: (_o, _m, fn) => fn(TX),
   };
 

@@ -1,6 +1,6 @@
 # 18 — Experimentos técnicos condicionantes
 
-> **Discovery v1.2 — especificação (11/09/2026).** Especifica os experimentos que condicionam as propostas técnicas DP-03, DP-04, DP-05/06, DP-07 e DP-09. **EXP-01 foi executado em 15/09/2026** e está aprovado; resultado e evidências em [`experiments/exp-01/RESULTADO.md`](../../../experiments/exp-01/RESULTADO.md) e na [ADR-0003](../../decisions/ADR-0003-tenancy-rls-e-acesso-a-dados.md). **EXP-02 a EXP-05 continuam não executados.** Eles exigem implementação estrutural local adicional, contas externas ou gasto. Por isso, **só podem rodar dentro de um escopo de implementação aprovado** ou com autorização específica.
+> **Discovery v1.4 — execução parcial (21/09/2026).** Especifica os experimentos que condicionam as propostas técnicas DP-03, DP-04, DP-05/06, DP-07 e DP-09. **EXP-01 e EXP-02 foram aprovados com notas**; resultados em [`experiments/exp-01/RESULTADO.md`](../../../experiments/exp-01/RESULTADO.md) e [`experiments/exp-02/RESULTADO.md`](../../../experiments/exp-02/RESULTADO.md). **EXP-03 a EXP-05 continuam não executados** e exigem contas externas, recursos pagos ou gasto; só podem rodar com autorização específica.
 
 ## Regras comuns
 
@@ -69,6 +69,8 @@ Restrições conhecidas do modo transação: sem prepared statements; sem estado
 2. Se o problema for estrutural (vazamento, claims): **PostgREST/`supabase-js` com o JWT do usuário** (RLS nativa) para leituras e **funções SQL com `SECURITY INVOKER`** para gravações atômicas (agregado + outbox + auditoria na mesma função). Regras de negócio permanecem na aplicação; a função só persiste o resultado validado. Nesse caso, o schema exposto à Data API precisa de revisão (ADR-0003 revisada).
 
 ## EXP-02 — Filas, scheduler e disputa com o banco (DP-04 · [ADR-0004](../../decisions/ADR-0004-filas-scheduler-postgres.md))
+
+**Executado e revisado em 21/09/2026 — aprovado com notas.** E2-09 foi repetido porque o proxy inicial era uma consulta submilissegundo não representativa. Com dashboard tenant-scoped sobre 450.000 snapshots, cinco rodadas pareadas mediram 12,92% de degradação agregada contra limite de 20%. Nenhum ambiente externo foi criado. Resultado detalhado: [`experiments/exp-02/RESULTADO.md`](../../../experiments/exp-02/RESULTADO.md).
 
 ### Hipótese
 
@@ -169,7 +171,7 @@ Alternativa: se nenhum candidato atingir os limiares, a rota fica desabilitada o
 | Experimento | Momento | Autorização necessária |
 | --- | --- | --- |
 | EXP-01 | **Executado em 15/09/2026**, antes das tabelas definitivas | Concedida com o I-01 |
-| EXP-02 | Início do I-02 | Aprovação do escopo local do I-02 |
+| EXP-02 | **Executado e aprovado com notas em 21/09/2026** | Aprovação local para desenho; repetir em homologação antes da ativação |
 | EXP-03 | Antes da primeira publicação do worker (I-02); latência da web antes da publicação do I-01 | Contas, recursos e orçamento de teste |
 | EXP-04 | Antes de dados reais de pilotos; repetição trimestral | Projeto descartável e orçamento |
 | EXP-05 | I-05 (antes de liberar agentes); a cada mudança de rota | Chave de API, orçamento de avaliação |

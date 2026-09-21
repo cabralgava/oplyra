@@ -1,0 +1,93 @@
+{
+  "artifact": "oplyra-create-copy-variants-contract-tests",
+  "artifactVersion": "2.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-21T14:06:00Z",
+  "status": "passed",
+  "subject": {
+    "action": "create_copy_variants",
+    "actionsRegistryVersion": "2.0",
+    "inputSchema": "create-copy-variants.input.schema.json",
+    "outputSchema": "create-copy-variants.output.schema.json"
+  },
+  "runner": {
+    "framework": "vitest",
+    "version": "5.0.0",
+    "command": "vitest run test/contracts/create-copy-variants.contract.test.ts",
+    "testFiles": 1,
+    "testsRun": 10,
+    "testsPassed": 10,
+    "testsFailed": 0
+  },
+  "coverage": {
+    "schemaKeywordGuard": true,
+    "externalAndLocalRefResolution": true,
+    "actionRegistryBinding": true,
+    "internalSideEffectClassification": true,
+    "idempotencyRequiredByRegistry": true,
+    "validTransactionIdempotencyKey": true,
+    "missingIdempotencyBusinessInvariant": true,
+    "validInputFixture": true,
+    "validOutputFixture": true,
+    "missingRequiredInput": true,
+    "minimumQuantity": true,
+    "minimumOutputItems": true,
+    "missingRequiredOutputField": true,
+    "crossPayloadQuantityInvariant": true
+  },
+  "fixtures": {
+    "valid": 3,
+    "invalid": 6,
+    "paths": [
+      "docs/product/marketing-ops/contracts/fixtures/valid/create-copy-variants-input.json",
+      "docs/product/marketing-ops/contracts/fixtures/valid/create-copy-variants-output.json",
+      "docs/product/marketing-ops/contracts/fixtures/valid/transaction-command-create-copy-variants.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-input-missing-objective.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-input-quantity-zero.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-output-empty-variants.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-output-missing-cta.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-quantity-mismatch-business-invariant.json",
+      "docs/product/marketing-ops/contracts/fixtures/invalid/transaction-command-create-copy-variants-without-idempotency.json"
+    ]
+  },
+  "harness": {
+    "path": "test/contracts/json-schema-subset.ts",
+    "supportedDraft": "2020-12 subset required by the bound schemas",
+    "failOnUnsupportedKeyword": true,
+    "supportedKeywords": [
+      "$ref",
+      "type",
+      "required",
+      "properties",
+      "additionalProperties",
+      "items",
+      "minItems",
+      "uniqueItems",
+      "minimum",
+      "enum",
+      "minLength",
+      "pattern",
+      "format:date-time"
+    ]
+  },
+  "integrity": {
+    "docs/product/marketing-ops/contracts/fixtures/valid/create-copy-variants-input.json": "173050878f352e06aeb8b2142d757bd67e887b0e39860c2f2fd275da6a07fea7",
+    "docs/product/marketing-ops/contracts/fixtures/valid/create-copy-variants-output.json": "76423bad4586bd4d916dbc067c2b72ed1e433ec96114b633c0dd2dad77afced3",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-input-missing-objective.json": "dd611d3f56a3f80c66816fcd7d6db3a22e651e174c4e23121e9f188b40e785ce",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-input-quantity-zero.json": "03a2af56f66a27114c4afad530f35254309ba87967f26e5aa6e7ee95bdb6613b",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-output-empty-variants.json": "db46633e695c06dde9b83faa95c45a20021a1371a42181f72c7d7f3c3b421522",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-output-missing-cta.json": "760c807600ba22f4195630c725d2d46cbbc1c60c28a853747b6d6494a7528128",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/create-copy-variants-quantity-mismatch-business-invariant.json": "9ea8b917afe9737a996eb2beaa6d0db5bc0253dc36217ba718621936d985649c",
+    "docs/product/marketing-ops/contracts/fixtures/valid/transaction-command-create-copy-variants.json": "aac3dbd7c0f51b3ae3acad29cbb41b680c85957ba9b47aabe81b2f7b06129eab",
+    "docs/product/marketing-ops/contracts/fixtures/invalid/transaction-command-create-copy-variants-without-idempotency.json": "77331cee6c905902901626923c3194b89cb8670397a5944572d207c163e5ca4a",
+    "test/contracts/json-schema-subset.ts": "3bf437a110ad6ef95a7aaaa304f948f16f1cb4e533f9a3b3da827f098c07cccc",
+    "test/contracts/create-copy-variants.contract.test.ts": "059afde1742582252e62b79dc83363de94548f974c55af77492605f86a7a3bb0"
+  },
+  "result": {
+    "contractExecutable": true,
+    "runtimeImplemented": false,
+    "registryModified": true,
+    "registryCompatibility": "behavioral_breaking",
+    "next": "resolve_idempotency_conflict_error_mapping"
+  }
+}

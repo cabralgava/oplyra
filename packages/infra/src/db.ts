@@ -42,6 +42,12 @@ export function criarUnitOfWork(cfg: PoolConfig): UnitOfWork & { pool: pg.Pool; 
       await tx.query("select set_config('app.job_ref', $1, true)", [jobRef]);
     }, fn),
 
+    withDispatcherTransaction: (tenantId: TenantId, dispatcherId: string, fn) => emTransacao(async (tx) => {
+      await tx.query("set local role oplyra_dispatcher_exec");
+      await tx.query("select set_config('app.tenant_id', $1, true)", [tenantId]);
+      await tx.query("select set_config('app.dispatcher_id', $1, true)", [dispatcherId]);
+    }, fn),
+
     withIdentityTransaction: (userId: UserId, fn) => emTransacao(async (tx) => {
       await tx.query("set local role authenticated");
       await tx.query("select set_config('request.jwt.claim.sub', $1, true)", [userId]);

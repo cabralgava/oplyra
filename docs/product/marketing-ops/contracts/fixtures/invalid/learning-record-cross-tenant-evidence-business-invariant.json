@@ -1,0 +1,81 @@
+{
+  "learning": {
+    "id": "learning_cross_tenant_01",
+    "schemaVersion": "1.0",
+    "tenantId": "tenant_123",
+    "source": {
+      "type": "performance_analysis",
+      "ref": "analysis:perf_001",
+      "experimentId": null,
+      "initiativeId": "cmp_123",
+      "observedAt": "2026-09-17T13:50:00Z"
+    },
+    "context": {
+      "scope": "campaign",
+      "initiativeId": "cmp_123",
+      "experimentId": null,
+      "productId": "prd_001",
+      "audienceId": "vp_marketing",
+      "channel": "meta_ads",
+      "periodStart": "2026-09-01T00:00:00Z",
+      "periodEnd": "2026-09-15T23:59:59Z",
+      "contextVersionRefs": []
+    },
+    "evidence": {
+      "refs": [
+        "evidence:tenant_999:dataset_01"
+      ],
+      "dataCoverage": 1.0,
+      "maturationStatus": "mature",
+      "causalSupport": "observational"
+    },
+    "conclusion": {
+      "status": "observational",
+      "statement": "Há associação entre o criativo e oportunidades no período.",
+      "scope": "Meta Ads",
+      "causalClaim": false
+    },
+    "confidence": {
+      "level": "medium",
+      "score": 0.6,
+      "reason": "Boa cobertura, mas análise observacional."
+    },
+    "limitations": [
+      {
+        "type": "attribution",
+        "description": "Análise observacional sem desenho causal.",
+        "impact": "medium",
+        "evidenceRef": null
+      }
+    ],
+    "decision": {
+      "action": "retain",
+      "reason": "Usar como sinal para novo teste.",
+      "ownerAgent": "performance-intelligence-agent"
+    },
+    "proposedContextUpdateRefs": [],
+    "nextExperiment": {
+      "question": "O criativo aumenta oportunidades em teste controlado?",
+      "hypothesis": "A variação B aumentará oportunidades qualificadas.",
+      "variable": "creative",
+      "priority": "normal"
+    },
+    "reviewStatus": "draft",
+    "review": null,
+    "supersededBy": null,
+    "createdBy": {
+      "type": "agent",
+      "id": "performance-intelligence-agent"
+    },
+    "createdAt": "2026-09-17T13:55:00Z",
+    "updatedAt": null,
+    "correlationId": "corr_cross_tenant_01",
+    "workflowId": null,
+    "taskId": "task_perf_01"
+  },
+  "evidenceRegistrySnapshot": {
+    "evidenceTenants": {
+      "evidence:tenant_999:dataset_01": "tenant_999"
+    }
+  }
+}

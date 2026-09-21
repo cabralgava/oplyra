@@ -1,0 +1,4 @@
+{
+  "planVersion": "1.0",
+  "topology": { "workerRuntime": "node_long_running", "workerCountPerQueue": 1, "processingMode": "sequential_single_cycle", "tenantScheduling": "round_robin", "crossTenantBatchAllowed": true, "dispatcherIdentity": "unique_per_process" }
+}

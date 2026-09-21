@@ -1,0 +1,58 @@
+{
+  "validationId": "outbox-dispatcher-runtime-plan-1.0",
+  "validatedAt": "2026-09-21T21:00:00Z",
+  "status": "passed_with_implementation_dependencies",
+  "schema": "outbox-dispatcher-runtime-plan.schema.json",
+  "validFixture": "../../fixtures/valid/outbox-dispatcher-runtime-plan-v1.json",
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "canonicalFixtureAccepted": "passed",
+    "activationDeniedByDefault": "passed",
+    "killSwitchBeforeEachClaim": "passed",
+    "tenantScopedFairPolling": "passed",
+    "singleWorkerSequentialMode": "passed",
+    "batchMaximum500": "passed",
+    "leaseDuration120Seconds": "passed",
+    "eventOutboxRemainsSourceOfTruth": "passed",
+    "pgmqAndPgCronResponsibilitiesSeparated": "passed",
+    "schedulerOccurrenceIdempotency": "passed",
+    "compositionDependenciesExplicit": "passed",
+    "safeShutdown": "passed",
+    "lowCardinalityMetrics": "passed",
+    "scaleOutRequiresRetest": "passed"
+  },
+  "evidenceValidated": [
+    "ADR-0004 approved for MVP design",
+    "EXP-02 10/10 gates with one worker and maximum batch 500",
+    "existing claim fixture default batch 25 and lease 120 seconds",
+    "single-cycle dispatcher processing mode",
+    "tenant-scoped SQL claim and fencing boundary",
+    "retry/failure policy v1",
+    "runtime.dead_lettered payload contract v1"
+  ],
+  "planningDefaultsWithoutProductionEvidence": [
+    "idleIntervalMilliseconds=1000",
+    "failureIntervalMilliseconds=5000",
+    "drainTimeoutSeconds=30",
+    "tenantScheduling=round_robin",
+    "schedulerMisfirePolicy=catch_up_once"
+  ],
+  "unvalidatedImplementationReferences": [
+    "activation gate and kill-switch store",
+    "tenant scheduling source and fair round-robin implementation",
+    "long-running Node worker entrypoint",
+    "consumer registry composition",
+    "canonical DeliveryFailurePolicy implementation",
+    "runtime.dead_lettered publisher",
+    "telemetry adapter and alert thresholds",
+    "graceful shutdown behavior under real process signals",
+    "pgmq JobQueue adapter for workflow jobs",
+    "pg_cron occurrence materializer",
+    "production-equivalent staging validation"
+  ],
+  "runtimeDispatchEnabled": false,
+  "schedulerActivated": false,
+  "workerCreated": false,
+  "databaseChanged": false,
+  "remoteResourcesCreated": false
+}

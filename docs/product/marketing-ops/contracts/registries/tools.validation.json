@@ -1,0 +1,49 @@
+{
+  "registry": "oplyra-tools",
+  "registryVersion": "1.0",
+  "entries": 58,
+  "agentReferencedToolKeys": 58,
+  "registeredToolKeys": 58,
+  "categories": [
+    "analysis_service",
+    "analytics_data",
+    "analytics_repository",
+    "asset_repository",
+    "audit",
+    "commercial_data",
+    "consent_governance",
+    "context",
+    "context_repository",
+    "customer_data",
+    "domain_repository",
+    "event_store",
+    "evidence_repository",
+    "external_action",
+    "external_integration",
+    "generation",
+    "governance_repository",
+    "governance_service",
+    "integration_facade",
+    "integration_service",
+    "learning_repository",
+    "lifecycle_repository",
+    "project_repository",
+    "runtime",
+    "scheduler",
+    "workflow"
+  ],
+  "checks": {
+    "uniqueKeys": true,
+    "allAgentToolRefsRegistered": true,
+    "allObservedPermissionsCanonical": true,
+    "allObservedPermissionsAllowedByTool": true,
+    "aliasesResolve": true,
+    "providerFlagsValid": true,
+    "videoCapabilitiesDisabled": true
+  },
+  "validation": {
+    "status": "passed",
+    "errors": [],
+    "warnings": []
+  }
+}

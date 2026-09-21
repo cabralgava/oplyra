@@ -1,0 +1,4 @@
+{
+  "planVersion": "1.0",
+  "environments": { "production": { "state": "created", "dataPolicy": "no_real_data_before_readiness_approval", "internalVerificationTenantsRequired": true, "runtimeStartsDisabled": true } }
+}

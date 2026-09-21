@@ -8,6 +8,7 @@ set -euo pipefail
 : "${OPLYRA_WEB_PASSWORD:=local-web-2026}"
 : "${OPLYRA_WORKER_PASSWORD:=local-worker-2026}"
 : "${OPLYRA_OPS_PASSWORD:=local-ops-2026}"
+: "${OPLYRA_DISPATCHER_PASSWORD:=local-dispatcher-2026}"
 
 case "$DATABASE_URL_MIGRATIONS" in
   *127.0.0.1*|*localhost*) ;;
@@ -17,6 +18,7 @@ esac
 psql "$DATABASE_URL_MIGRATIONS" -v ON_ERROR_STOP=1 -q \
   -c "alter role oplyra_web_login    with password '$OPLYRA_WEB_PASSWORD'" \
   -c "alter role oplyra_worker_login with password '$OPLYRA_WORKER_PASSWORD'" \
-  -c "alter role oplyra_ops_login    with password '$OPLYRA_OPS_PASSWORD'"
+  -c "alter role oplyra_ops_login    with password '$OPLYRA_OPS_PASSWORD'" \
+  -c "alter role oplyra_dispatcher_login with password '$OPLYRA_DISPATCHER_PASSWORD'"
 
-echo "senhas locais definidas para oplyra_web_login, oplyra_worker_login e oplyra_ops_login"
+echo "senhas locais definidas para os logins web, worker, ops e dispatcher"

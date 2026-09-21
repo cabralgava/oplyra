@@ -1,0 +1,78 @@
+{
+  "id": "handoff_copy_to_design_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "fromAgent": "copywriting-agent",
+  "toAgent": "design-agent",
+  "taskId": "task_design_01",
+  "workflowId": "wf_campaign_01",
+  "correlationId": "corr_campaign_01",
+  "causationId": "txn_copy_approved_01",
+  "initiativeId": "cmp_123",
+  "experimentId": "exp_091",
+  "contextPackageId": "ctx_design_44",
+  "objective": "Transformar a mensagem aprovada em três variações visuais mantendo a variável experimental restrita ao ângulo criativo.",
+  "reason": "A etapa de copy foi concluída e o workflow exige execução visual.",
+  "status": "created",
+  "inputRefs": [
+    {
+      "ref": "copy_variant_set_22",
+      "type": "content",
+      "version": 4,
+      "required": true,
+      "description": "Conjunto de copy aprovado para desenvolvimento visual."
+    },
+    {
+      "ref": "asset_logo_01",
+      "type": "asset",
+      "version": 2,
+      "required": true,
+      "description": "Logo oficial com direitos confirmados."
+    }
+  ],
+  "decisionsMade": [
+    {
+      "id": "decision_01",
+      "decision": "Manter offer, CTA e formato constantes entre as variantes.",
+      "sourceRef": "experiment:exp_091:v2",
+      "madeBy": "strategy-quality-agent",
+      "madeAt": "2026-09-16T19:55:00Z",
+      "binding": true
+    }
+  ],
+  "constraints": [
+    {
+      "type": "experiment",
+      "description": "Apenas o ângulo visual pode variar.",
+      "severity": "blocking",
+      "ref": "experiment:exp_091:v2"
+    },
+    {
+      "type": "brand",
+      "description": "Usar somente assets aprovados da Brand Truth vigente.",
+      "severity": "high",
+      "ref": "brandTruth:tenant_123:v5"
+    }
+  ],
+  "openQuestions": [],
+  "expectedOutput": {
+    "action": "create_static_variations",
+    "description": "Três conceitos visuais prontos para quality review.",
+    "schemaRef": "oplyra.design.static-variations.v1",
+    "qualityGateRef": "creative_gate",
+    "dueAt": "2026-09-17T18:00:00Z"
+  },
+  "requiredContextRefs": [
+    "brandTruth:tenant_123:v5",
+    "experiment:exp_091:v2"
+  ],
+  "approvalRefs": [],
+  "evidenceRefs": [
+    "claim_12",
+    "proof_09"
+  ],
+  "createdAt": "2026-09-16T20:00:00Z",
+  "acceptedAt": null,
+  "completedAt": null,
+  "rejection": null
+}

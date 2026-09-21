@@ -1,0 +1,35 @@
+{
+  "tenantId": "tenant_acme",
+  "dispatcherId": "outbox-worker-01",
+  "claimedAt": "2026-09-21T16:00:00Z",
+  "claims": [
+    {
+      "eventTransactionId": "tx_event_copy_01",
+      "eventKey": "copy.draft_created",
+      "schemaVersion": "1.0",
+      "producerAgent": "copywriting-agent",
+      "consumerAgent": "design-agent",
+      "payload": {
+        "draftRef": "copy_draft_01",
+        "version": 1,
+        "sourceAction": "create_copy_variants",
+        "variantRefs": [
+          "var_a_copy_v1",
+          "var_b_copy_v1"
+        ]
+      },
+      "trace": {
+        "correlationId": "corr_copy_01",
+        "causationId": "tx_command_copy_01",
+        "workflowId": "workflow_launch_01",
+        "taskId": "task_copy_01"
+      },
+      "context": {
+        "initiativeRef": "initiative_launch_01"
+      },
+      "attempt": 1,
+      "fencingToken": "fence_01",
+      "leaseExpiresAt": "2026-09-21T16:02:00Z"
+    }
+  ]
+}

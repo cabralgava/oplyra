@@ -1,0 +1,4 @@
+{
+  "planVersion": "1.0",
+  "activation": { "enabled": true, "explicitChangeRequired": true, "killSwitchRequired": true, "checkBeforeEachClaim": true }
+}

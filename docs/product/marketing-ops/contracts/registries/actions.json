@@ -1,0 +1,4639 @@
+{
+  "registry": "oplyra-actions",
+  "registryVersion": "2.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-21T14:06:00Z",
+  "status": "active",
+  "collisionPolicy": {
+    "singleOwnerRequired": true,
+    "sharedFacadeActions": {
+      "resolve_blocker": "account-projects-agent",
+      "task_dependencies": "account-projects-agent",
+      "pending_approvals": "account-projects-agent"
+    },
+    "renamedAmbiguousActions": {
+      "campaign_status": [
+        "media_campaign_status",
+        "email_campaign_status"
+      ],
+      "attribution_status": [
+        "performance_attribution_status",
+        "revenue_attribution_status"
+      ]
+    }
+  },
+  "entries": [
+    {
+      "action": "activate_journey",
+      "type": "command",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `activate_journey` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "active_blockers",
+      "type": "query",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `active_blockers` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "adapt_content_by_channel",
+      "type": "command",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `adapt_content_by_channel` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "adapt_copy",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `adapt_copy` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "adapt_visual",
+      "type": "command",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `adapt_visual` sob ownership de `design-agent`."
+    },
+    {
+      "action": "analyze_asset_fit",
+      "type": "query",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `analyze_asset_fit` sob ownership de `design-agent`."
+    },
+    {
+      "action": "analyze_brand_alignment",
+      "type": "query",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `analyze_brand_alignment` sob ownership de `design-agent`."
+    },
+    {
+      "action": "analyze_campaign_performance",
+      "type": "command",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `analyze_campaign_performance` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "analyze_claim_usage",
+      "type": "query",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `analyze_claim_usage` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "analyze_experiment",
+      "type": "command",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `analyze_experiment` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "analyze_funnel",
+      "type": "command",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `analyze_funnel` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "analyze_lead_quality",
+      "type": "command",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `analyze_lead_quality` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "analyze_message",
+      "type": "query",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `analyze_message` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "analyze_pipeline_contribution",
+      "type": "command",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `analyze_pipeline_contribution` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "analyze_revenue_attribution",
+      "type": "command",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `analyze_revenue_attribution` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "analyze_unattributed_revenue",
+      "type": "command",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `analyze_unattributed_revenue` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "analyze_visual_consistency",
+      "type": "query",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `analyze_visual_consistency` sob ownership de `design-agent`."
+    },
+    {
+      "action": "anomaly_status",
+      "type": "query",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `anomaly_status` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "assess_attribution_coverage",
+      "type": "command",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `assess_attribution_coverage` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "assess_maturation",
+      "type": "command",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `assess_maturation` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "assign_task",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `assign_task` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "blocked_tasks",
+      "type": "query",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `blocked_tasks` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "brand_alignment",
+      "type": "query",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `brand_alignment` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "budget_status",
+      "type": "query",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `budget_status` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "calendar_status",
+      "type": "query",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `calendar_status` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "cancel_workflow",
+      "type": "command",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `cancel_workflow` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "claim_validity",
+      "type": "query",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `claim_validity` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "compare_attribution_models",
+      "type": "command",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `compare_attribution_models` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "compare_copy_versions",
+      "type": "query",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `compare_copy_versions` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "compare_periods",
+      "type": "command",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `compare_periods` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "compare_variants",
+      "type": "command",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `compare_variants` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "compare_visual_variants",
+      "type": "query",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `compare_visual_variants` sob ownership de `design-agent`."
+    },
+    {
+      "action": "confidence_status",
+      "type": "query",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `confidence_status` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "contact_journey_history",
+      "type": "query",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `contact_journey_history` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "content_status",
+      "type": "query",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `content_status` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "context_readiness",
+      "type": "query",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `context_readiness` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "coordinate_approval",
+      "type": "command",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `coordinate_approval` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "coordinate_campaign",
+      "type": "command",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `coordinate_campaign` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "coordinate_experiment",
+      "type": "command",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `coordinate_experiment` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "coverage_status",
+      "type": "query",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `coverage_status` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "create_ad_copy",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_ad_copy` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "create_content_calendar",
+      "type": "command",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_content_calendar` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "create_copy_variants",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "bound",
+      "inputSchema": "../schemas/copywriting/create-copy-variants.input.schema.json",
+      "outputSchema": "../schemas/copywriting/create-copy-variants.output.schema.json",
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_copy_variants` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "create_editorial_plan",
+      "type": "command",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_editorial_plan` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "create_email_campaign",
+      "type": "command",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_email_campaign` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "create_email_copy",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_email_copy` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "create_journey",
+      "type": "command",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_journey` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "create_journey_version",
+      "type": "command",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_journey_version` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "create_landing_page_copy",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_landing_page_copy` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "create_media_plan",
+      "type": "command",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_media_plan` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "create_nurture_flow",
+      "type": "command",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_nurture_flow` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "create_reactivation_flow",
+      "type": "command",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_reactivation_flow` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "create_script",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_script` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "create_segment",
+      "type": "command",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_segment` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "create_social_copy",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_social_copy` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "create_static_variation",
+      "type": "command",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_static_variation` sob ownership de `design-agent`."
+    },
+    {
+      "action": "create_task",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_task` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "create_visual_brief",
+      "type": "command",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_visual_brief` sob ownership de `design-agent`."
+    },
+    {
+      "action": "create_visual_concept",
+      "type": "command",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_visual_concept` sob ownership de `design-agent`."
+    },
+    {
+      "action": "create_visual_variants",
+      "type": "command",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_visual_variants` sob ownership de `design-agent`."
+    },
+    {
+      "action": "create_workflow",
+      "type": "command",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `create_workflow` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "data_health",
+      "type": "query",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `data_health` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "deliverability_status",
+      "type": "query",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `deliverability_status` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "delivery_status",
+      "type": "query",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `delivery_status` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "derive_copy_from_asset",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `derive_copy_from_asset` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "derive_visual_direction_from_asset",
+      "type": "command",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `derive_visual_direction_from_asset` sob ownership de `design-agent`."
+    },
+    {
+      "action": "email_campaign_status",
+      "type": "query",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [
+        {
+          "action": "campaign_status",
+          "agent": "email-marketing-agent",
+          "source": "../../agents/email-marketing.md"
+        }
+      ],
+      "description": "Consulta a capability canônica `email_campaign_status` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "email_performance",
+      "type": "query",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `email_performance` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "enroll_contact",
+      "type": "command",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `enroll_contact` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "enrollment_status",
+      "type": "query",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `enrollment_status` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "evidence_sufficiency",
+      "type": "query",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `evidence_sufficiency` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "experiment_distribution",
+      "type": "query",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `experiment_distribution` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "experiment_integrity",
+      "type": "query",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `experiment_integrity` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "experiment_status",
+      "type": "query",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `experiment_status` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "funnel_status",
+      "type": "query",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `funnel_status` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "generate_executive_summary",
+      "type": "command",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `generate_executive_summary` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "generate_monthly_report",
+      "type": "command",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `generate_monthly_report` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "generate_weekly_checkin",
+      "type": "command",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `generate_weekly_checkin` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "identify_anomaly",
+      "type": "command",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `identify_anomaly` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "identify_copy_gaps",
+      "type": "query",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `identify_copy_gaps` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "identify_tracking_gap",
+      "type": "command",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `identify_tracking_gap` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "identify_visual_gaps",
+      "type": "query",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `identify_visual_gaps` sob ownership de `design-agent`."
+    },
+    {
+      "action": "initiative_progress",
+      "type": "query",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `initiative_progress` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "journey_conflicts",
+      "type": "query",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `journey_conflicts` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "journey_performance",
+      "type": "query",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `journey_performance` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "journey_readiness",
+      "type": "query",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `journey_readiness` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "journey_status",
+      "type": "query",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `journey_status` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "latest_report",
+      "type": "query",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `latest_report` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "map_experiment_variants",
+      "type": "command",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `map_experiment_variants` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "maturation_status",
+      "type": "query",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `maturation_status` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "media_campaign_status",
+      "type": "query",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [
+        {
+          "action": "campaign_status",
+          "agent": "paid-media-agent",
+          "source": "../../agents/paid-media.md"
+        }
+      ],
+      "description": "Consulta a capability canônica `media_campaign_status` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "media_performance",
+      "type": "query",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `media_performance` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "next_action",
+      "type": "query",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `next_action` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "operation_status",
+      "type": "query",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `operation_status` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "orchestrate_request",
+      "type": "command",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `orchestrate_request` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "organic_performance",
+      "type": "query",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `organic_performance` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "overdue_tasks",
+      "type": "query",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `overdue_tasks` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "owner_workload",
+      "type": "query",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `owner_workload` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "pause_campaign",
+      "type": "command",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "external",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `pause_campaign` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "pause_journey",
+      "type": "command",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `pause_journey` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "pending_approvals",
+      "type": "query",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [
+        {
+          "action": "pending_approvals",
+          "agent": "account-projects-agent",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "action": "pending_approvals",
+          "agent": "orchestrator-agent",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Consulta a capability canônica `pending_approvals` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "pending_reporting_decisions",
+      "type": "query",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `pending_reporting_decisions` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "performance_attribution_status",
+      "type": "query",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [
+        {
+          "action": "attribution_status",
+          "agent": "performance-intelligence-agent",
+          "source": "../../agents/performance-intelligence.md"
+        }
+      ],
+      "description": "Consulta a capability canônica `performance_attribution_status` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "performance_status",
+      "type": "query",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `performance_status` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "persist_report",
+      "type": "command",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `persist_report` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "pipeline_status",
+      "type": "query",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `pipeline_status` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "prepare_ad",
+      "type": "command",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `prepare_ad` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "prepare_campaign",
+      "type": "command",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `prepare_campaign` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "prepare_checkin",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `prepare_checkin` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "prepare_email_ab_test",
+      "type": "command",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `prepare_email_ab_test` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "prepare_email_campaign",
+      "type": "command",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `prepare_email_campaign` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "prepare_report_delivery",
+      "type": "command",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `prepare_report_delivery` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "prepare_social_post",
+      "type": "command",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `prepare_social_post` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "prepare_tracking",
+      "type": "command",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `prepare_tracking` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "project_status",
+      "type": "query",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `project_status` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "propose_learning",
+      "type": "command",
+      "ownerAgent": "performance-intelligence-agent",
+      "domain": "performance",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "performance-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "performance-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `propose_learning` sob ownership de `performance-intelligence-agent`."
+    },
+    {
+      "action": "propose_revenue_learning",
+      "type": "command",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `propose_revenue_learning` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "publication_readiness",
+      "type": "query",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `publication_readiness` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "publication_status",
+      "type": "query",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `publication_status` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "publish_campaign",
+      "type": "command",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "external",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `publish_campaign` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "publish_post",
+      "type": "command",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "external",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `publish_post` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "quality_status",
+      "type": "query",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `quality_status` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "register_approval",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `register_approval` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "register_blocker",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `register_blocker` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "register_decision",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `register_decision` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "register_dependency",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `register_dependency` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "register_risk",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `register_risk` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "report_status",
+      "type": "query",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `report_status` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "reporting_period_status",
+      "type": "query",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `reporting_period_status` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "repurpose_content",
+      "type": "command",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `repurpose_content` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "repurpose_opportunities",
+      "type": "query",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `repurpose_opportunities` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "resolve_blocker",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [
+        {
+          "action": "resolve_blocker",
+          "agent": "account-projects-agent",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "action": "resolve_blocker",
+          "agent": "orchestrator-agent",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Executa a capability canônica `resolve_blocker` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "resume_campaign",
+      "type": "command",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "external",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `resume_campaign` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "resume_workflow",
+      "type": "command",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `resume_workflow` sob ownership de `orchestrator-agent`."
+    },
+    {
+      "action": "revenue_attribution_status",
+      "type": "query",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [
+        {
+          "action": "attribution_status",
+          "agent": "revenue-intelligence-agent",
+          "source": "../../agents/revenue-intelligence.md"
+        }
+      ],
+      "description": "Consulta a capability canônica `revenue_attribution_status` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "revenue_status",
+      "type": "query",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `revenue_status` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "review_analysis",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_analysis` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_campaign",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_campaign` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_context_update",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_context_update` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_copy",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_copy` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_design",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_design` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_email_campaign",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_email_campaign` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_experiment",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_experiment` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_journey",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_journey` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_learning",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_learning` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_report",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_report` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_social_content",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_social_content` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "review_strategy",
+      "type": "command",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `review_strategy` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "revise_copy",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `revise_copy` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "revise_journey",
+      "type": "command",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `revise_journey` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "revise_visual_brief",
+      "type": "command",
+      "ownerAgent": "design-agent",
+      "domain": "design",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "design-agent"
+      ],
+      "callableByAgents": [
+        "design-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `revise_visual_brief` sob ownership de `design-agent`."
+    },
+    {
+      "action": "schedule_email",
+      "type": "command",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "external",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `schedule_email` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "schedule_post",
+      "type": "command",
+      "ownerAgent": "social-media-agent",
+      "domain": "social_media",
+      "plans": [
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "external",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "social-media-agent"
+      ],
+      "callableByAgents": [
+        "social-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `schedule_post` sob ownership de `social-media-agent`."
+    },
+    {
+      "action": "segment_status",
+      "type": "query",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `segment_status` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "send_email_campaign",
+      "type": "command",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "external",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `send_email_campaign` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "send_readiness",
+      "type": "query",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `send_readiness` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "send_report",
+      "type": "command",
+      "ownerAgent": "reporting-checkins-agent",
+      "domain": "reporting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "external",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "reporting-checkins-agent"
+      ],
+      "callableByAgents": [
+        "reporting-checkins-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `send_report` sob ownership de `reporting-checkins-agent`."
+    },
+    {
+      "action": "shorten_copy",
+      "type": "command",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `shorten_copy` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "simulate_journey",
+      "type": "command",
+      "ownerAgent": "lifecycle-agent",
+      "domain": "lifecycle",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "lifecycle-agent"
+      ],
+      "callableByAgents": [
+        "lifecycle-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `simulate_journey` sob ownership de `lifecycle-agent`."
+    },
+    {
+      "action": "source_conflicts",
+      "type": "query",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `source_conflicts` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "strategic_alignment",
+      "type": "query",
+      "ownerAgent": "strategy-quality-agent",
+      "domain": "strategy_quality",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "strategy-quality-agent"
+      ],
+      "callableByAgents": [
+        "strategy-quality-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `strategic_alignment` sob ownership de `strategy-quality-agent`."
+    },
+    {
+      "action": "suggest_message_angles",
+      "type": "query",
+      "ownerAgent": "copywriting-agent",
+      "domain": "copywriting",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "copywriting-agent"
+      ],
+      "callableByAgents": [
+        "copywriting-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `suggest_message_angles` sob ownership de `copywriting-agent`."
+    },
+    {
+      "action": "suppression_status",
+      "type": "query",
+      "ownerAgent": "email-marketing-agent",
+      "domain": "email_marketing",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "email-marketing-agent"
+      ],
+      "callableByAgents": [
+        "email-marketing-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `suppression_status` sob ownership de `email-marketing-agent`."
+    },
+    {
+      "action": "task_dependencies",
+      "type": "query",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [
+        {
+          "action": "task_dependencies",
+          "agent": "account-projects-agent",
+          "source": "../../agents/account-projects.md"
+        },
+        {
+          "action": "task_dependencies",
+          "agent": "orchestrator-agent",
+          "source": "../../agents/orchestrator.md"
+        }
+      ],
+      "description": "Consulta a capability canônica `task_dependencies` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "task_status",
+      "type": "query",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `task_status` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "tracking_status",
+      "type": "query",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `tracking_status` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "unattributed_revenue_status",
+      "type": "query",
+      "ownerAgent": "revenue-intelligence-agent",
+      "domain": "revenue_intelligence",
+      "plans": [
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "revenue-intelligence-agent"
+      ],
+      "callableByAgents": [
+        "revenue-intelligence-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `unattributed_revenue_status` sob ownership de `revenue-intelligence-agent`."
+    },
+    {
+      "action": "update_budget",
+      "type": "command",
+      "ownerAgent": "paid-media-agent",
+      "domain": "paid_media",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "high",
+      "sideEffect": true,
+      "sideEffectType": "external",
+      "requiresApproval": true,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "paid-media-agent"
+      ],
+      "callableByAgents": [
+        "paid-media-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `update_budget` sob ownership de `paid-media-agent`."
+    },
+    {
+      "action": "update_deadline",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `update_deadline` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "update_task",
+      "type": "command",
+      "ownerAgent": "account-projects-agent",
+      "domain": "project_management",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "medium",
+      "sideEffect": true,
+      "sideEffectType": "internal",
+      "requiresApproval": false,
+      "requiresIdempotency": true,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "account-projects-agent"
+      ],
+      "callableByAgents": [
+        "account-projects-agent",
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Executa a capability canônica `update_task` sob ownership de `account-projects-agent`."
+    },
+    {
+      "action": "workflow_status",
+      "type": "query",
+      "ownerAgent": "orchestrator-agent",
+      "domain": "orchestration",
+      "plans": [
+        "performance",
+        "growth"
+      ],
+      "risk": "low",
+      "sideEffect": false,
+      "sideEffectType": null,
+      "requiresApproval": false,
+      "requiresIdempotency": false,
+      "schemaStatus": "pending_domain_schema",
+      "inputSchema": null,
+      "outputSchema": null,
+      "declaredByAgents": [
+        "orchestrator-agent"
+      ],
+      "callableByAgents": [
+        "orchestrator-agent"
+      ],
+      "legacyDeclarations": [],
+      "description": "Consulta a capability canônica `workflow_status` sob ownership de `orchestrator-agent`."
+    }
+  ]
+}

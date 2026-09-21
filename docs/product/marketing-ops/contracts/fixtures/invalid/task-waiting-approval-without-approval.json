@@ -1,0 +1,30 @@
+{
+  "id": "task_publish_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "type": "publish_campaign",
+  "title": "Publicar campanha",
+  "status": "waiting_approval",
+  "priority": "urgent",
+  "owner": {
+    "type": "team",
+    "id": "paid_media"
+  },
+  "assignedAgent": "paid-media-agent",
+  "acceptanceCriteria": [
+    {
+      "id": "ac_publish_01",
+      "description": "Campanha publicada com tracking válido.",
+      "status": "pending"
+    }
+  ],
+  "approvals": [],
+  "blockedBy": [],
+  "risk": "high",
+  "sideEffect": true,
+  "requiresApproval": false,
+  "requiresIdempotency": true,
+  "idempotencyKey": null,
+  "createdAt": "2026-09-16T19:50:00Z",
+  "failure": null
+}

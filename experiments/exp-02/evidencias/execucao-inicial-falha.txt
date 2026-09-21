@@ -1,0 +1,8 @@
+EXP-02 — primeira execução do harness (preservada)
+
+Resultado: falha de preparação antes dos cenários funcionais.
+Código PostgreSQL: 42725
+Mensagem: function pgmq.send(unknown, jsonb, jsonb, unknown) is not unique
+Causa: a API pgmq 1.5.1 possui overloads de send para atraso inteiro e timestamp; a chamada não tipava o quarto argumento.
+Correção aplicada: casts explícitos para text/jsonb/jsonb/integer.
+Interpretação: este registro não aprova nem reprova E2-01–E2-10; documenta a primeira falha do próprio harness.

@@ -1,0 +1,59 @@
+{
+  "registry": "oplyra-actions",
+  "registryVersion": "2.0",
+  "sourceDeclarations": 174,
+  "sourceUniqueActionNames": 169,
+  "canonicalActions": 171,
+  "commands": 100,
+  "queries": 71,
+  "sideEffectActions": 52,
+  "approvalRequiredActions": 12,
+  "collisionsDetected": 5,
+  "collisionsResolved": 5,
+  "checks": {
+    "uniqueCanonicalActions": true,
+    "allOwnersRegistered": true,
+    "allSourceDeclarationsRepresented": true,
+    "queriesAreReadOnly": true,
+    "sideEffectsRequireIdempotency": true,
+    "highRiskActionsGoverned": true,
+    "allCollisionsResolved": true,
+    "actionSchemaReferencesResolve": true,
+    "boundSchemasValidated": true,
+    "frozenActionSemanticsChangedUnderApprovedMajorRelease": true,
+    "majorVersionBumpApplied": true
+  },
+  "schemaCoverage": {
+    "status": "partial_domain_schemas",
+    "boundActions": 1,
+    "pendingActions": 170,
+    "bindings": [
+      {
+        "action": "create_copy_variants",
+        "inputSchema": "../schemas/copywriting/create-copy-variants.input.schema.json",
+        "outputSchema": "../schemas/copywriting/create-copy-variants.output.schema.json",
+        "inputSchemaSha256": "529dae1ded9c6255ab6fa39a45d198e743450dfbdb99ea5181f87839c176c66b",
+        "outputSchemaSha256": "634ad7e48ec9b947d5c8ca7bb6909a90e42e921ad72d1f8e336b07e4d3c0c412",
+        "validation": "../schemas/copywriting/create-copy-variants.validation.json"
+      }
+    ],
+    "note": "Actions Registry 2.0 retains the CR-001 schema binding and reconciles create_copy_variants persistence semantics with DEC-ACTION-EVENT-001."
+  },
+  "validation": {
+    "status": "passed_with_notes",
+    "errors": [],
+    "warnings": [
+      "170 actions remain pending_domain_schema and are outside CR-010.",
+      "create_copy_variants callers must migrate to an envelope with idempotency.key before the write runtime is enabled."
+    ]
+  },
+  "generatedAt": "2026-09-21T14:06:00Z",
+  "compatibility": {
+    "changeProposal": "../changes/CR-010-create-copy-variants-persistence-semantics.md",
+    "classification": "behavioral_breaking",
+    "baseRegistryVersion": "1.1",
+    "currentRegistryVersion": "2.0",
+    "schemaVersionChanged": false,
+    "callerMigrationRequired": true
+  }
+}

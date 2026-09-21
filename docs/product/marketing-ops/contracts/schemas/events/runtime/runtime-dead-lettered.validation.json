@@ -1,0 +1,36 @@
+{
+  "artifact": "oplyra-runtime-dead-lettered-payload-validation",
+  "artifactVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-21T20:00:00Z",
+  "status": "passed_with_runtime_dependency",
+  "subject": {
+    "event": "runtime.dead_lettered",
+    "payloadSchema": "runtime-dead-lettered.payload.schema.json",
+    "decision": "DEC-RUNTIME-005"
+  },
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "validFixture": "passed",
+    "invalidStructuralFixtures": "passed",
+    "eventIdentityUnique": "passed",
+    "producerOwnership": "passed",
+    "consumerRegistered": "passed",
+    "sourceEventRegistered": "passed",
+    "terminalErrorRegistered": "passed",
+    "rootCauseRegistered": "passed",
+    "retryExhaustionBinding": "passed",
+    "provenancePreserved": "passed",
+    "automaticReprocessingProhibited": "passed",
+    "authorizationRevalidationRequired": "passed"
+  },
+  "unvalidatedImplementationReferences": [
+    "atomic persistence of runtime.dead_lettered with the terminal outbox transition",
+    "runtime publisher for runtime.dead_lettered",
+    "Orchestrator consumer implementation for the escalation",
+    "human notification destination and operational SLA",
+    "authorized manual reprocessing command and audit path"
+  ],
+  "runtimeDispatchEnabled": false,
+  "databaseChanged": false
+}

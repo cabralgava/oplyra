@@ -1,0 +1,54 @@
+{
+  "error": {
+    "code": "TOTALLY_NEW_RUNTIME_ERROR",
+    "category": "runtime",
+    "severity": "medium",
+    "retryable": false,
+    "message": "An unregistered error code was emitted.",
+    "details": {},
+    "defaultNextAction": {
+      "action": "stop",
+      "target": null,
+      "reason": "Unknown error contract."
+    },
+    "retryPolicy": null,
+    "source": {
+      "type": "runtime",
+      "id": "agent-runtime"
+    },
+    "cause": null,
+    "tenantId": "tenant_123",
+    "transactionId": "txn_runtime_001",
+    "correlationId": "corr_runtime_01",
+    "taskId": null,
+    "occurredAt": "2026-09-16T20:57:00Z"
+  },
+  "registrySnapshot": {
+    "registeredCodes": [
+      "TRANSACTION_SCHEMA_INVALID",
+      "TRANSACTION_SCHEMA_VERSION_UNSUPPORTED",
+      "AGENT_NOT_FOUND",
+      "ACTION_NOT_FOUND",
+      "EVENT_NOT_REGISTERED",
+      "TENANT_REQUIRED",
+      "TENANT_MISMATCH",
+      "CONTEXT_MISSING",
+      "CONTEXT_CONFLICT",
+      "PERMISSION_DENIED",
+      "ENTITLEMENT_REQUIRED",
+      "MISSING_APPROVAL",
+      "STALE_APPROVAL",
+      "INVALID_STATE_TRANSITION",
+      "ASSET_RIGHTS_UNCONFIRMED",
+      "TRACKING_NOT_READY",
+      "BUDGET_LIMIT_EXCEEDED",
+      "RECIPIENT_NOT_ELIGIBLE",
+      "SUPPRESSION_REQUIRED",
+      "UNBOUNDED_LOOP_DETECTED",
+      "DUPLICATE_ENROLLMENT",
+      "INTEGRATION_UNAVAILABLE",
+      "ATTRIBUTION_DATA_INSUFFICIENT",
+      "REVENUE_DEFINITION_REQUIRED"
+    ]
+  }
+}

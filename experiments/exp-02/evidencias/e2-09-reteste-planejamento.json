@@ -1,0 +1,65 @@
+{
+  "experiment": "EXP-02/E2-09-RETEST",
+  "startedAt": "2026-09-21T18:24:41.911Z",
+  "finishedAt": "2026-09-21T18:24:45.735Z",
+  "environment": {
+    "database": "Supabase local",
+    "pgmq": "1.5.1",
+    "pgCron": "1.6.4",
+    "syntheticData": true,
+    "applicationQuery": "tenant campaign dashboard over 30 days of metric snapshots",
+    "dataset": {
+      "tenants": 50,
+      "campaignsPerTenant": 100,
+      "snapshotDays": 90,
+      "totalMetricSnapshots": 450000
+    }
+  },
+  "checks": [
+    {
+      "id": "E2-01",
+      "pass": true,
+      "detail": "cinco rodadas de um worker drenaram burst de 1.000 + carga equivalente a 5.000 jobs/h dentro do limite de lag p95",
+      "metrics": {
+        "tenants": 50,
+        "jobsPerTrial": 6000,
+        "trials": 5,
+        "workers": 1,
+        "queueLagP95Seconds": 0.172,
+        "throughputPerSecond": 14724.5
+      }
+    },
+    {
+      "id": "E2-09",
+      "pass": true,
+      "detail": "p95 agregado de cinco rodadas pareadas, conexões, locks, crescimento por job e vacuum foram medidos; CPU é evidência externa correlata",
+      "metrics": {
+        "trials": 5,
+        "samplesPerArm": 1500,
+        "baselineP95Ms": 1.417,
+        "underLoadP95Ms": 1.6,
+        "degradationPct": 12.92,
+        "trialDegradationPct": [
+          -2.68,
+          2.82,
+          -7.89,
+          37.27,
+          9.13
+        ],
+        "activeConnections": 13,
+        "waitingLocks": 0,
+        "emptyQueueBytes": 24576,
+        "loadedQueueBytes": 1138688,
+        "bytesPerJob": 185.69,
+        "projectedSevenDayBytes": 155975680,
+        "deadTuplesBeforeVacuum": 12000,
+        "deadTuplesAfterVacuum": 0
+      }
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "total": 2,
+    "approved": true
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "policyVersion": "1.0",
+  "maximumDeliveryAttempts": 5,
+  "backoff": { "strategy": "exponential", "secondsByFailedAttempt": [1, 2, 4, 8], "jitter": "none" },
+  "classification": { "retryableErrorCodes": ["PROVIDER_TIMEOUT"], "terminalErrorCodes": ["PROVIDER_TIMEOUT", "INVALID_STATE_TRANSITION"], "unknownErrorOutcome": "terminal_failure" },
+  "exhaustion": { "outcome": "dead_lettered", "errorCode": "RETRY_ATTEMPTS_EXHAUSTED", "preserveRootCause": true },
+  "uncertainExternalEffect": { "automaticRetryAllowed": false, "workflowState": "waiting_human", "reconciliationRequired": true },
+  "settlementFailure": { "repeatDeliveryWithinSameCycle": false, "recoveryAuthority": "persistent_lease_and_fencing" }
+}

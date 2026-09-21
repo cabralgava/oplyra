@@ -1,0 +1,669 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/core/context-package/1.0",
+  "title": "Oplyra Context Package",
+  "description": "Pacote contextual seletivo e versionado entregue a uma execução de agente Oplyra, materializando o Context Stack L0–L8 sem exigir o envio integral de todas as camadas.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "schemaVersion",
+    "tenantId",
+    "agentKey",
+    "generatedAt",
+    "layers",
+    "sourceVersions",
+    "permissions",
+    "autonomy",
+    "missingContext",
+    "conflicts",
+    "freshness"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ctx_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "schemaVersion": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/schemaVersion"
+    },
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+    },
+    "agentKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*-agent$"
+    },
+    "taskId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "workflowId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+    },
+    "transactionId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^txn_[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "generatedAt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+    },
+    "validUntil": {
+      "oneOf": [
+        {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "layers": {
+      "$ref": "#/$defs/layers"
+    },
+    "sourceVersions": {
+      "$ref": "#/$defs/sourceVersions"
+    },
+    "permissions": {
+      "$ref": "#/$defs/permissions"
+    },
+    "autonomy": {
+      "$ref": "#/$defs/autonomy"
+    },
+    "evidence": {
+      "$ref": "#/$defs/evidence"
+    },
+    "missingContext": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/missingContextItem"
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/conflictItem"
+      }
+    },
+    "freshness": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/freshnessItem"
+      }
+    },
+    "retrieval": {
+      "$ref": "#/$defs/retrieval"
+    },
+    "contextBudget": {
+      "$ref": "#/$defs/contextBudget"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "layers": {
+          "required": [
+            "l0"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "missingContext": {
+            "contains": {
+              "properties": {
+                "impact": {
+                  "const": "blocking"
+                }
+              },
+              "required": [
+                "impact"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "layerKey": {
+      "type": "string",
+      "enum": [
+        "L0",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+        "L6",
+        "L7",
+        "L8"
+      ]
+    },
+    "layerStatus": {
+      "type": "string",
+      "enum": [
+        "included",
+        "omitted",
+        "missing",
+        "conflict",
+        "stale"
+      ]
+    },
+    "contextSlice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/layerStatus"
+        },
+        "ref": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+        },
+        "version": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Subconjunto estruturado e mínimo necessário da camada. Nunca deve conter secrets crus."
+        },
+        "sourceRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "included"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "ref"
+                ],
+                "properties": {
+                  "ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object"
+                  }
+                }
+              },
+              {
+                "required": [
+                  "summary"
+                ],
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "omitted",
+                  "missing",
+                  "conflict",
+                  "stale"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "required": [
+              "reason"
+            ]
+          }
+        }
+      ]
+    },
+    "layers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "l0": {
+          "$ref": "#/$defs/contextSlice"
+        },
+        "l1": {
+          "$ref": "#/$defs/contextSlice"
+        },
+        "l2": {
+          "$ref": "#/$defs/contextSlice"
+        },
+        "l3": {
+          "$ref": "#/$defs/contextSlice"
+        },
+        "l4": {
+          "$ref": "#/$defs/contextSlice"
+        },
+        "l5": {
+          "$ref": "#/$defs/contextSlice"
+        },
+        "l6": {
+          "$ref": "#/$defs/contextSlice"
+        },
+        "l7": {
+          "$ref": "#/$defs/contextSlice"
+        },
+        "l8": {
+          "$ref": "#/$defs/contextSlice"
+        }
+      }
+    },
+    "sourceVersions": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "minLength": 1
+          }
+        ]
+      },
+      "propertyNames": {
+        "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "permissionSetRefs",
+        "effectivePermissions"
+      ],
+      "properties": {
+        "permissionSetRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          }
+        },
+        "effectivePermissions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          }
+        },
+        "deniedPermissions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        }
+      }
+    },
+    "autonomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level"
+      ],
+      "properties": {
+        "level": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/autonomyLevel"
+        },
+        "policyRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "providedRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        },
+        "requiredRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        }
+      }
+    },
+    "missingContextItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layer",
+        "field",
+        "impact",
+        "reason"
+      ],
+      "properties": {
+        "layer": {
+          "$ref": "#/$defs/layerKey"
+        },
+        "field": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "impact": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "blocking"
+          ]
+        },
+        "reason": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "resolvableBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sourceRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        }
+      }
+    },
+    "conflictItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layer",
+        "field",
+        "severity",
+        "values"
+      ],
+      "properties": {
+        "layer": {
+          "$ref": "#/$defs/layerKey"
+        },
+        "field": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "blocking"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "sourceRef"
+            ],
+            "properties": {
+              "value": {},
+              "sourceRef": {
+                "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+              },
+              "observedAt": {
+                "oneOf": [
+                  {
+                    "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "resolutionOwner": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "freshnessItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "status"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "fresh",
+            "stale",
+            "unknown"
+          ]
+        },
+        "observedAt": {
+          "oneOf": [
+            {
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "updatedAt": {
+          "oneOf": [
+            {
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maxAgeSeconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "sourceRef": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "retrieval": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requestId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "strategy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "required_only",
+            "required_plus_enrichment",
+            "risk_expanded",
+            "historical_as_of",
+            null
+          ]
+        },
+        "queryRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          },
+          "default": []
+        },
+        "retrievedAt": {
+          "oneOf": [
+            {
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "contextBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxTokens": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "usedTokens": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "compressionApplied": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  }
+}

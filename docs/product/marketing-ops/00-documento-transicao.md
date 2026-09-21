@@ -2,14 +2,14 @@
 
 > Documento autossuficiente para orientar a construção greenfield da Oplyra como uma nova plataforma SaaS, sem dependência, herança técnica ou acoplamento com sistemas preexistentes.
 
-**Versão:** 2.2  
-**Data:** 13 de setembro de 2026  
+**Versão:** 2.3  
+**Data:** 16 de setembro de 2026  
 **Status:** Direção estratégica para novo produto comercial  
 **Nome do produto:** `Oplyra`  
 **Mercado inicial recomendado:** empresas SaaS B2B  
 **Expansão futura:** outros segmentos B2B, mediante validação
 
-**Revisão desta versão 2.2:** 13 de setembro de 2026 — correção do posicionamento de mercado para SaaS B2B, remoção de referências ao posicionamento anterior e incorporação da DEC-018. As decisões e evoluções funcionais da versão 2.1, incluindo a DEC-017, permanecem preservadas.
+**Revisão desta versão 2.3:** 16 de setembro de 2026 — incorporação formal do Oplyra Context Stack (L0–L8), governança de contexto, Context Assembly, Evidence & Provenance e do protocolo JSON transacional para comunicação entre agentes, runtime, workflows e integrações internas. Foram adicionadas as DEC-019 e DEC-020 e os documentos `19-context-stack.md` e `20-agent-transaction-protocol.md`. As decisões anteriores permanecem preservadas.
 
 ---
 
@@ -1087,6 +1087,70 @@ Toda análise dos agentes deverá classificar suas afirmações como:
 
 ---
 
+## 13.2 Oplyra Context Stack e contratos transacionais
+
+A arquitetura multiagentes utilizará o **Oplyra Context Stack** como contrato oficial de montagem de contexto. O objetivo é garantir que cada agente receba o fundamento necessário para compreender o tenant e apenas o contexto adicional relevante para a execução atual, com isolamento, versionamento, provenance, permissões e minimização de dados.
+
+As camadas oficiais são:
+
+```text
+L0 — Oplyra Constitution
+L1 — Tenant Foundation
+L2 — Brand & Business Truth
+L3 — Tenant Operational Context
+L4 — Domain Context
+L5 — Initiative Context
+L6 — Experiment Context
+L7 — Task & Conversation Context
+L8 — Immediate Request
+```
+
+O `Context Assembly` resolverá tenant, agente, task, domínio, iniciativa, experimento, versões, freshness, permissões, evidências, conflitos e lacunas antes de construir o `Context Package` da execução. Nem todo agente receberá todas as camadas materializadas integralmente; o recorte seguirá políticas declarativas por agente, domínio, tipo de tarefa e risco.
+
+Toda informação relevante deverá preservar, quando aplicável, origem, versão, temporalidade, escopo e classificação como fato, inferência, hipótese, recomendação ou limitação. Informações surgidas em conversas, resultados ou agentes poderão gerar propostas de atualização de contexto, mas não serão promovidas silenciosamente a Foundation ou Brand & Business Truth.
+
+A especificação completa está em:
+
+`docs/product/marketing-ops/19-context-stack.md`
+
+### Comunicação máquina↔máquina
+
+Toda comunicação operacional entre agentes, runtime, workflows, scheduler, filas, serviços e adapters internos utilizará **contratos JSON versionados e transacionais**.
+
+Os tipos fundamentais serão:
+
+- `command`;
+- `query`;
+- `event`;
+- `response`.
+
+O envelope transacional deverá carregar, conforme aplicável:
+
+- `transaction.id`;
+- `schemaVersion`;
+- `tenantId`;
+- ator e target;
+- `correlationId` e `causationId`;
+- referências de task/workflow/contexto;
+- autorização e autonomia;
+- input estruturado;
+- constraints;
+- evidências;
+- contrato de saída;
+- resultado ou erro estruturado;
+- próximo passo;
+- auditoria;
+- idempotência para ações com side effect.
+
+Linguagem natural poderá existir dentro dos contratos, mas não deverá substituir os campos estruturados necessários para execução, governança ou auditoria. Arquivos binários, datasets volumosos, secrets e contexto extenso deverão ser transportados por referências seguras, não embutidos indiscriminadamente no JSON.
+
+A especificação completa está em:
+
+`docs/product/marketing-ops/20-agent-transaction-protocol.md`
+
+
+---
+
 ## 14. Fluxo operacional completo
 
 ```mermaid
@@ -1786,6 +1850,16 @@ Além dos indicadores anteriores, acompanhar campanhas com briefing e hipótese 
       "id": "DEC-018",
       "decision": "O mercado inicial da Oplyra será SaaS B2B. Documentação, exemplos, dados de demonstração, templates, campanhas, jornadas, indicadores e linguagem de produto deverão refletir empresas SaaS B2B e sua conexão entre marketing, geração de demanda, pipeline e receita recorrente. Exemplos de outros segmentos não deverão ser usados como referência funcional ou conceitual do produto sem decisão explícita. A arquitetura permanecerá agnóstica de segmento para permitir expansão futura sem acoplamento ao mercado inicial.",
       "status": "approved"
+    },
+    {
+      "id": "DEC-019",
+      "decision": "A Oplyra adotará o Context Stack L0–L8 como contrato oficial de contexto da arquitetura multiagentes: L0 Oplyra Constitution, L1 Tenant Foundation, L2 Brand & Business Truth, L3 Tenant Operational Context, L4 Domain Context, L5 Initiative Context, L6 Experiment Context, L7 Task & Conversation Context e L8 Immediate Request. O contexto será montado por execução com minimização de dados, versionamento, provenance, freshness, permissões, evidências, detecção de conflitos e isolamento por tenant. Conversas, agentes e experimentos poderão propor atualizações de contexto, mas não promoverão silenciosamente informação a verdade aprovada.",
+      "status": "approved"
+    },
+    {
+      "id": "DEC-020",
+      "decision": "Toda comunicação entre agentes, runtime, workflows, scheduler, filas, serviços e integrações internas da Oplyra utilizará contratos JSON versionados e transacionais. As mensagens serão classificadas como command, query, event ou response e carregarão identidade da transação, tenant, tracing, ator, target, referências de contexto, autorização, autonomia, input/output estruturados, evidências, erros e auditoria conforme aplicável. Fluxos relacionados utilizarão correlationId/causationId, e ações com side effect relevante deverão possuir idempotência, validação de versão/estado e controles de autorização antes da execução.",
+      "status": "approved"
     }
   ]
 }
@@ -1858,7 +1932,15 @@ docs/
         ├── 09-agentic-architecture.md
         ├── 10-agent-catalog.md
         ├── 11-agent-governance.md
-        └── 12-roadmap.md
+        ├── 12-roadmap.md
+        ├── 13-ai-model-routing-finops.md
+        ├── 14-ux-flows.md
+        ├── 15-test-plan.md
+        ├── 16-environments-release.md
+        ├── 17-risks-costs.md
+        ├── 18-technical-experiments.md
+        ├── 19-context-stack.md
+        └── 20-agent-transaction-protocol.md
 ```
 
 Este documento deve ser colocado como:
@@ -1907,12 +1989,14 @@ Antes de escrever código:
 5. Proponha arquitetura multi-tenant, segurança, billing, entitlements e integrações.
 6. Modele a arquitetura multiagentes, incluindo Orquestrador, Account, Mídia Paga, Copywriting, Design, Estratégia e Qualidade, Performance, Relatórios e os especialistas Growth.
 7. Defina contratos estruturados, memória, ferramentas, permissões, níveis de autonomia, quality gates, escalonamento humano, scheduler, filas, idempotência, auditoria, observabilidade e custos por agente.
-8. Modele o pipeline de ativos multimídia por tenant: upload seguro, validação, storage isolado, análise multimodal, derivados, retenção, permissões e vínculo com campanhas.
-9. Modele publicação de campanhas como ação controlada: preview, quality gate, aprovação ou política explícita, limites de orçamento, idempotência, auditoria e kill switch.
-10. Não implemente todas as frentes simultaneamente.
-11. Priorize o MVP do plano Performance.
-12. Documente decisões, riscos, custos e questões em aberto.
-13. Pare após o discovery e apresente a proposta para aprovação antes de migrations ou implementação estrutural.
+8. Leia e aplique `docs/product/marketing-ops/19-context-stack.md`. Modele toda execução de agente sobre o Context Stack L0–L8, com Context Assembly, Evidence & Provenance, versionamento, freshness, minimização de dados e isolamento por tenant.
+9. Leia e aplique `docs/product/marketing-ops/20-agent-transaction-protocol.md`. Toda comunicação máquina↔máquina entre agentes, runtime, workflows e serviços internos deve usar contratos JSON transacionais e versionados, com tracing, schemas, erros estruturados e idempotência para side effects.
+10. Modele o pipeline de ativos multimídia por tenant: upload seguro, validação, storage isolado, análise multimodal, derivados, retenção, permissões e vínculo com campanhas.
+11. Modele publicação de campanhas como ação controlada: preview, quality gate, aprovação ou política explícita, limites de orçamento, idempotência, auditoria e kill switch.
+12. Não implemente todas as frentes simultaneamente.
+13. Priorize o MVP do plano Performance.
+14. Documente decisões, riscos, custos e questões em aberto.
+15. Pare após o discovery e apresente a proposta para aprovação antes de migrations ou implementação estrutural.
 ```
 
 ---
@@ -1926,6 +2010,10 @@ O **Performance** representa o núcleo de estratégia, criação, mídia e gest�
 O **Growth** representa a operação completa, adicionando conteúdo orgânico, e-mail, relacionamento, automações e atribuição avançada.
 
 Sua arquitetura multiagentes deverá coordenar especialistas digitais sobre um contexto empresarial compartilhado, com supervisão estratégica, quality gates, aprovação humana, auditoria e autonomia progressiva.
+
+O contexto operacional dos agentes será governado pelo **Oplyra Context Stack**, que separa fundamento do tenant, verdade de marca e negócio, estado operacional, domínio, iniciativa, experimento, tarefa/conversa e pedido imediato. Cada execução receberá apenas o recorte relevante, com evidências, versões, provenance, freshness, permissões e isolamento por tenant.
+
+A comunicação máquina↔máquina da arquitetura agentic utilizará **JSON transacional versionado**, com commands, queries, events e responses, além de tracing por correlação/causalidade, schemas de input/output, erros estruturados, auditoria e idempotência para operações com efeitos externos.
 
 O software não deve prometer substituir toda a inteligência humana. Seu papel é estruturar a operação, automatizar tarefas, conectar dados, manter governança e permitir que pessoas decidam com mais clareza.
 

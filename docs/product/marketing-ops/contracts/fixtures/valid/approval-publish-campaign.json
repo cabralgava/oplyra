@@ -1,0 +1,52 @@
+{
+  "approvalId": "approval_media_publish_01",
+  "schemaVersion": "1.0",
+  "tenantId": "tenant_123",
+  "target": {
+    "type": "campaign",
+    "id": "campaign_meta_001",
+    "version": 7,
+    "ownerAgent": "paid-media-agent"
+  },
+  "scope": {
+    "action": "publish_campaign",
+    "risk": "high",
+    "sideEffect": true,
+    "constraints": {
+      "maxDailyBudget": 1500,
+      "currency": "BRL",
+      "accountId": "meta_account_01"
+    }
+  },
+  "status": "approved",
+  "requestedBy": {
+    "type": "agent",
+    "id": "paid-media-agent",
+    "role": null
+  },
+  "requestedAt": "2026-09-16T20:40:00Z",
+  "decision": {
+    "outcome": "approved",
+    "decidedBy": {
+      "type": "user",
+      "id": "user_marketing_lead_01",
+      "role": "marketing_lead"
+    },
+    "decidedAt": "2026-09-16T20:45:00Z",
+    "reason": "Campanha revisada, budget e tracking aprovados."
+  },
+  "expiresAt": "2026-09-18T23:59:59Z",
+  "revocation": null,
+  "staleness": null,
+  "policyRefs": [
+    "policy:paid-media-publication-v1"
+  ],
+  "evidenceRefs": [
+    "quality_review:review_campaign_01",
+    "tracking_check:tracking_91"
+  ],
+  "correlationId": "corr_campaign_01",
+  "workflowId": "wf_campaign_01",
+  "taskId": "task_publish_campaign_01",
+  "notes": null
+}

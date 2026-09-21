@@ -1,0 +1,22 @@
+EXP-02 — amostragem do container PostgreSQL durante a rodada reprovada de E2-09
+
+Ambiente: supabase_db_Oplyra
+Método: docker stats contínuo, iniciado antes do harness e encerrado após a execução.
+Faixa de CPU observada: 0,20% a 14,06%.
+Pico de memória observado: 173,2 MiB de 7,746 GiB.
+Pico de processos observado: 37.
+
+Amostras relevantes durante a subida e execução da carga:
+cpu=1,16% memory=166,6MiB pids=34
+cpu=2,55% memory=172,4MiB pids=37
+cpu=2,25% memory=173,2MiB pids=37
+cpu=14,06% memory=163,8MiB pids=33
+
+Resultado correlato no harness:
+- baseline p95: 0,477 ms
+- sob carga p95: 0,589 ms
+- degradação: 23,36%
+- limite: 20%
+- resultado: REPROVADO
+
+Observação: as amostras são do container completo e não atribuem CPU a uma consulta individual.

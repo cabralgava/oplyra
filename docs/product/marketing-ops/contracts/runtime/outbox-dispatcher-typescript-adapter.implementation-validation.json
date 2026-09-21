@@ -1,0 +1,56 @@
+{
+  "validationId": "outbox-dispatcher-typescript-adapter-cr-016",
+  "validatedAt": "2026-09-21T17:55:00Z",
+  "status": "passed_with_notes",
+  "core": {
+    "module": "packages/core/src/application/outbox-dispatcher.ts",
+    "port": "OutboxDispatcherPort",
+    "unitOfWorkMethod": "withDispatcherTransaction",
+    "canonicalErrorsAdded": [
+      "INVALID_STATE_TRANSITION",
+      "INTEGRATION_UNAVAILABLE"
+    ]
+  },
+  "infrastructure": {
+    "adapter": "packages/infra/src/outbox-dispatcher-adapter.ts",
+    "directTableAccess": false,
+    "sqlFunctions": [
+      "app.claim_outbox_events",
+      "app.settle_outbox_event"
+    ]
+  },
+  "specificTests": {
+    "coreTestsRun": 10,
+    "coreTestsPassed": 10,
+    "adapterTestsRun": 7,
+    "adapterTestsPassed": 7,
+    "realPostgreSqlUsed": true,
+    "concurrentClaimValidated": true
+  },
+  "typecheck": {
+    "coreErrors": 0,
+    "infraErrors": 0,
+    "testingErrors": 0
+  },
+  "behaviorsValidated": [
+    "input_validation_before_transaction",
+    "typed_claim_result",
+    "canonical_event_binding",
+    "single_concurrent_winner",
+    "stale_fencing_domain_error",
+    "successful_duplicate_result",
+    "retry_availability_and_attempt_increment",
+    "database_unavailable_domain_error"
+  ],
+  "notImplemented": [
+    "consumer_delivery_port",
+    "single_cycle_dispatcher_service",
+    "dispatcher_polling_loop",
+    "retry_policy_values",
+    "dead_letter_escalation_event",
+    "transport"
+  ],
+  "runtimeDispatchEnabled": false,
+  "databaseChanged": false,
+  "privilegesChanged": false
+}

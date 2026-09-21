@@ -1,0 +1,863 @@
+{
+  "artifact": "oplyra-cross-registry-validation",
+  "artifactVersion": "1.0",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-17T23:17:05Z",
+  "stage": "final_cross_registry_validation",
+  "status": "passed",
+  "freezeStatus": "not_frozen",
+  "scope": {
+    "registries": [
+      "agents.json",
+      "permissions.json",
+      "tools.json",
+      "actions.json",
+      "events.json",
+      "errors.json",
+      "handoffs.json",
+      "quality-gates.json"
+    ],
+    "schemas": [
+      "common-definitions.schema.json",
+      "agent-definition.schema.json",
+      "transaction-envelope.schema.json",
+      "context-package.schema.json",
+      "task.schema.json",
+      "handoff.schema.json",
+      "quality-review.schema.json",
+      "approval.schema.json",
+      "error.schema.json",
+      "context-update-candidate.schema.json",
+      "learning-record.schema.json"
+    ],
+    "supportingArtifacts": [
+      "handoff-action-binding-analysis.json",
+      "registries/quality-gates.validation.json",
+      "schema-integration-manifest.json"
+    ]
+  },
+  "evidencePolicy": {
+    "direct": "Every in-scope artifact was read from the Oplyra working folder and hashed during this run.",
+    "zeroGapRule": "Zero blocking issues and zero unresolved registry gaps are declared only because all in-scope artifacts were directly inspected and every executed check passed.",
+    "nonCanonicalFiles": "Recovery and stale duplicate artifacts are excluded explicitly and must not enter the Freeze manifest."
+  },
+  "inputs": [
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/agents.json",
+      "sha256": "52d9cdc5b1c2f54ad022a345778be2e08e53acd2a3fa67664008fbfa9cce26fe",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/permissions.json",
+      "sha256": "38ff5cf89e23fb4e66c0798fe1ea6537d94f9813ecc4074c90a50ef4bac5329e",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/tools.json",
+      "sha256": "36cf3acc8b69ea0f33a801eae6ca8c2b8a170c9aa7f8002082d364d61a2ed226",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/actions.json",
+      "sha256": "71d6ec6246eae5f8a2aeeb822bbceeed17e8081b513adb6401e9c344c007a19e",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/events.json",
+      "sha256": "8bfc90be847816f53f4924d88e0d1d838a10c51701de5455bd0600dff6824024",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/errors.json",
+      "sha256": "7a2ee87ce8fedd7beda825ce64b5d4798aa30d3880ffaa608bee508c78a9dde6",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/handoffs.json",
+      "sha256": "9b5f777d7147c5506ed9691769de7241adec1707af4488b73b145d4b8e4f3061",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/quality-gates.json",
+      "sha256": "9d12baad514abe25b323f568c7b0e63d294863fa5ba8db697e001bb18fe7430d",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/common-definitions.schema.json",
+      "sha256": "25456132041bf1affbd09210921b12d7b2555d15269adbe45f6f203eac5c2a2d",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/agent-definition.schema.json",
+      "sha256": "d14b18fe859c87d97f3906cbcf3db6d62b06b2ec406a54d99977e75f1623597c",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/transaction-envelope.schema.json",
+      "sha256": "f412c547f76b9cc26b1870fc683d32a1deb38bdbe8afb4b2b9764beed65c61e8",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/context-package.schema.json",
+      "sha256": "6247fa11c34b8d36744c4f881523898587f9bbe88a1d7a5bf972eb901e0c0097",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/task.schema.json",
+      "sha256": "7a4fcea73356995ecd75e67ed14ed1d98fe93e093b7cc7c216e86e25395c3ee7",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/handoff.schema.json",
+      "sha256": "b89c84f22c1040b6dde20457594a54c0c0d170a5fd7b04c20d92771fcbb164e4",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/quality-review.schema.json",
+      "sha256": "c6bbbb836ed41af9c951d28abaa6c863ea0ad5927ae0e7d89e9b8b078771e96b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/approval.schema.json",
+      "sha256": "5f4268f1142fc6a8aa3bf9ce1d2facb8fdf48916ec9f9425113c9c22c1f9fc73",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/error.schema.json",
+      "sha256": "b354c4aa8214878ee7d08be7027b02a4e9eceafa34f814d15db87f538e3b32e8",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/context-update-candidate.schema.json",
+      "sha256": "5c0f22127a18d9591346f49784eaa8652612a5c1568dc1c6232a2e9093578260",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/learning-record.schema.json",
+      "sha256": "0381d9b397a41c95370d8cb15e15b7014b41746128e9b27011fc74e10e1146d1",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/handoff-action-binding-analysis.json",
+      "sha256": "6042bcb69b308513690e0b23860ddb26e18caa850cb5c4c09941f07ad07561e2",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/quality-gates.validation.json",
+      "sha256": "52e551258ae84c94634183d9d8ebdcbf5f84dd986eea49c3a04b1eba017b0059",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schema-integration-manifest.json",
+      "sha256": "31aaec113812ce082e62d1d26257086e2f362c9f62a5601f933c5a89017ae8bd",
+      "evidenceLevel": "direct"
+    }
+  ],
+  "counts": {
+    "agents": 12,
+    "permissions": 6,
+    "tools": 58,
+    "actions": 171,
+    "events": 136,
+    "errors": 42,
+    "handoffs": 43,
+    "gates": 11,
+    "schemasIntegrated": 11,
+    "totalAllowedActionBindings": 364
+  },
+  "validation": {
+    "checksRun": 70,
+    "checksPassed": 70,
+    "checksFailed": 0,
+    "checks": [
+      {
+        "id": "ENV-agents",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-agents",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 12
+          }
+        }
+      },
+      {
+        "id": "ENV-permissions",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-permissions",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 6
+          }
+        }
+      },
+      {
+        "id": "ENV-tools",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-tools",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 58
+          }
+        }
+      },
+      {
+        "id": "ENV-actions",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-actions",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 171
+          }
+        }
+      },
+      {
+        "id": "ENV-events",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-events",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 136
+          }
+        }
+      },
+      {
+        "id": "ENV-errors",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-errors",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 42
+          }
+        }
+      },
+      {
+        "id": "ENV-handoffs",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-handoffs",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 43
+          }
+        }
+      },
+      {
+        "id": "ENV-quality-gates",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-quality-gates",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 11
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-agents",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "UNIQUE-permissions",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "UNIQUE-tools",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "UNIQUE-actions",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "UNIQUE-events",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "UNIQUE-errors",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "UNIQUE-handoffs",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "UNIQUE-gates",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-agents",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 12,
+          "expected": 12
+        }
+      },
+      {
+        "id": "COUNT-permissions",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 6,
+          "expected": 6
+        }
+      },
+      {
+        "id": "COUNT-tools",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 58,
+          "expected": 58
+        }
+      },
+      {
+        "id": "COUNT-actions",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 171,
+          "expected": 171
+        }
+      },
+      {
+        "id": "COUNT-events",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 136,
+          "expected": 136
+        }
+      },
+      {
+        "id": "COUNT-errors",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 42,
+          "expected": 42
+        }
+      },
+      {
+        "id": "COUNT-handoffs",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 43,
+          "expected": 43
+        }
+      },
+      {
+        "id": "COUNT-gates",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 11,
+          "expected": 11
+        }
+      },
+      {
+        "id": "NAMING-agents",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "NAMING-permissions",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "NAMING-tools",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "NAMING-actions",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "NAMING-events",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "NAMING-errors",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "NAMING-gates",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "AGENT-plans",
+        "category": "agents",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "AGENT-quality-gates",
+        "category": "agents",
+        "status": "passed",
+        "details": {
+          "orphans": []
+        }
+      },
+      {
+        "id": "AGENT-definition-schema",
+        "category": "agents",
+        "status": "passed",
+        "details": {
+          "missing": []
+        }
+      },
+      {
+        "id": "AGENT-documentation",
+        "category": "agents",
+        "status": "passed",
+        "details": {
+          "missing": []
+        }
+      },
+      {
+        "id": "PERMISSION-implies",
+        "category": "permissions",
+        "status": "passed",
+        "details": {
+          "orphans": []
+        }
+      },
+      {
+        "id": "TOOL-permissions",
+        "category": "tools",
+        "status": "passed",
+        "details": {
+          "orphans": []
+        }
+      },
+      {
+        "id": "TOOL-agents",
+        "category": "tools",
+        "status": "passed",
+        "details": {
+          "orphans": []
+        }
+      },
+      {
+        "id": "ACTION-agents",
+        "category": "actions",
+        "status": "passed",
+        "details": {
+          "orphans": []
+        }
+      },
+      {
+        "id": "ACTION-plans",
+        "category": "actions",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "ACTION-side-effect-idempotency",
+        "category": "actions",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "ACTION-side-effect-type",
+        "category": "actions",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "EVENT-agent-refs",
+        "category": "events",
+        "status": "passed",
+        "details": {
+          "orphans": []
+        }
+      },
+      {
+        "id": "EVENT-consumer-producer",
+        "category": "events",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "HANDOFF-agent-refs",
+        "category": "handoffs",
+        "status": "passed",
+        "details": {
+          "orphans": []
+        }
+      },
+      {
+        "id": "HANDOFF-self-transfer",
+        "category": "handoffs",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "HANDOFF-key-shape",
+        "category": "handoffs",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "HANDOFF-action-refs",
+        "category": "handoffs",
+        "status": "passed",
+        "details": {
+          "orphans": []
+        }
+      },
+      {
+        "id": "HANDOFF-action-binding",
+        "category": "handoffs",
+        "status": "passed",
+        "details": {
+          "unboundCount": 0,
+          "unboundHandoffKeys": []
+        }
+      },
+      {
+        "id": "HANDOFF-tenant-match",
+        "category": "handoffs",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "HANDOFF-trace-propagation",
+        "category": "handoffs",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "GATE-key-enum",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "invalid": [],
+          "schemaEnumCount": 11
+        }
+      },
+      {
+        "id": "GATE-agent-refs",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "orphans": []
+        }
+      },
+      {
+        "id": "GATE-target-enum",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "GATE-status-enum",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "invalid": [],
+          "expected": [
+            "passed",
+            "passed_with_notes",
+            "changes_required",
+            "blocked",
+            "escalation_required"
+          ]
+        }
+      },
+      {
+        "id": "GATE-severity-enum",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "GATE-self-approval",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "GATE-agentic-ownership",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "GATE-operational-owner",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "ownerAgent": null,
+            "ownerService": "policy-engine",
+            "reviewType": "deterministic"
+          }
+        }
+      },
+      {
+        "id": "GATE-conditional-checks",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "missing": []
+        }
+      },
+      {
+        "id": "SCHEMA-count",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "actual": 11,
+          "expected": 11
+        }
+      },
+      {
+        "id": "SCHEMA-draft",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "SCHEMA-id-unique",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "SCHEMA-ref-resolution",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "unresolved": []
+        }
+      },
+      {
+        "id": "MANIFEST-files",
+        "category": "schema_manifest",
+        "status": "passed",
+        "details": {
+          "manifestFiles": [
+            "common-definitions.schema.json",
+            "agent-definition.schema.json",
+            "approval.schema.json",
+            "context-package.schema.json",
+            "context-update-candidate.schema.json",
+            "error.schema.json",
+            "handoff.schema.json",
+            "learning-record.schema.json",
+            "quality-review.schema.json",
+            "task.schema.json",
+            "transaction-envelope.schema.json"
+          ],
+          "duplicates": []
+        }
+      },
+      {
+        "id": "MANIFEST-ids",
+        "category": "schema_manifest",
+        "status": "passed",
+        "details": {
+          "mismatches": []
+        }
+      },
+      {
+        "id": "REPORT-binding-root",
+        "category": "supporting_artifacts",
+        "status": "passed",
+        "details": {
+          "status": "passed",
+          "bindingCompleted": true,
+          "handoffsUnbound": 0
+        }
+      },
+      {
+        "id": "REPORT-binding-integrity",
+        "category": "supporting_artifacts",
+        "status": "passed",
+        "details": {
+          "reported": "9b5f777d7147c5506ed9691769de7241adec1707af4488b73b145d4b8e4f3061",
+          "actual": "9b5f777d7147c5506ed9691769de7241adec1707af4488b73b145d4b8e4f3061"
+        }
+      },
+      {
+        "id": "REPORT-quality-gates",
+        "category": "supporting_artifacts",
+        "status": "passed",
+        "details": {
+          "validationStatus": "passed",
+          "checksRun": 15,
+          "checksPassed": 15,
+          "checksFailed": 0
+        }
+      },
+      {
+        "id": "REPORT-schema-manifest",
+        "category": "supporting_artifacts",
+        "status": "passed",
+        "details": {
+          "status": "approved",
+          "validation": {
+            "totalChecks": 32,
+            "failedChecks": 0,
+            "formatCheckerEnabled": true,
+            "externalRefResolution": true
+          }
+        }
+      }
+    ]
+  },
+  "nonCanonicalExcluded": [
+    {
+      "path": "docs/product/marketing-ops/contracts/handoffs.recovery.json",
+      "reason": "Recovery artifact; not a canonical registry and not eligible for the Freeze manifest."
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/handoffs.recovery.json",
+      "reason": "Recovery artifact; not a canonical registry and not eligible for the Freeze manifest."
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/handoff-action-binding-analysis.json",
+      "reason": "Stale duplicate outside the canonical analysis path; the authoritative artifact is contracts/handoff-action-binding-analysis.json."
+    }
+  ],
+  "summary": {
+    "blockingIssues": 0,
+    "unresolvedRegistryGaps": 0,
+    "orphanReferences": 0,
+    "unboundHandoffs": 0,
+    "schemaReferenceFailures": 0,
+    "finalCrossValidationCompleted": true,
+    "eligibleForFreeze": true,
+    "freezeEmitted": false,
+    "runtimeAuthorized": false
+  },
+  "decision": {
+    "result": "passed",
+    "reason": "All 70 direct cross-registry and schema checks passed against the canonical artifacts in the Oplyra working folder.",
+    "nextStage": "contract_registry_freeze_v1",
+    "freezeAuthorizedForNextStage": true,
+    "freezeCreatedInThisStage": false,
+    "runtimeAuthorized": false
+  }
+}

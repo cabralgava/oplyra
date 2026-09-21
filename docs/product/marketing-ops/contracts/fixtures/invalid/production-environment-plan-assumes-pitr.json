@@ -1,0 +1,4 @@
+{
+  "planVersion": "1.0",
+  "database": { "migrationsOnly": true, "manualProductionChangesAllowed": false, "expandContractRequired": true, "rlsRequired": true, "directTableAccessForWorkers": false, "backupCapabilityMustBeVerified": true, "restoreExerciseRequiredBeforeRealData": true, "pitrAssumedAvailable": true }
+}

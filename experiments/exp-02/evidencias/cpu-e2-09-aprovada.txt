@@ -1,0 +1,23 @@
+EXP-02 — CPU do container em rodada isolada inicialmente aprovada de E2-09
+
+Ambiente: supabase_db_Oplyra
+Configuração: um worker, leitura/ack em lotes de 500.
+Método: docker stats contínuo, iniciado antes do harness e encerrado após a execução.
+Faixa de CPU observada: 0,35% a 11,69%.
+Pico de memória observado: 174,1 MiB de 7,746 GiB.
+Pico de processos observado: 37.
+
+Amostras relevantes durante a subida e execução da carga:
+cpu=1,26% memory=167,6MiB pids=34
+cpu=2,64% memory=173,6MiB pids=37
+cpu=0,35% memory=174,1MiB pids=37
+cpu=11,69% memory=166,5MiB pids=33
+
+Resultado correlato nessa rodada isolada:
+- baseline p95: 0,612 ms
+- sob carga p95: 0,643 ms
+- degradação: 5,14%
+- limite: 20%
+- resultado da rodada: APROVADO
+
+Observação: esta rodada não é a conclusão do EXP-02. Repetições posteriores mostraram alta variância e o benchmark pareado final reprovou E2-09 em 23,95%. As amostras cobrem o container completo e não atribuem CPU a uma consulta individual.

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/events/copywriting/copy-draft-created/payload/1.0",
+  "title": "copy.draft_created — Payload",
+  "description": "Payload versionado do evento canônico copy.draft_created. Tenant, actor, trace e context pertencem ao transaction envelope e não são duplicados aqui.",
+  "type": "object",
+  "required": [
+    "draftRef",
+    "version",
+    "sourceAction",
+    "variantRefs"
+  ],
+  "properties": {
+    "draftRef": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sourceAction": {
+      "type": "string",
+      "enum": [
+        "create_copy_variants"
+      ]
+    },
+    "variantRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+      }
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "draftRef": "copy_draft_01",
+      "version": 1,
+      "sourceAction": "create_copy_variants",
+      "variantRefs": [
+        "var_a_copy_v1",
+        "var_b_copy_v1"
+      ]
+    }
+  ]
+}
