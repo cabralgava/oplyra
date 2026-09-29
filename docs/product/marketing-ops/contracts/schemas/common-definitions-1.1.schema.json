@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/core/common-definitions/1.1",
+  "title": "Oplyra Common Definitions",
+  "description": "Definições primitivas e cross-cutting compartilhadas pelos contratos universais da Oplyra. Versão 1.1 (CR-026, Release 2.16): superconjunto compatível da 1.0 com as definições do AI Model Harness.",
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nullableNonEmptyString": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "agentKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*-agent$"
+    },
+    "domainKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "actionKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "eventKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+    },
+    "autonomyLevel": {
+      "type": "string",
+      "enum": [
+        "recommend",
+        "draft",
+        "approval_required",
+        "policy_execute"
+      ]
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "tenantId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dataClassification": {
+      "type": "string",
+      "enum": [
+        "synthetic",
+        "internal",
+        "tenant_confidential",
+        "personal_data"
+      ],
+      "description": "Classificação de dados, da menos à mais sensível (CR-026)."
+    },
+    "nonNegativeSafeInteger": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Quantidade ou valor monetário em micro-USD: inteiro seguro não negativo. NaN, infinito e decimais são rejeitados também em runtime (CR-026)."
+    },
+    "identifierLimits": {
+      "description": "Limites dos identificadores do AI Model Harness (CR-026 §2 item 7). Todo identificador é Unicode bem formado (sem surrogate isolado); maxLength conta code points.",
+      "$defs": {
+        "wellFormedText": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$",
+          "description": "Texto não vazio sem surrogate isolado."
+        },
+        "tenantId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$",
+          "description": "tenantId até 128 code points."
+        },
+        "workflowKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$",
+          "description": "workflowKey até 128 code points."
+        },
+        "invocationId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$",
+          "description": "invocationId de 1 a 255, mesmo limite de idempotency.key do envelope de transação."
+        },
+        "actionKey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "maxLength": 64,
+          "description": "Padrão canônico de actionKey, até 64."
+        },
+        "agentKey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*-agent$",
+          "maxLength": 64,
+          "description": "Padrão canônico de agentKey, até 64."
+        },
+        "traceField": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$",
+          "description": "Campo de trace até 255 code points."
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Número da tentativa, limitado por maxAttempts do Model Profile."
+        }
+      }
+    },
+    "traceContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correlationId",
+        "transactionId",
+        "causationId",
+        "parentTransactionId",
+        "workflowId",
+        "taskId",
+        "runId"
+      ],
+      "description": "Trace do envelope (20 §6) mais transactionId e runId (13 §12.1, §14). Todas as chaves presentes; null quando não se aplica, nunca texto vazio.",
+      "properties": {
+        "correlationId": {
+          "$ref": "#/$defs/identifierLimits/$defs/traceField"
+        },
+        "transactionId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+        },
+        "causationId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+        },
+        "parentTransactionId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+        },
+        "workflowId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+        },
+        "taskId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+        },
+        "runId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+        }
+      }
+    },
+    "classificationSourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "ref"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "context_package",
+            "asset"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$",
+          "description": "Referência da fonte no tenant, até 256."
+        }
+      }
+    },
+    "requestFingerprint": {
+      "type": "string",
+      "pattern": "^hmac-sha256:v1:[a-z0-9][a-z0-9._-]{0,63}:[0-9a-f]{64}$",
+      "description": "HMAC-SHA-256 do material canônico v1 com chave identificada por keyId (rotação). Formato sem chave não é aceito."
+    },
+    "attemptCallId": {
+      "type": "string",
+      "pattern": "^att1\\.[A-Za-z0-9_-]+$",
+      "maxLength": 3171,
+      "description": "att1. + base64url sem preenchimento de UTF-8(JSON.stringify([tenantId, actionKey, invocationId, attempt])). Interno; nunca encaminhado ao fornecedor. maxLength = pior caso sob identifierLimits."
+    }
+  }
+}

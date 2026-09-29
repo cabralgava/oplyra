@@ -1,0 +1,52 @@
+{
+  "validationId": "provider-response-1.0",
+  "validatedAt": "2026-09-29T18:00:00Z",
+  "status": "passed",
+  "schema": "provider-response.schema.json",
+  "validFixtures": [
+    "../../fixtures/valid/provider-response-failure.json",
+    "../../fixtures/valid/provider-response-text-success.json",
+    "../../fixtures/valid/provider-response-visual-success.json"
+  ],
+  "invalidFixtures": [
+    "../../fixtures/invalid/provider-response-decimal-reported-cost.json",
+    "../../fixtures/invalid/provider-response-negative-usage.json",
+    "../../fixtures/invalid/provider-response-reported-cost-above-safe-integer.json",
+    "../../fixtures/invalid/provider-response-success-without-usage-business-invariant.json",
+    "../../fixtures/invalid/provider-response-text-with-images-business-invariant.json",
+    "../../fixtures/invalid/provider-response-unknown-error-kind.json",
+    "../../fixtures/invalid/provider-response-visual-above-requested-business-invariant.json",
+    "../../fixtures/invalid/provider-response-visual-data-url.json",
+    "../../fixtures/invalid/provider-response-visual-inline-binary.json",
+    "../../fixtures/invalid/provider-response-visual-zero-assets.json"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "draft202012AndVersionedId": "passed",
+    "canonicalFixturesAccepted": "passed",
+    "schemaLevelInvalidFixturesRejected": "passed",
+    "businessInvariantFixturesAcceptedBySchema": "passed",
+    "businessInvariantFixturesRejectedByRuntime": "passed",
+    "sharedDefinitionsResolved": "passed",
+    "visualOutputByTypedAssetReferenceOnly": "passed",
+    "inlineBinaryRejected": "passed",
+    "invalidResponseNeverSettled": "passed"
+  },
+  "directReferencesValidated": [
+    "Errors Registry 1.4",
+    "common-definitions 1.1 (superconjunto da 1.0, CR-026)",
+    "agents.json 1.0",
+    "actions.json 2.0",
+    "CR-026"
+  ],
+  "unvalidatedImplementationReferences": [
+    "Cost Ledger persistido",
+    "carregamento de chave de fingerprint de cofre",
+    "adapter real de provider",
+    "contrato canônico de asset"
+  ],
+  "runtimeDispatchEnabled": false,
+  "visualCapabilityEnabled": false,
+  "realProviderEnabled": false,
+  "databaseChanged": false
+}

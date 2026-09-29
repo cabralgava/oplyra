@@ -63,7 +63,7 @@ describe("outbox retry and failure policy contract", () => {
   it("fecha exaustão com erro terminal próprio e preserva a causa", () => {
     const errors = readJson("docs/product/marketing-ops/contracts/registries/errors.json");
     const exhausted = errors.entries.find((entry: Record<string, unknown>) => entry.code === "RETRY_ATTEMPTS_EXHAUSTED");
-    expect(errors.registryVersion).toBe("1.3");
+    expect(errors.registryVersion).toBe("1.4");
     expect(exhausted).toMatchObject({ category: "runtime", severity: "high", retryable: false, defaultNextAction: "escalate" });
     expect(policy.exhaustion).toEqual({ outcome: "dead_lettered", errorCode: "RETRY_ATTEMPTS_EXHAUSTED", preserveRootCause: true });
   });

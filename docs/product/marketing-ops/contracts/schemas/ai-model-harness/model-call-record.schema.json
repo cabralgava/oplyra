@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/ai-model-harness/model-call-record/1.0",
+  "title": "Oplyra Model Call Record",
+  "description": "Registro por tentativa (CR-026 §8.5; 13 §14 Model Call; entrada do Cost Ledger). Não contém prompt, resposta nem PII. Invariantes de runtime: outcome succeeded implica failureKind null; costStatus settled implica costMicroUsd inteiro e pending_reconciliation implica null; outputAssetIds só em chamada visual bem-sucedida, null em qualquer falha ou descarte; toda proveniência pertence ao tenantId do registro; callId = attemptCallId(tenantId, actionKey, invocationId, attempt).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "invocationId",
+    "attempt",
+    "callId",
+    "tenantId",
+    "workflowKey",
+    "agentKey",
+    "actionKey",
+    "trace",
+    "requestFingerprint",
+    "dataClassification",
+    "classificationProvenance",
+    "inputTokensEstimate",
+    "inputTokensEstimateMethod",
+    "profileRef",
+    "registryVersion",
+    "modelId",
+    "provider",
+    "adapterKey",
+    "providerModelId",
+    "tariffVersion",
+    "routingReason",
+    "fallbackOccurred",
+    "resolvedProvider",
+    "resolvedProviderModelId",
+    "externalRequestId",
+    "outcome",
+    "failureKind",
+    "usage",
+    "outputAssetIds",
+    "estimatedCostMicroUsd",
+    "costMicroUsd",
+    "costStatus",
+    "startedAt",
+    "latencyMs"
+  ],
+  "properties": {
+    "invocationId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/invocationId"
+    },
+    "attempt": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/attempt"
+    },
+    "callId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/attemptCallId"
+    },
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/tenantId"
+    },
+    "workflowKey": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/workflowKey"
+    },
+    "agentKey": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/agentKey"
+    },
+    "actionKey": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/actionKey"
+    },
+    "trace": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/traceContext"
+    },
+    "requestFingerprint": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/requestFingerprint"
+    },
+    "dataClassification": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/dataClassification"
+    },
+    "classificationProvenance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "ref",
+          "tenantId",
+          "classification"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "context_package",
+              "asset",
+              "conservative_default"
+            ]
+          },
+          "ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+          },
+          "tenantId": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/tenantId"
+          },
+          "classification": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/dataClassification"
+          }
+        }
+      }
+    },
+    "inputTokensEstimate": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+    },
+    "inputTokensEstimateMethod": {
+      "type": "string",
+      "enum": [
+        "model_exact",
+        "conservative_bound",
+        "caller_hint"
+      ]
+    },
+    "profileRef": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^[a-z0-9][a-z0-9._-]*@[1-9][0-9]*$"
+    },
+    "registryVersion": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+    },
+    "modelId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._/-]*$"
+    },
+    "provider": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+    },
+    "adapterKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "providerModelId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+    },
+    "tariffVersion": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+    },
+    "routingReason": {
+      "type": "string",
+      "enum": [
+        "preferred",
+        "lowest_cost_above_threshold",
+        "fallback",
+        "retry"
+      ]
+    },
+    "fallbackOccurred": {
+      "type": "boolean"
+    },
+    "resolvedProvider": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+    },
+    "resolvedProviderModelId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+    },
+    "externalRequestId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "succeeded",
+        "failed"
+      ]
+    },
+    "failureKind": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "tenant_required",
+        "invalid_request",
+        "idempotency_conflict",
+        "classification_source_not_found",
+        "visual_capability_blocked",
+        "tenant_mismatch",
+        "agent_not_found",
+        "action_not_found",
+        "action_not_callable_by_agent",
+        "entitlement_required",
+        "profile_not_found",
+        "no_eligible_model",
+        "budget_exceeded",
+        "provider_timeout",
+        "provider_rate_limited",
+        "provider_unavailable",
+        "provider_rejected_request",
+        "parameter_not_applied",
+        "output_invalid",
+        "resolution_mismatch",
+        "provider_response_invalid",
+        "attempt_in_progress",
+        "attempt_already_executed",
+        "attempts_exhausted",
+        null
+      ]
+    },
+    "usage": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "inputTokens",
+        "outputTokens",
+        "images"
+      ],
+      "properties": {
+        "inputTokens": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        },
+        "outputTokens": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        },
+        "images": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        }
+      }
+    },
+    "outputAssetIds": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256,
+        "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+      }
+    },
+    "estimatedCostMicroUsd": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+    },
+    "costMicroUsd": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "costStatus": {
+      "type": "string",
+      "enum": [
+        "settled",
+        "not_charged",
+        "pending_reconciliation",
+        "not_reserved"
+      ]
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "latencyMs": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+    }
+  }
+}

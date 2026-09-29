@@ -1,0 +1,291 @@
+{
+  "invocationId": "inv-fixture-1",
+  "tenantId": "11111111-1111-4111-8111-111111111111",
+  "workflowKey": "copy-review",
+  "agentKey": "copywriting-agent",
+  "actionKey": "create_ad_copy",
+  "trace": {
+    "correlationId": "corr-fixture-1",
+    "transactionId": "txn_fixture_1",
+    "causationId": null,
+    "parentTransactionId": null,
+    "workflowId": "wf-fixture-1",
+    "taskId": "task-fixture-1",
+    "runId": "run-fixture-1"
+  },
+  "classification": {
+    "sources": [
+      {
+        "kind": "context_package",
+        "ref": "ctx-fixture-1"
+      }
+    ],
+    "declared": null
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "m0"
+    },
+    {
+      "role": "user",
+      "content": "m1"
+    },
+    {
+      "role": "user",
+      "content": "m2"
+    },
+    {
+      "role": "user",
+      "content": "m3"
+    },
+    {
+      "role": "user",
+      "content": "m4"
+    },
+    {
+      "role": "user",
+      "content": "m5"
+    },
+    {
+      "role": "user",
+      "content": "m6"
+    },
+    {
+      "role": "user",
+      "content": "m7"
+    },
+    {
+      "role": "user",
+      "content": "m8"
+    },
+    {
+      "role": "user",
+      "content": "m9"
+    },
+    {
+      "role": "user",
+      "content": "m10"
+    },
+    {
+      "role": "user",
+      "content": "m11"
+    },
+    {
+      "role": "user",
+      "content": "m12"
+    },
+    {
+      "role": "user",
+      "content": "m13"
+    },
+    {
+      "role": "user",
+      "content": "m14"
+    },
+    {
+      "role": "user",
+      "content": "m15"
+    },
+    {
+      "role": "user",
+      "content": "m16"
+    },
+    {
+      "role": "user",
+      "content": "m17"
+    },
+    {
+      "role": "user",
+      "content": "m18"
+    },
+    {
+      "role": "user",
+      "content": "m19"
+    },
+    {
+      "role": "user",
+      "content": "m20"
+    },
+    {
+      "role": "user",
+      "content": "m21"
+    },
+    {
+      "role": "user",
+      "content": "m22"
+    },
+    {
+      "role": "user",
+      "content": "m23"
+    },
+    {
+      "role": "user",
+      "content": "m24"
+    },
+    {
+      "role": "user",
+      "content": "m25"
+    },
+    {
+      "role": "user",
+      "content": "m26"
+    },
+    {
+      "role": "user",
+      "content": "m27"
+    },
+    {
+      "role": "user",
+      "content": "m28"
+    },
+    {
+      "role": "user",
+      "content": "m29"
+    },
+    {
+      "role": "user",
+      "content": "m30"
+    },
+    {
+      "role": "user",
+      "content": "m31"
+    },
+    {
+      "role": "user",
+      "content": "m32"
+    },
+    {
+      "role": "user",
+      "content": "m33"
+    },
+    {
+      "role": "user",
+      "content": "m34"
+    },
+    {
+      "role": "user",
+      "content": "m35"
+    },
+    {
+      "role": "user",
+      "content": "m36"
+    },
+    {
+      "role": "user",
+      "content": "m37"
+    },
+    {
+      "role": "user",
+      "content": "m38"
+    },
+    {
+      "role": "user",
+      "content": "m39"
+    },
+    {
+      "role": "user",
+      "content": "m40"
+    },
+    {
+      "role": "user",
+      "content": "m41"
+    },
+    {
+      "role": "user",
+      "content": "m42"
+    },
+    {
+      "role": "user",
+      "content": "m43"
+    },
+    {
+      "role": "user",
+      "content": "m44"
+    },
+    {
+      "role": "user",
+      "content": "m45"
+    },
+    {
+      "role": "user",
+      "content": "m46"
+    },
+    {
+      "role": "user",
+      "content": "m47"
+    },
+    {
+      "role": "user",
+      "content": "m48"
+    },
+    {
+      "role": "user",
+      "content": "m49"
+    },
+    {
+      "role": "user",
+      "content": "m50"
+    },
+    {
+      "role": "user",
+      "content": "m51"
+    },
+    {
+      "role": "user",
+      "content": "m52"
+    },
+    {
+      "role": "user",
+      "content": "m53"
+    },
+    {
+      "role": "user",
+      "content": "m54"
+    },
+    {
+      "role": "user",
+      "content": "m55"
+    },
+    {
+      "role": "user",
+      "content": "m56"
+    },
+    {
+      "role": "user",
+      "content": "m57"
+    },
+    {
+      "role": "user",
+      "content": "m58"
+    },
+    {
+      "role": "user",
+      "content": "m59"
+    },
+    {
+      "role": "user",
+      "content": "m60"
+    },
+    {
+      "role": "user",
+      "content": "m61"
+    },
+    {
+      "role": "user",
+      "content": "m62"
+    },
+    {
+      "role": "user",
+      "content": "m63"
+    },
+    {
+      "role": "user",
+      "content": "m64"
+    }
+  ],
+  "inputModalities": [
+    "text"
+  ],
+  "inputTokensHint": 400
+}

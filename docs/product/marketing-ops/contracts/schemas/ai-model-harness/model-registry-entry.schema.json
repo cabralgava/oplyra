@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/ai-model-harness/model-registry-entry/1.0",
+  "title": "Oplyra Model Registry Entry",
+  "description": "Entrada do catálogo operacional de modelos (CR-026 §8.3, opção A): configuração operacional validada por schema, fora do freeze. Invariantes de runtime: status experimental aceita somente dados synthetic; maxOutputTokens <= contextWindowTokens; capability visual exige tariff.microUsdPerImage; modelId e (adapterKey, providerModelId) únicos no catálogo.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "modelId",
+    "provider",
+    "adapterKey",
+    "providerModelId",
+    "status",
+    "capabilities",
+    "inputModalities",
+    "supportedParameters",
+    "structuredOutput",
+    "toolCalling",
+    "contextWindowTokens",
+    "maxOutputTokens",
+    "tariff",
+    "dataPolicy",
+    "qualityEvidence",
+    "evidenceDate"
+  ],
+  "properties": {
+    "modelId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._/-]*$"
+    },
+    "provider": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+    },
+    "adapterKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "providerModelId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "degraded",
+        "disabled",
+        "experimental"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "classification",
+          "generation",
+          "analysis",
+          "strategy",
+          "quality_gate",
+          "image_generation",
+          "image_edit",
+          "asset_analysis",
+          "other"
+        ]
+      }
+    },
+    "inputModalities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "text",
+          "image",
+          "audio",
+          "video"
+        ]
+      }
+    },
+    "supportedParameters": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "temperature",
+          "top_p",
+          "seed",
+          "reasoning_effort"
+        ]
+      }
+    },
+    "structuredOutput": {
+      "type": "boolean"
+    },
+    "toolCalling": {
+      "type": "boolean"
+    },
+    "contextWindowTokens": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "maxOutputTokens": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "tariff": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "tariffVersion",
+        "currency",
+        "effectiveFrom",
+        "inputMicroUsdPerMillionTokens",
+        "outputMicroUsdPerMillionTokens"
+      ],
+      "properties": {
+        "tariffVersion": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+        },
+        "currency": {
+          "type": "string",
+          "const": "USD"
+        },
+        "effectiveFrom": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "inputMicroUsdPerMillionTokens": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        },
+        "outputMicroUsdPerMillionTokens": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        },
+        "microUsdPerImage": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        }
+      }
+    },
+    "dataPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowedDataClassifications",
+        "zeroDataRetention",
+        "evidenceRef"
+      ],
+      "properties": {
+        "allowedDataClassifications": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/dataClassification"
+          }
+        },
+        "zeroDataRetention": {
+          "type": "boolean"
+        },
+        "evidenceRef": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+        }
+      }
+    },
+    "qualityEvidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "agentKey",
+          "actionKey",
+          "score",
+          "evalRef",
+          "measuredAt"
+        ],
+        "properties": {
+          "agentKey": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/agentKey"
+          },
+          "actionKey": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/actionKey"
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "evalRef": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+          },
+          "measuredAt": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          }
+        }
+      }
+    },
+    "evidenceDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    }
+  }
+}

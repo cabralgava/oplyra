@@ -13,3 +13,4 @@ export * from "./application/use-cases/provision-tenant.ts";
 export * from "./application/use-cases/invite-member.ts";
 export * from "./application/use-cases/accept-invitation.ts";
 export * from "./application/use-cases/membership-admin.ts";
+export * from "./ai-model-harness/index.ts";

@@ -1,0 +1,53 @@
+{
+  "validationId": "model-invocation-request-1.0",
+  "validatedAt": "2026-09-29T18:00:00Z",
+  "status": "passed",
+  "schema": "model-invocation-request.schema.json",
+  "validFixtures": [
+    "../../fixtures/valid/model-invocation-request-visual.json",
+    "../../fixtures/valid/model-invocation-request.json"
+  ],
+  "invalidFixtures": [
+    "../../fixtures/invalid/model-invocation-request-classification-downgrade-business-invariant.json",
+    "../../fixtures/invalid/model-invocation-request-decimal-requested-images.json",
+    "../../fixtures/invalid/model-invocation-request-idempotency-conflict-business-invariant.json",
+    "../../fixtures/invalid/model-invocation-request-invocation-id-too-long.json",
+    "../../fixtures/invalid/model-invocation-request-lone-surrogate-invocation-id.json",
+    "../../fixtures/invalid/model-invocation-request-lone-surrogate-message.json",
+    "../../fixtures/invalid/model-invocation-request-message-above-byte-limit-business-invariant.json",
+    "../../fixtures/invalid/model-invocation-request-negative-hint.json",
+    "../../fixtures/invalid/model-invocation-request-selects-model.json",
+    "../../fixtures/invalid/model-invocation-request-too-many-messages.json",
+    "../../fixtures/invalid/model-invocation-request-without-text-modality-business-invariant.json"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "draft202012AndVersionedId": "passed",
+    "canonicalFixturesAccepted": "passed",
+    "schemaLevelInvalidFixturesRejected": "passed",
+    "businessInvariantFixturesAcceptedBySchema": "passed",
+    "businessInvariantFixturesRejectedByRuntime": "passed",
+    "sharedDefinitionsResolved": "passed",
+    "requestSelectsNoModelProviderOrSampling": "passed",
+    "identifierLimitsCanonical": "passed",
+    "malformedUnicodeRejected": "passed",
+    "harnessDependentInvariants": "passed"
+  },
+  "directReferencesValidated": [
+    "Errors Registry 1.4",
+    "common-definitions 1.1 (superconjunto da 1.0, CR-026)",
+    "agents.json 1.0",
+    "actions.json 2.0",
+    "CR-026"
+  ],
+  "unvalidatedImplementationReferences": [
+    "Cost Ledger persistido",
+    "carregamento de chave de fingerprint de cofre",
+    "adapter real de provider",
+    "contrato canônico de asset"
+  ],
+  "runtimeDispatchEnabled": false,
+  "visualCapabilityEnabled": false,
+  "realProviderEnabled": false,
+  "databaseChanged": false
+}

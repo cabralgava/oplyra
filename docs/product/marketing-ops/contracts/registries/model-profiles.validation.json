@@ -1,0 +1,26 @@
+{
+  "registry": "oplyra-model-profiles",
+  "registryVersion": "1.0",
+  "canonicalProfiles": 3,
+  "activeProfiles": 3,
+  "bindings": ["copywriting-agent::create_ad_copy", "copywriting-agent::revise_copy", "strategy-quality-agent::review_copy"],
+  "checks": {
+    "entriesMatchProfileSchema": true,
+    "uniqueProfileVersions": true,
+    "atMostOneActivePerAgentAction": true,
+    "agentsRegistered": true,
+    "actionsRegistered": true,
+    "agentOwnsOrIsCallableForAction": true,
+    "candidatesResolvedInLocalOperationalCatalog": true,
+    "noPaidCandidateInLocalProfiles": true
+  },
+  "validation": { "status": "passed", "errors": [], "warnings": [] },
+  "generatedAt": "2026-09-29T18:00:00Z",
+  "compatibility": {
+    "changeProposal": "../changes/CR-026-product-ai-model-harness-contracts.md",
+    "classification": "backward_compatible_registry_addition",
+    "baseRegistryVersion": null,
+    "currentRegistryVersion": "1.0",
+    "schemaVersionChanged": false
+  }
+}

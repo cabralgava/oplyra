@@ -1,0 +1,41 @@
+{
+  "invocationId": "inv-fixture-1",
+  "tenantId": "11111111-1111-4111-8111-111111111111",
+  "workflowKey": "copy-review",
+  "agentKey": "copywriting-agent",
+  "actionKey": "create_ad_copy",
+  "trace": {
+    "correlationId": "corr-fixture-1",
+    "transactionId": "txn_fixture_1",
+    "causationId": null,
+    "parentTransactionId": null,
+    "workflowId": "wf-fixture-1",
+    "taskId": "task-fixture-1",
+    "runId": "run-fixture-1"
+  },
+  "classification": {
+    "sources": [
+      {
+        "kind": "context_package",
+        "ref": "ctx-fixture-1"
+      }
+    ],
+    "declared": null
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Brand OS sintético."
+    },
+    {
+      "role": "user",
+      "content": "Gerar anúncio sintético para teste."
+    }
+  ],
+  "inputModalities": [
+    "text"
+  ],
+  "inputTokensHint": 400,
+  "model": "lab-a/any-model",
+  "temperature": 0.9
+}

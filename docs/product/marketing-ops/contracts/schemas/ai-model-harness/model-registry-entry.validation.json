@@ -1,0 +1,42 @@
+{
+  "validationId": "model-registry-entry-1.0",
+  "validatedAt": "2026-09-29T18:00:00Z",
+  "status": "passed",
+  "schema": "model-registry-entry.schema.json",
+  "validFixtures": [
+    "../../fixtures/valid/model-registry-entry.json"
+  ],
+  "invalidFixtures": [
+    "../../fixtures/invalid/model-registry-entry-decimal-tariff.json",
+    "../../fixtures/invalid/model-registry-entry-experimental-real-data-business-invariant.json",
+    "../../fixtures/invalid/model-registry-entry-negative-tariff.json"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "draft202012AndVersionedId": "passed",
+    "canonicalFixturesAccepted": "passed",
+    "schemaLevelInvalidFixturesRejected": "passed",
+    "businessInvariantFixturesAcceptedBySchema": "passed",
+    "businessInvariantFixturesRejectedByRuntime": "passed",
+    "sharedDefinitionsResolved": "passed",
+    "operationalConfigurationOutsideFreeze": "passed",
+    "localCatalogValidated": "passed"
+  },
+  "directReferencesValidated": [
+    "Errors Registry 1.4",
+    "common-definitions 1.1 (superconjunto da 1.0, CR-026)",
+    "agents.json 1.0",
+    "actions.json 2.0",
+    "CR-026"
+  ],
+  "unvalidatedImplementationReferences": [
+    "Cost Ledger persistido",
+    "carregamento de chave de fingerprint de cofre",
+    "adapter real de provider",
+    "contrato canônico de asset"
+  ],
+  "runtimeDispatchEnabled": false,
+  "visualCapabilityEnabled": false,
+  "realProviderEnabled": false,
+  "databaseChanged": false
+}

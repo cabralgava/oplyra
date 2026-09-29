@@ -8,10 +8,10 @@ const readJson = (relativePath: string): Record<string, any> =>
   JSON.parse(readFileSync(join(ROOT, relativePath), "utf8"));
 
 describe("idempotency conflict contract", () => {
-  it("mantém IDEMPOTENCY_CONFLICT no Errors Registry 1.3", () => {
+  it("mantém IDEMPOTENCY_CONFLICT no Errors Registry 1.4", () => {
     const registry = readJson("docs/product/marketing-ops/contracts/registries/errors.json");
     const entry = registry.entries.find((item: Record<string, unknown>) => item.code === "IDEMPOTENCY_CONFLICT");
-    expect(registry.registryVersion).toBe("1.3");
+    expect(registry.registryVersion).toBe("1.4");
     expect(entry).toEqual({
       code: "IDEMPOTENCY_CONFLICT",
       category: "idempotency",

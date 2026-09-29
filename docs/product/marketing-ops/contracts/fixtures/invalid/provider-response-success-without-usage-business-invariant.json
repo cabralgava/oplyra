@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "output": {
+    "modality": "text",
+    "text": "{\"headline\":\"sintético\"}"
+  },
+  "resolvedProvider": "oplyra-test",
+  "resolvedProviderModelId": "oplyra-test/text-economy",
+  "ignoredParameters": [],
+  "externalRequestId": "test-00000001",
+  "billing": {
+    "kind": "charged",
+    "reportedCostMicroUsd": null
+  }
+}

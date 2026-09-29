@@ -1,0 +1,46 @@
+{
+  "modelId": "local-test-text-economy",
+  "provider": "oplyra-test",
+  "adapterKey": "test",
+  "providerModelId": "oplyra-test/text-economy",
+  "status": "active",
+  "capabilities": [
+    "classification",
+    "generation",
+    "analysis",
+    "strategy",
+    "quality_gate"
+  ],
+  "inputModalities": [
+    "text"
+  ],
+  "supportedParameters": [
+    "temperature",
+    "top_p",
+    "seed"
+  ],
+  "structuredOutput": true,
+  "toolCalling": false,
+  "contextWindowTokens": 32000,
+  "maxOutputTokens": 4096,
+  "tariff": {
+    "tariffVersion": "local-test-0",
+    "currency": "USD",
+    "effectiveFrom": "2026-09-29",
+    "inputMicroUsdPerMillionTokens": 0,
+    "outputMicroUsdPerMillionTokens": 0,
+    "microUsdPerImage": 0
+  },
+  "dataPolicy": {
+    "allowedDataClassifications": [
+      "synthetic",
+      "internal",
+      "tenant_confidential",
+      "personal_data"
+    ],
+    "zeroDataRetention": true,
+    "evidenceRef": "in-process deterministic Test Adapter; no network"
+  },
+  "qualityEvidence": [],
+  "evidenceDate": "2026-09-29"
+}

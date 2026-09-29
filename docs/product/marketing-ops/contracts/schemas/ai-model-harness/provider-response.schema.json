@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/ai-model-harness/provider-response/1.0",
+  "title": "Oplyra Provider Response",
+  "description": "Resposta do adapter ao harness (CR-026 §7, §8.2). Invariantes de runtime: ok:true exige output, usage, resolvedProvider, resolvedProviderModelId e ignoredParameters e não tem errorKind; ok:false exige errorKind; rota textual exige output.modality text e usage.images 0; rota visual exige de 1 a requestedImages assets, usage.images igual aos assets entregues e cada asset confirmado no tenant e na tentativa; usage.outputTokens <= maxOutputTokens enviado. Resposta inválida nunca é liquidada.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ok",
+    "externalRequestId",
+    "billing"
+  ],
+  "properties": {
+    "ok": {
+      "type": "boolean"
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modality"
+      ],
+      "properties": {
+        "modality": {
+          "type": "string",
+          "enum": [
+            "text",
+            "visual"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "assets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "assetId",
+              "mediaType"
+            ],
+            "properties": {
+              "assetId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256,
+                "pattern": "^(?![dD][aA][tT][aA]:)(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+              },
+              "mediaType": {
+                "type": "string",
+                "enum": [
+                  "image/png",
+                  "image/jpeg",
+                  "image/webp"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputTokens",
+        "outputTokens",
+        "images"
+      ],
+      "properties": {
+        "inputTokens": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        },
+        "outputTokens": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        },
+        "images": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        }
+      }
+    },
+    "resolvedProvider": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+    },
+    "resolvedProviderModelId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+    },
+    "ignoredParameters": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+      }
+    },
+    "externalRequestId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+    },
+    "errorKind": {
+      "type": "string",
+      "enum": [
+        "timeout",
+        "rate_limited",
+        "unavailable",
+        "rejected_request"
+      ]
+    },
+    "billing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "charged",
+            "none",
+            "unknown"
+          ]
+        },
+        "reportedCostMicroUsd": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    }
+  }
+}

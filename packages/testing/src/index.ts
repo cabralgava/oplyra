@@ -120,3 +120,4 @@ export function contexto(over: Partial<AccessContext> & Pick<AccessContext, "ten
     resolvedAt: over.resolvedAt ?? new Date("2026-09-15T12:00:00Z"),
   };
 }
+export * from "./ai-model-harness.ts";

@@ -30,6 +30,7 @@ const SUPPORTED_VALIDATION_KEYWORDS = new Set([
   "const",
   "enum",
   "minLength",
+  "maxLength",
   "pattern",
   "format"
 ]);
@@ -115,6 +116,10 @@ function validateNode(
   if (typeof value === "string") {
     if (typeof schema.minLength === "number" && value.length < schema.minLength) {
       errors.push({ path, keyword: "minLength", message: `Comprimento menor que ${schema.minLength}` });
+    }
+    // JSON Schema conta comprimento em code points, não em unidades UTF-16 (CR-026).
+    if (typeof schema.maxLength === "number" && [...value].length > schema.maxLength) {
+      errors.push({ path, keyword: "maxLength", message: `Comprimento maior que ${schema.maxLength}` });
     }
     if (typeof schema.pattern === "string" && !new RegExp(schema.pattern).test(value)) {
       errors.push({ path, keyword: "pattern", message: "Valor não corresponde ao pattern" });

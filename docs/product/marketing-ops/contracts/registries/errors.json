@@ -1,8 +1,8 @@
 {
   "registry": "oplyra-errors",
-  "registryVersion": "1.3",
+  "registryVersion": "1.4",
   "schemaVersion": "1.0",
-  "generatedAt": "2026-09-21T19:00:00Z",
+  "generatedAt": "2026-09-29T18:00:00Z",
   "status": "active",
   "rules": {
     "codeNaming": "UPPER_SNAKE_CASE",
@@ -219,6 +219,102 @@
       "retryable": false,
       "defaultNextAction": "request_approval",
       "description": "Envio externo exige approval específica."
+    },
+    {
+      "code": "MODEL_ATTEMPTS_EXHAUSTED",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "escalate",
+      "description": "Retries e fallbacks compatíveis foram esgotados sem resultado válido."
+    },
+    {
+      "code": "MODEL_ATTEMPT_ALREADY_EXECUTED",
+      "category": "idempotency",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "A mesma tentativa (tenant, action, invocationId, tentativa) com fingerprint aceito já foi liquidada, liberada ou retida; repeti-la gastaria fora de qualquer reserva."
+    },
+    {
+      "code": "MODEL_ATTEMPT_IN_PROGRESS",
+      "category": "idempotency",
+      "severity": "medium",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Outra execução detém a mesma tentativa (tenant, action, invocationId, tentativa) com fingerprint aceito; aguardar o resultado dela em vez de chamar o provider novamente."
+    },
+    {
+      "code": "MODEL_CAPABILITY_BLOCKED",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "A rota resolvida produz saída visual, mas não há contrato canônico de asset nem porta de assets gerados; nenhuma tentativa é feita."
+    },
+    {
+      "code": "MODEL_INVOCATION_INVALID",
+      "category": "validation",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "revise_input",
+      "description": "O pedido de invocação de modelo viola o schema ou uma invariante de runtime (identificadores e limites, Unicode malformado, trace, classificação, mensagens e limites, modalidades, quantidades, semântica de imagens ou downgrade de classificação); nenhuma tentativa, reserva ou registro é criado."
+    },
+    {
+      "code": "MODEL_OUTPUT_INVALID",
+      "category": "validation",
+      "severity": "medium",
+      "retryable": false,
+      "defaultNextAction": "revise_input",
+      "description": "A saída do modelo não atende ao formato estruturado exigido."
+    },
+    {
+      "code": "MODEL_PARAMETER_NOT_APPLIED",
+      "category": "validation",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "O fornecedor informou que um parâmetro do Model Profile foi ignorado; a resposta é descartada."
+    },
+    {
+      "code": "MODEL_PROFILE_NOT_FOUND",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "Não há Model Profile ativo para o agent + action solicitado."
+    },
+    {
+      "code": "MODEL_PROVIDER_RESPONSE_INVALID",
+      "category": "integration",
+      "severity": "critical",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "A resposta do adapter viola o contrato de resposta (usage, imagens, saídas visuais, custo informado, identificadores, parâmetros aplicados ou forma); nada é liquidado, a reserva fica retida para conciliação e a saída é descartada."
+    },
+    {
+      "code": "MODEL_REQUEST_REJECTED",
+      "category": "external_provider",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "O fornecedor rejeitou a requisição como inválida para o modelo roteado."
+    },
+    {
+      "code": "MODEL_RESOLUTION_MISMATCH",
+      "category": "integration",
+      "severity": "critical",
+      "retryable": false,
+      "defaultNextAction": "stop",
+      "description": "O adapter devolveu fornecedor ou modelo diferente do roteado; a saída é descartada."
+    },
+    {
+      "code": "MODEL_ROUTE_UNAVAILABLE",
+      "category": "runtime",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "escalate",
+      "description": "Nenhum candidato satisfaz capability, allowlist, política do tenant, disponibilidade, privacidade e tarifa."
     },
     {
       "code": "PERMISSION_DENIED",

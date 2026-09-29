@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "output": {
+    "modality": "visual",
+    "assets": [
+      {
+        "assetId": "asset-fixture-1",
+        "mediaType": "image/png"
+      },
+      {
+        "assetId": "asset-fixture-2",
+        "mediaType": "image/webp"
+      },
+      {
+        "assetId": "asset-fixture-3",
+        "mediaType": "image/png"
+      }
+    ]
+  },
+  "usage": {
+    "inputTokens": 30,
+    "outputTokens": 0,
+    "images": 3
+  },
+  "resolvedProvider": "oplyra-test",
+  "resolvedProviderModelId": "oplyra-test/image",
+  "ignoredParameters": [],
+  "externalRequestId": null,
+  "billing": {
+    "kind": "charged",
+    "reportedCostMicroUsd": 80030
+  }
+}

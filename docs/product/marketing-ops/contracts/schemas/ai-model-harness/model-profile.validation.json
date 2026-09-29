@@ -1,0 +1,44 @@
+{
+  "validationId": "model-profile-1.0",
+  "validatedAt": "2026-09-29T18:00:00Z",
+  "status": "passed",
+  "schema": "model-profile.schema.json",
+  "validFixtures": [
+    "../../fixtures/valid/model-profile.json"
+  ],
+  "invalidFixtures": [
+    "../../fixtures/invalid/model-profile-action-not-callable-business-invariant.json",
+    "../../fixtures/invalid/model-profile-candidate-forbidden-business-invariant.json",
+    "../../fixtures/invalid/model-profile-lowest-cost-without-threshold-business-invariant.json",
+    "../../fixtures/invalid/model-profile-max-attempts-above-limit.json",
+    "../../fixtures/invalid/model-profile-temperature-above-range.json"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "draft202012AndVersionedId": "passed",
+    "canonicalFixturesAccepted": "passed",
+    "schemaLevelInvalidFixturesRejected": "passed",
+    "businessInvariantFixturesAcceptedBySchema": "passed",
+    "businessInvariantFixturesRejectedByRuntime": "passed",
+    "sharedDefinitionsResolved": "passed",
+    "agentActionBindingAgainstFrozenRegistries": "passed",
+    "registryEntriesValidated": "passed"
+  },
+  "directReferencesValidated": [
+    "Errors Registry 1.4",
+    "common-definitions 1.1 (superconjunto da 1.0, CR-026)",
+    "agents.json 1.0",
+    "actions.json 2.0",
+    "CR-026"
+  ],
+  "unvalidatedImplementationReferences": [
+    "Cost Ledger persistido",
+    "carregamento de chave de fingerprint de cofre",
+    "adapter real de provider",
+    "contrato canônico de asset"
+  ],
+  "runtimeDispatchEnabled": false,
+  "visualCapabilityEnabled": false,
+  "realProviderEnabled": false,
+  "databaseChanged": false
+}

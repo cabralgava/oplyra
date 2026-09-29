@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.oplyra.com/core/context-package/1.0",
+  "$id": "https://schemas.oplyra.com/core/context-package/1.1",
   "title": "Oplyra Context Package",
   "description": "Pacote contextual seletivo e versionado entregue a uma execução de agente Oplyra, materializando o Context Stack L0–L8 sem exigir o envio integral de todas as camadas.",
   "type": "object",
@@ -25,20 +25,20 @@
       "pattern": "^ctx_[A-Za-z0-9][A-Za-z0-9._:-]*$"
     },
     "schemaVersion": {
-      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/schemaVersion"
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/schemaVersion"
     },
     "tenantId": {
-      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/tenantId"
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/tenantId"
     },
     "agentKey": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9-]*-agent$"
     },
     "taskId": {
-      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nullableNonEmptyString"
     },
     "workflowId": {
-      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nullableNonEmptyString"
     },
     "transactionId": {
       "type": [
@@ -48,12 +48,12 @@
       "pattern": "^txn_[A-Za-z0-9][A-Za-z0-9._:-]*$"
     },
     "generatedAt": {
-      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/timestamp"
     },
     "validUntil": {
       "oneOf": [
         {
-          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/timestamp"
         },
         {
           "type": "null"
@@ -102,6 +102,10 @@
     "metadata": {
       "type": "object",
       "additionalProperties": true
+    },
+    "dataClassification": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/dataClassification",
+      "description": "Opcional (CR-026 §5): classificação preenchida pelo Context Builder a partir de camadas e fontes; fonte verificável da classificação no AI Model Harness."
     }
   },
   "allOf": [
@@ -177,7 +181,7 @@
           "$ref": "#/$defs/layerStatus"
         },
         "ref": {
-          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nullableNonEmptyString"
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nullableNonEmptyString"
         },
         "version": {
           "oneOf": [
@@ -211,7 +215,7 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           },
           "default": []
         },
@@ -219,7 +223,7 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           },
           "default": []
         },
@@ -365,21 +369,21 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           }
         },
         "effectivePermissions": {
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           }
         },
         "deniedPermissions": {
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           },
           "default": []
         }
@@ -393,13 +397,13 @@
       ],
       "properties": {
         "level": {
-          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/autonomyLevel"
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/autonomyLevel"
         },
         "policyRefs": {
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           },
           "default": []
         },
@@ -419,7 +423,7 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           },
           "default": []
         },
@@ -427,7 +431,7 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           },
           "default": []
         }
@@ -447,7 +451,7 @@
           "$ref": "#/$defs/layerKey"
         },
         "field": {
-          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
         },
         "impact": {
           "type": "string",
@@ -459,7 +463,7 @@
           ]
         },
         "reason": {
-          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
         },
         "resolvableBy": {
           "type": [
@@ -471,7 +475,7 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           },
           "default": []
         }
@@ -491,7 +495,7 @@
           "$ref": "#/$defs/layerKey"
         },
         "field": {
-          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
         },
         "severity": {
           "type": "string",
@@ -515,12 +519,12 @@
             "properties": {
               "value": {},
               "sourceRef": {
-                "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+                "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
               },
               "observedAt": {
                 "oneOf": [
                   {
-                    "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+                    "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/timestamp"
                   },
                   {
                     "type": "null"
@@ -553,7 +557,7 @@
       ],
       "properties": {
         "key": {
-          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
         },
         "status": {
           "type": "string",
@@ -566,7 +570,7 @@
         "observedAt": {
           "oneOf": [
             {
-              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/timestamp"
             },
             {
               "type": "null"
@@ -576,7 +580,7 @@
         "updatedAt": {
           "oneOf": [
             {
-              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/timestamp"
             },
             {
               "type": "null"
@@ -625,14 +629,14 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/nonEmptyString"
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonEmptyString"
           },
           "default": []
         },
         "retrievedAt": {
           "oneOf": [
             {
-              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.0#/$defs/timestamp"
+              "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/timestamp"
             },
             {
               "type": "null"

@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/ai-model-harness/model-profile/1.0",
+  "title": "Oplyra Model Profile",
+  "description": "Model Profile versionado por agent + action (CR-026 §8.4, opção A: registry canônico registries/model-profiles.json). Invariantes fora do subconjunto de schema: no máximo um perfil active por agent + action; agentKey e actionKey existem nos registries e o agent é dono ou chamador autorizado da action; lowest_cost_above_threshold exige qualityThreshold; candidatos não aparecem em forbiddenModels; sampling.topP > 0; candidatos existem no catálogo operacional carregado (falha fechada na inicialização).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profileId",
+    "version",
+    "status",
+    "agentKey",
+    "actionKey",
+    "requirements",
+    "routing",
+    "sampling",
+    "maxOutputTokens",
+    "limits",
+    "requiredEntitlement",
+    "dataPolicy"
+  ],
+  "properties": {
+    "profileId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "retired"
+      ]
+    },
+    "agentKey": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/agentKey"
+    },
+    "actionKey": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/actionKey"
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability",
+        "inputModalities",
+        "structuredOutput",
+        "toolCalling",
+        "minContextTokens"
+      ],
+      "properties": {
+        "capability": {
+          "type": "string",
+          "enum": [
+            "classification",
+            "generation",
+            "analysis",
+            "strategy",
+            "quality_gate",
+            "image_generation",
+            "image_edit",
+            "asset_analysis",
+            "other"
+          ]
+        },
+        "inputModalities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "audio",
+              "video"
+            ]
+          }
+        },
+        "structuredOutput": {
+          "type": "boolean"
+        },
+        "toolCalling": {
+          "type": "boolean"
+        },
+        "minContextTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "candidates",
+        "forbiddenModels",
+        "allowedProviders",
+        "qualityThreshold",
+        "allowExperimental"
+      ],
+      "properties": {
+        "policy": {
+          "type": "string",
+          "enum": [
+            "lowest_cost_above_threshold",
+            "ordered_preference"
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z0-9][a-z0-9._/-]*$"
+          }
+        },
+        "forbiddenModels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z0-9][a-z0-9._/-]*$"
+          }
+        },
+        "allowedProviders": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/wellFormedText"
+          }
+        },
+        "qualityThreshold": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "allowExperimental": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sampling": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "topP": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "reasoningEffort": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      }
+    },
+    "maxOutputTokens": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxCostMicroUsdPerCall",
+        "maxAttempts",
+        "maxRetriesPerModel",
+        "timeoutMs"
+      ],
+      "properties": {
+        "maxCostMicroUsdPerCall": {
+          "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+        },
+        "maxAttempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "maxRetriesPerModel": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "requiredEntitlement": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+    },
+    "dataPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requireZeroDataRetention"
+      ],
+      "properties": {
+        "requireZeroDataRetention": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

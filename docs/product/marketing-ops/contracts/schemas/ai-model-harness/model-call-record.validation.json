@@ -1,0 +1,49 @@
+{
+  "validationId": "model-call-record-1.0",
+  "validatedAt": "2026-09-29T18:00:00Z",
+  "status": "passed",
+  "schema": "model-call-record.schema.json",
+  "validFixtures": [
+    "../../fixtures/valid/model-call-record-failed.json",
+    "../../fixtures/valid/model-call-record-text.json",
+    "../../fixtures/valid/model-call-record-visual.json"
+  ],
+  "invalidFixtures": [
+    "../../fixtures/invalid/model-call-record-assets-on-failure-business-invariant.json",
+    "../../fixtures/invalid/model-call-record-call-id-other-tenant-business-invariant.json",
+    "../../fixtures/invalid/model-call-record-lone-surrogate-tenant.json",
+    "../../fixtures/invalid/model-call-record-provenance-other-tenant-business-invariant.json",
+    "../../fixtures/invalid/model-call-record-raw-call-id.json",
+    "../../fixtures/invalid/model-call-record-unkeyed-fingerprint.json"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "draft202012AndVersionedId": "passed",
+    "canonicalFixturesAccepted": "passed",
+    "schemaLevelInvalidFixturesRejected": "passed",
+    "businessInvariantFixturesAcceptedBySchema": "passed",
+    "businessInvariantFixturesRejectedByRuntime": "passed",
+    "sharedDefinitionsResolved": "passed",
+    "protectedFingerprintOnly": "passed",
+    "fullScopeAttemptCallId": "passed",
+    "acceptedAssetsOnly": "passed",
+    "noPromptOrResponseFields": "passed"
+  },
+  "directReferencesValidated": [
+    "Errors Registry 1.4",
+    "common-definitions 1.1 (superconjunto da 1.0, CR-026)",
+    "agents.json 1.0",
+    "actions.json 2.0",
+    "CR-026"
+  ],
+  "unvalidatedImplementationReferences": [
+    "Cost Ledger persistido",
+    "carregamento de chave de fingerprint de cofre",
+    "adapter real de provider",
+    "contrato canônico de asset"
+  ],
+  "runtimeDispatchEnabled": false,
+  "visualCapabilityEnabled": false,
+  "realProviderEnabled": false,
+  "databaseChanged": false
+}
