@@ -1,11 +1,11 @@
 // Contratos internos de resultado do Product AI Model Harness.
 //
-// Cada falha interna aponta para exatamente um código do Error Registry 1.4
-// (contracts/registries/errors.json, Contract Registry Release 2.16). Os
-// códigos MODEL_* foram registrados pelo CR-026; os demais já existiam e são
-// reutilizados sem mudar semântica.
+// Cada falha interna aponta para exatamente um código do Error Registry 1.5
+// (contracts/registries/errors.json, Contract Registry Release 2.17). Os
+// códigos MODEL_* foram registrados pelo CR-026 e `BUDGET_NOT_CONFIGURED` e
+// `MODEL_ATTEMPT_CLOSE_UNCONFIRMED` pelo CR-027; os demais já existiam e são reutilizados sem mudar semântica.
 
-/** Códigos do Error Registry 1.4 emitidos pelo harness. */
+/** Códigos do Error Registry 1.5 emitidos pelo harness. */
 export const HARNESS_REGISTERED_ERROR_CODES = [
   "TENANT_REQUIRED",
   "TENANT_MISMATCH",
@@ -16,6 +16,9 @@ export const HARNESS_REGISTERED_ERROR_CODES = [
   "PERMISSION_DENIED",
   "ENTITLEMENT_REQUIRED",
   "BUDGET_LIMIT_EXCEEDED",
+  "BUDGET_NOT_CONFIGURED",
+  "INVALID_STATE_TRANSITION",
+  "INTEGRATION_UNAVAILABLE",
   "PROVIDER_TIMEOUT",
   "PROVIDER_RATE_LIMITED",
   "UPSTREAM_SERVICE_UNAVAILABLE",
@@ -31,6 +34,7 @@ export const HARNESS_REGISTERED_ERROR_CODES = [
   "MODEL_PROVIDER_RESPONSE_INVALID",
   "MODEL_ATTEMPT_IN_PROGRESS",
   "MODEL_ATTEMPT_ALREADY_EXECUTED",
+  "MODEL_ATTEMPT_CLOSE_UNCONFIRMED",
 ] as const;
 export type HarnessRegisteredErrorCode = (typeof HARNESS_REGISTERED_ERROR_CODES)[number];
 
@@ -48,6 +52,10 @@ export type HarnessFailureKind =
   | "profile_not_found"
   | "no_eligible_model"
   | "budget_exceeded"
+  | "budget_not_configured"
+  | "ledger_unavailable"
+  | "attempt_close_rejected"
+  | "attempt_close_unconfirmed"
   | "provider_timeout"
   | "provider_rate_limited"
   | "provider_unavailable"
@@ -81,6 +89,13 @@ export const HARNESS_FAILURE_CONTRACT: Readonly<Record<HarnessFailureKind, KindS
   action_not_callable_by_agent: registrado("PERMISSION_DENIED", false),
   entitlement_required: registrado("ENTITLEMENT_REQUIRED", false),
   budget_exceeded: registrado("BUDGET_LIMIT_EXCEEDED", false),
+  budget_not_configured: registrado("BUDGET_NOT_CONFIGURED", false),
+  // Somente antes da aquisição, quando nada foi chamado.
+  ledger_unavailable: registrado("INTEGRATION_UNAVAILABLE", true),
+  // Rejeição determinística do fechamento (token, transição, comando ou replay divergente).
+  attempt_close_rejected: registrado("INVALID_STATE_TRANSITION", false),
+  // Resultado do commit desconhecido mesmo após um replay idempotente do fechamento.
+  attempt_close_unconfirmed: registrado("MODEL_ATTEMPT_CLOSE_UNCONFIRMED", false),
   provider_timeout: registrado("PROVIDER_TIMEOUT", true),
   provider_rate_limited: registrado("PROVIDER_RATE_LIMITED", true),
   provider_unavailable: registrado("UPSTREAM_SERVICE_UNAVAILABLE", true),

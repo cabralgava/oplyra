@@ -6,3 +6,4 @@ export * from "./local-test-catalog.ts";
 export * from "./local-composition.ts";
 export * from "./hmac-fingerprint.ts";
 export * from "./model-profile-registry.ts";
+export * from "./persistent-cost-ledger.ts";

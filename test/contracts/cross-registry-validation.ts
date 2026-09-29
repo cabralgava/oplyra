@@ -1,8 +1,10 @@
-// Cross-registry validation executável da Contract Registry Release 2.16.
+// Cross-registry validation executável da Contract Registry Release 2.17.
 // Reproduz as categorias da validação do Freeze v1 (envelope, identidade,
-// contagem, nomenclatura, referências, schemas, manifest de integração) e
-// acrescenta as verificações do CR-026 (Error Registry 1.4, Model Profiles,
-// mapeamento de erros do harness, fixtures e relatórios derivados).
+// contagem, nomenclatura, referências, schemas, manifest de integração),
+// mantém as verificações do CR-026 e acrescenta as do CR-027 (Error Registry
+// 1.5, Model Profile Schema 1.1 e Registry 1.1, schemas do Cost Ledger,
+// migrations do Ledger). A Release 2.16 fica como evidência histórica em
+// cross-registry-validation-v2.16.json, conferida pelo manifest v2.16.
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -12,7 +14,9 @@ import {
   validateProviderResult,
 } from "../../packages/core/src/index.ts";
 import type { AgentActionCatalog } from "../../packages/core/src/index.ts";
+import { leaseSecondsFor } from "../../packages/core/src/index.ts";
 import { LOCAL_TEST_MODEL_REGISTRY } from "../../packages/infra/src/ai-model-harness/local-test-catalog.ts";
+import { budgetPeriodInvariants, costLedgerEntryInvariants, modelAttemptInvariants } from "./cost-ledger-invariants.ts";
 
 export type Check = { id: string; category: string; status: "passed" | "failed"; details: Record<string, unknown> };
 type Json = Record<string, any>;
@@ -21,12 +25,12 @@ export const CONTRACTS_DIR = "docs/product/marketing-ops/contracts";
 export const REGISTRY_NAMES = ["agents", "permissions", "tools", "actions", "events", "errors", "handoffs", "quality-gates", "model-profiles"] as const;
 type RegistryName = (typeof REGISTRY_NAMES)[number];
 
-/** Contagem esperada: Release 2.15 mais o delta declarado pelo CR-026 (+12 erros, +3 perfis no registry novo). */
+/** Contagem esperada: Release 2.16 mais o delta do CR-027 (+2 erros; perfis inalterados). */
 export const EXPECTED_COUNTS: Record<RegistryName, number> = {
-  agents: 12, permissions: 6, tools: 58, actions: 171, events: 137, errors: 58, handoffs: 43, "quality-gates": 11, "model-profiles": 3,
+  agents: 12, permissions: 6, tools: 58, actions: 171, events: 137, errors: 60, handoffs: 43, "quality-gates": 11, "model-profiles": 3,
 };
 const EXPECTED_VERSIONS: Record<RegistryName, string> = {
-  agents: "1.0", permissions: "1.0", tools: "1.0", actions: "2.0", events: "1.2", errors: "1.4", handoffs: "1.0", "quality-gates": "1.0", "model-profiles": "1.0",
+  agents: "1.0", permissions: "1.0", tools: "1.0", actions: "2.0", events: "1.2", errors: "1.5", handoffs: "1.0", "quality-gates": "1.0", "model-profiles": "1.1",
 };
 const IDENTITY: Record<RegistryName, (e: Json) => string> = {
   agents: (e) => e.key, permissions: (e) => e.key, tools: (e) => e.key, actions: (e) => e.action, events: (e) => e.event,
@@ -43,7 +47,23 @@ export const CR026_ERROR_CODES = [
   "MODEL_INVOCATION_INVALID", "MODEL_OUTPUT_INVALID", "MODEL_PARAMETER_NOT_APPLIED", "MODEL_PROFILE_NOT_FOUND",
   "MODEL_PROVIDER_RESPONSE_INVALID", "MODEL_REQUEST_REJECTED", "MODEL_RESOLUTION_MISMATCH", "MODEL_ROUTE_UNAVAILABLE",
 ];
-const HARNESS_SCHEMAS = ["model-invocation-request", "provider-response", "model-registry-entry", "model-profile", "model-call-record"] as const;
+const HARNESS_SCHEMAS = [
+  "model-invocation-request", "provider-response", "model-registry-entry", "model-profile", "model-call-record",
+  "model-profile-1.1", "budget-period", "cost-ledger-entry", "model-attempt",
+] as const;
+/** Schemas do CR-027 (Model Profile 1.1 e os três do Cost Ledger). */
+export const CR027_SCHEMAS = ["model-profile-1.1", "budget-period", "cost-ledger-entry", "model-attempt"] as const;
+/** A fixture pertence ao schema de prefixo mais longo: `model-profile-1.1-*` não é fixture do 1.0. */
+const schemaDaFixture = (arquivo: string) =>
+  [...HARNESS_SCHEMAS].filter((n) => arquivo.startsWith(n)).sort((a, b) => b.length - a.length)[0];
+export const CR027_MIGRATIONS = [
+  "supabase/migrations/20260929000013_finops_ledger_schema.sql",
+  "supabase/migrations/20260929000014_finops_ledger_functions.sql",
+] as const;
+const LEDGER_FUNCTIONS = [
+  "acquire_model_attempt", "close_model_attempt", "budget_remaining", "expire_next_model_attempt",
+  "reconcile_model_attempt", "open_budget_period", "close_budget_period",
+] as const;
 /** Invariantes que dependem de sequência no harness (fingerprint, classificação); verificados em teste de contrato próprio. */
 const HARNESS_DEPENDENT = new Set([
   "model-invocation-request-classification-downgrade-business-invariant.json",
@@ -136,6 +156,14 @@ export function runCrossRegistryValidation(root: string): { checks: Check[]; cou
   add("ERROR-critical-behavior", "errors", erros.filter((e) => e.severity === "critical").every((e) => ["stop", "escalate", "request_approval", "request_human_intervention"].includes(e.defaultNextAction)), {});
   const presentes = CR026_ERROR_CODES.filter((c) => erros.filter((e) => e.code === c).length === 1);
   add("ERROR-cr026-codes", "errors", presentes.length === 12, { registered: presentes.length, expected: 12 });
+  const bnc = erros.filter((e) => e.code === "BUDGET_NOT_CONFIGURED");
+  add("ERROR-cr027-budget-not-configured", "errors", bnc.length === 1 && bnc[0]!.category === "budget" && bnc[0]!.severity === "high" &&
+    bnc[0]!.retryable === false && bnc[0]!.defaultNextAction === "request_approval", { registered: bnc.length });
+  const acu = erros.filter((e) => e.code === "MODEL_ATTEMPT_CLOSE_UNCONFIRMED");
+  add("ERROR-cr027-close-unconfirmed", "errors", acu.length === 1 && acu[0]!.category === "integration" && acu[0]!.severity === "high" &&
+    acu[0]!.retryable === false && acu[0]!.defaultNextAction === "escalate" &&
+    HARNESS_FAILURE_CONTRACT.attempt_close_unconfirmed?.contract.code === "MODEL_ATTEMPT_CLOSE_UNCONFIRMED" &&
+    HARNESS_FAILURE_CONTRACT.attempt_close_rejected?.contract.code === "INVALID_STATE_TRANSITION", { registered: acu.length });
 
   // Model Profiles
   const catalogo: AgentActionCatalog = {
@@ -184,6 +212,51 @@ export function runCrossRegistryValidation(root: string): { checks: Check[]; cou
   const cp = docs.find((d) => d.file === "schemas/context-package.schema.json")!.doc;
   add("SCHEMA-context-package-1.1", "schemas", cp.$id.endsWith("/context-package/1.1") && !cp.required.includes("dataClassification") && !!cp.properties.dataClassification, { id: cp.$id });
 
+  // CR-027: Model Profile Schema 1.0 preservado, 1.1 com timeoutMs limitado, schemas do Ledger
+  const v216 = ler("contract-registry-manifest-v2.16.json");
+  const hash216 = (rel: string) => v216.artifacts.find((a: Json) => a.path === `${CONTRACTS_DIR}/${rel}`)?.sha256;
+  const mp10 = docs.find((d) => d.file === "schemas/ai-model-harness/model-profile.schema.json")!.doc;
+  const mp11 = docs.find((d) => d.file === "schemas/ai-model-harness/model-profile-1.1.schema.json")!.doc;
+  add("SCHEMA-model-profile-1.0-unchanged", "schemas",
+    mp10.$id === "https://schemas.oplyra.com/ai-model-harness/model-profile/1.0" &&
+    sha256File(root, `${CONTRACTS_DIR}/schemas/ai-model-harness/model-profile.schema.json`) === hash216("schemas/ai-model-harness/model-profile.schema.json"),
+    { id: mp10.$id, unchangedFromRelease216: true });
+  const semVersao = (d: Json) => { const c = structuredClone(d); delete c.$id; delete c.title; delete c.description; return c; };
+  const mp10ComTeto = semVersao(mp10); mp10ComTeto.properties.limits.properties.timeoutMs.maximum = 840_000;
+  add("SCHEMA-model-profile-1.1", "schemas",
+    mp11.$id === "https://schemas.oplyra.com/ai-model-harness/model-profile/1.1" &&
+    mp11.properties.limits.properties.timeoutMs.maximum === 840_000 &&
+    JSON.stringify(semVersao(mp11)) === JSON.stringify(mp10ComTeto) &&
+    JSON.stringify(mp11).includes("common-definitions/1.1") && !JSON.stringify(mp11).includes("common-definitions/1.0"),
+    { id: mp11.$id, timeoutMsMaximum: mp11.properties.limits.properties.timeoutMs.maximum, identicalExceptTimeoutMs: true });
+  const regPerfis = regs["model-profiles"];
+  add("PROFILE-registry-entry-schema-1.1", "model_profiles",
+    regPerfis.rules.entrySchema === "../schemas/ai-model-harness/model-profile-1.1.schema.json", { entrySchema: regPerfis.rules.entrySchema });
+  const leases = perfis.map((p) => { try { return leaseSecondsFor(p.limits.timeoutMs); } catch { return null; } });
+  const foraDo11 = perfis.filter((p) => validateSchema(mp11, p, registro).length > 0).map((p) => `${p.profileId}@${p.version}`);
+  add("PROFILE-entries-valid-schema-1.1", "model_profiles", foraDo11.length === 0 && leases.every((l) => l !== null && l >= 60 && l <= 900),
+    { invalid: foraDo11, derivedLeaseSeconds: leases });
+  const ledger = ["budget-period", "cost-ledger-entry", "model-attempt"].map((n) => docs.find((d) => d.file === `schemas/ai-model-harness/${n}.schema.json`)?.doc);
+  add("SCHEMA-cr027-ledger-schemas", "schemas",
+    ledger.every((d, i) => d && d.$id === `https://schemas.oplyra.com/ai-model-harness/${["budget-period", "cost-ledger-entry", "model-attempt"][i]}/1.0` &&
+      !JSON.stringify(d).includes("common-definitions/1.0")),
+    { schemas: ledger.map((d) => d?.$id ?? null) });
+  const relatoriosCr027 = CR027_SCHEMAS.map((n) => `schemas/ai-model-harness/${n}.validation.json`);
+  const relatoriosOk = relatoriosCr027.filter((f) => { try { const r = ler(f); return r.status === "passed" && r.schema === `${f.split("/").pop()!.replace(".validation.json", "")}.schema.json`; } catch { return false; } });
+  for (const f of relatoriosCr027) { try { entrada(f); } catch { /* ausência já falha o check */ } }
+  add("REPORT-cr027-schema-validations", "supporting_artifacts", relatoriosOk.length === relatoriosCr027.length, { present: relatoriosOk.length, expected: relatoriosCr027.length });
+
+  // CR-027: migrations do Ledger (verificação estática; a execução é coberta por pgTAP e integração)
+  const sqls = CR027_MIGRATIONS.map((m) => { inputs.push({ path: m, sha256: sha256File(root, m), evidenceLevel: "direct" }); return readFileSync(join(root, m), "utf8"); });
+  const tabelas = ["budget_periods", "model_attempts", "model_call_records", "cost_ledger_entries"];
+  const rlsForcada = tabelas.filter((t) => new RegExp(`alter table finops\\.${t}\\s+force\\s+row level security`).test(sqls[0]!));
+  const semGrantTabela = !/grant\s+(select|insert|update|delete|all)[^;]*on\s+(table\s+)?finops\./i.test(sqls.join("\n"));
+  const revogadas = LEDGER_FUNCTIONS.filter((f) => new RegExp(`revoke all on function app\\.${f}\\([^)]*\\) from public;`).test(sqls[1]!));
+  const definer = LEDGER_FUNCTIONS.filter((f) => new RegExp(`function app\\.${f}\\([\\s\\S]*?security definer\\s+set search_path = pg_catalog, pg_temp`).test(sqls[1]!));
+  add("DATABASE-cr027-ledger-migrations", "database",
+    rlsForcada.length === tabelas.length && semGrantTabela && revogadas.length === LEDGER_FUNCTIONS.length && definer.length === LEDGER_FUNCTIONS.length,
+    { forcedRls: rlsForcada.length, tableGrants: semGrantTabela ? 0 : "found", revokedFromPublic: revogadas.length, securityDefinerWithFixedSearchPath: definer.length });
+
   // Manifest de integração
   const sim = ler("schema-integration-manifest.json");
   entrada("schema-integration-manifest.json");
@@ -194,16 +267,20 @@ export function runCrossRegistryValidation(root: string): { checks: Check[]; cou
 
   // Fixtures dos schemas novos
   const esquemas = Object.fromEntries(HARNESS_SCHEMAS.map((n) => [n, docs.find((d) => d.file === `schemas/ai-model-harness/${n}.schema.json`)!.doc]));
+  const periodosCanonicos = readdirSync(join(C, "fixtures/valid")).filter((f) => schemaDaFixture(f) === "budget-period").map((f) => ler(`fixtures/valid/${f}`));
   const runtime = (n: string, f: Json, arq: string): unknown[] => {
+    if (n === "budget-period") return budgetPeriodInvariants(f, periodosCanonicos);
+    if (n === "cost-ledger-entry") return costLedgerEntryInvariants(f);
+    if (n === "model-attempt") return modelAttemptInvariants(f);
     if (n === "model-invocation-request") return validateInvocationRequest(f);
     if (n === "provider-response") { const v = f.output?.modality === "visual" || arq.includes("visual"); return validateProviderResult(f, { maxOutputTokens: 1024, requestedImages: v ? 2 : 0, imageRoute: v }); }
     if (n === "model-registry-entry") return validateModelRegistry({ registryVersion: "x", models: [f as never] });
-    if (n === "model-profile") return validateModelProfiles([f as never], LOCAL_TEST_MODEL_REGISTRY, catalogo);
+    if (n === "model-profile" || n === "model-profile-1.1") return validateModelProfiles([f as never], LOCAL_TEST_MODEL_REGISTRY, catalogo);
     return recordInvariants(f);
   };
   for (const n of HARNESS_SCHEMAS) {
-    const val = readdirSync(join(C, "fixtures/valid")).filter((f) => f.startsWith(n)).sort();
-    const inv = readdirSync(join(C, "fixtures/invalid")).filter((f) => f.startsWith(n)).sort();
+    const val = readdirSync(join(C, "fixtures/valid")).filter((f) => schemaDaFixture(f) === n).sort();
+    const inv = readdirSync(join(C, "fixtures/invalid")).filter((f) => schemaDaFixture(f) === n).sort();
     for (const f of [...val.map((v) => `fixtures/valid/${v}`), ...inv.map((v) => `fixtures/invalid/${v}`)]) entrada(f);
     const falhas: string[] = [];
     for (const f of val) { const d = ler(`fixtures/valid/${f}`); if (validateSchema(esquemas[n]!, d, registro).length || runtime(n, d, f).length) falhas.push(f); }
@@ -224,7 +301,7 @@ export function runCrossRegistryValidation(root: string): { checks: Check[]; cou
   add("REPORT-model-profiles-validation", "supporting_artifacts", mv.registryVersion === regs["model-profiles"].registryVersion && mv.canonicalProfiles === perfis.length && mv.validation.status === "passed", { canonicalProfiles: mv.canonicalProfiles });
   for (const f of ["registries/errors.validation.json", "registries/model-profiles.validation.json"]) entrada(f);
 
-  // Registries não alterados pelo CR-026
+  // Registries não alterados pelo CR-026 nem pelo CR-027
   const v215 = ler("contract-registry-manifest-v2.15.json");
   const alterados = UNCHANGED_SINCE_2_15.filter((n) => v215.artifacts.find((a: Json) => a.path === `${CONTRACTS_DIR}/registries/${n}.json`)?.sha256 !== sha256File(root, `${CONTRACTS_DIR}/registries/${n}.json`));
   add("FROZEN-registries-unchanged", "freeze", alterados.length === 0, { changed: alterados });

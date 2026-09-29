@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/ai-model-harness/cost-ledger-entry/1.0",
+  "title": "Oplyra Cost Ledger Entry",
+  "description": "Lançamento append-only do Cost Ledger (CR-027 §4.4): deltas dos contadores de um período causados por um passo do ciclo de vida de uma tentativa. Invariantes fora do subconjunto de schema: entryId = callId:kind:periodScope (determinístico, idempotente); padrão de sinais por kind — reserve (reserved ≥ 0, demais 0), settle (reserved ≤ 0, settled ≥ 0, held 0), release (reserved ≤ 0, settled 0, held 0), hold (reserved = −held ≤ 0, settled 0), reconcile (reserved 0, settled ≥ 0, held ≤ 0); overrun só em settle/reconcile; reconcile somente por operator, demais por worker ou system.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tenantId",
+    "entryId",
+    "callId",
+    "kind",
+    "periodId",
+    "periodScope",
+    "reservedDelta",
+    "settledDelta",
+    "heldDelta",
+    "overrunMicroUsd",
+    "actorType",
+    "reason",
+    "createdAt"
+  ],
+  "properties": {
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/tenantId"
+    },
+    "entryId": {
+      "type": "string",
+      "maxLength": 3200,
+      "pattern": "^att1\\.[A-Za-z0-9_-]+:(reserve|settle|release|hold|reconcile):(tenant|workflow_key)$"
+    },
+    "callId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/attemptCallId"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "reserve",
+        "settle",
+        "release",
+        "hold",
+        "reconcile"
+      ]
+    },
+    "periodId": {
+      "type": "string",
+      "pattern": "^bp-[0-9a-f]{32}$"
+    },
+    "periodScope": {
+      "type": "string",
+      "enum": [
+        "tenant",
+        "workflow_key"
+      ]
+    },
+    "reservedDelta": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "settledDelta": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "heldDelta": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "overrunMicroUsd": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+    },
+    "actorType": {
+      "type": "string",
+      "enum": [
+        "worker",
+        "operator",
+        "system"
+      ]
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "validationId": "budget-period-1.0",
+  "validatedAt": "2026-09-29T22:00:00Z",
+  "status": "passed",
+  "schema": "budget-period.schema.json",
+  "validFixtures": [
+    "../../fixtures/valid/budget-period-workflow-closed.json",
+    "../../fixtures/valid/budget-period.json"
+  ],
+  "invalidFixtures": [
+    "../../fixtures/invalid/budget-period-above-safe-integer.json",
+    "../../fixtures/invalid/budget-period-closed-without-closed-at-business-invariant.json",
+    "../../fixtures/invalid/budget-period-decimal-amount.json",
+    "../../fixtures/invalid/budget-period-inverted-window-business-invariant.json",
+    "../../fixtures/invalid/budget-period-malformed-period-id.json",
+    "../../fixtures/invalid/budget-period-negative-limit.json",
+    "../../fixtures/invalid/budget-period-overlapping-business-invariant.json",
+    "../../fixtures/invalid/budget-period-tenant-scope-with-workflow-key-business-invariant.json"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "draft202012AndVersionedId": "passed",
+    "canonicalFixturesAccepted": "passed",
+    "schemaLevelInvalidFixturesRejected": "passed",
+    "sharedDefinitionsResolved": "passed",
+    "businessInvariantFixturesAcceptedBySchema": "passed",
+    "businessInvariantFixturesRejectedByRuntime": "passed",
+    "overlapCheckedAgainstCanonicalPeriods": "passed"
+  },
+  "directReferencesValidated": [
+    "Errors Registry 1.5",
+    "common-definitions 1.1",
+    "CR-027",
+    "supabase/migrations/20260929000013_finops_ledger_schema.sql",
+    "supabase/migrations/20260929000014_finops_ledger_functions.sql"
+  ],
+  "unvalidatedImplementationReferences": [
+    "adapter real de provider",
+    "conciliação automática por exportação de uso do provedor",
+    "política de retenção (D-5)",
+    "geração automática de períodos (D-1)"
+  ],
+  "runtimeDispatchEnabled": false,
+  "visualCapabilityEnabled": false,
+  "realProviderEnabled": false,
+  "databaseChanged": true
+}

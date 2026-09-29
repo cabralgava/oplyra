@@ -1,11 +1,16 @@
 {
   "registry": "oplyra-model-profiles",
-  "registryVersion": "1.0",
+  "registryVersion": "1.1",
   "canonicalProfiles": 3,
   "activeProfiles": 3,
   "bindings": ["copywriting-agent::create_ad_copy", "copywriting-agent::revise_copy", "strategy-quality-agent::review_copy"],
+  "entrySchema": "../schemas/ai-model-harness/model-profile-1.1.schema.json",
+  "derivedLeaseSeconds": {"local-test.copywriting-agent.create_ad_copy@1": 90, "local-test.copywriting-agent.revise_copy@1": 90, "local-test.strategy-quality-agent.review_copy@1": 90},
   "checks": {
     "entriesMatchProfileSchema": true,
+    "entrySchemaIsModelProfile11Only": true,
+    "timeoutMsWithinSchema11Maximum": true,
+    "derivedLeaseSecondsWithinBounds": true,
     "uniqueProfileVersions": true,
     "atMostOneActivePerAgentAction": true,
     "agentsRegistered": true,
@@ -15,12 +20,12 @@
     "noPaidCandidateInLocalProfiles": true
   },
   "validation": { "status": "passed", "errors": [], "warnings": [] },
-  "generatedAt": "2026-09-29T18:00:00Z",
+  "generatedAt": "2026-09-29T22:00:00Z",
   "compatibility": {
-    "changeProposal": "../changes/CR-026-product-ai-model-harness-contracts.md",
-    "classification": "backward_compatible_registry_addition",
-    "baseRegistryVersion": null,
-    "currentRegistryVersion": "1.0",
+    "changeProposal": "../changes/CR-027-persistent-cost-ledger.md",
+    "classification": "compatible_for_existing_entries_with_deliberate_timeout_restriction",
+    "baseRegistryVersion": "1.0",
+    "currentRegistryVersion": "1.1",
     "schemaVersionChanged": false
   }
 }

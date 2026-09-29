@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import type { ModelInvocationRequest } from "../packages/core/src/index.ts";
 import {
-  InMemoryBudgetGuard, InMemoryDataClassifier, InMemoryModelCallRecorder, SetAiEntitlements, steppingClock,
+  InMemoryBudgetGuard, InMemoryDataClassifier, SetAiEntitlements, steppingClock,
 } from "../packages/testing/src/index.ts";
 import {
   createLocalModelHarness, ModelHarnessConfigurationError, StaticModelAvailability, StaticTenantAiPolicies,
@@ -13,7 +13,7 @@ import { loadFrozenAgentActionCatalog } from "../packages/infra/src/ai-model-har
 import { LOCAL_TEST_MODEL_REGISTRY } from "../packages/infra/src/ai-model-harness/local-test-catalog.ts";
 import { loadModelProfileRegistry } from "../packages/infra/src/ai-model-harness/model-profile-registry.ts";
 
-// Perfis canônicos do registry versionado (Release 2.16).
+// Perfis canônicos do registry versionado (Model Profile Registry 1.1, Release 2.17).
 const LOCAL_TEST_MODEL_PROFILES = loadModelProfileRegistry().entries;
 import { TestModelProviderAdapter } from "../packages/infra/src/ai-model-harness/test-model-provider.ts";
 import { HmacRequestFingerprinter } from "../packages/infra/src/ai-model-harness/hmac-fingerprint.ts";
@@ -29,9 +29,9 @@ const FONTE = { kind: "context_package", ref: "ctx-local-1" } as const;
 
 function harness(extra: Partial<Parameters<typeof createLocalModelHarness>[0]> = {}) {
   const budget = new InMemoryBudgetGuard({ tenants: { [TA]: 50_000, [TB]: 50_000 } });
-  const recorder = new InMemoryModelCallRecorder();
+  const recorder = budget.recorder;
   const classifier = new InMemoryDataClassifier().register(TA, FONTE, "synthetic").register(TB, FONTE, "synthetic");
-  const h = createLocalModelHarness({ budget, recorder, entitlements: new SetAiEntitlements(), classifier, fingerprints, clock: steppingClock(), ...extra });
+  const h = createLocalModelHarness({ budget, entitlements: new SetAiEntitlements(), classifier, fingerprints, clock: steppingClock(), ...extra });
   return { h, budget, recorder };
 }
 

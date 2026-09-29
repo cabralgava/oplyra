@@ -2,10 +2,10 @@
 import { attemptCallId, buildModelHarnessConfig, canonicalRequestMaterial } from "@oplyra/core";
 import { HmacRequestFingerprinter } from "../../infra/src/ai-model-harness/hmac-fingerprint.ts";
 import type {
-  ModelDescriptor, ModelInvocationDeps, ModelInvocationRequest, ModelProfile, ModelProviderPort, RequestFingerprintPort, TokenEstimatorPort,
+  AttemptAcquisitionRequest, AttemptCloseCommand, ModelCallRecord, ModelDescriptor, ModelInvocationDeps, ModelInvocationRequest, ModelProfile, ModelProviderPort, RequestFingerprintPort, TokenEstimatorPort,
 } from "@oplyra/core";
 import {
-  FixedAvailability, InMemoryBudgetGuard, InMemoryDataClassifier, InMemoryGeneratedAssets, InMemoryModelCallRecorder, InMemoryTenantAiPolicies, ManualDeadline, ScriptedModelProvider,
+  FixedAvailability, InMemoryBudgetGuard, InMemoryDataClassifier, InMemoryGeneratedAssets, InMemoryTenantAiPolicies, ManualDeadline, ScriptedModelProvider,
   SetAiEntitlements, inMemoryAgentActionCatalog, steppingClock,
 } from "@oplyra/testing";
 
@@ -51,12 +51,13 @@ export function montar(opts: {
   });
   if (!built.ok) throw new Error(JSON.stringify(built.issues));
   const provider = opts.provider ?? new ScriptedModelProvider("test");
-  const recorder = new InMemoryModelCallRecorder();
   const budget = opts.budget ?? new InMemoryBudgetGuard({ tenants: { [TA]: 1_000_000, [TB]: 1_000_000 } });
+  // O Model Call Record é gravado pelo fechamento atômico do Ledger (CR-027).
+  const recorder = budget.recorder;
   const deps: ModelInvocationDeps = {
     config: built.config,
     providers: new Map([[provider.adapterKey, provider]]),
-    budget, recorder,
+    budget,
     tenantPolicies: opts.policies ?? new InMemoryTenantAiPolicies(),
     entitlements: opts.entitlements ?? new SetAiEntitlements(),
     availability: opts.availability ?? new FixedAvailability(),
@@ -129,3 +130,34 @@ export const pedidoImagem = (extra: Partial<ModelInvocationRequest> = {}) =>
 export const COPY1 = attemptCallId(TA, "create_ad_copy", "inv-1", 1);
 export const REV1 = attemptCallId(TA, "revise_copy", "inv-1", 1);
 export const IMG1 = attemptCallId(TA, "create_static_variation", "inv-1", 1);
+
+/** Pedido de aquisição completo para testes diretos do Ledger. */
+export const aquisicao = (extra: Partial<AttemptAcquisitionRequest> & { tenantId?: string } = {}): AttemptAcquisitionRequest => {
+  const tenantId = extra.tenantId ?? TA;
+  const attempt = extra.attempt ?? { actionKey: "create_ad_copy", invocationId: "inv", number: 1 };
+  return {
+    tenantId, workflowKey: "w", attempt, callId: attemptCallId(tenantId, attempt.actionKey, attempt.invocationId, attempt.number),
+    agentKey: "copywriting-agent", requestFingerprint: FP, acceptedFingerprints: [FP], amountMicroUsd: 1_000, profileTimeoutMs: 30_000,
+    ...extra,
+  };
+};
+
+/** Model Call Record sintético coerente com uma aquisição. */
+export const registroPara = (a: AttemptAcquisitionRequest, extra: Partial<ModelCallRecord> = {}): ModelCallRecord => ({
+  invocationId: a.attempt.invocationId, attempt: a.attempt.number, callId: a.callId, tenantId: a.tenantId,
+  workflowKey: a.workflowKey, agentKey: a.agentKey, actionKey: a.attempt.actionKey, trace: TRACE_MINIMO,
+  requestFingerprint: a.requestFingerprint, dataClassification: "personal_data",
+  classificationProvenance: [{ kind: "conservative_default", ref: null, tenantId: a.tenantId, classification: "personal_data" }],
+  inputTokensEstimate: 10, inputTokensEstimateMethod: "conservative_bound", profileRef: "fixture.copy@3", registryVersion: "fixture-7",
+  modelId: "m-a", provider: "lab-a", adapterKey: "test", providerModelId: "lab-a/m-a", tariffVersion: "t1",
+  routingReason: "preferred", fallbackOccurred: false, resolvedProvider: "lab-a", resolvedProviderModelId: "lab-a/m-a",
+  externalRequestId: null, outcome: "succeeded", failureKind: null, usage: { inputTokens: 10, outputTokens: 5, images: 0 },
+  outputAssetIds: null, estimatedCostMicroUsd: a.amountMicroUsd, costMicroUsd: 500, costStatus: "settled",
+  startedAt: "2026-09-29T12:00:00.000Z", latencyMs: 5, ...extra,
+});
+
+/** Fechamento `charged` coerente com a aquisição. */
+export const fechamentoPara = (a: AttemptAcquisitionRequest, fencingToken: string, actual = 500): AttemptCloseCommand => ({
+  tenantId: a.tenantId, attempt: a.attempt, fencingToken, outcome: "charged", actualMicroUsd: actual, pendingReason: null,
+  record: registroPara(a, { costMicroUsd: actual }),
+});

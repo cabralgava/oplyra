@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.oplyra.com/ai-model-harness/budget-period/1.0",
+  "title": "Oplyra Budget Period",
+  "description": "Período de orçamento explícito criado por operador (CR-027 §4.1, D-1): forma persistida devolvida por app.open_budget_period e app.close_budget_period. Valores em micro-USD inteiros. Invariantes fora do subconjunto de schema: scope tenant ⇔ workflowKey null; periodEnd > periodStart (janela semiaberta); status closed ⇔ closedAt não nulo; reserved + settled + held ≤ 2^53 − 1; períodos do mesmo tenant, scope e workflowKey não se sobrepõem; cada contador é a soma dos lançamentos do Ledger.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tenantId",
+    "periodId",
+    "scope",
+    "workflowKey",
+    "periodStart",
+    "periodEnd",
+    "currency",
+    "limitMicroUsd",
+    "reservedMicroUsd",
+    "settledMicroUsd",
+    "heldMicroUsd",
+    "status",
+    "createdAt",
+    "closedAt"
+  ],
+  "properties": {
+    "tenantId": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/identifierLimits/$defs/tenantId"
+    },
+    "periodId": {
+      "type": "string",
+      "pattern": "^bp-[0-9a-f]{32}$"
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "tenant",
+        "workflow_key"
+      ]
+    },
+    "workflowKey": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^(?:[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff])+$"
+    },
+    "periodStart": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "periodEnd": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "currency": {
+      "type": "string",
+      "const": "USD"
+    },
+    "limitMicroUsd": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+    },
+    "reservedMicroUsd": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+    },
+    "settledMicroUsd": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+    },
+    "heldMicroUsd": {
+      "$ref": "https://schemas.oplyra.com/core/common-definitions/1.1#/$defs/nonNegativeSafeInteger"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "closed"
+      ]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "closedAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  }
+}

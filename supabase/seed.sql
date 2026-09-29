@@ -53,3 +53,15 @@ insert into core.tenant_entitlements (tenant_id, capability_key, value, source) 
   ('11111111-1111-4111-8111-111111111111','assets.library','true','plan'),
   ('22222222-2222-4222-8222-222222222222','team.invite','true','plan')
 on conflict do nothing;
+
+-- CR-027: períodos de orçamento sintéticos (micro-USD) das duas empresas
+-- fictícias. Criados por um operador sintético; limites locais, não preços.
+insert into finops.budget_periods (tenant_id, period_id, scope, workflow_key, period_start, period_end,
+                                   limit_micro_usd, created_by, created_at) values
+  ('11111111-1111-4111-8111-111111111111','bp-a0000000000000000000000000000001','tenant',null,
+   '2026-01-01T00:00:00Z','2027-01-01T00:00:00Z', 5000000,'0e000000-0000-4000-8000-000000000001', now()),
+  ('11111111-1111-4111-8111-111111111111','bp-a0000000000000000000000000000002','workflow_key','seed-copy-review',
+   '2026-01-01T00:00:00Z','2027-01-01T00:00:00Z', 1000000,'0e000000-0000-4000-8000-000000000001', now()),
+  ('22222222-2222-4222-8222-222222222222','bp-b0000000000000000000000000000001','tenant',null,
+   '2026-01-01T00:00:00Z','2027-01-01T00:00:00Z', 5000000,'0e000000-0000-4000-8000-000000000001', now())
+on conflict do nothing;

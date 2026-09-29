@@ -12,7 +12,7 @@ import {
 } from "../../packages/core/src/index.ts";
 import type { ModelInvocationRequest, ModelProfile } from "../../packages/core/src/index.ts";
 import {
-  InMemoryBudgetGuard, InMemoryDataClassifier, InMemoryModelCallRecorder, SetAiEntitlements, steppingClock,
+  InMemoryBudgetGuard, InMemoryDataClassifier, SetAiEntitlements, steppingClock,
 } from "../../packages/testing/src/index.ts";
 import { createLocalModelHarness } from "../../packages/infra/src/ai-model-harness/local-composition.ts";
 import { HmacRequestFingerprinter } from "../../packages/infra/src/ai-model-harness/hmac-fingerprint.ts";
@@ -29,7 +29,9 @@ const common = ler("schemas/common-definitions-1.1.schema.json");
 const contextPackage = ler("schemas/context-package.schema.json");
 const NOMES = ["model-invocation-request", "provider-response", "model-registry-entry", "model-profile", "model-call-record"] as const;
 const harness = Object.fromEntries(NOMES.map((n) => [n, ler(`schemas/ai-model-harness/${n}.schema.json`)])) as Record<(typeof NOMES)[number], Record<string, any>>;
-const registro = createSchemaRegistry([common10, common, contextPackage, ...Object.values(harness)]);
+/** Model Profile Schema 1.1 (CR-027): referenciado pelo Model Profile Registry 1.1. */
+const perfil11 = ler("schemas/ai-model-harness/model-profile-1.1.schema.json");
+const registro = createSchemaRegistry([common10, common, contextPackage, ...Object.values(harness), perfil11]);
 
 const TA = "11111111-1111-4111-8111-111111111111";
 const TB = "22222222-2222-4222-8222-222222222222";
@@ -40,6 +42,7 @@ const SCHEMA_DA_FIXTURE: [string, Record<string, any>][] = [
   ["model-invocation-request", harness["model-invocation-request"]],
   ["provider-response", harness["provider-response"]],
   ["model-registry-entry", harness["model-registry-entry"]],
+  ["model-profile-1.1", perfil11],
   ["model-profile", harness["model-profile"]],
   ["model-call-record", harness["model-call-record"]],
   ["context-package-copywriting-classified", contextPackage],
@@ -79,9 +82,10 @@ function harnessLocal() {
   const classifier = new InMemoryDataClassifier()
     .register(TA, { kind: "context_package", ref: "ctx-fixture-1" }, "synthetic")
     .register(TB, { kind: "context_package", ref: "ctx-fixture-1" }, "synthetic");
-  const recorder = new InMemoryModelCallRecorder();
+  const budget = new InMemoryBudgetGuard({ tenants: { [TA]: 100_000, [TB]: 100_000 } });
+  const recorder = budget.recorder;
   const h = createLocalModelHarness({
-    budget: new InMemoryBudgetGuard({ tenants: { [TA]: 100_000, [TB]: 100_000 } }), recorder,
+    budget,
     entitlements: new SetAiEntitlements(), classifier, clock: steppingClock(),
     fingerprints: new HmacRequestFingerprinter({ active: { keyId: "synthetic-contract-v1", secret: new TextEncoder().encode("oplyra-synthetic-contract-fingerprint-key-not-a-secret") } }),
   });
@@ -191,6 +195,7 @@ describe("fixtures inválidas", () => {
     "model-registry-entry-decimal-tariff.json": "type",
     "model-profile-temperature-above-range.json": "maximum",
     "model-profile-max-attempts-above-limit.json": "maximum",
+    "model-profile-1.1-timeout-above-maximum.json": "maximum",
     "model-call-record-unkeyed-fingerprint.json": "pattern",
     "model-call-record-raw-call-id.json": "pattern",
     "model-call-record-lone-surrogate-tenant.json": "pattern",
@@ -247,14 +252,15 @@ describe("registry canônico de Model Profiles", () => {
   const reg = ler("registries/model-profiles.json");
 
   it("envelope segue o precedente dos registries", () => {
-    expect(reg).toMatchObject({ registry: "oplyra-model-profiles", registryVersion: "1.0", schemaVersion: "1.0", status: "active" });
+    expect(reg).toMatchObject({ registry: "oplyra-model-profiles", registryVersion: "1.1", schemaVersion: "1.0", status: "active" });
+    expect(reg.rules.entrySchema).toBe("../schemas/ai-model-harness/model-profile-1.1.schema.json");
     expect(reg.rules.atMostOneActiveProfilePerAgentAction).toBe(true);
     expect(reg.rules.modelCatalogTariffsAndAvailabilityOutsideFreeze).toBe(true);
   });
 
   it("cada entrada valida contra o schema e o vínculo agent + action contra os registries congelados", () => {
     for (const e of reg.entries) {
-      expect(validateSchema(harness["model-profile"], e, registro), e.profileId).toEqual([]);
+      expect(validateSchema(perfil11, e, registro), e.profileId).toEqual([]);
       expect(catalogo.hasAgent(e.agentKey) && catalogo.hasAction(e.actionKey) && catalogo.canAgentCallAction(e.agentKey, e.actionKey), e.profileId).toBe(true);
     }
     expect(validateModelProfiles(reg.entries, LOCAL_TEST_MODEL_REGISTRY, catalogo)).toEqual([]);

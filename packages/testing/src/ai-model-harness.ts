@@ -1,29 +1,44 @@
 // Fakes em memória das portas do Product AI Model Harness. Voláteis e
-// determinísticos; não substituem o Cost Ledger persistido nem a reserva
-// transacional no Supabase local, que ainda não existem.
+// determinísticos; servem a testes unitários e nunca como persistência. O
+// Cost Ledger persistido (CR-027) vive no Supabase local, em
+// `@oplyra/infra/ai-model-harness`.
 import type {
-  AgentActionCatalog, AiEntitlementPort, AttemptAcquisition, AttemptRef, AvailabilitySnapshot, BudgetGuardPort,
+  AgentActionCatalog, AiEntitlementPort, AttemptAcquisition, AttemptAcquisitionRequest, AttemptCloseCommand,
+  AttemptCloseResult, AvailabilitySnapshot, BudgetGuardPort,
   ClassificationProvenance, ClassificationResolution, ClassificationSourceRef, DataClassification, DataClassificationPort,
   GeneratedAssetDescriptor, GeneratedAssetPort, TokenEstimatorPort,
-  BudgetScope, Clock, DeadlinePort, ModelAvailabilityPort, ModelCallRecord, ModelCallRecorderPort, ModelProviderPort,
+  BudgetScope, Clock, DeadlinePort, ModelAvailabilityPort, ModelCallRecord, ModelProviderPort,
   ProviderCall, ProviderCallResult, TenantAiPolicy, TenantAiPolicyPort,
 } from "@oplyra/core";
-import { isQuantity, REQUEST_FINGERPRINT_PATTERN } from "@oplyra/core";
+import { ATTEMPT_CALL_ID_PATTERN, isQuantity, leaseSecondsFor, REQUEST_FINGERPRINT_PATTERN } from "@oplyra/core";
 
 type Reserva = {
   readonly id: string;
   readonly tenantId: string;
   readonly workflowKey: string;
+  readonly callId: string;
   readonly amount: number;
   status: "reserved" | "held" | "settled" | "released";
   actual: number;
   /** Resumo da requisição material; o conteúdo nunca chega aqui. */
   readonly fingerprint: string;
+  readonly fencingToken: string;
+  /** Derivado do prazo do perfil, como no adapter persistente. */
+  readonly leaseSeconds: number;
+  /** Comando de fechamento normalizado, para reconhecer replay exato. */
+  fechamento: string | null;
 };
+
+/** Registros gravados pelo fechamento do fake; não é porta. */
+export class InMemoryModelCallRecorder {
+  readonly records: ModelCallRecord[] = [];
+  ofTenant(tenantId: string) { return this.records.filter((r) => r.tenantId === tenantId); }
+}
 
 /**
  * Teto por tenant e, opcionalmente, por `tenant::workflow`. Tenant sem teto
- * configurado tem saldo zero: falha fechada.
+ * configurado não tem período: tentativa nova é `budget_not_configured`.
+ * O fechamento grava o registro no `recorder` junto com a transição.
  */
 export class InMemoryBudgetGuard implements BudgetGuardPort {
   readonly #tenantLimits: ReadonlyMap<string, number>;
@@ -31,11 +46,13 @@ export class InMemoryBudgetGuard implements BudgetGuardPort {
   readonly #reservas = new Map<string, Reserva>();
   /** `[tenant, action, invocationId, tentativa]` → id: cada tentativa é adquirida no máximo uma vez. */
   readonly #porChave = new Map<string, string>();
+  readonly recorder: InMemoryModelCallRecorder;
   #seq = 0;
 
-  constructor(limits: { tenants: Record<string, number>; workflows?: Record<string, number> }) {
+  constructor(limits: { tenants: Record<string, number>; workflows?: Record<string, number> }, recorder = new InMemoryModelCallRecorder()) {
     this.#tenantLimits = new Map(Object.entries(limits.tenants));
     this.#workflowLimits = new Map(Object.entries(limits.workflows ?? {}));
+    this.recorder = recorder;
   }
 
   #consumo(filtro: (r: Reserva) => boolean): number {
@@ -47,8 +64,10 @@ export class InMemoryBudgetGuard implements BudgetGuardPort {
     return total;
   }
 
-  #saldo(scope: BudgetScope): number {
-    const tenant = (this.#tenantLimits.get(scope.tenantId) ?? 0) - this.#consumo((r) => r.tenantId === scope.tenantId);
+  #saldo(scope: BudgetScope): number | null {
+    const limiteTenant = this.#tenantLimits.get(scope.tenantId);
+    if (limiteTenant === undefined) return null;
+    const tenant = limiteTenant - this.#consumo((r) => r.tenantId === scope.tenantId);
     const chave = `${scope.tenantId}::${scope.workflowKey}`;
     const limite = this.#workflowLimits.get(chave);
     if (limite === undefined) return tenant;
@@ -58,16 +77,21 @@ export class InMemoryBudgetGuard implements BudgetGuardPort {
 
   async remaining(scope: BudgetScope) { return { remainingMicroUsd: this.#saldo(scope) }; }
 
+  static #chave(tenantId: string, a: { actionKey: string; invocationId: string; number: number }) {
+    // Array JSON: sem ambiguidade entre componentes, qualquer que seja o conteúdo.
+    return JSON.stringify([tenantId, a.actionKey, a.invocationId, a.number]);
+  }
+
   // Sem `await` entre verificar e gravar: no event loop, a aquisição é atômica.
-  async acquireAttempt(pedido: BudgetScope & {
-    attempt: AttemptRef; requestFingerprint: string; acceptedFingerprints: readonly string[]; amountMicroUsd: number;
-  }): Promise<AttemptAcquisition> {
+  async acquireAttempt(pedido: AttemptAcquisitionRequest): Promise<AttemptAcquisition> {
     if (!isQuantity(pedido.amountMicroUsd)) throw new Error("valor de reserva inválido");
     if (!REQUEST_FINGERPRINT_PATTERN.test(pedido.requestFingerprint) || !pedido.acceptedFingerprints.includes(pedido.requestFingerprint)) {
       throw new Error("fingerprint inválido");
     }
-    // Array JSON: sem ambiguidade entre componentes, qualquer que seja o conteúdo.
-    const chave = JSON.stringify([pedido.tenantId, pedido.attempt.actionKey, pedido.attempt.invocationId, pedido.attempt.number]);
+    if (!ATTEMPT_CALL_ID_PATTERN.test(pedido.callId)) return { status: "invalid" };
+    let leaseSeconds: number;
+    try { leaseSeconds = leaseSecondsFor(pedido.profileTimeoutMs); } catch { return { status: "invalid" }; }
+    const chave = InMemoryBudgetGuard.#chave(pedido.tenantId, pedido.attempt);
     const existente = this.#porChave.get(chave);
     if (existente) {
       const r = this.#reservas.get(existente)!;
@@ -76,40 +100,43 @@ export class InMemoryBudgetGuard implements BudgetGuardPort {
       return r.status === "reserved" ? { status: "in_progress" } : { status: "closed" };
     }
     const saldo = this.#saldo(pedido);
-    if (pedido.amountMicroUsd > saldo) return { status: "insufficient", remainingMicroUsd: saldo };
+    if (saldo === null) return { status: "budget_not_configured" };
+    if (pedido.amountMicroUsd > saldo) return { status: "insufficient", remainingMicroUsd: Math.max(0, saldo) };
     const id = `res-${++this.#seq}`;
+    const fencingToken = `fence-${this.#seq}`;
     this.#porChave.set(chave, id);
     this.#reservas.set(id, {
-      id, tenantId: pedido.tenantId, workflowKey: pedido.workflowKey, amount: pedido.amountMicroUsd, status: "reserved", actual: 0,
-      fingerprint: pedido.requestFingerprint,
+      id, tenantId: pedido.tenantId, workflowKey: pedido.workflowKey, callId: pedido.callId, amount: pedido.amountMicroUsd,
+      status: "reserved", actual: 0, fingerprint: pedido.requestFingerprint, fencingToken, leaseSeconds, fechamento: null,
     });
-    return { status: "acquired", reservationId: id };
+    return { status: "acquired", fencingToken, leaseExpiresAt: `lease+${leaseSeconds}s` };
   }
 
-  /** Só reserva aberta do próprio tenant pode ser encerrada, e uma única vez. */
-  #aberta(scope: BudgetScope, id: string): Reserva {
-    const r = this.#reservas.get(id);
-    if (!r || r.tenantId !== scope.tenantId) throw new Error("reserva inexistente neste tenant");
-    if (r.status !== "reserved") throw new Error("reserva já encerrada");
-    return r;
+  /** Mesmas regras do Ledger persistente: token atual, comando coerente, registro da própria tentativa, replay só exato. */
+  async closeAttempt(c: AttemptCloseCommand): Promise<AttemptCloseResult> {
+    const id = this.#porChave.get(InMemoryBudgetGuard.#chave(c.tenantId, c.attempt));
+    const r = id ? this.#reservas.get(id) : undefined;
+    if (!r || r.tenantId !== c.tenantId) return { status: "rejected" };
+    const normalizado = JSON.stringify([c.fencingToken, c.outcome, c.actualMicroUsd, c.pendingReason, c.record]);
+    if (r.status !== "reserved") return { status: r.fechamento === normalizado ? "duplicate" : "rejected" };
+    if (c.fencingToken !== r.fencingToken) return { status: "rejected" };
+    const coerente =
+      (c.outcome === "charged" && isQuantity(c.actualMicroUsd) && c.pendingReason === null && c.record.costStatus === "settled") ||
+      (c.outcome === "not_charged" && c.actualMicroUsd === 0 && c.pendingReason === null && c.record.costStatus === "not_charged") ||
+      (c.outcome === "unknown" && c.actualMicroUsd === null && c.pendingReason !== null && c.record.costStatus === "pending_reconciliation");
+    const doRegistro = c.record.tenantId === r.tenantId && c.record.callId === r.callId && c.record.requestFingerprint === r.fingerprint &&
+      c.record.costMicroUsd === c.actualMicroUsd && c.record.classificationProvenance.every((p) => p.tenantId === r.tenantId);
+    if (!coerente || !doRegistro) return { status: "rejected" };
+    r.status = c.outcome === "charged" ? "settled" : c.outcome === "not_charged" ? "released" : "held";
+    r.actual = c.actualMicroUsd ?? 0;
+    r.fechamento = normalizado;
+    this.recorder.records.push(c.record);
+    return { status: "closed" };
   }
-
-  async settle(scope: BudgetScope, id: string, actual: number) {
-    if (!isQuantity(actual)) throw new Error("valor de liquidação inválido");
-    const r = this.#aberta(scope, id); r.status = "settled"; r.actual = actual;
-  }
-  async release(scope: BudgetScope, id: string) { this.#aberta(scope, id).status = "released"; }
-  async holdForReconciliation(scope: BudgetScope, id: string) { this.#aberta(scope, id).status = "held"; }
 
   reservations(tenantId: string): readonly Readonly<Reserva>[] {
     return [...this.#reservas.values()].filter((r) => r.tenantId === tenantId);
   }
-}
-
-export class InMemoryModelCallRecorder implements ModelCallRecorderPort {
-  readonly records: ModelCallRecord[] = [];
-  async record(entry: ModelCallRecord) { this.records.push(entry); }
-  ofTenant(tenantId: string) { return this.records.filter((r) => r.tenantId === tenantId); }
 }
 
 export function inMemoryAgentActionCatalog(

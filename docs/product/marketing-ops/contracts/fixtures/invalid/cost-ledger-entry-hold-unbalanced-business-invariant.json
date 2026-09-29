@@ -1,0 +1,15 @@
+{
+  "tenantId": "11111111-1111-4111-8111-111111111111",
+  "entryId": "att1.WyIxMTExMTExMS0xMTExLTQxMTEtODExMS0xMTExMTExMTExMTEiLCJjcmVhdGVfYWRfY29weSIsImludi1sZWRnZXItMSIsMV0:hold:tenant",
+  "callId": "att1.WyIxMTExMTExMS0xMTExLTQxMTEtODExMS0xMTExMTExMTExMTEiLCJjcmVhdGVfYWRfY29weSIsImludi1sZWRnZXItMSIsMV0",
+  "kind": "hold",
+  "periodId": "bp-a0000000000000000000000000000001",
+  "periodScope": "tenant",
+  "reservedDelta": -2500,
+  "settledDelta": 0,
+  "heldDelta": 2000,
+  "overrunMicroUsd": 0,
+  "actorType": "worker",
+  "reason": null,
+  "createdAt": "2026-09-29T12:00:00.000000Z"
+}

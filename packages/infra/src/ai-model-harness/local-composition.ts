@@ -6,7 +6,7 @@ import { buildModelHarnessConfig, invokeModel } from "@oplyra/core";
 import type {
   AgentActionCatalog, AiEntitlementPort, AvailabilitySnapshot, BudgetGuardPort, Clock, DataClassificationPort, DeadlinePort,
   RequestFingerprintPort,
-  ModelAvailabilityPort, ModelCallRecorderPort, ModelHarnessConfig, ModelInvocationRequest,
+  ModelAvailabilityPort, ModelHarnessConfig, ModelInvocationRequest,
   ModelInvocationResult, ModelProfile, ModelProviderPort, ModelRegistry, TenantAiPolicy, TenantAiPolicyPort,
 } from "@oplyra/core";
 import { loadFrozenAgentActionCatalog } from "./frozen-registry-catalog.ts";
@@ -61,9 +61,11 @@ export type LocalModelHarness = {
 };
 
 export function createLocalModelHarness(opts: {
-  /** Orçamento e registro de chamadas ainda não têm persistência: o chamador fornece. */
+  /**
+   * Cost Ledger: `PersistentCostLedger` (Supabase local, CR-027) ou fake em
+   * memória nos testes unitários. Fecha a tentativa e grava o registro juntos.
+   */
   readonly budget: BudgetGuardPort;
-  readonly recorder: ModelCallRecorderPort;
   readonly entitlements: AiEntitlementPort;
   /** Classificação verificável ainda não tem armazenamento canônico: o chamador fornece a porta. */
   readonly classifier: DataClassificationPort;
@@ -94,7 +96,6 @@ export function createLocalModelHarness(opts: {
     config: built.config,
     providers,
     budget: opts.budget,
-    recorder: opts.recorder,
     entitlements: opts.entitlements,
     tenantPolicies: opts.tenantPolicies ?? new StaticTenantAiPolicies(),
     availability: opts.availability ?? new StaticModelAvailability(),

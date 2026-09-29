@@ -4,7 +4,7 @@
 **Contract version:** `1.0`
 **Change:** [CR-026](changes/CR-026-product-ai-model-harness-contracts.md), Contract Registry Release 2.16
 **Applies to:** Product AI Model Harness (doc 13 §1.1, §2, §12.1, §14)
-**Runtime activation:** local Test Adapter only; real providers, productive fingerprint keys, persisted Cost Ledger and visual output remain blocked
+**Runtime activation:** local Test Adapter only; real providers, productive fingerprint keys and visual output remain blocked; the persisted Cost Ledger exists locally since Release 2.17 ([COST-LEDGER-CONTRACTS](COST-LEDGER-CONTRACTS.md), CR-027)
 
 ## Purpose
 
@@ -67,6 +67,6 @@ The executable schema subset does not express byte limits, cross-field coherence
 
 - **Visual output:** no canonical asset contract exists; without a `GeneratedAssetPort` the harness returns `MODEL_CAPABILITY_BLOCKED`. The asset contract needs its own CR.
 - **Fingerprint keys:** HMAC runs in infrastructure with caller-supplied keys; loading keys from a secret store is not implemented, so productive use is blocked.
-- **Cost Ledger:** attempt acquisition and reservations exist only as in-memory fakes; persistence, RLS and database-level atomicity need their own CR and migrations.
+- **Cost Ledger:** applied locally by [CR-027](changes/CR-027-persistent-cost-ledger.md) in Release 2.17 (Error Registry 1.5, Model Profile Schema and Registry 1.1, three Ledger schemas); see [COST-LEDGER-CONTRACTS](COST-LEDGER-CONTRACTS.md).
 - **Real providers:** no OpenRouter or direct adapter; the local composition enables only the Test Adapter.
 - **Model Profile entries:** the three canonical entries are synthetic local bindings to the operational test catalog; production bindings depend on EXP-05 evidence.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildModelHarnessConfig, routeModelCall, validateModelRegistry } from "../src/index.ts";
+import { buildModelHarnessConfig, leaseSecondsFor, MAX_PROFILE_TIMEOUT_MS, routeModelCall, validateModelRegistry } from "../src/index.ts";
 import type {
   AgentActionCatalog, AvailabilitySnapshot, ModelDescriptor, ModelProfile, RoutingContext, RoutingRequest, TenantAiPolicy,
 } from "../src/index.ts";
@@ -273,8 +273,22 @@ describe("configuração do harness", () => {
       sampling: { temperature: 3, topP: 0 },
       limits: { maxCostMicroUsdPerCall: -1, maxAttempts: 9, maxRetriesPerModel: 5, timeoutMs: 0 },
     }, { policy: "lowest_cost_above_threshold", qualityThreshold: null, candidates: ["m-a"] })]);
-    for (const esperado of ["entre 0 e 2", "entre 0 (exclusivo) e 1", "inteiro >= 0", "entre 1 e 5", "entre 0 e 2", "inteiro positivo", "obrigatório para lowest_cost_above_threshold"]) {
+    for (const esperado of ["entre 0 e 2", "entre 0 (exclusivo) e 1", "inteiro >= 0", "entre 1 e 5", "entre 0 e 2", "entre 1 e 840000", "obrigatório para lowest_cost_above_threshold"]) {
       expect(p).toContain(esperado);
+    }
+  });
+
+  it("timeoutMs do perfil: 840000 aceito, 840001 recusado (Model Profile Schema 1.1, CR-027 §6.6)", () => {
+    const comTimeout = (timeoutMs: number) => problemas([perfil({ limits: { ...perfil().limits, timeoutMs } })]);
+    expect(MAX_PROFILE_TIMEOUT_MS).toBe(840_000);
+    expect(comTimeout(840_000).filter((x) => x.includes("840000"))).toEqual([]);
+    expect(comTimeout(840_001)).toContain("entre 1 e 840000");
+  });
+
+  it("leaseSecondsFor deriva o lease do prazo do perfil nos limites", () => {
+    expect([1, 999, 1_000, 30_000, 839_001, 840_000].map(leaseSecondsFor)).toEqual([61, 61, 61, 90, 900, 900]);
+    for (const invalido of [0, -1, 0.5, 840_001, Number.NaN, Number.POSITIVE_INFINITY]) {
+      expect(() => leaseSecondsFor(invalido)).toThrow(RangeError);
     }
   });
 

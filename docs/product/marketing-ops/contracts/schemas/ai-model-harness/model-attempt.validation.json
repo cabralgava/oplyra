@@ -1,0 +1,48 @@
+{
+  "validationId": "model-attempt-1.0",
+  "validatedAt": "2026-09-29T22:00:00Z",
+  "status": "passed",
+  "schema": "model-attempt.schema.json",
+  "validFixtures": [
+    "../../fixtures/valid/model-attempt-reconciled.json",
+    "../../fixtures/valid/model-attempt-released.json",
+    "../../fixtures/valid/model-attempt.json"
+  ],
+  "invalidFixtures": [
+    "../../fixtures/invalid/model-attempt-call-id-other-scope-business-invariant.json",
+    "../../fixtures/invalid/model-attempt-lease-above-900.json",
+    "../../fixtures/invalid/model-attempt-malformed-call-id.json",
+    "../../fixtures/invalid/model-attempt-negative-estimate.json",
+    "../../fixtures/invalid/model-attempt-reconciled-without-evidence-business-invariant.json",
+    "../../fixtures/invalid/model-attempt-released-nonzero-actual-business-invariant.json"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "draft202012AndVersionedId": "passed",
+    "canonicalFixturesAccepted": "passed",
+    "schemaLevelInvalidFixturesRejected": "passed",
+    "sharedDefinitionsResolved": "passed",
+    "businessInvariantFixturesAcceptedBySchema": "passed",
+    "businessInvariantFixturesRejectedByRuntime": "passed",
+    "stateShapePerStatus": "passed",
+    "callIdBoundToScope": "passed",
+    "fencingTokenNotExposed": "passed"
+  },
+  "directReferencesValidated": [
+    "Errors Registry 1.5",
+    "common-definitions 1.1",
+    "CR-027",
+    "supabase/migrations/20260929000013_finops_ledger_schema.sql",
+    "supabase/migrations/20260929000014_finops_ledger_functions.sql"
+  ],
+  "unvalidatedImplementationReferences": [
+    "adapter real de provider",
+    "conciliação automática por exportação de uso do provedor",
+    "política de retenção (D-5)",
+    "geração automática de períodos (D-1)"
+  ],
+  "runtimeDispatchEnabled": false,
+  "visualCapabilityEnabled": false,
+  "realProviderEnabled": false,
+  "databaseChanged": true
+}

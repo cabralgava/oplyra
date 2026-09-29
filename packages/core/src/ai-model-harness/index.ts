@@ -6,3 +6,4 @@ export * from "./router.ts";
 export * from "./invocation-validation.ts";
 export * from "./invoke-model.ts";
 export * from "./utf8.ts";
+export * from "./recover-expired-attempts.ts";

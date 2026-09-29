@@ -1,8 +1,8 @@
 {
   "registry": "oplyra-errors",
-  "registryVersion": "1.4",
+  "registryVersion": "1.5",
   "schemaVersion": "1.0",
-  "generatedAt": "2026-09-29T18:00:00Z",
+  "generatedAt": "2026-09-29T22:00:00Z",
   "status": "active",
   "rules": {
     "codeNaming": "UPPER_SNAKE_CASE",
@@ -59,6 +59,14 @@
       "retryable": false,
       "defaultNextAction": "request_approval",
       "description": "Operação excede budget autorizado."
+    },
+    {
+      "code": "BUDGET_NOT_CONFIGURED",
+      "category": "budget",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "request_approval",
+      "description": "Nenhum período de orçamento do tenant vigente pelo relógio do Cost Ledger; uma tentativa nova não é reservada nem executada até um operador configurar o período."
     },
     {
       "code": "CAUSAL_CLAIM_UNSUPPORTED",
@@ -235,6 +243,14 @@
       "retryable": false,
       "defaultNextAction": "stop",
       "description": "A mesma tentativa (tenant, action, invocationId, tentativa) com fingerprint aceito já foi liquidada, liberada ou retida; repeti-la gastaria fora de qualquer reserva."
+    },
+    {
+      "code": "MODEL_ATTEMPT_CLOSE_UNCONFIRMED",
+      "category": "integration",
+      "severity": "high",
+      "retryable": false,
+      "defaultNextAction": "escalate",
+      "description": "O fechamento da tentativa no Cost Ledger não foi confirmado nem após um replay idempotente do mesmo comando; a saída não é entregue, o provider não é chamado de novo e a tentativa fica reservada para sweep ou conciliação."
     },
     {
       "code": "MODEL_ATTEMPT_IN_PROGRESS",

@@ -122,50 +122,108 @@ export interface RequestFingerprintPort {
 
 /**
  * Resultado da aquisição de uma tentativa (`AttemptRef`):
- * - `acquired`: esta execução é dona da tentativa e da reserva; só ela chama o provider;
- * - `in_progress`: outra execução adquiriu a tentativa e ainda não a encerrou;
- * - `closed`: a tentativa já foi liquidada, liberada ou retida para conciliação;
+ * - `acquired`: esta execução é dona da tentativa e da reserva; só ela chama o provider
+ *   e só ela encerra a tentativa, apresentando o `fencingToken`;
+ * - `in_progress`: outra execução adquiriu a tentativa e o lease ainda vale;
+ * - `closed`: a tentativa já foi liquidada, liberada, retida ou abandonada;
  * - `conflict`: a chave já existe com outro fingerprint (requisição materialmente diferente);
- * - `insufficient`: saldo não cobre a estimativa.
+ * - `insufficient`: saldo de algum período aplicável não cobre a estimativa;
+ * - `budget_not_configured`: tentativa nova sem período de orçamento do tenant vigente;
+ * - `invalid`: parâmetros recusados pelo Ledger antes de qualquer escrita.
+ *
+ * Chave existente é respondida só pela própria tentativa, sem consultar período.
  */
 export type AttemptAcquisition =
-  | { readonly status: "acquired"; readonly reservationId: string }
+  | { readonly status: "acquired"; readonly fencingToken: string; readonly leaseExpiresAt: string }
   | { readonly status: "conflict" }
   | { readonly status: "in_progress" }
   | { readonly status: "closed" }
-  | { readonly status: "insufficient"; readonly remainingMicroUsd: number };
+  | { readonly status: "insufficient"; readonly remainingMicroUsd: number }
+  | { readonly status: "budget_not_configured" }
+  | { readonly status: "invalid" };
+
+export type AttemptAcquisitionRequest = BudgetScope & {
+  readonly attempt: AttemptRef;
+  /** `attemptCallId(tenant, action, invocationId, número)`. */
+  readonly callId: string;
+  readonly agentKey: string;
+  /** Gravado na aquisição. */
+  readonly requestFingerprint: string;
+  /** Chave existente com fingerprint fora desta lista é `conflict`. */
+  readonly acceptedFingerprints: readonly string[];
+  readonly amountMicroUsd: number;
+  /**
+   * `limits.timeoutMs` do perfil resolvido. O adapter deriva o lease com
+   * `leaseSecondsFor`; nenhum chamador escolhe duração nem instante decisório.
+   */
+  readonly profileTimeoutMs: number;
+  /** Metadado não autoritativo do relógio do worker; nunca decide período, lease ou expiração. */
+  readonly clientObservedAt?: string;
+};
+
+/** Custo conhecido, ausência garantida de cobrança ou custo incerto. */
+export type AttemptCloseOutcome = "charged" | "not_charged" | "unknown";
+
+/** Por que o custo ficou pendente de conciliação no fechamento. `lease_expired` é exclusivo do sweep. */
+export type PendingReason = "billing_unknown" | "provider_response_invalid" | "adapter_exception" | "cost_not_computable";
 
 /**
- * Reserva atômica por tenant e workflow. `remaining` é consultivo para o
- * roteamento; a aquisição é a barreira efetiva contra corrida.
+ * Fechamento atômico: transição da tentativa, contadores, lançamentos do
+ * Ledger e o Model Call Record na mesma transação. `record.costStatus` e
+ * `record.costMicroUsd` precisam refletir o comando.
+ */
+export type AttemptCloseCommand = {
+  readonly tenantId: string;
+  readonly attempt: AttemptRef;
+  readonly fencingToken: string;
+  readonly outcome: AttemptCloseOutcome;
+  /** Obrigatório em `charged`, 0 em `not_charged`, `null` em `unknown`. */
+  readonly actualMicroUsd: number | null;
+  readonly pendingReason: PendingReason | null;
+  readonly record: ModelCallRecord;
+};
+
+/**
+ * - `closed`: este comando encerrou a tentativa;
+ * - `duplicate`: replay exato de um fechamento já gravado, sem efeito;
+ * - `rejected`: token obsoleto, transição inválida, comando incoerente ou
+ *   replay divergente (`INVALID_STATE_TRANSITION`); nada foi gravado.
+ */
+export type AttemptCloseResult = { readonly status: "closed" | "duplicate" | "rejected" };
+
+/**
+ * Cost Ledger visto pelo harness. `remaining` é consultivo (`null` quando o
+ * tenant não tem período vigente); a aquisição é a barreira efetiva contra corrida.
  */
 export interface BudgetGuardPort {
-  remaining(scope: BudgetScope): Promise<{ readonly remainingMicroUsd: number }>;
+  remaining(scope: BudgetScope): Promise<{ readonly remainingMicroUsd: number | null }>;
   /**
    * Verificar e gravar numa única operação atômica: no máximo uma execução
    * recebe `acquired` por tenant, action, invocationId e tentativa, para sempre. A comparação do
    * fingerprint faz parte da mesma operação e vem antes do estado: chave
    * existente com fingerprint diferente é sempre `conflict`.
    */
-  acquireAttempt(scope: BudgetScope & {
-    readonly attempt: AttemptRef;
-    /** Gravado na aquisição. */
-    readonly requestFingerprint: string;
-    /** Chave existente com fingerprint fora desta lista é `conflict`. */
-    readonly acceptedFingerprints: readonly string[];
-    readonly amountMicroUsd: number;
-  }): Promise<AttemptAcquisition>;
-  /** Liquida pelo valor apurado e devolve a diferença. */
-  settle(scope: BudgetScope, reservationId: string, actualMicroUsd: number): Promise<void>;
-  /** Garantia de que não houve cobrança: devolve tudo. */
-  release(scope: BudgetScope, reservationId: string): Promise<void>;
-  /** Custo incerto: mantém a reserva inteira até conciliação. */
-  holdForReconciliation(scope: BudgetScope, reservationId: string): Promise<void>;
+  acquireAttempt(request: AttemptAcquisitionRequest): Promise<AttemptAcquisition>;
+  /** Encerra a tentativa uma única vez; custo incerto nunca vira zero nem libera a reserva. */
+  closeAttempt(command: AttemptCloseCommand): Promise<AttemptCloseResult>;
+}
+
+/**
+ * Recuperação de tentativas abandonadas: cada chamada move no máximo uma
+ * tentativa `reserved` com lease vencido pelo relógio do Ledger para
+ * `pending_reconciliation (lease_expired)`, sem registro, e devolve o `callId`.
+ */
+export interface AttemptRecoveryPort {
+  expireNext(tenantId: string): Promise<string | null>;
 }
 
 export type ModelCallCostStatus = "settled" | "not_charged" | "pending_reconciliation" | "not_reserved";
 
-/** Uma linha por tentativa, inclusive falhas. Sem prompt, resposta ou PII. */
+/**
+ * Uma linha por tentativa encerrada pelo harness, inclusive falhas, gravada
+ * pelo `closeAttempt`. Tentativa abandonada e movida pelo sweep não tem
+ * registro (CR-027 §2). Sem prompt, resposta ou PII.
+ */
 export type ModelCallRecord = {
   readonly invocationId: string;
   readonly attempt: number;
@@ -205,10 +263,6 @@ export type ModelCallRecord = {
   readonly startedAt: string;
   readonly latencyMs: number;
 };
-
-export interface ModelCallRecorderPort {
-  record(entry: ModelCallRecord): Promise<void>;
-}
 
 /** Restrições do tenant. Nunca mais permissivas que o perfil. */
 export type TenantAiPolicy = {

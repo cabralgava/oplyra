@@ -1,0 +1,40 @@
+{
+  "validationId": "model-profile-1.1",
+  "validatedAt": "2026-09-29T22:00:00Z",
+  "status": "passed",
+  "schema": "model-profile-1.1.schema.json",
+  "validFixtures": [
+    "../../fixtures/valid/model-profile-1.1-timeout-at-maximum.json"
+  ],
+  "invalidFixtures": [
+    "../../fixtures/invalid/model-profile-1.1-timeout-above-maximum.json"
+  ],
+  "checks": {
+    "supportedSchemaKeywords": "passed",
+    "draft202012AndVersionedId": "passed",
+    "canonicalFixturesAccepted": "passed",
+    "schemaLevelInvalidFixturesRejected": "passed",
+    "sharedDefinitionsResolved": "passed",
+    "identicalTo10ExceptTimeoutMs": "passed",
+    "timeoutMsMaximum840000": "passed",
+    "registryEntriesValidated": "passed",
+    "derivedLeaseWithin60To900Seconds": "passed",
+    "schema10UnchangedFromRelease216": "passed"
+  },
+  "directReferencesValidated": [
+    "Model Profile Registry 1.1",
+    "model-profile.schema.json 1.0 (preservado)",
+    "common-definitions 1.1",
+    "CR-027"
+  ],
+  "unvalidatedImplementationReferences": [
+    "adapter real de provider",
+    "conciliação automática por exportação de uso do provedor",
+    "política de retenção (D-5)",
+    "geração automática de períodos (D-1)"
+  ],
+  "runtimeDispatchEnabled": false,
+  "visualCapabilityEnabled": false,
+  "realProviderEnabled": false,
+  "databaseChanged": false
+}

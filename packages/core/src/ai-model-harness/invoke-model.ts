@@ -5,7 +5,8 @@
 // estimativa autoritativa de tokens. Cada tentativa, inclusive retry e
 // fallback, passa de novo pelo Router com orçamento e disponibilidade
 // atualizados, adquire a tentativa (com fingerprint) junto com a reserva de
-// orçamento, valida a resposta do adapter antes de liquidar e deixa registro.
+// orçamento, valida a resposta do adapter e encerra a tentativa com o
+// registro numa única operação atômica do Cost Ledger (CR-027).
 import { harnessFailure } from "./outcomes.ts";
 import type { HarnessFailure, HarnessFailureKind } from "./outcomes.ts";
 import { DATA_CLASSIFICATIONS, estimateWorstCaseMicroUsd, IMAGE_CAPABILITIES } from "./model-registry.ts";
@@ -19,10 +20,10 @@ import {
 } from "./invocation-validation.ts";
 import type { TraceContext } from "./invocation-validation.ts";
 import type {
-  AiEntitlementPort, BudgetGuardPort, BudgetScope, ClassificationProvenance, ClassificationSourceRef,
-  DataClassificationPort, DeadlinePort, GeneratedAssetDescriptor, GeneratedAssetPort, InputTokensEstimateMethod,
-  ModelAvailabilityPort, ModelCallCostStatus, ModelCallRecord, ModelCallRecorderPort, ModelMessage,
-  ModelProviderPort, ProviderCallResult, ProviderErrorKind, ProviderUsage, ProviderVisualAsset, RequestFingerprint,
+  AiEntitlementPort, AttemptAcquisition, AttemptCloseCommand, AttemptCloseOutcome, AttemptCloseResult, BudgetGuardPort, BudgetScope,
+  ClassificationProvenance, ClassificationSourceRef, DataClassificationPort, DeadlinePort, GeneratedAssetDescriptor,
+  GeneratedAssetPort, InputTokensEstimateMethod, ModelAvailabilityPort, ModelCallCostStatus, ModelCallRecord,
+  ModelMessage, ModelProviderPort, PendingReason, ProviderCallResult, ProviderErrorKind, ProviderUsage, ProviderVisualAsset, RequestFingerprint,
   RequestFingerprintPort, TenantAiPolicy, TenantAiPolicyPort, TokenEstimatorPort,
 } from "./ports.ts";
 import type { Clock } from "../application/ports.ts";
@@ -78,8 +79,8 @@ export type ModelInvocationDeps = {
   readonly config: ModelHarnessConfig;
   /** Somente os adapters presentes aqui estão habilitados neste ambiente. */
   readonly providers: ReadonlyMap<string, ModelProviderPort>;
+  /** Cost Ledger: aquisição, fechamento atômico com o Model Call Record e saldo consultivo. */
   readonly budget: BudgetGuardPort;
-  readonly recorder: ModelCallRecorderPort;
   readonly tenantPolicies: TenantAiPolicyPort;
   readonly entitlements: AiEntitlementPort;
   readonly availability: ModelAvailabilityPort;
@@ -236,30 +237,49 @@ function estimarPorModelo(deps: ModelInvocationDeps, req: ModelInvocationRequest
   return mapa;
 }
 
-type Liquidacao = { readonly costMicroUsd: number | null; readonly costStatus: ModelCallCostStatus };
+type Liquidacao = {
+  readonly outcome: AttemptCloseOutcome;
+  readonly costMicroUsd: number | null;
+  readonly costStatus: ModelCallCostStatus;
+  readonly pendingReason: PendingReason | null;
+};
 
-/** Liquida somente valores validados; o resto fica pendente de conciliação. */
-async function liquidar(
-  deps: ModelInvocationDeps, scope: BudgetScope, reservationId: string, model: ModelDescriptor,
-  resultado: ProviderCallResult | null,
-): Promise<Liquidacao> {
-  const pendente = async (): Promise<Liquidacao> => {
-    await deps.budget.holdForReconciliation(scope, reservationId);
-    return { costMicroUsd: null, costStatus: "pending_reconciliation" };
-  };
-  if (!resultado) return pendente();
+/**
+ * Decide o fechamento somente com valores validados; o resto fica pendente de
+ * conciliação com o motivo. Custo incerto nunca vira zero.
+ */
+function decidirFechamento(model: ModelDescriptor, resultado: ProviderCallResult | null, motivoSemResultado: PendingReason): Liquidacao {
+  const pendente = (pendingReason: PendingReason): Liquidacao =>
+    ({ outcome: "unknown", costMicroUsd: null, costStatus: "pending_reconciliation", pendingReason });
+  if (!resultado) return pendente(motivoSemResultado);
   const billing = resultado.billing;
-  if (billing.kind === "none") {
-    await deps.budget.release(scope, reservationId);
-    return { costMicroUsd: 0, costStatus: "not_charged" };
-  }
-  if (billing.kind === "unknown") return pendente();
+  if (billing.kind === "none") return { outcome: "not_charged", costMicroUsd: 0, costStatus: "not_charged", pendingReason: null };
+  if (billing.kind === "unknown") return pendente("billing_unknown");
   const custo = billing.reportedCostMicroUsd
     ?? (resultado.ok && model.tariff ? estimateWorstCaseMicroUsd(model.tariff, resultado.usage) : null);
   // Estouro aritmético ou custo não calculável não é liquidado.
-  if (custo === null || !isQuantity(custo)) return pendente();
-  await deps.budget.settle(scope, reservationId, custo);
-  return { costMicroUsd: custo, costStatus: "settled" };
+  if (custo === null || !isQuantity(custo)) return pendente("cost_not_computable");
+  return { outcome: "charged", costMicroUsd: custo, costStatus: "settled", pendingReason: null };
+}
+
+/**
+ * Fechamento com no máximo um replay do **mesmo** comando idempotente do
+ * Ledger. `rejected` é determinístico e não é repetido. Exceção deixa o
+ * commit desconhecido: o mesmo objeto de comando (token, valores e registro)
+ * é reenviado uma vez; `closed` ou `duplicate` confirmam. Não é retry da
+ * invocação: o provider não é chamado de novo e a saída não é reconstruída.
+ */
+async function fecharComReplay(budget: BudgetGuardPort, comando: AttemptCloseCommand): Promise<"confirmed" | "rejected" | "unconfirmed"> {
+  const tentar = async (): Promise<AttemptCloseResult | null> => {
+    try {
+      return await budget.closeAttempt(comando);
+    } catch {
+      return null;
+    }
+  };
+  const primeiro = (await tentar()) ?? (await tentar());
+  if (primeiro === null) return "unconfirmed";
+  return primeiro.status === "rejected" ? "rejected" : "confirmed";
 }
 
 type VerificacaoVisual = { readonly issues: string[]; readonly tenantMismatch: boolean; readonly assets: GeneratedAssetDescriptor[] };
@@ -302,7 +322,17 @@ async function executarTentativas(
   let ultimaFalha: HarnessFailureKind | null = null;
 
   for (let attempt = 1; attempt <= profile.limits.maxAttempts; attempt++) {
-    const [{ remainingMicroUsd }, availability] = await Promise.all([deps.budget.remaining(scope), deps.availability.snapshot()]);
+    let saldo: { readonly remainingMicroUsd: number | null };
+    try {
+      saldo = await deps.budget.remaining(scope);
+    } catch {
+      return falha("ledger_unavailable", "Cost Ledger indisponível antes da aquisição", { attempts: attempt - 1 });
+    }
+    const availability = await deps.availability.snapshot();
+    // Sem período vigente o saldo é desconhecido: o roteamento não filtra por
+    // saldo e a aquisição decide (`budget_not_configured` para tentativa nova,
+    // resposta da própria tentativa para chave existente).
+    const remainingMicroUsd = saldo.remainingMicroUsd ?? Number.MAX_SAFE_INTEGER;
     const decisao = routeModelCall(
       {
         tenantId: req.tenantId, dataClassification: ctx.effective, inputModalities: req.inputModalities,
@@ -336,11 +366,19 @@ async function executarTentativas(
 
     // Aquisição atômica no escopo tenant + action + invocationId + tentativa, com fingerprint.
     const callId = attemptCallId(req.tenantId, req.actionKey, req.invocationId, attempt);
-    const aquisicao = await deps.budget.acquireAttempt({
-      ...scope, attempt: { actionKey: req.actionKey, invocationId: req.invocationId, number: attempt },
-      requestFingerprint: ctx.fingerprint.primary, acceptedFingerprints: ctx.fingerprint.accepted,
-      amountMicroUsd: estimatedCostMicroUsd,
-    });
+    const attemptRef = { actionKey: req.actionKey, invocationId: req.invocationId, number: attempt };
+    let aquisicao: AttemptAcquisition;
+    try {
+      aquisicao = await deps.budget.acquireAttempt({
+        ...scope, attempt: attemptRef, callId, agentKey: req.agentKey,
+        requestFingerprint: ctx.fingerprint.primary, acceptedFingerprints: ctx.fingerprint.accepted,
+        amountMicroUsd: estimatedCostMicroUsd, profileTimeoutMs: profile.limits.timeoutMs,
+        clientObservedAt: deps.clock.now().toISOString(),
+      });
+    } catch {
+      // Nada foi chamado: repetir a invocação é seguro.
+      return falha("ledger_unavailable", "Cost Ledger indisponível na aquisição", { attempts: attempt - 1 });
+    }
     switch (aquisicao.status) {
       case "acquired": break;
       case "conflict":
@@ -351,13 +389,18 @@ async function executarTentativas(
         return falha("attempt_already_executed", `tentativa ${callId} já foi executada`, { attempts: attempt - 1 });
       case "insufficient":
         return falha("budget_exceeded", "reserva de orçamento negada", { attempts: attempt - 1 });
+      case "budget_not_configured":
+        return falha("budget_not_configured", "tenant sem período de orçamento vigente", { attempts: attempt - 1 });
+      case "invalid":
+        return falha("invalid_request", "parâmetros de aquisição recusados pelo Cost Ledger", { attempts: attempt - 1 });
     }
-    const { reservationId } = aquisicao;
+    const { fencingToken } = aquisicao;
 
     const routingReason = ultimoModelo === model.modelId ? "retry" : decisao.reason;
     ultimoModelo = model.modelId;
     const inicio = deps.clock.now();
     let bruto: unknown;
+    let adapterLancou = false;
     try {
       bruto = await comPrazo(deps.deadline, () => provider.invoke({
         callId,
@@ -373,6 +416,7 @@ async function executarTentativas(
       }), profile.limits.timeoutMs);
     } catch {
       // Adapter que lança não prova ausência de cobrança.
+      adapterLancou = true;
       bruto = { ok: false, errorKind: "unavailable", externalRequestId: null, billing: { kind: "unknown" } };
     }
     const latencyMs = Math.max(0, deps.clock.now().getTime() - inicio.getTime());
@@ -386,7 +430,8 @@ async function executarTentativas(
       problemas.push(...visual.issues);
     }
     const resultado = problemas.length === 0 && !visual?.tenantMismatch ? estruturado : null;
-    const { costMicroUsd, costStatus } = await liquidar(deps, scope, reservationId, model, resultado);
+    const fechamento = decidirFechamento(model, resultado, adapterLancou ? "adapter_exception" : "provider_response_invalid");
+    const { costMicroUsd, costStatus } = fechamento;
 
     // Verificações pós-chamada: contrato do adapter, modelo efetivo, parâmetros, formato.
     let failureKind: HarnessFailureKind | null = null;
@@ -429,7 +474,18 @@ async function executarTentativas(
       estimatedCostMicroUsd, costMicroUsd, costStatus,
       startedAt: inicio.toISOString(), latencyMs,
     };
-    await deps.recorder.record(registro);
+    const encerramento = await fecharComReplay(deps.budget, {
+      tenantId: req.tenantId, attempt: attemptRef, fencingToken, outcome: fechamento.outcome,
+      actualMicroUsd: costMicroUsd, pendingReason: fechamento.pendingReason, record: registro,
+    });
+    // Sem fechamento confirmado a tentativa segue reservada para o sweep ou a
+    // conciliação: não há retry, fallback nem saída entregue.
+    if (encerramento === "rejected") {
+      return falha("attempt_close_rejected", `fechamento da tentativa ${callId} recusado pelo Cost Ledger`, { attempts: attempt });
+    }
+    if (encerramento === "unconfirmed") {
+      return falha("attempt_close_unconfirmed", `fechamento da tentativa ${callId} sem confirmação do Cost Ledger`, { attempts: attempt });
+    }
 
     if (failureKind === null && sucesso) {
       const output: ModelInvocationOutput = sucesso.output.modality === "visual"

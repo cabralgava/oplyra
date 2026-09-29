@@ -1,13 +1,14 @@
-// Contract Registry Release 2.16 (CR-026): cross-validation reexecutada e
-// manifest conferido como mudança lógica sobre a Release 2.15. Artefato
-// herdado conserva exatamente a entrada da 2.15; somente os caminhos
-// autorizados no changeSet carregam conteúdo atual, conferido contra o disco.
+// Contract Registry Release 2.16 (CR-026), agora referência histórica: o
+// relatório gravado e o manifest são conferidos pela própria cadeia de hashes.
+// A cross-validation executável corrente é a da Release 2.17 (CR-027); os
+// artefatos do CR-026 que o CR-027 modificou são conferidos pelo manifest
+// v2.17, e os demais continuam idênticos ao disco.
 import { describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { CONTRACTS_DIR, runCrossRegistryValidation } from "./cross-registry-validation.ts";
+import { CONTRACTS_DIR } from "./cross-registry-validation.ts";
 
 type Artefato = { path: string; category: string; sizeBytes: number; sha256: string; source: string };
 type Manifest = Record<string, any> & { artifacts: Artefato[] };
@@ -22,6 +23,7 @@ const agregado = (artefatos: { path: string; sha256: string }[]) =>
 const relatorio = ler(`${CONTRACTS_DIR}/cross-registry-validation-v2.16.json`);
 const m = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.16.json`) as Manifest;
 const base = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.15.json`) as Manifest;
+const v217 = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.17.json`) as Manifest;
 
 /** Classifica cada artefato da release; qualquer caso fora das três classes é violação. */
 export function classificar(release: Manifest, anterior: Manifest) {
@@ -46,19 +48,18 @@ export function classificar(release: Manifest, anterior: Manifest) {
   return { herdados, modificados, adicionados, violacoes };
 }
 
-describe("cross-registry validation da Release 2.16", () => {
-  const atual = runCrossRegistryValidation(ROOT);
-
-  it("todos os checks passam", () => {
-    expect(atual.checks.filter((c) => c.status !== "passed")).toEqual([]);
-    expect(atual.checks.length).toBe(62);
+describe("cross-registry validation da Release 2.16 (histórico)", () => {
+  it("o relatório gravado registra 62 checks aprovados", () => {
+    expect(relatorio.validation.checks).toHaveLength(62);
+    expect(relatorio.validation.checks.filter((c: { status: string }) => c.status !== "passed")).toEqual([]);
+    expect(relatorio).toMatchObject({ status: "passed", releaseVersion: "2.16", changeSet: "CR-026", validation: { checksFailed: 0 } });
   });
 
-  it("o relatório gravado é exatamente o resultado reexecutado", () => {
-    expect(relatorio.validation.checks).toEqual(atual.checks);
-    expect(relatorio.inputs).toEqual(atual.inputs);
-    expect(relatorio.counts).toEqual(atual.counts);
-    expect(relatorio).toMatchObject({ status: "passed", releaseVersion: "2.16", changeSet: "CR-026", validation: { checksFailed: 0 } });
+  it("o relatório gravado é íntegro: hash igual ao do manifest v2.16 e herdado sem mudança na 2.17", () => {
+    const caminho = `${CONTRACTS_DIR}/cross-registry-validation-v2.16.json`;
+    const entrada = m.artifacts.find((a) => a.path === caminho)!;
+    expect(sha(caminho)).toBe(entrada.sha256);
+    expect(v217.artifacts.find((a) => a.path === caminho)).toEqual(entrada);
   });
 
   it("a validação do Freeze v1 permanece intacta", () => {
@@ -109,10 +110,15 @@ describe("manifest v2.16 como mudança lógica sobre a 2.15", () => {
     expect(classificar(faltando, base).violacoes).toContain("docs/decisions/README.md: herdado ausente");
   });
 
-  it("artefatos do CR-026 conferem com o conteúdo atual em disco", () => {
-    const divergentes = m.artifacts.filter((a) => a.source === "cr_026")
+  it("artefatos do CR-026 conferem com o disco, salvo os modificados pelo CR-027 na Release 2.17", () => {
+    const modificadosCr027 = new Set<string>(v217.changeSet.modifiedArtifacts);
+    const divergentes = m.artifacts.filter((a) => a.source === "cr_026" && !modificadosCr027.has(a.path))
       .filter((a) => !existsSync(join(ROOT, a.path)) || sha(a.path) !== a.sha256 || readFileSync(join(ROOT, a.path)).length !== a.sizeBytes);
     expect(divergentes.map((a) => a.path)).toEqual([]);
+    for (const p of modificadosCr027) {
+      const atual = v217.artifacts.find((a) => a.path === p)!;
+      expect(atual.source, p).toBe("cr_027");
+    }
   });
 
   it("edições pendentes do worktree fora do CR ficam na release com a entrada da 2.15", () => {

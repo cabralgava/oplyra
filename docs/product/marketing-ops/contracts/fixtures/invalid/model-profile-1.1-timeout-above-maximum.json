@@ -1,0 +1,43 @@
+{
+  "profileId": "local-test.copywriting-agent.create_ad_copy",
+  "version": 1,
+  "status": "active",
+  "agentKey": "copywriting-agent",
+  "actionKey": "create_ad_copy",
+  "requirements": {
+    "capability": "generation",
+    "inputModalities": [
+      "text"
+    ],
+    "structuredOutput": true,
+    "toolCalling": false,
+    "minContextTokens": 8000
+  },
+  "routing": {
+    "policy": "ordered_preference",
+    "candidates": [
+      "local-test-text-economy",
+      "local-test-text-extended"
+    ],
+    "forbiddenModels": [],
+    "allowedProviders": [
+      "oplyra-test"
+    ],
+    "qualityThreshold": null,
+    "allowExperimental": false
+  },
+  "sampling": {
+    "temperature": 0.7
+  },
+  "maxOutputTokens": 1024,
+  "limits": {
+    "maxCostMicroUsdPerCall": 0,
+    "maxAttempts": 3,
+    "maxRetriesPerModel": 1,
+    "timeoutMs": 840001
+  },
+  "requiredEntitlement": null,
+  "dataPolicy": {
+    "requireZeroDataRetention": true
+  }
+}

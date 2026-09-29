@@ -1,11 +1,11 @@
 {
   "registry": "oplyra-model-profiles",
-  "registryVersion": "1.0",
+  "registryVersion": "1.1",
   "schemaVersion": "1.0",
-  "generatedAt": "2026-09-29T18:00:00Z",
+  "generatedAt": "2026-09-29T22:00:00Z",
   "status": "active",
   "rules": {
-    "entrySchema": "../schemas/ai-model-harness/model-profile.schema.json",
+    "entrySchema": "../schemas/ai-model-harness/model-profile-1.1.schema.json",
     "bindingKey": "agentKey + actionKey",
     "atMostOneActiveProfilePerAgentAction": true,
     "agentAndActionMustExistInFrozenRegistries": true,

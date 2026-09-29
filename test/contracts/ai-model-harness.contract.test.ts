@@ -1,5 +1,6 @@
-// O harness emite somente códigos do Error Registry 1.4 (Release 2.16, CR-026
-// aplicado). Os hashes da Release 2.15 permanecem como referência histórica.
+// O harness emite somente códigos do Error Registry 1.5 (Release 2.17: CR-026
+// e CR-027 aplicados). Os hashes das Releases 2.15 e 2.16 permanecem como
+// referência histórica.
 import { describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -14,17 +15,31 @@ const sha = (p: string) => createHash("sha256").update(readFileSync(join(ROOT, p
 const errors = readJson(`${CONTRACTS}/registries/errors.json`);
 const porCodigo = new Map<string, Record<string, unknown>>(errors.entries.map((e: Record<string, unknown>) => [e.code, e]));
 
+const APROVADOS_CR027 = ["BUDGET_NOT_CONFIGURED", "MODEL_ATTEMPT_CLOSE_UNCONFIRMED"];
 const APROVADOS_CR026 = [
   "MODEL_ATTEMPT_ALREADY_EXECUTED", "MODEL_ATTEMPT_IN_PROGRESS", "MODEL_ATTEMPTS_EXHAUSTED", "MODEL_CAPABILITY_BLOCKED",
   "MODEL_INVOCATION_INVALID", "MODEL_OUTPUT_INVALID", "MODEL_PARAMETER_NOT_APPLIED", "MODEL_PROFILE_NOT_FOUND",
   "MODEL_PROVIDER_RESPONSE_INVALID", "MODEL_REQUEST_REJECTED", "MODEL_RESOLUTION_MISMATCH", "MODEL_ROUTE_UNAVAILABLE",
 ];
 
-describe("AI Model Harness × Error Registry 1.4", () => {
-  it("o registry está na versão 1.4 com os 12 códigos do CR-026, cada um uma vez", () => {
-    expect(errors.registryVersion).toBe("1.4");
-    expect(errors.entries).toHaveLength(58);
-    for (const c of APROVADOS_CR026) expect(errors.entries.filter((e: { code: string }) => e.code === c), c).toHaveLength(1);
+describe("AI Model Harness × Error Registry 1.5", () => {
+  it("o registry está na versão 1.5 com os 12 códigos do CR-026 e os 2 do CR-027, cada um uma vez", () => {
+    expect(errors.registryVersion).toBe("1.5");
+    expect(errors.entries).toHaveLength(60);
+    for (const c of [...APROVADOS_CR026, ...APROVADOS_CR027]) expect(errors.entries.filter((e: { code: string }) => e.code === c), c).toHaveLength(1);
+  });
+
+  it("BUDGET_NOT_CONFIGURED tem exatamente os atributos aprovados (CR-027 D-2)", () => {
+    expect(porCodigo.get("BUDGET_NOT_CONFIGURED")).toMatchObject({ category: "budget", severity: "high", retryable: false, defaultNextAction: "request_approval" });
+    expect(HARNESS_FAILURE_CONTRACT.budget_not_configured.contract.code).toBe("BUDGET_NOT_CONFIGURED");
+  });
+
+  it("MODEL_ATTEMPT_CLOSE_UNCONFIRMED tem exatamente os atributos aprovados e é distinto da rejeição explícita", () => {
+    expect(porCodigo.get("MODEL_ATTEMPT_CLOSE_UNCONFIRMED")).toMatchObject({
+      category: "integration", severity: "high", retryable: false, defaultNextAction: "escalate",
+    });
+    expect(HARNESS_FAILURE_CONTRACT.attempt_close_unconfirmed).toMatchObject({ contract: { code: "MODEL_ATTEMPT_CLOSE_UNCONFIRMED" }, retryable: false });
+    expect(HARNESS_FAILURE_CONTRACT.attempt_close_rejected).toMatchObject({ contract: { code: "INVALID_STATE_TRANSITION" }, retryable: false });
   });
 
   it("os 12 códigos têm exatamente categoria, severidade, retryable e próxima ação aprovados", () => {
@@ -78,7 +93,7 @@ describe("premissas do CR-026 sobre o Error Registry", () => {
     expect([...relatorio.categories].sort()).toEqual(emUso);
     expect(relatorio.canonicalErrors).toBe(errors.entries.length);
     expect(relatorio.registryVersion).toBe(errors.registryVersion);
-    expect(relatorio.addedCodes).toEqual(APROVADOS_CR026);
+    expect(relatorio.addedCodes).toEqual(APROVADOS_CR027);
   });
 });
 
@@ -91,10 +106,12 @@ describe("Release 2.15 como referência histórica", () => {
     (nome) => expect(sha(`${CONTRACTS}/registries/${nome}`)).toBe(hash215(nome)),
   );
 
-  it("errors.json mudou somente pela Release 2.16 (CR-026)", () => {
-    expect(sha(`${CONTRACTS}/registries/errors.json`)).not.toBe(hash215("errors.json"));
-    const v216 = readJson(`${CONTRACTS}/contract-registry-manifest-v2.16.json`);
-    const a = v216.artifacts.find((x: { path: string }) => x.path.endsWith("registries/errors.json"));
-    expect(a).toMatchObject({ sha256: sha(`${CONTRACTS}/registries/errors.json`), source: "cr_026" });
+  it("errors.json mudou somente pelas Releases 2.16 (CR-026) e 2.17 (CR-027)", () => {
+    const entrada = (v: string) => readJson(`${CONTRACTS}/contract-registry-manifest-v${v}.json`).artifacts
+      .find((x: { path: string }) => x.path.endsWith("registries/errors.json"));
+    expect(entrada("2.16")).toMatchObject({ source: "cr_026" });
+    expect(entrada("2.16").sha256).not.toBe(hash215("errors.json"));
+    expect(entrada("2.17")).toMatchObject({ sha256: sha(`${CONTRACTS}/registries/errors.json`), source: "cr_027" });
+    expect(entrada("2.17").sha256).not.toBe(entrada("2.16").sha256);
   });
 });

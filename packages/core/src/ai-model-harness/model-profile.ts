@@ -59,6 +59,26 @@ export type ModelProfile = {
   readonly dataPolicy: { readonly requireZeroDataRetention: boolean };
 };
 
+/**
+ * Teto de `limits.timeoutMs` (Model Profile Schema 1.1, CR-027 §6.6): com 60 s
+ * de folga, o lease derivado nunca passa de 900 s.
+ */
+export const MAX_PROFILE_TIMEOUT_MS = 840_000;
+export const LEASE_GRACE_SECONDS = 60;
+export const LEASE_SECONDS_RANGE = { min: 60, max: 900 } as const;
+
+/**
+ * Lease de uma tentativa derivado do prazo do perfil, nunca escolhido pelo
+ * chamador: `max(60, ceil(timeoutMs / 1000) + 60)`. Fora de 1..840000 lança,
+ * porque o perfil já deveria ter sido rejeitado na configuração.
+ */
+export function leaseSecondsFor(timeoutMs: number): number {
+  if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > MAX_PROFILE_TIMEOUT_MS) {
+    throw new RangeError(`timeoutMs fora de 1..${MAX_PROFILE_TIMEOUT_MS}`);
+  }
+  return Math.max(LEASE_SECONDS_RANGE.min, Math.ceil(timeoutMs / 1000) + LEASE_GRACE_SECONDS);
+}
+
 export const profileRef = (p: Pick<ModelProfile, "profileId" | "version">): string => `${p.profileId}@${p.version}`;
 
 /** Visão somente leitura dos registries congelados de agents e actions. */
@@ -144,7 +164,9 @@ export function validateModelProfiles(
     if (!Number.isSafeInteger(l.maxRetriesPerModel) || l.maxRetriesPerModel < 0 || l.maxRetriesPerModel > MAX_RETRIES_PER_MODEL) {
       add(`${p}.limits.maxRetriesPerModel`, `entre 0 e ${MAX_RETRIES_PER_MODEL}`);
     }
-    if (!Number.isSafeInteger(l.timeoutMs) || l.timeoutMs < 1) add(`${p}.limits.timeoutMs`, "inteiro positivo");
+    if (!Number.isSafeInteger(l.timeoutMs) || l.timeoutMs < 1 || l.timeoutMs > MAX_PROFILE_TIMEOUT_MS) {
+      add(`${p}.limits.timeoutMs`, `entre 1 e ${MAX_PROFILE_TIMEOUT_MS}`);
+    }
     if (pf.requiredEntitlement !== null && pf.requiredEntitlement.trim() === "") add(`${p}.requiredEntitlement`, "vazio; use null");
   });
   return issues;

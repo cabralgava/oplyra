@@ -5,7 +5,7 @@ import {
   FixedAvailability, InMemoryBudgetGuard, InMemoryDataClassifier, InMemoryTenantAiPolicies, ManualDeadline, ScriptedModelProvider, SetAiEntitlements, scripted,
 } from "@oplyra/testing";
 import { FONTE_CTX, SEGREDO, TA, TB, modelo, montar, pedido, perfil } from "./ai-model-harness-fixtures.ts";
-import { FP, fingerprintDe } from "./ai-model-harness-fixtures.ts";
+import { FP, aquisicao, fechamentoPara, fingerprintDe } from "./ai-model-harness-fixtures.ts";
 
 describe("invokeModel — caminho feliz", () => {
   it("resolve pelo perfil, aplica parâmetros do perfil e registra a tentativa com custo liquidado", async () => {
@@ -179,7 +179,7 @@ describe("invokeModel — prazo e repetição", () => {
   it("tentativa ainda aberta em outra execução não é chamada de novo", async () => {
     const budget = new InMemoryBudgetGuard({ tenants: { [TA]: 1_000_000 } });
     const fp = await fingerprintDe(pedido());
-    await budget.acquireAttempt({ tenantId: TA, workflowKey: "copy-review", attempt: { actionKey: "create_ad_copy", invocationId: "inv-1", number: 1 }, requestFingerprint: fp, acceptedFingerprints: [fp], amountMicroUsd: 2_500 });
+    await budget.acquireAttempt(aquisicao({ workflowKey: "copy-review", attempt: { actionKey: "create_ad_copy", invocationId: "inv-1", number: 1 }, requestFingerprint: fp, acceptedFingerprints: [fp], amountMicroUsd: 2_500 }));
     const { deps, provider } = montar({ budget });
     const r = await invokeModel(deps, pedido());
     expect(!r.ok && r.failure).toMatchObject({ kind: "attempt_in_progress", contract: { registered: true, code: "MODEL_ATTEMPT_IN_PROGRESS" } });
@@ -239,11 +239,11 @@ describe("isolamento entre tenants", () => {
     expect((await budget.remaining({ tenantId: TA, workflowKey: "copy-review" })).remainingMicroUsd).toBe(1_000);
   });
 
-  it("tenant sem teto configurado não chama modelo (falha fechada)", async () => {
+  it("tenant sem teto configurado não chama modelo (falha fechada, BUDGET_NOT_CONFIGURED — CR-027 D-2)", async () => {
     const classifier = new InMemoryDataClassifier().register("tenant-sem-teto", FONTE_CTX, "synthetic");
     const { deps } = montar({ budget: new InMemoryBudgetGuard({ tenants: { [TA]: 1_000_000 } }), classifier });
     const r = await invokeModel(deps, pedido({ tenantId: "tenant-sem-teto" }));
-    expect(!r.ok && r.failure.kind).toBe("budget_exceeded");
+    expect(!r.ok && r.failure.kind).toBe("budget_not_configured");
   });
 
   it("restrição de fornecedor de A não afeta B", async () => {
@@ -262,21 +262,37 @@ describe("isolamento entre tenants", () => {
     expect(recorder.ofTenant(TA).map((r) => r.invocationId)).toEqual(["inv-1"]);
     expect(recorder.ofTenant(TB).map((r) => r.invocationId)).toEqual(["inv-b"]);
     expect(budget.reservations(TB)).toHaveLength(1);
-    await expect(budget.settle({ tenantId: TB, workflowKey: "copy-review" }, budget.reservations(TA)[0]!.id, 0)).rejects.toThrow();
+    // O token de A não fecha tentativa de B com a mesma chave lógica.
+    const deA = budget.reservations(TA)[0]!;
+    const deB = aquisicao({ tenantId: TB, workflowKey: "copy-review", attempt: { actionKey: "create_ad_copy", invocationId: "inv-b", number: 1 } });
+    expect(await budget.closeAttempt(fechamentoPara(deB, deA.fencingToken))).toEqual({ status: "rejected" });
   });
 
   it("aquisição distingue adquirida, em andamento e encerrada, por tenant", async () => {
     const budget = new InMemoryBudgetGuard({ tenants: { [TA]: 10_000, [TB]: 10_000 } });
-    const pedidoA = { tenantId: TA, workflowKey: "w", attempt: { actionKey: "create_ad_copy", invocationId: "inv", number: 1 }, requestFingerprint: FP, acceptedFingerprints: [FP], amountMicroUsd: 6_000 };
+    const pedidoA = aquisicao({ amountMicroUsd: 6_000 });
     const [a1, a2] = await Promise.all([budget.acquireAttempt(pedidoA), budget.acquireAttempt(pedidoA)]);
     expect([a1.status, a2.status]).toEqual(["acquired", "in_progress"]);
-    const b1 = await budget.acquireAttempt({ ...pedidoA, tenantId: TB });
+    const b1 = await budget.acquireAttempt(aquisicao({ tenantId: TB, amountMicroUsd: 6_000 }));
     expect(b1.status).toBe("acquired");
     expect((await budget.remaining({ tenantId: TA, workflowKey: "w" })).remainingMicroUsd).toBe(4_000);
     if (a1.status !== "acquired") throw new Error("esperado acquired");
-    await budget.settle({ tenantId: TA, workflowKey: "w" }, a1.reservationId, 5_000);
+    const fechamento = fechamentoPara(pedidoA, a1.fencingToken, 5_000);
+    expect(await budget.closeAttempt(fechamento)).toEqual({ status: "closed" });
     expect((await budget.acquireAttempt(pedidoA)).status).toBe("closed");
-    await expect(budget.settle({ tenantId: TA, workflowKey: "w" }, a1.reservationId, 1)).rejects.toThrow("já encerrada");
+    // Replay exato é duplicata; qualquer divergência é rejeitada sem efeito.
+    expect(await budget.closeAttempt(fechamento)).toEqual({ status: "duplicate" });
+    expect(await budget.closeAttempt(fechamentoPara(pedidoA, a1.fencingToken, 1))).toEqual({ status: "rejected" });
+    expect(budget.recorder.ofTenant(TA)).toHaveLength(1);
+  });
+
+  it("tenant sem período configurado: tentativa nova é budget_not_configured e nada é chamado", async () => {
+    const budget = new InMemoryBudgetGuard({ tenants: { [TB]: 10_000 } });
+    const { deps, provider } = montar({ budget });
+    const r = await invokeModel(deps, pedido());
+    expect(!r.ok && r.failure).toMatchObject({ kind: "budget_not_configured", contract: { registered: true, code: "BUDGET_NOT_CONFIGURED" }, retryable: false });
+    expect((provider as ScriptedModelProvider).calls).toHaveLength(0);
+    expect(budget.reservations(TA)).toHaveLength(0);
   });
 
   it("teto por workflow limita dentro do tenant", async () => {

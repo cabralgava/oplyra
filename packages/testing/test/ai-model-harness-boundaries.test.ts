@@ -5,7 +5,7 @@ import { invokeModel } from "@oplyra/core";
 import type { ModelInvocationRequest, ModelProviderPort, ProviderCall, ProviderCallResult } from "@oplyra/core";
 import { InMemoryBudgetGuard, ScriptedModelProvider, scripted } from "@oplyra/testing";
 import { TA, TRACE_MINIMO, modelo, montar, pedido, perfil } from "./ai-model-harness-fixtures.ts";
-import { COPY1, FP, imagemModelo, perfilImagem } from "./ai-model-harness-fixtures.ts";
+import { COPY1, FP, aquisicao, fechamentoPara, imagemModelo, perfilImagem } from "./ai-model-harness-fixtures.ts";
 
 const INVALIDOS: [string, unknown][] = [
   ["negativo", -1], ["decimal", 1.5], ["NaN", Number.NaN], ["infinito", Number.POSITIVE_INFINITY],
@@ -164,13 +164,15 @@ describe("validação da resposta do adapter antes da liquidação", () => {
 
   it("guarda de orçamento recusa liquidação inválida mesmo se chamada diretamente", async () => {
     const budget = new InMemoryBudgetGuard({ tenants: { [TA]: 10_000 } });
-    const a = await budget.acquireAttempt({ tenantId: TA, workflowKey: "w", attempt: { actionKey: "create_ad_copy", invocationId: "k", number: 1 }, requestFingerprint: FP, acceptedFingerprints: [FP], amountMicroUsd: 1_000 });
+    const pedidoA = aquisicao({ attempt: { actionKey: "create_ad_copy", invocationId: "k", number: 1 } });
+    const a = await budget.acquireAttempt(pedidoA);
     if (a.status !== "acquired") throw new Error("esperado acquired");
     for (const v of [-1, 0.5, Number.NaN, Number.POSITIVE_INFINITY]) {
-      await expect(budget.settle({ tenantId: TA, workflowKey: "w" }, a.reservationId, v)).rejects.toThrow("liquidação inválido");
+      expect(await budget.closeAttempt(fechamentoPara(pedidoA, a.fencingToken, v))).toEqual({ status: "rejected" });
     }
-    await expect(budget.acquireAttempt({ tenantId: TA, workflowKey: "w", attempt: { actionKey: "create_ad_copy", invocationId: "k", number: 2 }, requestFingerprint: FP, acceptedFingerprints: [FP], amountMicroUsd: -5 })).rejects.toThrow("reserva inválido");
+    await expect(budget.acquireAttempt(aquisicao({ attempt: { actionKey: "create_ad_copy", invocationId: "k", number: 2 }, amountMicroUsd: -5 }))).rejects.toThrow("reserva inválido");
     expect((await budget.remaining({ tenantId: TA, workflowKey: "w" })).remainingMicroUsd).toBe(9_000);
+    expect(budget.recorder.records).toHaveLength(0);
   });
 });
 
