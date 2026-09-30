@@ -1,26 +1,31 @@
-// Contract Registry Release 2.19 (CR-029): reconciliação documental. A
-// cross-validation é reexecutada e o manifest é conferido como mudança lógica
-// sobre a Release 2.18 (verificada congelada pelo seu próprio teste). Este
-// teste valida o CONTEÚDO CORRENTE reconciliado: artefatos autorizados no
-// changeSet e artefatos herdados do CR-028 conferem com o disco; documentos
-// operacionais (PREPARACAO-I01, VERIFICACOES, DEVELOPMENT-TOOLS, ESTADO)
-// ficam fora do manifest e do digest.
+// Contract Registry Release 2.19 (CR-029) — verificação do manifest CONGELADO.
+// Desde a Release 2.20 este teste não depende do conteúdo mutável do worktree
+// nem de objetos Git: fixa o SHA-256 do manifest, do aggregate digest, do
+// relatório e da base 2.18, e valida classificação, cadeia e propriedades do
+// próprio manifest. O conteúdo corrente dos documentos é validado pelo teste da
+// Release 2.20.
 import { describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { CONTRACTS_DIR, runCrossRegistryValidation } from "./cross-registry-validation.ts";
+import { CONTRACTS_DIR } from "./cross-registry-validation.ts";
 
 type Artefato = { path: string; category: string; sizeBytes: number; sha256: string; source: string };
 type Manifest = Record<string, any> & { artifacts: Artefato[] };
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const ler = (p: string): Record<string, any> => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
-const texto = (p: string) => readFileSync(join(ROOT, p), "utf8");
 const sha = (p: string) => createHash("sha256").update(readFileSync(join(ROOT, p))).digest("hex");
 const agregado = (artefatos: { path: string; sha256: string }[]) =>
   createHash("sha256").update([...artefatos].sort((a, b) => a.path.localeCompare(b.path)).map((a) => `${a.path}:${a.sha256}`).join("\n")).digest("hex");
+
+// Valores congelados da Release 2.19.
+const MANIFEST_SHA256 = "fb509e10f1561f0ffbcae277bc9b14281b0a72d794f377e7c4f5050404b67858";
+const AGGREGATE_DIGEST = "a15b086e9c6fb2209a8a950e94974a00a76ae67980effab6b4d34ae478660c38";
+const REPORT_SHA256 = "495550e1fd6bb39a4e9dfc834d3eb777ef4c272054d6e9ece777316e19510c34";
+const BASE_MANIFEST_SHA256 = "2fca9e53d241430005cf5091fd98be063d5de4e98031d84701ec3dfab3bcd7b2";
+const BASE_AGGREGATE_DIGEST = "fbfbb06a65a8915ac64e184eb47ff6b604359076e4a2e6a978c4fffd34d04a01";
 
 const relatorio = ler(`${CONTRACTS_DIR}/cross-registry-validation-v2.19.json`);
 const m = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.19.json`) as Manifest;
@@ -54,23 +59,28 @@ export function classificar(release: Manifest, anterior: Manifest, fonte = FONTE
   return { herdados, modificados, adicionados, violacoes };
 }
 
-describe("cross-validation da Release 2.19", () => {
-  const atual = runCrossRegistryValidation(ROOT);
-
-  it("todos os checks passam", () => {
-    expect(atual.checks.filter((c) => c.status !== "passed")).toEqual([]);
-    expect(atual.checks.length).toBe(80);
+describe("Release 2.19 congelada: manifest, relatório e cadeia para a base 2.18", () => {
+  it("manifest, relatório e base 2.18 têm os SHA-256 fixados", () => {
+    expect(sha(`${CONTRACTS_DIR}/contract-registry-manifest-v2.19.json`)).toBe(MANIFEST_SHA256);
+    expect(sha(`${CONTRACTS_DIR}/cross-registry-validation-v2.19.json`)).toBe(REPORT_SHA256);
+    expect(sha(`${CONTRACTS_DIR}/contract-registry-manifest-v2.18.json`)).toBe(BASE_MANIFEST_SHA256);
   });
 
-  it("o relatório gravado é exatamente o resultado reexecutado", () => {
-    expect(relatorio.validation.checks).toEqual(atual.checks);
-    expect(relatorio.inputs).toEqual(atual.inputs);
-    expect(relatorio.counts).toEqual(atual.counts);
-    expect(relatorio).toMatchObject({ status: "passed", releaseVersion: "2.19", changeSet: "CR-029", validation: { checksFailed: 0, checksRun: 80 } });
+  it("o aggregate digest fixado é o recalculado a partir do manifest, e o da base 2.18 também", () => {
+    expect(m.artifactSummary.aggregateDigest).toBe(AGGREGATE_DIGEST);
+    expect(agregado(m.artifacts)).toBe(AGGREGATE_DIGEST);
+    expect(base.artifactSummary.aggregateDigest).toBe(BASE_AGGREGATE_DIGEST);
+    expect(agregado(base.artifacts)).toBe(BASE_AGGREGATE_DIGEST);
+  });
+
+  it("o relatório congelado registra 80 checks aprovados para a Release 2.19", () => {
+    expect(relatorio).toMatchObject({ status: "passed", releaseVersion: "2.19", changeSet: "CR-029", validation: { checksFailed: 0, checksRun: 80, checksPassed: 80 } });
+    expect(relatorio.validation.checks).toHaveLength(80);
+    expect(relatorio.validation.checks.filter((c: { status: string }) => c.status !== "passed")).toEqual([]);
   });
 
   it("a validação do Freeze v1 permanece intacta", () => {
-    const freeze = texto(`${CONTRACTS_DIR}/CONTRACT-REGISTRY-FREEZE-v1.md`);
+    const freeze = readFileSync(join(ROOT, `${CONTRACTS_DIR}/CONTRACT-REGISTRY-FREEZE-v1.md`), "utf8");
     const citado = freeze.match(/`([0-9a-f]{64})`/)![1];
     expect(sha(`${CONTRACTS_DIR}/cross-registry-validation.json`)).toBe(citado);
   });
@@ -129,18 +139,12 @@ describe("manifest v2.19 como mudança lógica sobre a 2.18", () => {
     expect(classificar(migracao, base).violacoes.some((v) => v.includes("20260929000015_tenant_deletion_owner_guard.sql"))).toBe(true);
   });
 
-  it("artefatos do CR-029 e os herdados do CR-028 conferem com o conteúdo atual em disco", () => {
-    const divergentes = m.artifacts.filter((a) => a.source === FONTE || (a.source === "cr_028" && c.herdados.includes(a.path)))
-      .filter((a) => !existsSync(join(ROOT, a.path)) || sha(a.path) !== a.sha256 || readFileSync(join(ROOT, a.path)).length !== a.sizeBytes);
-    expect(divergentes.map((a) => a.path)).toEqual([]);
-  });
-
   it("classificação dos documentos governados: doc 16 modificado, plano de testes adicionado como contract_documentation", () => {
     expect(c.modificados).toContain(DOC16);
     expect(m.artifacts.find((a) => a.path === DOC16)).toMatchObject({ source: FONTE, category: "contract_documentation" });
     expect(c.modificados).toContain(PSP);
     expect(m.artifacts.find((a) => a.path === PSP)).toMatchObject({ source: FONTE, category: "environment_plan" });
-    expect(m.artifactClassification).toMatchObject({ inheritedUnchanged: 436, modifiedByCr029: 4, addedByCr029: 4, unclassified: 0 });
+    expect(m.artifactClassification).toEqual({ inheritedUnchanged: 436, modifiedByCr029: 4, addedByCr029: 4, unclassified: 0 });
     expect(c.adicionados).toContain(PLANO);
     expect(m.artifacts.find((a) => a.path === PLANO)).toMatchObject({ source: FONTE, category: "contract_documentation" });
     expect(c.modificados).toEqual(expect.arrayContaining(["test/contracts/cross-registry-validation.ts", "test/contracts/contract-registry-release-2.18.contract.test.ts"]));
@@ -178,7 +182,7 @@ describe("manifest v2.19 como mudança lógica sobre a 2.18", () => {
     expect(m.registryVersions).toEqual(base.registryVersions);
     expect(m.baseRelease).toEqual({
       version: "2.18", manifestPath: `${CONTRACTS_DIR}/contract-registry-manifest-v2.18.json`,
-      manifestSha256: sha(`${CONTRACTS_DIR}/contract-registry-manifest-v2.18.json`), aggregateDigest: base.artifactSummary.aggregateDigest,
+      manifestSha256: BASE_MANIFEST_SHA256, aggregateDigest: BASE_AGGREGATE_DIGEST,
     });
     expect(m.baseFreeze).toEqual(base.baseFreeze);
     expect(agregado(base.artifacts)).toBe(base.artifactSummary.aggregateDigest);
@@ -196,60 +200,5 @@ describe("manifest v2.19 como mudança lógica sobre a 2.18", () => {
     expect(m.changeSet).toMatchObject({
       remoteResourcesCreated: false, remoteMigrationsApplied: false, publicationPerformed: false, externalCallsPerformed: false, realKeysUsed: false, realDataUsed: false,
     });
-  });
-});
-
-describe("conteúdo corrente reconciliado (CR-029)", () => {
-  it("doc 16 descreve o CR-028 e preserva o hunk aprovado do proprietário", () => {
-    const d = texto(DOC16);
-    for (const t of ["SUPABASE_PROJECT_REF", "OPLYRA_ENVIRONMENT_FINGERPRINT", "TrustedDeploymentContext", "<origem>/auth/v1", "/auth/v1/.well-known/jwks.json", "CR-028"]) expect(d, t).toContain(t);
-    expect(d).not.toMatch(/^\|\s*`OPLYRA_ALLOW_REMOTE`/m);
-    expect(d).not.toContain("sem `OPLYRA_ALLOW_REMOTE=true`");
-    // H16-1, aprovado sem alteração
-    expect(d).toContain("| `OPENROUTER_API_KEY` | Não | Worker | Credencial do gateway inicial;");
-    expect(d).toContain("Somente adapters diretos explicitamente habilitados; não são obrigatórias para o caminho inicial via OpenRouter");
-  });
-
-  it("PREPARACAO-SUPABASE-PRODUCAO registra a reconciliação como concluída e não a apresenta mais como adiada", () => {
-    const p = texto(PSP);
-    expect(p).not.toContain("Reconciliação documental adiada");
-    expect(p).toContain("**Reconciliação documental concluída (CR-029, Release 2.19, 30/09/2026).**");
-    expect(p).toContain("O `DEVELOPMENT-TOOLS.md` permanece como pendência operacional separada");
-    expect(p).toContain("nenhuma autorização de produção foi criada");
-    // restante do arquivo preservado: o parágrafo do CR-028 sobre o parsing e o requisito B-4 continuam
-    expect(p).toContain("Endurecimento do parsing (CR-028, Release 2.18)");
-    expect(p).toContain("Requisitos do bloqueio B-4 (atendidos pelo CR-028)");
-  });
-
-  it("TST-19 afirma recusa de qualquer endpoint remoto e da flag, sem sugerir opt-in", () => {
-    const l = texto(PLANO).split("\n").find((x) => x.startsWith("| TST-19 |"))!;
-    expect(l).toMatch(/`local`\/`ci` com qualquer endpoint remoto/);
-    expect(l).toMatch(/presença de `OPLYRA_ALLOW_REMOTE`, com qualquer valor, também falha/);
-    expect(l).not.toMatch(/opt-in|sem flag explícita|com flag/);
-  });
-
-  it("PREPARACAO-I01 preserva o aceite histórico e marca item 2 e A14 como superados", () => {
-    const p = texto("docs/harness/PREPARACAO-I01.md");
-    const a14 = p.split("\n").find((l) => l.startsWith("| A14 |"))!;
-    expect(a14).toContain("Configuração apontando para host remoto sem flag explícita falha na inicialização");
-    expect(a14).toMatch(/superado pelo CR-028/);
-    expect(p).toContain("validação de configuração que falha se apontar para host remoto sem `OPLYRA_ALLOW_REMOTE=true`. *Superado pelo CR-028");
-    expect(p).toContain("**Registro histórico de 15/09/2026.**"); // HP-1
-  });
-
-  it("VERIFICACOES usa a barreira Local First vigente, estados sem excesso e ponteiro para o ESTADO no lugar de contagens", () => {
-    const v = texto("docs/harness/VERIFICACOES.md");
-    expect(v).toContain("| Local First | Nenhum remoto como fallback; `local`/`ci` recusam qualquer endpoint remoto e a presença de `OPLYRA_ALLOW_REMOTE` falha (CR-028) |");
-    expect(v).toContain("Fronteira por portas implementada no slice 1 do I-02; adapter real pendente");
-    expect(v).toContain("Contratos e registry implementados desde a Release 2.16; vínculos produtivos dependem do EXP-05");
-    expect(v).toContain("Implementado no harness local para allowlist, capabilities, privacidade e orçamento; integração completa ao runtime produtivo pendente");
-    expect(v).toContain("Implementado e testado no harness local; provider real pendente");
-    expect(v).toContain("Cost Ledger persistente implementado no Supabase local pelo CR-027; integração produtiva pendente");
-    expect(v).not.toMatch(/\b(12 migrations|212 testes|87 assertions)\b|manifest v2\.15/);
-    expect(v).not.toMatch(/opt-in autorizado|sem `OPLYRA_ALLOW_REMOTE=true`/);
-    expect(v.match(/\]\(ESTADO\.md\)/g)?.length).toBeGreaterThanOrEqual(3);
-    // HV-1 e HV-6, aprovados sem alteração
-    expect(v).toContain("A fundação I-01 e seus checks locais existem;");
-    expect(v).toContain("| Guard Local First do Claude | `pnpm test:harness` | Implementado; 4 cenários em 29/09/2026 |");
   });
 });

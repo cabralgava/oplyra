@@ -2,7 +2,7 @@
 
 **Versão documental:** 0.2  
 **Data:** 11 de setembro de 2026  
-**Autoridade:** detalhamento do 00 v2.2, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.2. Propostas técnicas permanecem propostas.
+**Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## Fase 0 — Discovery
 
@@ -126,7 +126,7 @@ As fases acima preservam a direção do produto. I-01 a I-09 são a proposta de 
 | Incremento | Fase | Entrega e dependências |
 | --- | --- | --- |
 | I-01 | 1 | Identidade, tenants, RLS, Storage e entitlements básicos; EXP-01 antes das tabelas definitivas. |
-| I-02 | 1 | Filas/runtime, Registry, Router, Cost Ledger, budgets e integração Stripe em teste; depende de I-01 e EXP-02. Fundação não concluída sem Stripe. |
+| I-02 | 1 | Filas/runtime, Registry, Router, Model Profiles, OpenRouter Adapter inicial, Test Adapter, Cost Ledger, budgets e integração Stripe em teste; depende de I-01 e EXP-02. O adapter real permanece desabilitado sem conta/chave/budget autorizados; Fundação não concluída sem Stripe. **Entregue localmente (CR-026/027):** slice 1 do Product AI Model Harness (portas, Test Adapter, Registry, Model Profiles, Router) e Cost Ledger persistente no Supabase local. **Pendentes:** Product Agent Runtime, filas/scheduler de produto, adapter real (OpenRouter ou direto), integração Stripe em teste e produção. |
 | I-03 | 2 | Brand OS e onboarding; depende de I-01. |
 | I-04 | 2 | Estratégia, campanhas e tarefas; depende de I-03. |
 | I-05 | 2 | Copy, Design para imagens, ativos, revisão e aprovação; Eval Engine inicial e EXP-05; depende de I-02/I-04. |

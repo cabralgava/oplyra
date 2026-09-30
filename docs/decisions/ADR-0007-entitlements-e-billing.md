@@ -1,6 +1,6 @@
 # ADR-0007 — Entitlements e Stripe na Fundação SaaS
 
-**Status:** Stripe e a integração na Fundação são diretrizes vigentes, registradas em [ATUALIZACOES](../product/marketing-ops/ATUALIZACOES.md) §2; não possuem identificador DEC na referência v2.2. Detalhes de implementação, provisionamento manual e cobrança de pilotos permanecem propostas/decisões abertas.
+**Status:** Stripe e a integração na Fundação são diretrizes vigentes, registradas em [ATUALIZACOES](../product/marketing-ops/ATUALIZACOES.md) §2; não possuem identificador DEC na referência v2.3. Detalhes de implementação, provisionamento manual e cobrança de pilotos permanecem propostas/decisões abertas.
 
 ## Contexto e decisão vigente
 

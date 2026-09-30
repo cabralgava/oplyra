@@ -1,6 +1,6 @@
 # Documentação de produto — Oplyra
 
-**Referência protegida:** [00 — Documento de Transição v2.2, de 13/09/2026](00-documento-transicao.md), somente leitura.
+**Referência protegida:** [00 — Documento de Transição v2.3, de 16/09/2026](00-documento-transicao.md), somente leitura; autoridade confirmada em 29/09/2026.
 **Precedência e decisões posteriores:** [ATUALIZACOES](ATUALIZACOES.md), que registra a ancoragem das decisões, o escopo de vídeo, o método de campanha, os domínios oficiais e a referência visual vigente.
 
 Leia ATUALIZACOES antes dos documentos derivados: ela indica onde uma decisão posterior prevalece sobre o texto da referência.
@@ -9,7 +9,7 @@ Leia ATUALIZACOES antes dos documentos derivados: ela indica onde uma decisão p
 
 | Nº | Documento | Conteúdo |
 | --- | --- | --- |
-| 00 | [Documento de transição](00-documento-transicao.md) | Referência protegida v2.2 |
+| 00 | [Documento de transição](00-documento-transicao.md) | Referência protegida v2.3 |
 | 01 | [Requisitos de produto](01-product-requirements.md) | Planos, capacidades, MVP e não objetivos |
 | 02 | [Discovery](02-discovery.md) | Hipóteses, pesquisa, evidências herdadas e questões abertas |
 | 03 | [Modelo de domínio](03-domain-model.md) | Linguagem ubíqua, bounded contexts, agregados e invariantes |
@@ -28,6 +28,8 @@ Leia ATUALIZACOES antes dos documentos derivados: ela indica onde uma decisão p
 | 16 | [Ambientes e publicação](16-environments-release.md) | Destinos, variáveis, versionamento e recuperação |
 | 17 | [Riscos e memória de cálculo](17-risks-costs.md) | Registro de riscos e baseline econômico reconstruído |
 | 18 | [Experimentos técnicos](18-technical-experiments.md) | EXP-01 a EXP-05 e critérios de aprovação |
+| 19 | [Context Stack](19-context-stack.md) | Camadas L0–L8, Context Assembly, provenance, promoção e isolamento |
+| 20 | [Agent Transaction Protocol](20-agent-transaction-protocol.md) | Envelope JSON transacional, tracing, autorização, auditoria e idempotência |
 
 ## Referências relacionadas
 
@@ -35,7 +37,7 @@ Leia ATUALIZACOES antes dos documentos derivados: ela indica onde uma decisão p
 | --- | --- | --- |
 | Guia de interface Figma | [GUIA-INTERFACE-FIGMA.md](GUIA-INTERFACE-FIGMA.md) | Referência visual vigente; frames ainda não inspecionados |
 | Manual de marca | [../../brand/oplyra_brand_system.md](../../brand/oplyra_brand_system.md) | Identidade, paleta e tipografia |
-| Decisões e ADRs | [../../decisions/README.md](../../decisions/README.md) | ADR-0001 a ADR-0008 e pendências DP |
+| Decisões e ADRs | [../../decisions/README.md](../../decisions/README.md) | ADR-0001 a ADR-0009 e pendências DP |
 | Skills e compatibilidade | [../../harness/SKILLS-COMPATIBILIDADE.md](../../harness/SKILLS-COMPATIBILIDADE.md) | Quatro skills presentes; trechos de outros produtos desconsiderados |
 | Protótipo vigente | [prototypes/performance-mvp.html](prototypes/performance-mvp.html) | Realinhado ao guia de interface |
 | Protótipo histórico | [prototypes/performance-mvp-legacy-claro.html](prototypes/performance-mvp-legacy-claro.html) | Tema claro; preservado apenas como histórico |

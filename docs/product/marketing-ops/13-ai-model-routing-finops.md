@@ -1,18 +1,40 @@
 # Oplyra — AI Model Routing & FinOps
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
-**Autoridade:** detalhamento do 00 v2.2, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.2. Propostas técnicas permanecem propostas.
+**Versão documental:** 0.5
+**Data:** 30 de setembro de 2026
+**Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 **Status:** requisito de arquitetura e economia do MVP
 
 ## 1. Tese
 
-A Oplyra será **multiagente, multimodelo e multiprovedor**. OpenAI e Anthropic são provedores iniciais candidatos, mas nenhum workflow deve depender estruturalmente de um fornecedor ou modelo específico.
+A Oplyra será **multiagente, multimodelo e multiprovedor**. OpenRouter é o gateway inicial padrão, por adapter próprio e sem exclusividade. Os modelos subjacentes podem ser fornecidos por OpenAI, Anthropic, Google ou outros provedores elegíveis; nenhum workflow depende estruturalmente do OpenRouter, de um laboratório ou de um modelo específico.
 
 A política padrão será:
 
 > **selecionar o modelo de menor custo que ultrapasse consistentemente o quality threshold do workflow.**
+
+## 1.1 Limite do Product AI Model Harness
+
+O Product AI Model Harness é a infraestrutura que resolve qual provider/model executará uma chamada de IA do Product Agent Runtime. Não é o Developer / AI Harness e não se reduz a uma integração com fornecedor.
+
+```text
+Product Agent
+  → Model Profile / requisitos da task/action
+  → AI Model Router
+  → Provider Port
+  → Provider Adapter
+  → OpenRouter Adapter (padrão inicial) | provider direto | Test Adapter
+  → Resolved Model
+```
+
+Context7, Playwright, Git, shell, pnpm e Supabase CLI permanecem no Developer Harness e não entram no Product Agent Tool Registry.
+
+## 1.2 Status contratual
+
+Registry, Router, Eval Engine, Cost Ledger e OpenRouter como gateway inicial padrão não exclusivo são diretrizes aprovadas de arquitetura. **Estado aplicado:** o registry canônico de Model Profiles (1.0; 1.1 desde o CR-027), os schemas de Model Profile (1.0 e 1.1), de pedido, resposta, catálogo, Model Call e do Cost Ledger e o Error Registry (1.4, depois 1.5) são canônicos desde as Contract Registry Releases 2.16 e 2.17 (CR-026 e CR-027). Os vínculos produtivos entre perfis e modelos e os valores de temperatura e demais parâmetros dependem do EXP-05; adapters reais (OpenRouter ou diretos) não estão implementados. Qualquer novo schema, registry, campo em agent definition, action, event ou error é **PROPOSED — requires controlled contract change** e deve respeitar o Freeze v1 e o manifest da Contract Registry vigente antes de implementação.
+
+**Implementação local (29/09/2026):** o primeiro slice do I-02 implementa portas, Test Adapter, Registry, Profiles por `agent + action`, Router e o caso de uso `invokeModel` (Product AI Model Harness, slice 1), inicialmente como tipos internos e depois com contratos canônicos pelo CR-026; ver [AI-MODEL-HARNESS](../../harness/AI-MODEL-HARNESS.md). O [CR-026](contracts/changes/CR-026-product-ai-model-harness-contracts.md) foi aprovado pelo proprietário em 29/09/2026 e aplicado na Contract Registry Release 2.16: Error Registry 1.4, registry canônico de Model Profiles, schemas de pedido, resposta, catálogo, perfil e Model Call, e Context Package 1.1 (ver [AI-MODEL-HARNESS-CONTRACTS](contracts/AI-MODEL-HARNESS-CONTRACTS.md)). Catálogo de modelos, tarifas e disponibilidade seguem como configuração operacional fora do freeze. O [CR-027](contracts/changes/CR-027-persistent-cost-ledger.md), aprovado em 29/09/2026 e aplicado na Release 2.17, implementa o **Cost Ledger persistente somente no Supabase local** (schema `finops`, aquisição idempotente, fechamento atômico com o Model Call Record, conciliação e isolamento por tenant; ver [COST-LEDGER-CONTRACTS](contracts/COST-LEDGER-CONTRACTS.md)). **Continuam pendentes ou não autorizados:** Product Agent Runtime, filas e scheduler de produto, integração Stripe, adapters reais (OpenRouter ou diretos), conta, chave, créditos, chamadas pagas, saída visual, chave produtiva de fingerprint e produção.
 
 ## 2. Componentes
 
@@ -52,6 +74,8 @@ Entrada conceitual:
 }
 ```
 
+O agent não escolhe livremente provider/model. A resolução é declarativa e determinística: políticas de budget, entitlement, allowlist, elegibilidade de dados e restrições do tenant não são delegadas ao LLM. Implementado no harness local para allowlist, capabilities, privacidade e orçamento; a integração completa ao runtime de produto permanece pendente.
+
 ### 2.3 AI Eval Engine
 
 Avaliar `ação × modelo × prompt version` por:
@@ -60,13 +84,19 @@ Avaliar `ação × modelo × prompt version` por:
 - factualidade;
 - Brand OS;
 - schema adherence;
+- instruction adherence;
+- quality gate adherence;
 - evidências;
+- seleção de ferramentas;
+- taxa de alucinação;
 - sucesso;
 - reprovação;
 - retries;
 - latência;
+- uso de tokens/unidades;
 - custo bruto;
 - custo por sucesso;
+- regressões;
 - estabilidade.
 
 ### 2.4 AI Cost Ledger
@@ -87,6 +117,86 @@ Registrar por execução:
 - latência;
 - quality result;
 - sucesso/falha.
+
+### 2.5 Model Profiles — contrato implementado; valores produtivos propostos (EXP-05)
+
+**Estado:** contratos, schemas e registry de Model Profiles são canônicos desde a Release 2.16 (CR-026; 1.1 no CR-027) e o Router os aplica no harness local com Test Adapter. Os vínculos produtivos a modelos e os valores de sampling continuam propostos e condicionados ao EXP-05.
+
+Um agent pode possuir perfil padrão, sem espalhar model IDs em prompts/código. Cada action existente pode refinar os requisitos; o vínculo de routing é `agent + action`, não apenas o agente, e não cria actions novas:
+
+```text
+global policy
+  → agent profile
+  → task/action requirement
+  → tenant policy
+  → entitlement
+  → budget
+  → runtime availability
+  → resolved provider/model
+```
+
+Um perfil deve representar identidade e versão, `agentKey`, `actionKey`, capability requirements, gateway, modelos preferenciais/permitidos/proibidos, provider allowlist, fallback order, temperatura e demais sampling parameters, limite de output, reasoning, structured output, tool calling, multimodalidade, context window, latency class, cost/budget class, quality tier, política de dados/ZDR, retry, fallback e evaluation policy. Nomes ilustrativos de perfis não são canônicos até change proposal e validação.
+
+Temperatura não é propriedade permanente da identidade do agente. O perfil padrão pode oferecer um valor inicial, mas a action prevalece. O adapter deve validar suporte do modelo/provedor e nunca fingir que parâmetro ignorado foi aplicado.
+
+### 2.5.1 Hipóteses iniciais de sampling — EXP-05
+
+Faixas abaixo são **PROPOSED**, servem para iniciar os experimentos e não selecionam modelo nem autorizam chamada paga:
+
+| Agent | Perfil predominante | Temperatura inicial |
+| --- | --- | ---: |
+| `orchestrator-agent` | coordenação estruturada e tool selection | 0,1–0,2 |
+| `strategy-quality-agent` | julgamento e quality gate | 0,0–0,2 |
+| `account-projects-agent` | planejamento operacional | 0,2–0,3 |
+| `copywriting-agent` | geração criativa; revisão usa override menor | 0,6–0,8 |
+| `design-agent` | direção criativa/multimodal; geração de imagem usa rota própria | 0,5–0,7 |
+| `paid-media-agent` | análise e recomendação controlada | 0,1–0,3 |
+| `performance-intelligence-agent` | análise quantitativa e síntese | 0,0–0,2 |
+| `reporting-checkins-agent` | narrativa factual e concisa | 0,2–0,4 |
+| `social-media-agent` | criação e adaptação por canal | 0,6–0,8 |
+| `email-marketing-agent` | criação persuasiva com constraints | 0,5–0,7 |
+| `lifecycle-agent` | desenho de jornada e decisão | 0,2–0,4 |
+| `revenue-intelligence-agent` | análise conservadora de receita/atribuição | 0,0–0,2 |
+
+Schema adherence, fatos, permissions, budgets, cálculos e decisões críticas continuam determinísticos; aumentar temperatura nunca reduz quality gate ou aprovação.
+
+### 2.6 Provider Ports e Adapters
+
+As políticas/casos de uso dependem de portas internas; SDKs, DTOs e erros de fornecedor são traduzidos na borda. O desenho preserva, sem obrigar a implementação de todos:
+
+```text
+AI Model Router
+├── OpenRouter Adapter (padrão inicial)
+├── OpenAI Direct Adapter
+├── Anthropic Direct Adapter
+├── Google Direct Adapter
+└── Local/Test Adapter
+```
+
+OpenRouter é o gateway inicial padrão por adapter, sem exclusividade. `AI Model Harness != OpenRouter integration`. Agents e casos de uso não importam seus conceitos específicos; adapters diretos continuam possíveis como estratégia de continuidade, custo, privacidade ou capacidade.
+
+O AI Model Router da Oplyra mantém autoridade sobre elegibilidade, `agent + action`, budget, privacy, allowlists e fallback entre modelos. O OpenRouter pode fazer failover entre endpoints elegíveis do mesmo modelo, desde que a configuração preserve as restrições e devolva o provider/model realmente usados. Fallback entre modelos não é irrestrito: cada tentativa deve ser permitida pela política versionada e registrada no Ledger.
+
+Metadados de resposta como request/generation ID, provider resolvido, model, timestamps e usage pertencem ao Model Call/Cost Ledger. Não são configuração do agente.
+
+`google/gemma-3-27b-it:free` entra somente como candidato `experimental` de sandbox/EXP-05. O sufixo `:free`, tarifa zero observada ou disponibilidade momentânea não autorizam produção, dados reais ou fallback; rate limit, qualidade, tool calling, structured output e política de dados devem ser medidos. Nenhum modelo gratuito é baseline comercial até aprovação posterior.
+
+### 2.7 Test Adapter
+
+Um adapter local determinístico deve permitir unit, integration, contract, workflow e routing tests sem chamada paga nem provider remoto. É o padrão de desenvolvimento local e CI. Suítes via OpenRouter ou provider real ficam explicitamente separadas, com conta, chave, autorização, budget, dados sintéticos e evidência próprios.
+
+### 2.8 Referências operacionais do gateway
+
+Fontes externas verificadas em 29/09/2026, usadas apenas para orientar o adapter e os experimentos; não substituem contratos nem decisões da Oplyra:
+
+- [OpenRouter — Quickstart](https://openrouter.ai/docs/quickstart): API unificada e roteamento entre modelos;
+- [OpenRouter — Model fallbacks](https://openrouter.ai/docs/guides/routing/model-fallbacks): comportamento de fallback entre modelos;
+- [OpenRouter — Guardrails](https://openrouter.ai/docs/guides/features/guardrails/overview): budgets e allowlists de modelos/provedores;
+- [OpenRouter — Request parameters](https://openrouter.ai/docs/api/reference/parameters): parâmetros como temperatura, tools e structured output;
+- [OpenRouter — Sovereign AI e data policies](https://openrouter.ai/docs/guides/get-started/sovereign-ai): roteamento e restrições por política de dados;
+- [OpenRouter — Gemma 3 27B IT Free](https://openrouter.ai/google/gemma-3-27b-it:free) e [FAQ](https://openrouter.ai/docs/faq): evidência datada para tratá-lo somente como candidato experimental gratuito, sujeito a disponibilidade e limites.
+
+Capacidades, disponibilidade, termos, limites e tarifas são temporais. O Registry deve registrar a data da evidência e a rodada EXP-05 deve revalidá-los antes de qualquer seleção.
 
 ## 3. Métrica principal
 
@@ -115,6 +225,17 @@ quality/confidence suficiente?
 ```
 
 Modelos avançados devem ser reservados para tarefas cuja qualidade/risco justifique o custo.
+
+Fallback por indisponibilidade e escalonamento por qualidade são políticas distintas. Todo fallback revalida capability, data policy, tenant isolation, provider/model allowlists, entitlement, budget e disponibilidade. Não pode aumentar custo sem limite, relaxar segurança ou transformar falha crítica em sucesso aparente. Sem candidato compatível, produzir falha estruturada/escalonamento auditável. A governança de fallback (revalidação, limites e falha estruturada) está implementada e testada no harness local com Test Adapter; o fallback com provider real permanece pendente.
+
+```text
+preferred compatible model
+  → unavailable/failure
+  → compatible fallback
+  → failure
+  → compatible fallback
+  → structured failure / escalation
+```
 
 ## 5. Regras determinísticas
 
@@ -227,6 +348,12 @@ Os pesos deverão ser lastreados no Action Catalog e recalibráveis sem mudança
 10. benchmarks dos principais workflows;
 11. política de fallback/escalonamento;
 12. mecanismos de limite/excedente.
+
+## 12.1 Observabilidade de routing e chamadas
+
+Quando aplicável, correlacionar `transactionId`, `correlationId`, `causationId`, `workflowId`, `taskId`, `tenantId`, agent/agentVersion, modelProfile, resolvedModel, provider, routingReason, fallbackOccurred, attempt, latency, usage e cost. Não registrar prompt body, resposta, PII ou conteúdo sensível indiscriminadamente; aplicar minimização, classificação, retenção e redaction na origem.
+
+O Cost Ledger deve permitir análise por tenant, agent/version, workflow, task, AI run, model profile, resolved model, provider, input/output usage e custo estimado/apurado quando disponível. Cache, datasets e resultados de eval permanecem isolados por tenant quando contiverem contexto do tenant. O Cost Ledger persistente existe hoje somente no Supabase local (schema `finops`, CR-027); a integração produtiva permanece pendente.
 
 ## 13. Relação com pricing
 

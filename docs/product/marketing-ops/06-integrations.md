@@ -2,7 +2,7 @@
 
 **Versão documental:** 0.2  
 **Data:** 11 de setembro de 2026  
-**Autoridade:** detalhamento do 00 v2.2, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.2. Propostas técnicas permanecem propostas.
+**Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## 1. Princípio
 
@@ -112,12 +112,17 @@ Integrações sociais do MVP ainda pendentes. A arquitetura deve permitir:
 
 ## 8. IA
 
-Provedores iniciais candidatos/aprovados para arquitetura:
+Gateway inicial aprovado para arquitetura:
+
+- OpenRouter, por adapter próprio atrás do AI Model Router da Oplyra, sem exclusividade.
+
+Provedores/modelos subjacentes candidatos:
 
 - OpenAI;
 - Anthropic.
+- Google e outros elegíveis por capacidade, privacidade, qualidade, custo e disponibilidade.
 
-Nenhum agente deve depender permanentemente de um modelo específico.
+Nenhum agente deve depender permanentemente do OpenRouter, de um provedor ou de um modelo específico. O vínculo ocorre por Model Profile versionado de `agent + action`; Test Adapter é o padrão local e adapters diretos permanecem possíveis.
 
 ## 9. Imagens
 

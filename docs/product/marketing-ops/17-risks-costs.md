@@ -37,6 +37,8 @@ Probabilidade (P) e impacto (I): B = baixo, M = médio, A = alto, C = crítico.
 | R-27 | Inferência de IA fora do Brasil (FX-18) | A | A | DP-09c e DP-22 antes de dados reais; sem PII (DP-27) | Antes dos pilotos |
 | R-28 | Custo da análise de vídeo não dimensionado: cobrança por minuto ou por ativo pode consumir o budget do tenant | A | A | Medidor, franquia e teto próprios antes de ativar (DP-34); adapter fake por padrão; custo por ativo no Ledger | Antes de habilitar a capacidade |
 | R-29 | Transcrição de vídeo reintroduz PII fora da política | M | A | Derivados herdam retenção e permissões do ativo (I-AST); redação antes do contexto do agente; TST-29 | Antes de dados reais |
+| R-30 | Concentração operacional no gateway OpenRouter ou roteamento para endpoint incompatível | M | A | Provider Port interno; Test Adapter; adapters diretos possíveis; model/provider allowlists; ZDR/data policy; circuit breaker e kill switch; registrar provider/model efetivos | Indisponibilidade, mudança de termos, rota fora da política ou falha de privacidade |
+| R-31 | Endpoint `:free` insuficiente ou instável para produção | A | M | Classificar modelos gratuitos como experimentais; medir rate limit/qualidade/latência no EXP-05; nenhuma dependência comercial sem rota paga aprovada | 429, retirada do modelo ou violação recorrente de SLO |
 
 ## 2. Baseline econômico reconstruído
 

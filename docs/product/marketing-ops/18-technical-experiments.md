@@ -146,7 +146,7 @@ Alternativa: se a replicação externa for inviável, reter versões e exclusõe
 | Item | Especificação |
 | --- | --- |
 | Rotas | Copy (produção e revisão por rodada), revisão de Estratégia e Qualidade, análise de mídia, consolidação do check-in, plano do Orquestrador, geração e edição de imagens, análise de ativo enviado (transcrição e derivados textuais) |
-| Candidatos | Pelo menos dois candidatos elegíveis por rota quando disponíveis, incluindo OpenAI e Anthropic para texto conforme capacidade; provedores de geração/edição para rotas visuais. Registrar IDs, tarifas datadas e elegibilidade antes da rodada. Não exigir que um modelo textual gere imagens. |
+| Gateway e candidatos | Executar a rodada pelo OpenRouter Adapter inicial, com pelo menos dois modelos elegíveis por rota quando disponíveis, incluindo laboratórios distintos para texto conforme capacidade; provedores de geração/edição para rotas visuais. Manter Test Adapter como controle e registrar IDs, provider resolvido, parâmetros, tarifas datadas e elegibilidade. Adapter direto pode ser comparado como contingência, sem mudar a porta interna. |
 | Conjuntos | [15](15-test-plan.md) §5.1, versionados; mesmo conjunto para todos os candidatos |
 | Métricas | Qualidade (determinística, rubrica calibrada, amostra humana), latência p50/p95, **custo por tarefa concluída** (inclui rodadas extras e falhas), taxa de recusa e de saída inválida |
 | Critério de escolha | Entre os candidatos que atingem **todos** os limiares de [15](15-test-plan.md) §5.3 com margem, escolher o de menor custo por tarefa concluída que respeite a latência máxima da rota. Empate técnico → o mais barato |
@@ -162,6 +162,9 @@ Alternativa: se nenhum candidato atingir os limiares, a rota fica desabilitada o
 - Para análise de ativo enviado, medir custo por ativo e por minuto, fidelidade da transcrição, utilidade dos derivados e comportamento com áudio ruidoso ou idioma misto. Nenhum candidato é avaliado para gerar ou renderizar vídeo.
 - Verificar que a saída respeita o método de campanha quando a rota produz peça: estrutura completa e hipótese declarada (DEC-017).
 - Reprovação de qualidade, indisponibilidade, orçamento esgotado e modelo desabilitado exercitam fallback sem contornar regras.
+- Validar profiles de `agent + action`, incluindo temperatura, output limit, structured output, tool calling e reasoning somente quando suportados; parâmetro ignorado é falha de compatibilidade, não sucesso.
+- `google/gemma-3-27b-it:free` pode participar como candidato experimental com dados sintéticos. Rate limit, política de dados e estabilidade devem ser medidos; resultado gratuito não o promove a produção.
+- Confirmar que fallback do gateway registra provider/model efetivos e não escolhe modelo, endpoint ou política de dados fora das allowlists da Oplyra.
 - Conferir que Ledger inclui tentativas, revisão, falhas faturadas e imagens; medidor comercial não duplica retry.
 - Rodar caso determinístico sem chamada LLM. Não usar modelo juiz em todas as tarefas sem justificar custo.
 - Limites propostos em 13 §15 são avaliados, não automaticamente aprovados pelo sucesso de um único caso.

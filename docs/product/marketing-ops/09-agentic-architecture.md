@@ -2,7 +2,7 @@
 
 **Versão documental:** 0.2  
 **Data:** 11 de setembro de 2026  
-**Autoridade:** detalhamento do 00 v2.2, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.2. Propostas técnicas permanecem propostas.
+**Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## 1. Objetivo
 
@@ -41,7 +41,7 @@ Cada agente deve declarar:
 - quality gate;
 - limites de custo e tempo.
 
-Não deve declarar dependência permanente de GPT, Claude ou outro fornecedor. A escolha passa pelo Model Router.
+Não deve declarar dependência permanente de GPT, Claude, OpenRouter ou outro fornecedor. A escolha passa pelo AI Model Router interno; OpenRouter é o gateway inicial padrão por adapter, sem exclusividade. Modelo, temperatura e demais parâmetros pertencem ao Model Profile versionado de `agent + action`, não ao prompt ou à identidade canônica do agente.
 
 ## 4. Contexto compartilhado
 

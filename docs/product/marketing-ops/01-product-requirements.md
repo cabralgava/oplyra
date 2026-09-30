@@ -2,9 +2,9 @@
 
 **Versão documental:** 0.2  
 **Data:** 11 de setembro de 2026  
-**Autoridade:** detalhamento do 00 v2.2, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.2. Propostas técnicas permanecem propostas.
+**Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
-**Status:** baseline de produto derivado do Documento de Transição v2.2  
+**Status:** baseline de produto derivado do Documento de Transição v2.3
 **Documento-mãe:** `00-documento-transicao.md`
 
 ## 1. Objetivo
@@ -94,6 +94,9 @@ A tabela canônica de franquias e budgets está em [08 — Limites](08-billing-e
 - arquitetura multiagente;
 - arquitetura multimodelo e multiprovedor;
 - modelos substituíveis;
+- OpenRouter como gateway inicial padrão por adapter, sem exclusividade, atrás do AI Model Router interno;
+- Model Profiles versionados por `agent + action`, com modelo, temperatura e demais parâmetros validados no EXP-05;
+- Test Adapter como padrão local e de CI; chamadas reais dependem de credencial, budget e autorização explícitos;
 - seleção de modelo por qualidade, custo, latência, risco e disponibilidade;
 - quality gates;
 - aprovação humana para ações críticas;

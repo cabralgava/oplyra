@@ -1,22 +1,22 @@
 # Atualizações documentais — Oplyra
 
-**Referência protegida:** [Documento de Transição v2.2, de 13/09/2026](00-documento-transicao.md).
-**Última atualização:** 15/09/2026.
+**Referência protegida:** [Documento de Transição v2.3, de 16/09/2026](00-documento-transicao.md), SHA-256 `59a2b9495d770f4fc621dc626369a86aed55d03e77d616c3f4ad5f69e9c78bfc`.
+**Última atualização:** 30/09/2026.
 **Escopo:** complemento documental. Registra decisões explícitas posteriores à referência. Não aprova implementação, cobrança ou publicação.
 
 ## 1. Precedência
 
-A v2.2 é a referência protegida deste repositório: somente leitura, não editar, renomear, mover ou excluir. As decisões explícitas posteriores do usuário prevalecem nos pontos que atualizam, sem modificar o arquivo protegido.
+A v2.3 é a referência protegida deste repositório: somente leitura, não editar, renomear, mover ou excluir. O usuário confirmou essa autoridade em 29/09/2026. As decisões explícitas posteriores prevalecem nos pontos que atualizam, sem modificar o arquivo protegido.
 
-Versões anteriores da referência e o pacote v2.3 citado em conversas **não estão disponíveis aqui** e não devem ser usados como fonte, nem ter leitura declarada. Documentos derivados que ainda citarem outra versão devem ser corrigidos para a v2.2.
+A v2.2 permanece apenas no histórico Git e em registros históricos datados; não é a autoridade corrente. Documentos normativos e checkpoints atuais devem apontar para a v2.3. Relatos históricos podem mencionar a v2.2 quando descrevem fielmente o estado daquela data, desde que não a apresentem como vigente.
 
-Ordem de precedência: instrução explícita do usuário → este complemento → v2.2 → documentos derivados 01–18 → propostas técnicas (ADRs e registro de decisões).
+Ordem de precedência: instrução explícita do usuário → este complemento → v2.3 → documentos normativos 19–20 → documentos derivados 01–18 → propostas técnicas (ADRs e registro de decisões).
 
 ## 2. Ancoragem das decisões
 
-Citar `DEC-0xx` **somente** quando o identificador corresponder à numeração real da v2.2 §27. Não renumerar, não reaproveitar IDs de outras versões e não atribuir ID por inferência.
+Citar `DEC-0xx` **somente** quando o identificador corresponder à numeração real da v2.3 §27. Não renumerar, não reaproveitar IDs de outras versões e não atribuir ID por inferência.
 
-| ID na v2.2 | Conteúdo | Situação |
+| ID na v2.3 | Conteúdo | Situação |
 | --- | --- | --- |
 | DEC-001 | Plataforma greenfield, sem herança técnica | Vigente |
 | DEC-002 | SaaS multi-tenant desde a fundação | Vigente |
@@ -34,8 +34,10 @@ Citar `DEC-0xx` **somente** quando o identificador corresponder à numeração r
 | DEC-016 | Preparar e, quando integração e autonomia permitirem, publicar campanhas; gasto e publicação exigem aprovação humana ou política explícita | Vigente; o MVP mantém mídia em leitura |
 | DEC-017 | Método de campanha orientado por problema, testes por hipótese e ciclo de aprendizado | Vigente; detalhada na §5 |
 | DEC-018 | Mercado inicial SaaS B2B, arquitetura agnóstica de segmento | Vigente |
+| DEC-019 | Context Stack L0–L8 como contrato oficial de contexto, com montagem seletiva, provenance, versionamento, freshness e isolamento por tenant | Vigente; especificada em [19](19-context-stack.md) |
+| DEC-020 | Comunicação máquina↔máquina por contratos JSON transacionais e versionados, com tracing, autorização, erros, auditoria e idempotência | Vigente; especificada em [20](20-agent-transaction-protocol.md) |
 
-**Decisões posteriores sem ID na referência.** As quatro abaixo foram tomadas depois da v2.2 e **não possuem DEC correspondente**. Citar este complemento; nunca inventar um identificador para elas.
+**Decisões posteriores sem ID na referência.** As cinco abaixo não possuem DEC correspondente na v2.3. Citar este complemento; nunca inventar um identificador para elas.
 
 | Decisão | Conteúdo | Onde é detalhada |
 | --- | --- | --- |
@@ -43,6 +45,7 @@ Citar `DEC-0xx` **somente** quando o identificador corresponder à numeração r
 | Budgets internos | Teto econômico de referência por tenant/mês: Performance US$ 40, Growth US$ 85. Limite para dimensionar capacidade, não preço nem prova de viabilidade | [08](08-billing-entitlements.md) e [17](17-risks-costs.md) |
 | Imagens | Geração e edição de imagens integram o MVP, com revisão, aprovação, estados de falha e consumo visível por ação | [12](12-roadmap.md) e [14](14-ux-flows.md) |
 | IA multimodelo | Arquitetura multimodelo e multiprovedor com Model Registry, Router/Gateway, Eval Engine e Cost Ledger atrás de contratos internos. Um primeiro adapter não cria exclusividade | [13](13-ai-model-routing-finops.md) |
+| Gateway de IA | OpenRouter é o gateway inicial padrão, por adapter próprio atrás do AI Model Router da Oplyra, sem exclusividade. Test Adapter permanece obrigatório e adapters diretos continuam possíveis. Modelo e parâmetros são selecionados por Model Profile versionado de `agent + action`, condicionado ao EXP-05. **Estado aplicado:** slice 1 do Product AI Model Harness e Cost Ledger persistente local implementados (CR-026, CR-027); Product Agent Runtime, filas/scheduler de produto, Stripe, adapters reais e produção seguem pendentes ou não autorizados | [13](13-ai-model-routing-finops.md) e [ADR-0006](../../decisions/ADR-0006-runtime-de-agentes.md) |
 
 Modelos, preços unitários e limiares de qualidade continuam dependendo de evidência e de configuração versionada. A fundação especifica e valida esses contratos antes de ativar workflows pagos; o Eval Engine acompanha o primeiro workflow de IA.
 
@@ -116,9 +119,10 @@ Verificado neste repositório em 15/09/2026:
 
 | Conjunto | Situação |
 | --- | --- |
-| 00 | Presente, protegido, v2.2 |
+| 00 | Presente, protegido, v2.3 |
 | 01–18 | **Presentes**; ver [índice](README.md) |
-| ADRs 0001–0008 e registro de decisões | Presentes em [docs/decisions](../../decisions/README.md) |
+| 19–20 | **Presentes e aprovados**; Context Stack e Agent Transaction Protocol |
+| ADRs 0001–0009 e registro de decisões | Presentes em [docs/decisions](../../decisions/README.md) |
 | Skills | As quatro presentes em `.claude/skills/`; compatibilidade em [SKILLS-COMPATIBILIDADE](../../harness/SKILLS-COMPATIBILIDADE.md) |
 | Protótipos | Presentes em [prototypes/](prototypes/) |
 | Marca e interface | [Manual de marca](../../brand/oplyra_brand_system.md) e [guia de interface](GUIA-INTERFACE-FIGMA.md) |

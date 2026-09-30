@@ -2,7 +2,7 @@
 
 **Versão documental:** 0.2  
 **Data:** 11 de setembro de 2026  
-**Autoridade:** detalhamento do 00 v2.2, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.2. Propostas técnicas permanecem propostas.
+**Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## 1. Direção
 
@@ -37,10 +37,11 @@ Ports
    +--> CRM/Data Adapters --> APIs / webhooks / imports
    +--> Social Adapters --> provedores suportados
    +--> Asset Analysis Adapter --> transcrição / visão multimodal
-   +--> AI Gateway / Router
-              +--> OpenAI
-              +--> Anthropic
-              +--> outros futuros
+   +--> AI Model Router da Oplyra
+              +--> OpenRouter Adapter (gateway inicial, não exclusivo)
+              |       +--> provedores/modelos elegíveis
+              +--> Provider Adapters diretos (quando necessários)
+              +--> Test Adapter (local/CI)
 ```
 
 ## 4. Multi-tenancy
@@ -87,7 +88,7 @@ Crons não contêm inteligência de negócio. Um scheduler persistente deve inic
 
 ## 7. AI Gateway
 
-O domínio solicita capacidade, não modelo específico. O Gateway aplica routing policy, fallback, budget e provider health.
+O domínio solicita capacidade, não modelo específico. O AI Model Router interno aplica routing policy, fallback, budget, privacidade, elegibilidade e provider health. OpenRouter é o gateway inicial padrão por adapter, sem exclusividade; não entra no domínio nem impede Test Adapter ou adapters diretos.
 
 Componentes obrigatórios:
 
@@ -97,6 +98,10 @@ Componentes obrigatórios:
 - Cost Ledger;
 - action catalog;
 - circuit breakers.
+
+Modelo, temperatura e demais parâmetros são configurados em Model Profiles versionados por `agent + action`, condicionados ao EXP-05. A decisão arquitetural não autoriza conta, chave, créditos, chamadas reais ou uso em produção.
+
+O Cost Ledger persistente está implementado somente no Supabase local ([CR-027](contracts/changes/CR-027-persistent-cost-ledger.md), [COST-LEDGER-CONTRACTS](contracts/COST-LEDGER-CONTRACTS.md)); a integração produtiva está pendente.
 
 Detalhes: `13-ai-model-routing-finops.md`.
 

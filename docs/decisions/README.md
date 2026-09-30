@@ -7,13 +7,14 @@ Formato definido em [DESENVOLVIMENTO.md](../harness/DESENVOLVIMENTO.md).
 - Aprovar uma ADR não aprova a fase inteira, e vice-versa.
 - Revisão de 11/09/2026 (Reconciliação documental v1.2): pendências classificadas conforme a orientação do usuário. **Nenhuma DP foi aprovada em bloco.**
 - Revisão de 15/09/2026: referência protegida passou a v2.2, ancoragem das decisões normalizada, escopo de vídeo e método de campanha incorporados.
+- Reconciliação de 29/09/2026: usuário confirmou a v2.3, de 16/09/2026, como referência protegida vigente; DEC-019 e DEC-020 passam a integrar a ancoragem canônica.
 - Decisões de stack e recorte de 15/09/2026: DP-01b, DP-02a, DP-02b1, DP-02c, DP-02e e DP-14a **decididas**; DP-02b2 (Turborepo) **adiada**. DP-03a, DP-13, DP-20, DP-25 e DP-33 integram o escopo do I-01 descrito em [PREPARACAO-I01](../harness/PREPARACAO-I01.md) §5. A execução local ainda depende do aceite do escopo.
 
 ## Decisões já aprovadas no documento de transição
 
-A referência protegida é a **v2.2, de 13/09/2026**, que numera **DEC-001 a DEC-018** em [§27](../product/marketing-ops/00-documento-transicao.md): greenfield (001), multi-tenant (002), pilotos sem privilégios (003), dois planos por escopo (004–005), entitlements configuráveis (006), preços após validação (007), marca (008), domínios (009), slogan e nome (010–011), multiagentes (012), ausência de CRM próprio (013), vídeo não gerado nativamente e tratado como ativo de entrada (014), herança de tenant pelos derivados (015), preparação e publicação de campanha sob aprovação (016), método de campanha (017) e mercado SaaS B2B (018).
+A referência protegida é a **v2.3, de 16/09/2026**, que numera **DEC-001 a DEC-020** em [§27](../product/marketing-ops/00-documento-transicao.md): DEC-001 a DEC-018 preservam as decisões anteriores; DEC-019 oficializa o Context Stack L0–L8 e DEC-020 oficializa o protocolo JSON transacional e versionado.
 
-**Ancoragem obrigatória.** Citar `DEC-0xx` somente quando o identificador existir na v2.2. Stripe, budgets internos, geração/edição de imagens e a arquitetura multimodelo com Registry, Router, Eval Engine e Cost Ledger são decisões posteriores **sem identificador** e devem citar [ATUALIZACOES](../product/marketing-ops/ATUALIZACOES.md) §2. Não renumerar, não reaproveitar IDs de outras versões e não atribuir ID por inferência. DEC-009 foi substituída pelos domínios `oplyra.io` e `app.oplyra.io`.
+**Ancoragem obrigatória.** Citar `DEC-0xx` somente quando o identificador existir na v2.3. Stripe, budgets internos, geração/edição de imagens, arquitetura multimodelo e gateway OpenRouter são decisões posteriores **sem identificador** e devem citar [ATUALIZACOES](../product/marketing-ops/ATUALIZACOES.md) §2. Não renumerar, não reaproveitar IDs de outras versões e não atribuir ID por inferência. DEC-009 foi substituída pelos domínios `oplyra.io` e `app.oplyra.io`.
 
 ## ADRs do discovery
 
@@ -21,15 +22,15 @@ A referência protegida é a **v2.2, de 13/09/2026**, que numera **DEC-001 a DEC
 | --- | --- | --- | --- |
 | [ADR-0001](ADR-0001-supabase-local-e-producao-incremental.md) | Supabase como backend, local via Docker e produção incremental | **Aprovada** (diretriz do projeto) | DP-28a |
 | [ADR-0002](ADR-0002-stack-typescript-monorepo-nextjs.md) | Stack complementar: TypeScript, monorepo, Next.js | Proposta | DP-02, DP-13, DP-14 |
-| [ADR-0003](ADR-0003-tenancy-rls-e-acesso-a-dados.md) | Tenancy com RLS e acesso a dados por conexão direta | Proposta condicionada ao EXP-01 | DP-03, DP-02d |
-| [ADR-0004](ADR-0004-filas-scheduler-postgres.md) | Filas e scheduler no PostgreSQL | Proposta condicionada ao EXP-02 | DP-04 |
+| [ADR-0003](ADR-0003-tenancy-rls-e-acesso-a-dados.md) | Tenancy com RLS e acesso a dados por conexão direta | **Aprovada em 15/09/2026 pelo EXP-01**; revisão de segurança antes de dados reais | DP-03, DP-02d |
+| [ADR-0004](ADR-0004-filas-scheduler-postgres.md) | Filas e scheduler no PostgreSQL | **Aprovada para desenho do MVP em 21/09/2026 pelo EXP-02**; repetir E2-09 antes da produção | DP-04 |
 | [ADR-0005](ADR-0005-destinos-de-publicacao.md) | Proposta histórica: Supabase, Vercel e Cloud Run | Substituída pela ADR-0009 quanto aos provedores | DP-05, DP-06, DP-07 |
-| [ADR-0006](ADR-0006-runtime-de-agentes.md) | Runtime próprio proposto; arquitetura multimodelo/multiprovedor vigente | Proposta condicionada ao EXP-05 | DP-09, DP-27 |
+| [ADR-0006](ADR-0006-runtime-de-agentes.md) | Runtime próprio proposto; arquitetura multimodelo e OpenRouter inicial não exclusivo vigentes | Gateway decidido; runtime/modelos condicionados ao I-02/EXP-05 | DP-09, DP-27 |
 | [ADR-0007](ADR-0007-entitlements-e-billing.md) | Entitlements e Stripe na Fundação | Diretriz de fornecedor/fase; detalhes propostos | DP-11 |
 | [ADR-0008](ADR-0008-autorizacao-rbac-por-vinculo.md) | RBAC por vínculo; CLI delimitada; suporte somente leitura | Proposta | DP-20, DP-23 |
 | [ADR-0009](ADR-0009-destinos-netlify-supabase-railway-github.md) | Destinos selecionados: Netlify, Supabase, Railway e GitHub | Parcialmente aprovada; parâmetros condicionados ao EXP-03/04 | DP-05, DP-06, DP-07, DP-14 |
 
-Experimentos especificados: [18-technical-experiments](../product/marketing-ops/18-technical-experiments.md) (EXP-01 a EXP-05). Nenhum foi executado.
+Experimentos especificados: [18-technical-experiments](../product/marketing-ops/18-technical-experiments.md) (EXP-01 a EXP-05). EXP-01 e EXP-02 foram executados e aprovados com as ressalvas registradas; EXP-03 a EXP-05 permanecem não executados.
 
 ## Legenda
 
@@ -66,7 +67,7 @@ Experimentos especificados: [18-technical-experiments](../product/marketing-ops/
 | DP-02e | U | Vitest, pgTAP, Playwright e lint de fronteiras | **Decidida 15/09/2026** | — | Concluída | ADR-0002 |
 | DP-03a | U | Autorizar o EXP-01 como primeira atividade do I-01 (local, dados sintéticos) | **Concluída**: experimento executado em 15/09/2026 | — | Concluída | [18](../product/marketing-ops/18-technical-experiments.md) EXP-01 |
 | DP-03b | T | Adotar acesso por conexão direta com papéis restritos, claims verificadas e RLS | **Aprovada 15/09/2026 pelo resultado do EXP-01**, com tenant ativo em escopo de transação e política por igualdade | — | Concluída | [ADR-0003](ADR-0003-tenancy-rls-e-acesso-a-dados.md) |
-| DP-04 | T | pgmq + pg_cron + worker Node | Condicionada ao EXP-02; alternativa pg-boss ou transporte separado | L (I-02) | Início do I-02 | [ADR-0004](ADR-0004-filas-scheduler-postgres.md) |
+| DP-04 | T | pgmq + pg_cron + worker Node | **Aprovada para desenho do MVP em 21/09/2026 após EXP-02**; repetir E2-09 antes da produção | L (I-02) | Concluída para implementação local | [ADR-0004](ADR-0004-filas-scheduler-postgres.md) |
 | DP-05a | U | Netlify como destino da web | **Decidida 21/09/2026**; provisionamento não autorizado | — | Concluída | [ADR-0009](ADR-0009-destinos-netlify-supabase-railway-github.md) |
 | DP-05b | T | Região/configuração das Netlify Functions e latência até o banco | Condicionada ao EXP-03 (E3-01); nenhuma região presumida | P (I-01) | Antes de publicar o I-01 | ADR-0009 |
 | DP-06a | U | Railway como destino do worker contínuo | **Decidida 21/09/2026**; provisionamento não autorizado | — | Concluída | ADR-0009 |
@@ -77,7 +78,7 @@ Experimentos especificados: [18-technical-experiments](../product/marketing-ops/
 | DP-07d | T | Procedimento e teste de restauração (banco + Storage + papéis) | Condicionada ao EXP-04 | D | Antes de dados reais | EXP-04 |
 | DP-08a | U | Provedor de e-mail transacional (SMTP do Auth, convites, avisos) | Aberta; decidir quando for publicar autenticação em produção | P (I-01) | Antes de publicar o I-01 | [06 §11.3](../product/marketing-ops/06-integrations.md#113-e-mail-transacional-e-marketing) |
 | DP-08b | C | Separar e-mail transacional (Fundação) de e-mail marketing (Growth) | Concluída na documentação | — | — | [06 §11.3](../product/marketing-ops/06-integrations.md#113-e-mail-transacional-e-marketing) |
-| DP-09a | U | Provedores/contas e acesso pago para avaliação de texto/imagem; arquitetura multiprovedor já definida | Aberta para operação externa; não reabre DEC-014 | Uso real de API (sandbox), D | Antes do EXP-05 | [ADR-0006](ADR-0006-runtime-de-agentes.md) |
+| DP-09a | U | Gateway, conta e acesso para avaliação de texto/imagem | **Gateway decidido em 29/09/2026:** OpenRouter inicial por adapter, sem exclusividade. Conta, chave, créditos e gasto permanecem não autorizados | Uso real de API (sandbox), D | Antes do EXP-05 | [ADR-0006](ADR-0006-runtime-de-agentes.md) |
 | DP-09b | T | Modelo configurável por rota, sem padrão universal; liberação só por avaliação | Condicionada ao EXP-05 | P (agentes, I-05) | I-05 | EXP-05 |
 | DP-09c | U | Política de dados de IA: retenção, ZDR, residência de inferência, dados permitidos | Aberta | D | Antes de dados reais | ADR-0006, [07](../product/marketing-ops/07-security-lgpd.md) §11.3 |
 | DP-09d | U | Orçamento das avaliações (por rodada e por mês) | Aberta | Execução do EXP-05 | Antes do EXP-05 | [15](../product/marketing-ops/15-test-plan.md) §5.4 |

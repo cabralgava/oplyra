@@ -2,7 +2,7 @@
 
 **Versão documental:** 0.2  
 **Data:** 11 de setembro de 2026  
-**Autoridade:** detalhamento do 00 v2.2, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.2. Propostas técnicas permanecem propostas.
+**Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 **Status:** conceitual; não criar migrations antes da aprovação do discovery e DDD
 
@@ -192,6 +192,8 @@ Entidades candidatas:
 - aiUsageAlerts.
 
 O Cost Ledger deve registrar custo de texto/raciocínio, ferramentas cobradas, imagens, retries e outros custos diretamente atribuíveis ao workflow.
+
+Estado implementado: o Cost Ledger persistente existe **somente no Supabase local** (schema `finops`, migrations 000013–000014; [CR-027](contracts/changes/CR-027-persistent-cost-ledger.md), [COST-LEDGER-CONTRACTS](contracts/COST-LEDGER-CONTRACTS.md)); a modelagem desta seção permanece conceitual e a integração produtiva está pendente.
 
 ## 11. Integrations & Analytics
 

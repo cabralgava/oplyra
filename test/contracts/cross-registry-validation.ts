@@ -1,12 +1,13 @@
-// Cross-registry validation executável da Contract Registry Release 2.19.
+// Cross-registry validation executável da Contract Registry Release 2.20.
 // Reproduz as categorias da validação do Freeze v1 (envelope, identidade,
 // contagem, nomenclatura, referências, schemas, manifest de integração),
 // mantém as verificações do CR-026 e acrescenta as do CR-027 (Error Registry
 // 1.5, Model Profile Schema 1.1 e Registry 1.1, schemas do Cost Ledger,
 // migrations do Ledger) e, desde a 2.18, as do CR-028 (migration 000015,
 // migrations anteriores imutáveis, identidade de ambiente) e, desde a 2.19, as
-// da reconciliação documental do CR-029. As Releases 2.16, 2.17 e 2.18 ficam
-// como evidência histórica nos relatórios versionados de cada uma.
+// da reconciliação documental do CR-029 e, desde a 2.20, as do alinhamento da
+// documentação de produto de IA do CR-030. As Releases 2.16 a 2.19 ficam como
+// evidência histórica nos relatórios versionados de cada uma.
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -62,6 +63,13 @@ const schemaDaFixture = (arquivo: string) =>
 export const CR027_MIGRATIONS = [
   "supabase/migrations/20260929000013_finops_ledger_schema.sql",
   "supabase/migrations/20260929000014_finops_ledger_functions.sql",
+] as const;
+/** Escopo exato do CR-030 (documentação de produto de IA): 20 arquivos. */
+export const CR030_DOCS = [
+  "docs/decisions/ADR-0006-runtime-de-agentes.md", "docs/decisions/ADR-0007-entitlements-e-billing.md", "docs/decisions/README.md",
+  ...["01-product-requirements", "02-discovery", "03-domain-model", "04-architecture", "05-data-model", "06-integrations", "07-security-lgpd",
+    "08-billing-entitlements", "09-agentic-architecture", "10-agent-catalog", "11-agent-governance", "12-roadmap", "13-ai-model-routing-finops",
+    "17-risks-costs", "18-technical-experiments", "ATUALIZACOES", "README"].map((n) => `docs/product/marketing-ops/${n}.md`),
 ] as const;
 export const CR028_MIGRATION = "supabase/migrations/20260929000015_tenant_deletion_owner_guard.sql";
 /**
@@ -332,6 +340,35 @@ export function runCrossRegistryValidation(root: string): { checks: Check[]; cou
     /superado\*{0,2} pelo CR-028/i.test(a14) && a14.includes("Configuração apontando para host remoto sem flag explícita falha na inicialização") &&
     !/sem `OPLYRA_ALLOW_REMOTE=true` impede/.test(verif) && !/opt-in autorizado/.test(verif) && !/\b(12 migrations|212 testes|87 assertions)\b/.test(verif) && verif.includes("(ESTADO.md)"),
     { a14MarkedSuperseded: /superado\*{0,2} pelo CR-028/i.test(a14), volatileCountsInVerificacoes: /\b(12 migrations|212 testes|87 assertions)\b/.test(verif), hashedInReport: false });
+
+  // CR-030: alinhamento da documentação de produto de IA ao estado aplicado pelos CR-026 e CR-027.
+  for (const p of CR030_DOCS) inputs.push({ path: p, sha256: sha256File(root, p), evidenceLevel: "direct" });
+  const dl = (p: string) => readFileSync(join(root, p), "utf8");
+  const D = (n: string) => dl(`docs/product/marketing-ops/${n}.md`);
+  const d13 = D("13-ai-model-routing-finops"), adr6 = dl("docs/decisions/ADR-0006-runtime-de-agentes.md"), atu = D("ATUALIZACOES");
+  const naoExclusivo = (t: string) => /sem exclusividade|não exclusivo/.test(t);
+  const cabecalhos = CR030_DOCS.map((p) => ({ p, l: dl(p).split("\n").find((x) => x.startsWith("**Autoridade:**")) })).filter((x) => x.l !== undefined);
+  const alinhado = {
+    doc13Registry: !/representação executável de Model Profiles[^.]*ainda é proposta/.test(d13) && !/Cost Ledger persistido[^.]*continuam bloqueados/.test(d13) &&
+      !/proposta controlada/.test(d13) && !/manifest[^.\n]{0,40}v2\.15/.test(d13) && d13.includes("CR-026") && d13.includes("CR-027") && d13.includes("Cost Ledger persistente"),
+    doc13Version: d13.includes("**Versão documental:** 0.5") && d13.includes("**Data:** 30 de setembro de 2026"),
+    adr6: adr6.includes("**Estado aplicado:**") && adr6.includes("somente localmente") && !/não há implementação autorizada nesta revisão/.test(adr6) && /Product Agent Runtime/.test(adr6),
+    openRouterNonExclusive: ["04-architecture", "06-integrations", "09-agentic-architecture", "13-ai-model-routing-finops", "ATUALIZACOES"].every((n) => naoExclusivo(D(n))) && naoExclusivo(adr6),
+    exp5: ["01-product-requirements", "04-architecture", "13-ai-model-routing-finops", "ATUALIZACOES"].every((n) => D(n).includes("EXP-05")) && adr6.includes("EXP-05"),
+    authorityV23: cabecalhos.every((x) => x.l!.includes("v2.3") && !x.l!.includes("v2.2")),
+    atualizacoes: atu.includes("**Última atualização:** 30/09/2026.") && atu.includes("ADRs 0001–0009") && !atu.includes("ADRs 0001–0008") && atu.includes("**Estado aplicado:**"),
+    pointers: D("04-architecture").includes("COST-LEDGER-CONTRACTS") && D("05-data-model").includes("COST-LEDGER-CONTRACTS") && D("12-roadmap").includes("**Entregue localmente (CR-026/027):**"),
+    pending: [d13, adr6, atu].every((t) => /não autorizad|pendente/.test(t)),
+  };
+  add("DOCS-cr030-product-ai-alignment", "documentation", Object.values(alinhado).every(Boolean) && CR030_DOCS.length === 20, { ...alinhado, files: CR030_DOCS.length });
+  const proibidos: [string, RegExp][] = [
+    ["real-adapter-enabled", /(adapter real|OpenRouter Adapter|adapter direto)[^.|\n]{0,30}\b(habilitad[oa]|ativ[oa]|implementad[oa])\b/i],
+    ["key-or-account-configured", /\b(chave|conta|créditos?)\b[^.|\n]{0,25}\b(configurad[oa]s?|criad[oa]s?|ativ[oa]s?)\b/i],
+    ["production-enabled", /produção[^.|\n]{0,20}\b(habilitada|ativa)\b/i],
+    ["native-video", /(suporta|inclui|permite|habilita|oferece|possui)[^.\n]{0,40}(geração|edição|renderização)[^.\n]{0,20}vídeo/i],
+  ];
+  const achados = CR030_DOCS.flatMap((p) => proibidos.filter(([, re]) => re.test(dl(p))).map(([id]) => `${p}:${id}`));
+  add("DOCS-cr030-no-enablement-claims", "documentation", achados.length === 0, { findings: achados });
 
   // Manifest de integração
   const sim = ler("schema-integration-manifest.json");
