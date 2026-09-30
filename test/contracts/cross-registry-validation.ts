@@ -1,11 +1,12 @@
-// Cross-registry validation executável da Contract Registry Release 2.18.
+// Cross-registry validation executável da Contract Registry Release 2.19.
 // Reproduz as categorias da validação do Freeze v1 (envelope, identidade,
 // contagem, nomenclatura, referências, schemas, manifest de integração),
 // mantém as verificações do CR-026 e acrescenta as do CR-027 (Error Registry
 // 1.5, Model Profile Schema 1.1 e Registry 1.1, schemas do Cost Ledger,
 // migrations do Ledger) e, desde a 2.18, as do CR-028 (migration 000015,
-// migrations anteriores imutáveis, identidade de ambiente). As Releases 2.16 e
-// 2.17 ficam como evidência histórica nos relatórios versionados de cada uma.
+// migrations anteriores imutáveis, identidade de ambiente) e, desde a 2.19, as
+// da reconciliação documental do CR-029. As Releases 2.16, 2.17 e 2.18 ficam
+// como evidência histórica nos relatórios versionados de cada uma.
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -307,6 +308,30 @@ export function runCrossRegistryValidation(root: string): { checks: Check[]; cou
     /protocolo não aceito/.test(configTs) && /não aceita credenciais na URL/.test(configTs) && /não aceita query nem fragmento/.test(configTs) && /usuário malformado/.test(configTs) &&
     /endpoint canônico de SUPABASE_URL/.test(configTs) && /não aceita path/.test(configTs),
     { approvedDeploymentProviders: APPROVED_DEPLOYMENT_EVIDENCE.length, allowRemoteDefined: false, strictUrlParsing: true });
+
+  // CR-029: reconciliação documental. Documentos governados (doc 16 e plano de testes) são hasheados
+  // como entrada; documentos operacionais ficam FORA do digest e do manifest, e são lidos sem hash.
+  const doc16 = "docs/product/marketing-ops/16-environments-release.md";
+  const planoTestes = "docs/product/marketing-ops/15-test-plan.md";
+  const planoProducao = "docs/harness/PREPARACAO-SUPABASE-PRODUCAO.md";
+  for (const p of [doc16, planoTestes, planoProducao]) inputs.push({ path: p, sha256: sha256File(root, p), evidenceLevel: "direct" });
+  const d16 = readFileSync(join(root, doc16), "utf8");
+  const tp = readFileSync(join(root, planoTestes), "utf8");
+  const psp = readFileSync(join(root, planoProducao), "utf8");
+  const tst19 = tp.split("\n").find((l) => l.startsWith("| TST-19 |")) ?? "";
+  add("DOCS-cr029-governed-documents", "documentation",
+    ["SUPABASE_PROJECT_REF", "OPLYRA_ENVIRONMENT_FINGERPRINT", "TrustedDeploymentContext", "/auth/v1/.well-known/jwks.json", "OPENROUTER_API_KEY"].every((t) => d16.includes(t)) &&
+    !/^\|\s*`OPLYRA_ALLOW_REMOTE`/m.test(d16) && !/sem `OPLYRA_ALLOW_REMOTE=true`/.test(d16) &&
+    /qualquer endpoint remoto/.test(tst19) && /OPLYRA_ALLOW_REMOTE/.test(tst19) && !/opt-in|sem flag explícita/.test(tst19) &&
+    !psp.includes("Reconciliação documental adiada") && psp.includes("**Reconciliação documental concluída (CR-029, Release 2.19, 30/09/2026).**"),
+    { deferralParagraphPresent: psp.includes("Reconciliação documental adiada"), doc16AllowRemoteRow: /^\|\s*`OPLYRA_ALLOW_REMOTE`/m.test(d16), tst19Reconciled: /qualquer endpoint remoto/.test(tst19) });
+  const prep = readFileSync(join(root, "docs/harness/PREPARACAO-I01.md"), "utf8");
+  const verif = readFileSync(join(root, "docs/harness/VERIFICACOES.md"), "utf8");
+  const a14 = prep.split("\n").find((l) => l.startsWith("| A14 |")) ?? "";
+  add("DOCS-cr029-operational-documents-outside-digest", "documentation",
+    /superado\*{0,2} pelo CR-028/i.test(a14) && a14.includes("Configuração apontando para host remoto sem flag explícita falha na inicialização") &&
+    !/sem `OPLYRA_ALLOW_REMOTE=true` impede/.test(verif) && !/opt-in autorizado/.test(verif) && !/\b(12 migrations|212 testes|87 assertions)\b/.test(verif) && verif.includes("(ESTADO.md)"),
+    { a14MarkedSuperseded: /superado\*{0,2} pelo CR-028/i.test(a14), volatileCountsInVerificacoes: /\b(12 migrations|212 testes|87 assertions)\b/.test(verif), hashedInReport: false });
 
   // Manifest de integração
   const sim = ler("schema-integration-manifest.json");

@@ -36,7 +36,7 @@
 ## 3. Configuração por ambiente
 
 - **Configuração como código** sempre que possível: `supabase/config.toml` (local), migrations, definições de agentes, tabela de preços de modelo e checklists de configuração não transportável.
-- **Validação na inicialização:** web, worker e CLI validam as variáveis por schema e **falham** se faltar algo, se houver mistura de ambientes (URL de produção com chave local) ou se o local apontar para host remoto sem `OPLYRA_ALLOW_REMOTE=true` explícito.
+- **Validação na inicialização:** web, worker e CLI validam as variáveis por schema e **falham** se faltar algo, se houver mistura de ambientes (URL de produção com chave local) ou se `local`/`ci` apontar para qualquer endpoint remoto, sem exceção. `OPLYRA_ALLOW_REMOTE` foi removida pelo [CR-028](contracts/changes/CR-028-production-readiness-hardening.md) e sua presença, com qualquer valor, impede a inicialização; produção exige `SUPABASE_PROJECT_REF` coerente com a URL e o banco (host direto ou usuário do pooler), `OPLYRA_ENVIRONMENT_FINGERPRINT` e evidência confiável do deployment (`TrustedDeploymentContext`) fornecida pelo composition root; enquanto não houver provedor de deployment aprovado, a produção não sobe (falha fechada). A `SUPABASE_URL` aceita somente path vazio ou `/`, sem usuário, senha, query ou fragmento; o issuer (`<origem>/auth/v1`) e o JWKS (`<origem>/auth/v1/.well-known/jwks.json`) são derivados dela.
 - Feature flags de lançamento e capacidades ficam no banco (dados), não em variáveis.
 
 ## 4. Variáveis de ambiente previstas
@@ -52,13 +52,14 @@ Nomes propostos para o futuro `.env.example`. **Nenhum valor real.**
 | `SUPABASE_URL` | Não | Web (servidor), worker, CLI | URL do projeto |
 | `DATABASE_URL_POOLED` | Não | Web (servidor), worker | Conexão via pooler (usuário limitado) |
 | `DATABASE_URL_MIGRATIONS` | Não | Pipeline de publicação | Credencial exclusiva para migrations |
-| `SUPABASE_JWT_ISSUER` / `SUPABASE_JWKS_URL` | Não | Web (servidor) | Verificação de sessão |
+| `SUPABASE_JWT_ISSUER` / `SUPABASE_JWKS_URL` | Não | Web (servidor) | Verificação de sessão. Opcionais: são derivados da `SUPABASE_URL`; se presentes, devem ser idênticos aos endpoints canônicos (CR-028), senão a inicialização falha |
 | `WORKER_DB_ROLE` | Não | Worker | Papel de execução proposto `oplyra_worker_exec` (ADR-0003), distinto do login |
 | `OPS_ADMIN_CREDENTIAL` | Não | `ops-cli` | Credencial privilegiada; **nunca em web/worker** |
 | `CREDENTIALS_MASTER_KEY` / `CREDENTIALS_KEY_VERSION` | Não | Worker | Cifragem envelope (DP-16) |
 | `API_KEY_PEPPER` | Não | Web (API pública) | Hash de chaves de fontes |
-| `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` | Não | Worker | Apenas os adapters habilitados exigem suas chaves; referências seguras por provedor/modalidade |
-| `AI_EXECUTION_MODE` | Não | Worker | `fake`, `replay` ou `gateway`; padrão local fake. Gateway usa Registry e política versionada, não um provedor global |
+| `OPENROUTER_API_KEY` | Não | Worker | Credencial do gateway inicial; somente servidor/secret store, com chave e budget separados por ambiente. Ausência bloqueia chamadas reais, nunca faz fallback para segredo pessoal |
+| `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / outras chaves diretas | Não | Worker | Somente adapters diretos explicitamente habilitados; não são obrigatórias para o caminho inicial via OpenRouter |
+| `AI_EXECUTION_MODE` | Não | Worker | `fake`, `replay` ou `gateway`; padrão local/CI `fake`. `gateway` usa Router, Registry, Model Profiles e OpenRouter Adapter inicial, não seleção livre do agente |
 | `AI_ROUTING_POLICY_VERSION` | Não | Worker | Versão da política e limites; falta de configuração bloqueia modo pago |
 | `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Não | Servidor de billing | Segredos separados por ambiente; modo teste na Fundação antes da ativação comercial |
 | `META_APP_ID` / `META_APP_SECRET` | Não | Web (OAuth callback), worker | App Meta |
@@ -67,7 +68,8 @@ Nomes propostos para o futuro `.env.example`. **Nenhum valor real.**
 | `ASSET_ANALYSIS_ADAPTER` | Não | Worker | `fake` ou `real`; provedor de transcrição/análise multimodal ainda pendente |
 | `EMAIL_PROVIDER_API_KEY` | Não | Worker | Notificações (o SMTP do Auth fica na configuração do Supabase) |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` / `OTEL_EXPORTER_OTLP_HEADERS` | Não | Web, worker | Telemetria |
-| `OPLYRA_ALLOW_REMOTE` | Não | Local | Proteção contra remoto acidental |
+| `SUPABASE_PROJECT_REF` | Não | Web (servidor), worker, CLI | Somente produção; deve coincidir com `SUPABASE_URL` e com o host direto ou o usuário do pooler (CR-028) |
+| `OPLYRA_ENVIRONMENT_FINGERPRINT` | Não | Web (servidor), worker, CLI | Somente produção; `ofp1:<ambiente>:<ref>:<deploymentId>`, validado contra a evidência confiável do deployment; não é segredo (CR-028) |
 
 O CI verifica que nenhuma variável privada ou valor secreto aparece no bundle; o prefixo NEXT_PUBLIC não torna um segredo seguro para exposição.
 

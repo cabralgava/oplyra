@@ -2,7 +2,7 @@
 
 ## Situação e registro de evidências
 
-Este documento especifica o que verificar. A aplicação não existe e nenhum script, CI ou teste de runtime é apresentado como implementado. Comandos reais serão definidos com a stack aprovada e validados localmente.
+Este documento especifica o que verificar. A fundação I-01 e seus checks locais existem; há componentes parciais do Product Agent Runtime, mas o runtime e o Product AI Model Harness não estão completos nem ativados. Cada capacidade deve ser classificada pela evidência real, sem generalizar um aceite para incrementos futuros.
 
 Para cada verificação executada, registrar: identificador do gate, cenário, comando ou procedimento real, ambiente, versão/commit ou arquivos verificados, data, resultado e evidência sem dados sensíveis.
 
@@ -19,6 +19,28 @@ Resultados permitidos: `passou`, `falhou`, `não executado`, `não aplicável` c
 | G4 — Runtime e integrações | Contratos, isolamento, autorização de ferramentas, aprovações, limites e recuperação testados em ambiente local. |
 | G5 — Incremento Performance | Fluxo do usuário e critérios de aceite do incremento aprovados; Meta/Google em leitura; qualidade dos dados explícita e regressões relevantes verificadas. |
 | G6 — Publicação do incremento | Versão e destino aprovados para deploy, migrations/configurações revisadas, dependências compatíveis e recuperação definida; após deploy, verificações não destrutivas e versão publicada registradas. |
+
+## Gates do Developer Harness e do Product AI Model Harness
+
+| Área | Gate documental/operacional | Estado atual |
+| --- | --- | --- |
+| Context7 | Configuração version-aware comprovada; resultado tratado abaixo das fontes canônicas da Oplyra | Implementado e validado em 29/09/2026 |
+| Playwright MCP | Abre aplicação local e navega com usuário sintético; achados críticos convergem para teste reproduzível | Implementado e validado em 29/09/2026 |
+| Playwright Test/CLI | Specs versionadas e execução focalizada/total reproduzível | Implementado no I-01 |
+| Usuários/tenants sintéticos | Personas aderem aos roles reais; ao menos dois tenants; sem segredo documentado | Implementado/parcial conforme [SYSTEM-TEST-USERS](SYSTEM-TEST-USERS.md) |
+| Tenant isolation | Evidência negativa cross-tenant em camada aplicável | Implementado para o I-01; revalidar por incremento |
+| Local First | Nenhum remoto como fallback; `local`/`ci` recusam qualquer endpoint remoto e a presença de `OPLYRA_ALLOW_REMOTE` falha (CR-028) | Implementado na configuração atual; ampliar conforme novas ferramentas |
+| Ausência de secrets | Secret scan e revisão de fixtures/configurações | Implementado; gate recorrente |
+| Version pinning | Versão resolvida e compatibilidade registradas; ausência de `@latest`; ranges avaliados | Implementado para Claude Code, Context7 MCP e Playwright MCP; demais dependências mantêm política anterior |
+| Separação de harnesses | Developer tools ausentes do Product Agent Tool Registry; runtime e Model Harness com limites próprios | Documentado; teste de arquitetura futuro |
+| Provider independence | casos de uso dependem de portas internas; SDKs/DTOs do provider ficam nos adapters | Fronteira por portas implementada no slice 1 do I-02; adapter real pendente |
+| OpenRouter boundary | OpenRouter é gateway inicial por adapter, não núcleo nem contrato de domínio; Test Adapter e possibilidade de adapters diretos preservados | Decisão documentada; implementação futura no I-02 |
+| Model Profiles | Vínculo versionado por `agent + action`; modelo, sampling, capabilities, privacy, budget e fallback validados sem alterar prompt/identidade do agente | Contratos e registry implementados desde a Release 2.16; vínculos produtivos dependem do EXP-05 |
+| Routing determinism | allowlists, capabilities, tenant policy, entitlement e budget aplicados fora do LLM | Implementado no harness local para allowlist, capabilities, privacidade e orçamento; integração completa ao runtime produtivo pendente |
+| Fallback governance | fallback compatível, limitado, auditável e fail-closed | Implementado e testado no harness local; provider real pendente |
+| Cost observability | uso/custo rastreável por tenant, run, agent, profile, model e provider | Cost Ledger persistente implementado no Supabase local pelo CR-027; integração produtiva pendente |
+
+Um check “planejado” não conta como executado. Navegação MCP não substitui Playwright Test; teste com adapter fake não comprova integração real, e integração real não substitui a suíte determinística.
 
 G3–G5 são incrementais: verificar capacidades conforme forem implementadas. Nenhum gate autoriza antecipar o Growth ou dispensa aprovação de ações externas.
 
@@ -49,22 +71,26 @@ Seguir [PUBLICACAO.md](PUBLICACAO.md). Antes de publicar: conferir destino de pr
 
 ## Catálogo de comandos
 
-Comandos reais do incremento I-01, executados em 15/09/2026. Pré-requisitos:
+Comandos reais do workspace. Contagens de migrations e de testes e a última execução integral não são repetidas aqui: a evidência corrente está em [ESTADO](ESTADO.md). Pré-requisitos:
 Docker em execução, Supabase CLI e `corepack enable pnpm`.
 
 | Verificação | Comando | Estado |
 | --- | --- | --- |
 | Subir e parar o Supabase local | `pnpm db:start` · `pnpm db:stop` | Implementado. Portas 544xx, próprias da Oplyra; passam pela trava de projeto |
-| Recriar o banco do zero por migrations e seeds | `pnpm db:reset` | Implementado. 8 migrations + seeds sintéticos |
+| Recriar o banco do zero por migrations e seeds | `pnpm db:reset` | Implementado. Migrations atuais + seeds sintéticos (contagem em [ESTADO](ESTADO.md)) |
 | Definir senhas locais dos papéis de login | `pnpm db:roles` | Implementado. Senhas nunca entram no versionamento |
 | Tipos | `pnpm typecheck` | Implementado |
-| Unidade, integração e arquitetura | `pnpm test` | Implementado. 36 testes |
-| Banco: matriz de isolamento | `pnpm test:db` | Implementado. 19 testes pgTAP |
+| Unidade, integração, contratos e arquitetura | `pnpm test` | Implementado. Resultado do último gate em [ESTADO](ESTADO.md) |
+| Banco: isolamento, persistência e dispatcher | `pnpm test:db` | Implementado. Resultado do último gate em [ESTADO](ESTADO.md) |
 | Varredura de segredos | `pnpm scan:secrets` | Implementado |
 | Build de produção da web | `pnpm build` | Implementado |
 | Tudo acima em sequência | `pnpm verificar` | Implementado |
 | Experimento EXP-01 | `cd experiments/exp-01&& pnpm setup && node src/run.ts && node src/api.ts` | Executado e aprovado |
 | Aplicação local | `pnpm --filter @oplyra/web dev` (porta 3100) | Implementado |
+| Guard Local First do Claude | `pnpm test:harness` | Implementado; 4 cenários em 29/09/2026 |
+| Versões do harness | `pnpm harness:tools` | Implementado |
+| Saúde dos MCPs | `pnpm harness:mcp` | Implementado; Context7 e Playwright conectados em 29/09/2026 |
+| Sessão Claude restrita aos MCPs do projeto | `pnpm claude:local` | Implementado; uso interativo |
 | Publicar e verificar produção | A definir com o destino aprovado | Não implementado |
 
 ### Convivência com outro stack Supabase na mesma máquina
@@ -84,7 +110,7 @@ Por isso `db:start`, `db:stop`, `db:status` e `db:reset` passam por
 explícito ao parar. Usar a CLI crua continua possível e continua sem rede de
 proteção: prefira os comandos do `package.json`.
 
-Antes de usar cada comando, inspecionar seu destino e efeitos. Não apontar checks locais para produção. A configuração falha fechada: ambiente local apontando para host remoto sem `OPLYRA_ALLOW_REMOTE=true` impede a inicialização.
+Antes de usar cada comando, inspecionar seu destino e efeitos. Não apontar checks locais para produção. A configuração falha fechada: ambiente `local` ou `ci` apontando para qualquer endpoint remoto impede a inicialização, e a presença de `OPLYRA_ALLOW_REMOTE` (removida pelo CR-028) também.
 
 ## Cenários adicionais de IA, FinOps e Stripe
 

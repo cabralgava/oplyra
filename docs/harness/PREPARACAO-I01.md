@@ -2,7 +2,7 @@
 
 11/09/2026 · Preparação documental concluída · **Nenhuma implementação autorizada por este documento.**
 
-> **Revisado em 15/09/2026, após a reconciliação documental.** A referência protegida passou a ser a **v2.2, de 13/09/2026** (SHA `79a25138…`); a ancoragem das decisões foi normalizada; o escopo de vídeo como ativo de entrada e o método de campanha (DEC-017) foram incorporados aos documentos; a direção visual passou ao guia de interface. As seções 4 (decisões necessárias), 5 (plano do I-01) e 6 (pendências adiadas) continuam válidas: o I-01 é identidade, tenancy, RLS, Storage, entitlements e `ops-cli`, e nenhuma das mudanças acima o altera. **Nenhuma decisão foi aprovada; o I-01 continua aguardando autorização.**
+> **Registro histórico de 15/09/2026.** Naquela data, a referência protegida era a **v2.2, de 13/09/2026** (SHA `79a25138…`). Em 29/09/2026 o usuário confirmou a v2.3, de 16/09/2026, como referência protegida vigente. As seções abaixo documentam a preparação e o aceite histórico do I-01; para autoridade e estado atuais, prevalecem [ATUALIZACOES](../product/marketing-ops/ATUALIZACOES.md) e [ESTADO](ESTADO.md).
 
 Este registro consolida a releitura integral da documentação reconciliada, a verificação independente da reconciliação, a validação interativa do protótipo conceitual, a classificação das decisões pendentes e o plano executável do incremento I-01. Ele não cria scaffold, migrations, infraestrutura, repositório, integração real ou chamada paga.
 
@@ -102,7 +102,7 @@ Escopo: identidade, empresas, vínculos, autorização, RLS, Storage, entitlemen
 ### 5.1 Sequência
 
 1. Repositório: `git init`, `.gitignore`, workspace pnpm, versões fixadas e registradas, `.env.example` sem segredos.
-2. Ambiente: Supabase CLI e Docker próprios; `config.toml` versionado; comandos reais de iniciar, parar, recriar e testar registrados em [VERIFICACOES](VERIFICACOES.md); validação de configuração que falha se apontar para host remoto sem `OPLYRA_ALLOW_REMOTE=true`.
+2. Ambiente: Supabase CLI e Docker próprios; `config.toml` versionado; comandos reais de iniciar, parar, recriar e testar registrados em [VERIFICACOES](VERIFICACOES.md); validação de configuração que falha se apontar para host remoto sem `OPLYRA_ALLOW_REMOTE=true`. *Superado pelo CR-028 (29/09/2026): `local`/`ci` recusam qualquer endpoint remoto e a flag foi removida; texto original preservado como registro histórico.*
 3. **EXP-01** em schema descartável, com duas empresas sintéticas.
 4. Decidir DP-03b e DP-02d com o resultado e atualizar a ADR-0003.
 5. Modelar o domínio (§5.4) e só então escrever as migrations definitivas (§5.7).
@@ -259,7 +259,7 @@ Cada item é verificável e indica como é provado. Item não executado é regis
 | A11 | `can()` nega capacidade ausente mesmo em chamada direta ao backend | Integração (TST-06) |
 | A12 | Nenhum acesso ao pool fora dos wrappers; nenhum import de SDK fora de `infra` | Teste de arquitetura + lint de fronteiras (TST-02) |
 | A13 | Bundle sem chave privada; logs sem tokens; varredura de segredos limpa | CI (TST-18) |
-| A14 | Configuração apontando para host remoto sem flag explícita falha na inicialização | Teste de configuração (TST-19) |
+| A14 | Configuração apontando para host remoto sem flag explícita falha na inicialização *(critério original do aceite de 16/09/2026; **superado pelo CR-028**: `local`/`ci` recusam qualquer endpoint remoto e a presença de `OPLYRA_ALLOW_REMOTE` falha)* | Teste de configuração (TST-19) |
 | A15 | EXP-01 executado, resultados brutos registrados e ADR-0003 atualizada com a decisão | Registro do experimento |
 | A16 | Telas do incremento com estados vazio, erro e sem permissão, no tema escuro do guia, revisadas com `apple-design` | Revisão de UI + Playwright nos fluxos do incremento |
 | A17 | Toda operação privilegiada gera auditoria na mesma transação do efeito | pgTAP + integração |

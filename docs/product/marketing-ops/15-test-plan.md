@@ -79,7 +79,7 @@ A matriz é aplicada a **cada nova tabela T** por gerador de testes pgTAP, compl
 | TST-16 | Regressão de agentes | Mudança de prompt, modelo, ferramenta ou rubrica reexecuta a avaliação afetada | I-05+ |
 | TST-17 | Mídia somente leitura | Adapters Meta e Google não expõem operações de escrita; escopos solicitados não incluem escrita (Meta) | I-06 |
 | TST-18 | Segredos | Bundle do frontend sem chaves privadas; logs redigidos; varredura de segredos | I-01+ |
-| TST-19 | Local sem remoto | Configuração apontando a host remoto sem flag explícita → falha na inicialização | I-01 |
+| TST-19 | Local sem remoto | `local`/`ci` com qualquer endpoint remoto (banco ou Supabase) falham na inicialização; a presença de `OPLYRA_ALLOW_REMOTE`, com qualquer valor, também falha (CR-028) | I-01 |
 | TST-20 | PII por agregados pequenos | Canário: empresa sintética com 1–4 eventos em um recorte → ferramenta de agregados retorna "<5" sem valores individuais; o contexto do agente não contém dado reidentificável | I-02, I-07 |
 | TST-21 | PII em campos livres e saídas | E-mail, telefone e CPF sintéticos inseridos em briefing, comentário, nome de campanha e evidência → redigidos antes do contexto; saída de modelo com PII bloqueada antes de persistir; memória com PII rejeitada; campo novo sem classificação falha no teste de arquitetura | I-02, I-05 |
 | TST-22 | Routing e fallback | Candidato não elegível excluído; falta de qualidade, erro e budget tratados por políticas distintas; kill switch não contornado | I-02/I-05 |

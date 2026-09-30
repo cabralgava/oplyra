@@ -1,0 +1,1540 @@
+{
+  "artifact": "oplyra-cross-registry-validation",
+  "artifactVersion": "2.19",
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T14:03:34Z",
+  "stage": "release_cross_registry_validation",
+  "status": "passed",
+  "releaseVersion": "2.19",
+  "changeSet": "CR-029",
+  "scope": {
+    "registries": [
+      "agents.json",
+      "permissions.json",
+      "tools.json",
+      "actions.json",
+      "events.json",
+      "errors.json",
+      "handoffs.json",
+      "quality-gates.json",
+      "model-profiles.json"
+    ],
+    "schemas": 34,
+    "supportingArtifacts": [
+      "registries/errors.validation.json",
+      "registries/model-profiles.validation.json",
+      "schema-integration-manifest.json",
+      "contract-registry-manifest-v2.15.json",
+      "contract-registry-manifest-v2.16.json",
+      "contract-registry-manifest-v2.17.json",
+      "schemas/ai-model-harness/model-profile-1.1.validation.json",
+      "schemas/ai-model-harness/budget-period.validation.json",
+      "schemas/ai-model-harness/cost-ledger-entry.validation.json",
+      "schemas/ai-model-harness/model-attempt.validation.json",
+      "supabase/migrations/20260929000013_finops_ledger_schema.sql",
+      "supabase/migrations/20260929000014_finops_ledger_functions.sql",
+      "supabase/migrations/20260929000015_tenant_deletion_owner_guard.sql",
+      "packages/infra/src/config.ts",
+      ".github/workflows/ci.yml",
+      ".env.example",
+      "contract-registry-manifest-v2.18.json",
+      "docs/product/marketing-ops/15-test-plan.md",
+      "docs/product/marketing-ops/16-environments-release.md",
+      "docs/harness/PREPARACAO-SUPABASE-PRODUCAO.md"
+    ]
+  },
+  "evidencePolicy": {
+    "direct": "Every in-scope artifact was read from the Oplyra working folder and hashed during this run.",
+    "executable": "Checks are produced by test/contracts/cross-registry-validation.ts; the contract test re-executes them and requires the same result.",
+    "freezeEvidencePreserved": "The Freeze v1 artifact cross-registry-validation.json and the Release 2.16, 2.17 and 2.18 reports are historical evidence and are not modified.",
+    "databaseEvidence": "Migration checks here are static; execution is covered by pgTAP (supabase/tests/finops_ledger_*.test.sql) and by the local integration and concurrency tests.",
+    "operationalDocuments": "PREPARACAO-I01, VERIFICACOES, DEVELOPMENT-TOOLS and ESTADO are operational documents outside the manifest and the digest; the check DOCS-cr029-operational-documents-outside-digest reads them without hashing."
+  },
+  "counts": {
+    "agents": 12,
+    "permissions": 6,
+    "tools": 58,
+    "actions": 171,
+    "events": 137,
+    "errors": 60,
+    "handoffs": 43,
+    "quality-gates": 11,
+    "model-profiles": 3,
+    "schemas": 34,
+    "errorCategoriesInUse": 18
+  },
+  "summary": {
+    "blockingIssues": 0,
+    "orphanReferences": 0,
+    "schemaReferenceFailures": 0,
+    "frozenRegistriesUnchangedExceptErrorsAndModelProfiles": true,
+    "errorRegistryVersion": "1.5",
+    "modelProfileRegistryVersion": "1.1",
+    "modelProfileSchemaVersions": [
+      "1.0",
+      "1.1"
+    ],
+    "modelProfileRegistryEntrySchema": "1.1",
+    "costLedgerSchemasAdded": 3,
+    "visualCapabilityEnabled": false,
+    "realProviderEnabled": false,
+    "costLedgerPersisted": "local_supabase_only",
+    "runtimeAuthorized": false,
+    "productionRuntimeEnabled": false,
+    "approvedDeploymentProviders": 0,
+    "migrationsImmutable000001to000014": true
+  },
+  "decision": {
+    "result": "passed",
+    "reason": "All 80 direct cross-registry, schema, fixture, derived-report, migration, environment-identity and documentation checks passed for Contract Registry Release 2.19 (CR-029).",
+    "releaseEligible": true
+  },
+  "validation": {
+    "checksRun": 80,
+    "checksPassed": 80,
+    "checksFailed": 0,
+    "checks": [
+      {
+        "id": "ENV-agents",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-agents",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 12
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-agents",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-agents",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 12,
+          "expected": 12
+        }
+      },
+      {
+        "id": "NAMING-agents",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "ENV-permissions",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-permissions",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 6
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-permissions",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-permissions",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 6,
+          "expected": 6
+        }
+      },
+      {
+        "id": "ENV-tools",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-tools",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 58
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-tools",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-tools",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 58,
+          "expected": 58
+        }
+      },
+      {
+        "id": "ENV-actions",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-actions",
+            "registryVersion": "2.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 171
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-actions",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-actions",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 171,
+          "expected": 171
+        }
+      },
+      {
+        "id": "NAMING-actions",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "ENV-events",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-events",
+            "registryVersion": "1.2",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 137
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-events",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-events",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 137,
+          "expected": 137
+        }
+      },
+      {
+        "id": "NAMING-events",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "ENV-errors",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-errors",
+            "registryVersion": "1.5",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 60
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-errors",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-errors",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 60,
+          "expected": 60
+        }
+      },
+      {
+        "id": "NAMING-errors",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "ENV-handoffs",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-handoffs",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 43
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-handoffs",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-handoffs",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 43,
+          "expected": 43
+        }
+      },
+      {
+        "id": "ENV-quality-gates",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-quality-gates",
+            "registryVersion": "1.0",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 11
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-quality-gates",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-quality-gates",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 11,
+          "expected": 11
+        }
+      },
+      {
+        "id": "ENV-model-profiles",
+        "category": "registry_envelope",
+        "status": "passed",
+        "details": {
+          "actual": {
+            "registry": "oplyra-model-profiles",
+            "registryVersion": "1.1",
+            "schemaVersion": "1.0",
+            "status": "active",
+            "entries": 3
+          }
+        }
+      },
+      {
+        "id": "UNIQUE-model-profiles",
+        "category": "identity",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "COUNT-model-profiles",
+        "category": "count",
+        "status": "passed",
+        "details": {
+          "actual": 3,
+          "expected": 3
+        }
+      },
+      {
+        "id": "NAMING-model-profiles",
+        "category": "naming",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "ACTION-agents",
+        "category": "actions",
+        "status": "passed",
+        "details": {
+          "orphan": [],
+          "checked": 675
+        }
+      },
+      {
+        "id": "EVENT-agent-refs",
+        "category": "events",
+        "status": "passed",
+        "details": {
+          "orphan": [],
+          "checked": 109
+        }
+      },
+      {
+        "id": "HANDOFF-refs",
+        "category": "handoffs",
+        "status": "passed",
+        "details": {
+          "orphan": [],
+          "actionBindingsChecked": 364
+        }
+      },
+      {
+        "id": "TOOL-permissions",
+        "category": "tools",
+        "status": "passed",
+        "details": {
+          "orphan": [],
+          "checked": 133
+        }
+      },
+      {
+        "id": "GATE-agent-refs",
+        "category": "quality_gates",
+        "status": "passed",
+        "details": {
+          "orphan": []
+        }
+      },
+      {
+        "id": "ERROR-categories",
+        "category": "errors",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "ERROR-retry-semantics",
+        "category": "errors",
+        "status": "passed",
+        "details": {}
+      },
+      {
+        "id": "ERROR-critical-behavior",
+        "category": "errors",
+        "status": "passed",
+        "details": {}
+      },
+      {
+        "id": "ERROR-cr026-codes",
+        "category": "errors",
+        "status": "passed",
+        "details": {
+          "registered": 12,
+          "expected": 12
+        }
+      },
+      {
+        "id": "ERROR-cr027-budget-not-configured",
+        "category": "errors",
+        "status": "passed",
+        "details": {
+          "registered": 1
+        }
+      },
+      {
+        "id": "ERROR-cr027-close-unconfirmed",
+        "category": "errors",
+        "status": "passed",
+        "details": {
+          "registered": 1
+        }
+      },
+      {
+        "id": "PROFILE-agent-action-binding",
+        "category": "model_profiles",
+        "status": "passed",
+        "details": {
+          "bindings": [
+            "copywriting-agent::create_ad_copy",
+            "copywriting-agent::revise_copy",
+            "strategy-quality-agent::review_copy"
+          ]
+        }
+      },
+      {
+        "id": "PROFILE-single-active",
+        "category": "model_profiles",
+        "status": "passed",
+        "details": {
+          "active": 3
+        }
+      },
+      {
+        "id": "PROFILE-semantics-local-catalog",
+        "category": "model_profiles",
+        "status": "passed",
+        "details": {
+          "issues": []
+        }
+      },
+      {
+        "id": "HARNESS-error-mapping",
+        "category": "harness",
+        "status": "passed",
+        "details": {
+          "mismatched": [],
+          "kinds": 28
+        }
+      },
+      {
+        "id": "SCHEMA-draft",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "invalid": []
+        }
+      },
+      {
+        "id": "SCHEMA-id-unique",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "duplicates": []
+        }
+      },
+      {
+        "id": "SCHEMA-ref-resolution",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "unresolved": [],
+          "schemas": 34
+        }
+      },
+      {
+        "id": "SCHEMA-cr026-executable-keywords",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "unsupported": []
+        }
+      },
+      {
+        "id": "SCHEMA-common-definitions-1.1",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "from": "1.0",
+          "to": "1.1",
+          "v10UnchangedFromRelease215": true,
+          "definitionsAdded": [
+            "dataClassification",
+            "nonNegativeSafeInteger",
+            "identifierLimits",
+            "traceContext",
+            "classificationSourceRef",
+            "requestFingerprint",
+            "attemptCallId"
+          ]
+        }
+      },
+      {
+        "id": "SCHEMA-release-2.16-refs-common-1.1",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "referencingOldVersion": []
+        }
+      },
+      {
+        "id": "SCHEMA-context-package-1.1",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "id": "https://schemas.oplyra.com/core/context-package/1.1"
+        }
+      },
+      {
+        "id": "SCHEMA-model-profile-1.0-unchanged",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "id": "https://schemas.oplyra.com/ai-model-harness/model-profile/1.0",
+          "unchangedFromRelease216": true
+        }
+      },
+      {
+        "id": "SCHEMA-model-profile-1.1",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "id": "https://schemas.oplyra.com/ai-model-harness/model-profile/1.1",
+          "timeoutMsMaximum": 840000,
+          "identicalExceptTimeoutMs": true
+        }
+      },
+      {
+        "id": "PROFILE-registry-entry-schema-1.1",
+        "category": "model_profiles",
+        "status": "passed",
+        "details": {
+          "entrySchema": "../schemas/ai-model-harness/model-profile-1.1.schema.json"
+        }
+      },
+      {
+        "id": "PROFILE-entries-valid-schema-1.1",
+        "category": "model_profiles",
+        "status": "passed",
+        "details": {
+          "invalid": [],
+          "derivedLeaseSeconds": [
+            90,
+            90,
+            90
+          ]
+        }
+      },
+      {
+        "id": "SCHEMA-cr027-ledger-schemas",
+        "category": "schemas",
+        "status": "passed",
+        "details": {
+          "schemas": [
+            "https://schemas.oplyra.com/ai-model-harness/budget-period/1.0",
+            "https://schemas.oplyra.com/ai-model-harness/cost-ledger-entry/1.0",
+            "https://schemas.oplyra.com/ai-model-harness/model-attempt/1.0"
+          ]
+        }
+      },
+      {
+        "id": "REPORT-cr027-schema-validations",
+        "category": "supporting_artifacts",
+        "status": "passed",
+        "details": {
+          "present": 4,
+          "expected": 4
+        }
+      },
+      {
+        "id": "DATABASE-cr027-ledger-migrations",
+        "category": "database",
+        "status": "passed",
+        "details": {
+          "forcedRls": 4,
+          "tableGrants": 0,
+          "revokedFromPublic": 7,
+          "securityDefinerWithFixedSearchPath": 7
+        }
+      },
+      {
+        "id": "FROZEN-migrations-000001-000014",
+        "category": "freeze",
+        "status": "passed",
+        "details": {
+          "migrations": 14,
+          "changed": [],
+          "onDisk": 15
+        }
+      },
+      {
+        "id": "DATABASE-cr028-owner-guard-migration",
+        "category": "database",
+        "status": "passed",
+        "details": {
+          "hardenedFunctions": 4,
+          "triggerDepthInDecision": false
+        }
+      },
+      {
+        "id": "CONFIG-cr028-environment-identity",
+        "category": "configuration",
+        "status": "passed",
+        "details": {
+          "approvedDeploymentProviders": 0,
+          "allowRemoteDefined": false,
+          "strictUrlParsing": true
+        }
+      },
+      {
+        "id": "DOCS-cr029-governed-documents",
+        "category": "documentation",
+        "status": "passed",
+        "details": {
+          "deferralParagraphPresent": false,
+          "doc16AllowRemoteRow": false,
+          "tst19Reconciled": true
+        }
+      },
+      {
+        "id": "DOCS-cr029-operational-documents-outside-digest",
+        "category": "documentation",
+        "status": "passed",
+        "details": {
+          "a14MarkedSuperseded": true,
+          "volatileCountsInVerificacoes": false,
+          "hashedInReport": false
+        }
+      },
+      {
+        "id": "MANIFEST-files",
+        "category": "schema_manifest",
+        "status": "passed",
+        "details": {
+          "missing": []
+        }
+      },
+      {
+        "id": "MANIFEST-ids",
+        "category": "schema_manifest",
+        "status": "passed",
+        "details": {
+          "mismatched": []
+        }
+      },
+      {
+        "id": "FIXTURE-model-invocation-request",
+        "category": "fixtures",
+        "status": "passed",
+        "details": {
+          "valid": 2,
+          "invalid": 11,
+          "unexpected": []
+        }
+      },
+      {
+        "id": "FIXTURE-provider-response",
+        "category": "fixtures",
+        "status": "passed",
+        "details": {
+          "valid": 3,
+          "invalid": 10,
+          "unexpected": []
+        }
+      },
+      {
+        "id": "FIXTURE-model-registry-entry",
+        "category": "fixtures",
+        "status": "passed",
+        "details": {
+          "valid": 1,
+          "invalid": 3,
+          "unexpected": []
+        }
+      },
+      {
+        "id": "FIXTURE-model-profile",
+        "category": "fixtures",
+        "status": "passed",
+        "details": {
+          "valid": 1,
+          "invalid": 5,
+          "unexpected": []
+        }
+      },
+      {
+        "id": "FIXTURE-model-call-record",
+        "category": "fixtures",
+        "status": "passed",
+        "details": {
+          "valid": 3,
+          "invalid": 6,
+          "unexpected": []
+        }
+      },
+      {
+        "id": "FIXTURE-model-profile-1.1",
+        "category": "fixtures",
+        "status": "passed",
+        "details": {
+          "valid": 1,
+          "invalid": 1,
+          "unexpected": []
+        }
+      },
+      {
+        "id": "FIXTURE-budget-period",
+        "category": "fixtures",
+        "status": "passed",
+        "details": {
+          "valid": 2,
+          "invalid": 8,
+          "unexpected": []
+        }
+      },
+      {
+        "id": "FIXTURE-cost-ledger-entry",
+        "category": "fixtures",
+        "status": "passed",
+        "details": {
+          "valid": 3,
+          "invalid": 6,
+          "unexpected": []
+        }
+      },
+      {
+        "id": "FIXTURE-model-attempt",
+        "category": "fixtures",
+        "status": "passed",
+        "details": {
+          "valid": 3,
+          "invalid": 6,
+          "unexpected": []
+        }
+      },
+      {
+        "id": "REPORT-errors-validation",
+        "category": "supporting_artifacts",
+        "status": "passed",
+        "details": {
+          "canonicalErrors": 60
+        }
+      },
+      {
+        "id": "REPORT-model-profiles-validation",
+        "category": "supporting_artifacts",
+        "status": "passed",
+        "details": {
+          "canonicalProfiles": 3
+        }
+      },
+      {
+        "id": "FROZEN-registries-unchanged",
+        "category": "freeze",
+        "status": "passed",
+        "details": {
+          "changed": []
+        }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/agents.json",
+      "sha256": "52d9cdc5b1c2f54ad022a345778be2e08e53acd2a3fa67664008fbfa9cce26fe",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/permissions.json",
+      "sha256": "38ff5cf89e23fb4e66c0798fe1ea6537d94f9813ecc4074c90a50ef4bac5329e",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/tools.json",
+      "sha256": "36cf3acc8b69ea0f33a801eae6ca8c2b8a170c9aa7f8002082d364d61a2ed226",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/actions.json",
+      "sha256": "5c5ee83217cb1b023de222e20b7997df3568de3be22948c527f414032116a4a7",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/events.json",
+      "sha256": "51176c9756dcfb60f6635df1edd3a7f3b3266e45fbb897aa6a215834060a6eb8",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/errors.json",
+      "sha256": "3ad9e50b950814a452d7dee68e2a7a328b44664947bf65d718480a8df3e02a60",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/handoffs.json",
+      "sha256": "9b5f777d7147c5506ed9691769de7241adec1707af4488b73b145d4b8e4f3061",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/quality-gates.json",
+      "sha256": "9d12baad514abe25b323f568c7b0e63d294863fa5ba8db697e001bb18fe7430d",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/model-profiles.json",
+      "sha256": "c4a46eebbf169bf569ba3df437caf690674ea0ba76e142fac29451a3f9e09a2f",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/error.schema.json",
+      "sha256": "b354c4aa8214878ee7d08be7027b02a4e9eceafa34f814d15db87f538e3b32e8",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/agent-definition.schema.json",
+      "sha256": "d14b18fe859c87d97f3906cbcf3db6d62b06b2ec406a54d99977e75f1623597c",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/budget-period.schema.json",
+      "sha256": "d1e680ece804d6a0617a64ce03b94e46c3c14b3689f7f6c16c24d364739b2372",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/cost-ledger-entry.schema.json",
+      "sha256": "4a45174505fb2b7903b922ebdbc20e870bb4e959e5d5f2d5f1783aba40ad6709",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-attempt.schema.json",
+      "sha256": "36cd2c03786b0c87c0ad1113a07bef66756618e1e80cc3f2da3ce71575b6c675",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-call-record.schema.json",
+      "sha256": "a50c0f1c84ff09fed139f9880a9ea6bf40fdfe8d678746285cf64c18abd0f94b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-invocation-request.schema.json",
+      "sha256": "3ccdd68aa3bd9e60f02523070733a5f95790421e861a412ebc2bae49d9075fb9",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-profile-1.1.schema.json",
+      "sha256": "fa4c41d44b58a3b586d311cb331dc727ba5508635b46440706854f23658c4f19",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-profile.schema.json",
+      "sha256": "2720854e982362ca289cbe0cef6a2e7edf25303d990deb4f44e1dcc38fb06e4b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-registry-entry.schema.json",
+      "sha256": "690a3b48016ea910c2974fca8d8fa7429d361ec9497cc2e8921452d4630e36b6",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/provider-response.schema.json",
+      "sha256": "586b6649a584861dfc6d260450ed56d21198da46e1a702359381b8d6ad6145cc",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/approval.schema.json",
+      "sha256": "5f4268f1142fc6a8aa3bf9ce1d2facb8fdf48916ec9f9425113c9c22c1f9fc73",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/common-definitions-1.1.schema.json",
+      "sha256": "c7ee32d3a27c5fc52251c72c2d4e854df3eafa26e75be7f5c2f9edb3c0675b36",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/common-definitions.schema.json",
+      "sha256": "25456132041bf1affbd09210921b12d7b2555d15269adbe45f6f203eac5c2a2d",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/context-package.schema.json",
+      "sha256": "f7207dafd61447e6da24aa76c6cfcae311543232db9284de4dd05e9f2c1e7d30",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/context-update-candidate.schema.json",
+      "sha256": "5c0f22127a18d9591346f49784eaa8652612a5c1568dc1c6232a2e9093578260",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.input.schema.json",
+      "sha256": "529dae1ded9c6255ab6fa39a45d198e743450dfbdb99ea5181f87839c176c66b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.output.schema.json",
+      "sha256": "634ad7e48ec9b947d5c8ca7bb6909a90e42e921ad72d1f8e336b07e4d3c0c412",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/error.schema.json",
+      "sha256": "b354c4aa8214878ee7d08be7027b02a4e9eceafa34f814d15db87f538e3b32e8",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/events/copywriting/copy-draft-created.payload.schema.json",
+      "sha256": "e6d66e1d023836e8428dc16f90daf1e3435a759bb1a663997377e517f8817e79",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/events/runtime/runtime-dead-lettered.payload.schema.json",
+      "sha256": "e1021ec68553f385985f05ec346cd3bfe40a30d6fd79c0aabf2a2a35677b4603",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/handoff.schema.json",
+      "sha256": "b89c84f22c1040b6dde20457594a54c0c0d170a5fd7b04c20d92771fcbb164e4",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/learning-record.schema.json",
+      "sha256": "0381d9b397a41c95370d8cb15e15b7014b41746128e9b27011fc74e10e1146d1",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/quality-review.schema.json",
+      "sha256": "c6bbbb836ed41af9c951d28abaa6c863ea0ad5927ae0e7d89e9b8b078771e96b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/content-reference-resolver.input.schema.json",
+      "sha256": "75acccd7a8545efbf59bd5a64e9db1b328d0fb9da55a77e0bb50f431d61a8cfe",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/content-reference-resolver.output.schema.json",
+      "sha256": "25e1471303d65688760e5aa88459e1139b32bb4c195d70892b1134166ba461e6",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-claim.input.schema.json",
+      "sha256": "1aa81f7c740e1c406797416fbf4899cc2bbf113c086707d5a11a8294f2a60f94",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-claim.output.schema.json",
+      "sha256": "f515113aea963bd050ab99bb2ef27910606e8f5543122e946ff3bfee44c8c8c6",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-runtime-plan.schema.json",
+      "sha256": "6306bd07af57e5ff4b001bf90b64ea6800b47c941b7abd11ecb4893ad3208f40",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-settlement.input.schema.json",
+      "sha256": "99b370013b1cf3fcb505da47daf990b8f320be333beccc80a204609cd34183a9",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-settlement.output.schema.json",
+      "sha256": "6bccf143ee733a4a19c91d42d4bfc516202579e1a6a018c1ceae4de800450f47",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-retry-policy.schema.json",
+      "sha256": "e70961e67a48b02f0ffa9826e3981de3a10e0d92af01338357da36d490a5a5ea",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/production-environment-plan.schema.json",
+      "sha256": "25fcc6a2a32291d5c7eebf5aaca901bcf1b20d546d6b66849fced86b65232eb0",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/task.schema.json",
+      "sha256": "7a4fcea73356995ecd75e67ed14ed1d98fe93e093b7cc7c216e86e25395c3ee7",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/transaction-envelope.schema.json",
+      "sha256": "f412c547f76b9cc26b1870fc683d32a1deb38bdbe8afb4b2b9764beed65c61e8",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-profile-1.1.validation.json",
+      "sha256": "22f18a33ea63f351daf01c8212abf513219b219cba5a8aee821e5f2838bef4f1",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/budget-period.validation.json",
+      "sha256": "5d0f9dde9b0badbe36567a596eae1a91f6863cf9a8939d7d1ec0f03304a0757f",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/cost-ledger-entry.validation.json",
+      "sha256": "4c47dc3ad6e25bb2d1b38a85501ef46301576aa1834c06eb558e3a6e87a3fac4",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-attempt.validation.json",
+      "sha256": "3331821c283b4e1ec9ff0e3102525ac1b18921cb28de0a360dd49215d16280b7",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "supabase/migrations/20260929000013_finops_ledger_schema.sql",
+      "sha256": "f2668c1fd43434c2581fc68bfc70b7d71167f49b28e2b958e86a0cd8e2d654af",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "supabase/migrations/20260929000014_finops_ledger_functions.sql",
+      "sha256": "dc7cbb3f444d76c689cda63fc3fe3de347851efa0d52d2048fd26d6fa9ffb047",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "supabase/migrations/20260929000015_tenant_deletion_owner_guard.sql",
+      "sha256": "0884972aa649dc6629cb3538b5f1203c0d5ab3aa67cf87ec805a0eed3e8cc342",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "packages/infra/src/config.ts",
+      "sha256": "acbdcbe00654f0e1c2d08047a7002fddbe1e0223e815e1e3a4a907a6d3f6ef0a",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "01bcfda7ada3758420b18f85523b33ffff2f6881be66bdcb740f924e3b0a6d6c",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "10d68808b0335b247eb3db29d1b681918bc6457a5b9dd7d586796b161e82ab36",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/16-environments-release.md",
+      "sha256": "1f836bf208325cdd3366ebb3a98de30777160113747838937942b2e8e6032f77",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/15-test-plan.md",
+      "sha256": "15d560ecd864d52e186c92ba23b849b7d3631bc6b245b2073c7f24b18aacce5f",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/harness/PREPARACAO-SUPABASE-PRODUCAO.md",
+      "sha256": "f7fc1b641d175f31e0b727f86b717e75114404c079ab9d2d07c37b1f8b05e93b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schema-integration-manifest.json",
+      "sha256": "7d4d1dd789aa53dc4dd5a442c6aed639568952367bc1bb517124ac24fd926152",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-invocation-request-visual.json",
+      "sha256": "22c4642069aa98a01aa8b6f46e8d1a472bd4784db8235f9210df590a834b7898",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-invocation-request.json",
+      "sha256": "ef7bc6a390c0b385ad3318676f8861c52b7e3bf3ca10a03aed66945a9b9d1c4c",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-classification-downgrade-business-invariant.json",
+      "sha256": "eec3b7b593d97d56edd4e2f4cfdb7ddf6af3fea41ed1664c030400e48e62e75e",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-decimal-requested-images.json",
+      "sha256": "b0a70afd7c17bc5a40d81d39f86236c6f1b273801e09e203033fe2c65d9b767b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-idempotency-conflict-business-invariant.json",
+      "sha256": "46a182c725c95c234e5fa3ec81d337ea4adfc80f76363beae841b8e59b39d394",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-invocation-id-too-long.json",
+      "sha256": "e81fe224dc613aaea964dd695fb9bb51c67992479409aaf4e209b926b8018a82",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-lone-surrogate-invocation-id.json",
+      "sha256": "7a6832f4600acd3924eed72e712572b7336dd9344dc05f833555020a529f101c",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-lone-surrogate-message.json",
+      "sha256": "36de2534f967f5dfc07b6daa37b2f2fb30aa284be1d17b7186086bfe3568530a",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-message-above-byte-limit-business-invariant.json",
+      "sha256": "9d6879d957a0ccececcb5b0b51f2d80929e19500723815ae4670f2256eb2a939",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-negative-hint.json",
+      "sha256": "3d39184fdb2e858453182958234997490292398612e315b43a1efdec09189a0b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-selects-model.json",
+      "sha256": "587e5d3bc45cf50a572bb98db10b2437099f8a115464da74c0c81ff7e3b390da",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-too-many-messages.json",
+      "sha256": "d499b584d3aa772a77e45e82e3d7a5f357705b5f3b3296fa9dae3f67f7fccf85",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-invocation-request-without-text-modality-business-invariant.json",
+      "sha256": "46bfe68609b8bfcf026dedc2359e2da60d11ec762a818385c80cc01bdd78cadd",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/provider-response-failure.json",
+      "sha256": "45cc16ba666dbddf9851d595554a81f94ce03cb897a306b3d04094d34766f923",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/provider-response-text-success.json",
+      "sha256": "f5c612659d6b2a5ab84f2aff3a1db5480493b0da16dfee946716b04b2b2474d4",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/provider-response-visual-success.json",
+      "sha256": "fb60ef94d989f1ba9091c65a16767cda661c0c52f67561d06668b9e11fc692dd",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-decimal-reported-cost.json",
+      "sha256": "b0f8f9a78375a2182a9c06dc32773e64efd396e46c4c707d53f8d1cb75e75a2c",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-negative-usage.json",
+      "sha256": "a4e293148d929f6729fe3174e7830c1e0483030a4c10e8c569793124e995e22f",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-reported-cost-above-safe-integer.json",
+      "sha256": "83d2a3e21b655f486cb33bdda514aafe168151543bbe7f96c236fc39bfa7c265",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-success-without-usage-business-invariant.json",
+      "sha256": "68018e468f6f5f3811b913cc7e3a22fcf0fa7163123cc9d8477338a4e621dd23",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-text-with-images-business-invariant.json",
+      "sha256": "122c7e75da1b27c9f9401a91ad2e46db7d54c9ce80ee38534b35be9418e6bf48",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-unknown-error-kind.json",
+      "sha256": "0c84c34f445305a8bba1a825bdb66a290c50ac7d3defe03cb20439afdfb41df2",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-visual-above-requested-business-invariant.json",
+      "sha256": "7b2b59bd657ecfa294470e5466a9662732773f773b5a710bca80acc402471c42",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-visual-data-url.json",
+      "sha256": "0ddb3481e3bc5369d22eb124bd9d62a151778d4115ff6361110dcd5662057aa0",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-visual-inline-binary.json",
+      "sha256": "2efd2d251225ac6186c807fc2bebdba71003f6ce9be725fdbeac499d71597c98",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/provider-response-visual-zero-assets.json",
+      "sha256": "2e382ed37681146fa9811b7d358e2c60cf4ec7a66784a1acb0b3e769f6bd546a",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-registry-entry.json",
+      "sha256": "2359d201161806b3a53469713202b92b7f69b6545df6465689c8c574d7fa0f33",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-registry-entry-decimal-tariff.json",
+      "sha256": "0b975316697f914fabc4ba3ff98d71b51ffb0e3a7a2e25798b0d1236fc4e91c1",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-registry-entry-experimental-real-data-business-invariant.json",
+      "sha256": "b047a0b138d52462a92e0caa19a8119fa6d36330dd66e4757b829874c194f85b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-registry-entry-negative-tariff.json",
+      "sha256": "fcbc23c78cfe03c6db5dc75b6eb22a80f514c8b39c539cbbcfc89aeb7d53b0de",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-profile.json",
+      "sha256": "3fb84521d8c775ca5e172506aec4977483badf70fdabfc100a453cd7d31583b4",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-profile-action-not-callable-business-invariant.json",
+      "sha256": "f7b511e1f7ddd0478f4fa64093a340d880c1e2c6a6c646d279f433aa02ddec02",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-profile-candidate-forbidden-business-invariant.json",
+      "sha256": "051d3bc7be2be938a171147c1eb8112af7c5de3756e9cffb6b14230c70b0295d",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-profile-lowest-cost-without-threshold-business-invariant.json",
+      "sha256": "c31f19e0c43da0f2ae508ae76e0f80b3339e342998e054ffcf3eaeff6f3032fa",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-profile-max-attempts-above-limit.json",
+      "sha256": "0a553d1d04d7c2e549b5c11b13889a0795d1a4955b2ee74e713a0ab7371628e8",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-profile-temperature-above-range.json",
+      "sha256": "096bad5d51155e3b8a41d28470dfd4b191ba871b62dd1c39bad37d0d813b2333",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-call-record-failed.json",
+      "sha256": "2302c5c75b6982aee296edc331b9ef3402528dc8438bad5827f961537aa7406b",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-call-record-text.json",
+      "sha256": "564f8fb10c5158550278fc30effe250e2bc7383103c2641b545ec3afa633d51f",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-call-record-visual.json",
+      "sha256": "b57847812776db05193a56c4261ab2f7992d5d93dd0f017fe96d3f4ce765ba13",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-call-record-assets-on-failure-business-invariant.json",
+      "sha256": "5fa6af575beb555f29a1757a7ddf638c6215bdbd504f76bf4a0958f19cd2541a",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-call-record-call-id-other-tenant-business-invariant.json",
+      "sha256": "3ba60a7788adb10e6a509725bd48d6fb49ac5e84debd68a2537013acc1bcfd69",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-call-record-lone-surrogate-tenant.json",
+      "sha256": "bef46a6c71eada99d94d793df902cd834d2cd0e115c0feb51291ac11624dea09",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-call-record-provenance-other-tenant-business-invariant.json",
+      "sha256": "1aabc322839b806ee1a70af6f5cf8350dae25a04c372c95aaba8dcdffa813c1d",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-call-record-raw-call-id.json",
+      "sha256": "b1434a8bde3cc696735d5071dd560af19c7bea8229c0e18d41f6fd0e0375d4db",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-call-record-unkeyed-fingerprint.json",
+      "sha256": "70781b84c473b39b05b7178965f5066759a5252398dfe5688ad7a7ccba15769e",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-profile-1.1-timeout-at-maximum.json",
+      "sha256": "4860ef2e244fdfb5ba0afac9b4a34a75324a0698a3f85ac84d69d0d353ee6cd9",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-profile-1.1-timeout-above-maximum.json",
+      "sha256": "9bc6260bbb3a9f89d0baed431c7534c779708642485bdf3bbc467feeee9eaa6f",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/budget-period-workflow-closed.json",
+      "sha256": "8e42350d1757b1af10fbf1736ccc49319c622b22c02f8f59a19bd779802156e8",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/budget-period.json",
+      "sha256": "a58f83c1aef3c197810c7761d5561d781bd57ffb921857cb272551026c77a852",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/budget-period-above-safe-integer.json",
+      "sha256": "b63a8612651a55cf23522e4b62375ab06be8174e627d8fc5844eff637812797d",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/budget-period-closed-without-closed-at-business-invariant.json",
+      "sha256": "ab6edafb186a5b4bac86344e6a1840cf4e8db2afd80d99172f8b0cf3b37a83c1",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/budget-period-decimal-amount.json",
+      "sha256": "99518b6bdf6ed036bf8cd056bb61082d0e8ef52d738fa92413b91d8211c83696",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/budget-period-inverted-window-business-invariant.json",
+      "sha256": "e1e0648ed8e5b3c814b6d7d3728054fedd5ebbd3d8a2327d4377030a0baac742",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/budget-period-malformed-period-id.json",
+      "sha256": "f0137216586e32c91b15e8cd575e73885f7bfec03af8ece75971576b10213af7",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/budget-period-negative-limit.json",
+      "sha256": "e8dfd2a84a0db8d71281d667fc92ed23c6b5d0b6886280ea2827e0bdfef39777",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/budget-period-overlapping-business-invariant.json",
+      "sha256": "68076990a1d20f3eaa981483a85b466e5adcfa46e1481c20fb54157991ecf4d7",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/budget-period-tenant-scope-with-workflow-key-business-invariant.json",
+      "sha256": "7160bf1000de916504ac78f0253ed0bffc42bb72beba85bdf7276f6ca70340da",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/cost-ledger-entry-reconcile.json",
+      "sha256": "1ce44d39c01e4c568688233518bd642fa864cb24b054d6f213deccc297199e33",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/cost-ledger-entry-settle-overrun.json",
+      "sha256": "ab88439c95ba5f2936f693a96e973996d479a1db0ad3e66b86aa2479eaffc8db",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/cost-ledger-entry.json",
+      "sha256": "640766df93fd762d32ffcb1a9a4c7f6eae545af35d1a4782545498c68a70e066",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/cost-ledger-entry-decimal-delta.json",
+      "sha256": "3191d9710c8fd672fbab62eb6bb36f2cac39d3e885d793f1ecd191807d913ee8",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/cost-ledger-entry-delta-above-safe-integer.json",
+      "sha256": "ad9ba2fd89c4c8eaf726ec8b1f9fc2910fa66ddad73597852cddb3eeb12c62d4",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/cost-ledger-entry-forbidden-sign-business-invariant.json",
+      "sha256": "64b47a1f184823566bbd24d3f1be5b252dda79b9935951712a14383a989d27e4",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/cost-ledger-entry-hold-unbalanced-business-invariant.json",
+      "sha256": "533bf689f06e71113bcdc4f0e46a7b60fb30a01baebc360b736974407333b4af",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/cost-ledger-entry-id-not-deterministic-business-invariant.json",
+      "sha256": "31ea7033058ae7abce49639753e690e878c0c8cd39c920fabf936babb0a8e4f5",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/cost-ledger-entry-malformed-entry-id.json",
+      "sha256": "af957859100e4e028a12151574fb6fc1853887fd1493885e18a51df397fc1120",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-attempt-reconciled.json",
+      "sha256": "b1edbf1c508a5e65cb82614e512d519a24d655b90e7f0561207fcab90769a62d",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-attempt-released.json",
+      "sha256": "c9f9d3a3e629f2665e41cc7b679c7afeacaff2ec296edb2cc78baa5267e8cb4f",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/valid/model-attempt.json",
+      "sha256": "97ac0d62363c3e157994359641a1959bed014249b88a35de3a0f1bfcb4d5f462",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-attempt-call-id-other-scope-business-invariant.json",
+      "sha256": "649a564b931a6df0ed645945f8f365257fb56ca1a35d2fc2cb55e469bac9bef9",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-attempt-lease-above-900.json",
+      "sha256": "d9ba90ec2119c82be99fd040fe82c794fdcf4871a8bde60f2a964f611f62818e",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-attempt-malformed-call-id.json",
+      "sha256": "e828e5e39c087bba439e9246b80c9ec7255d825c8b7b6fff9ac6ce50bc81a95d",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-attempt-negative-estimate.json",
+      "sha256": "ecffe7a58ef292f44369cdd61334111395777f55ea79195fe0ebfdb00f8fa4ed",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-attempt-reconciled-without-evidence-business-invariant.json",
+      "sha256": "0f6f40d2778f613397a6a7af4a0c370d9b398c263511d72f6e091051cbae5bec",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/fixtures/invalid/model-attempt-released-nonzero-actual-business-invariant.json",
+      "sha256": "50b97912fdcc5adb3ed6b7945f27bb8e442725b55dfcb6eb080ba8f95deec1b2",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/errors.validation.json",
+      "sha256": "63b196f771fc0c7fdcf61022a4eb54b76aeb7e05da87f756c0e57c8c60686468",
+      "evidenceLevel": "direct"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/model-profiles.validation.json",
+      "sha256": "347f3f6fb11d6df1a3d09439ce8a260fdf0a9acd1bcdd99f72dba6dd16c19c17",
+      "evidenceLevel": "direct"
+    }
+  ]
+}
