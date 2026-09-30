@@ -1,0 +1,15 @@
+{
+  "name": "@oplyra/developer-harness",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Developer Harness tooling (Claude Code, Context7 MCP, Playwright MCP). Isolated from the product workspace; never a product dependency.",
+  "packageManager": "pnpm@12.4.2",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-code": "2.1.284",
+    "@playwright/mcp": "0.0.83",
+    "@upstash/context7-mcp": "4.1.1"
+  }
+}

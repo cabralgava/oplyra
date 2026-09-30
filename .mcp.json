@@ -1,0 +1,40 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "stdio",
+      "command": "corepack",
+      "args": [
+        "pnpm",
+        "--dir",
+        "tools/developer-harness",
+        "exec",
+        "context7-mcp"
+      ]
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "corepack",
+      "args": [
+        "pnpm",
+        "--dir",
+        "tools/developer-harness",
+        "exec",
+        "playwright-mcp",
+        "--browser",
+        "chrome",
+        "--headless",
+        "--isolated",
+        "--block-service-workers",
+        "--no-webmcp",
+        "--image-responses",
+        "omit",
+        "--allowed-origins",
+        "http://localhost:3100;http://127.0.0.1:3100;http://localhost:54421;http://127.0.0.1:54421;http://localhost:54424;http://127.0.0.1:54424",
+        "--output-dir",
+        "test-results/playwright-mcp",
+        "--output-max-size",
+        "10485760"
+      ]
+    }
+  }
+}

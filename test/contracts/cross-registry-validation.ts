@@ -1,4 +1,4 @@
-// Cross-registry validation executável da Contract Registry Release 2.20.
+// Cross-registry validation executável da Contract Registry Release 2.21.
 // Reproduz as categorias da validação do Freeze v1 (envelope, identidade,
 // contagem, nomenclatura, referências, schemas, manifest de integração),
 // mantém as verificações do CR-026 e acrescenta as do CR-027 (Error Registry
@@ -6,10 +6,12 @@
 // migrations do Ledger) e, desde a 2.18, as do CR-028 (migration 000015,
 // migrations anteriores imutáveis, identidade de ambiente) e, desde a 2.19, as
 // da reconciliação documental do CR-029 e, desde a 2.20, as do alinhamento da
-// documentação de produto de IA do CR-030. As Releases 2.16 a 2.19 ficam como
-// evidência histórica nos relatórios versionados de cada uma.
+// documentação de produto de IA do CR-030 e, desde a 2.21, as do Developer
+// Harness do CR-031 (isolamento do tooling, guard e launcher, documentos, fixtures
+// determinísticas). As Releases 2.16 a 2.20 ficam como evidência histórica nos
+// relatórios versionados de cada uma.
 import { createHash } from "node:crypto";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { createSchemaRegistry, unsupportedKeywords, validateSchema } from "./json-schema-subset.ts";
 import {
@@ -70,6 +72,16 @@ export const CR030_DOCS = [
   ...["01-product-requirements", "02-discovery", "03-domain-model", "04-architecture", "05-data-model", "06-integrations", "07-security-lgpd",
     "08-billing-entitlements", "09-agentic-architecture", "10-agent-catalog", "11-agent-governance", "12-roadmap", "13-ai-model-routing-finops",
     "17-risks-costs", "18-technical-experiments", "ATUALIZACOES", "README"].map((n) => `docs/product/marketing-ops/${n}.md`),
+] as const;
+/** Arquivos do Developer Harness (CR-031) que a cross-validation lê como entrada. */
+export const CR031_FILES = [
+  "CLAUDE.md", "README.md", ".claude/settings.json", ".mcp.json", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".github/workflows/ci.yml",
+  "scripts/claude-local-first-guard.mjs", "scripts/claude-local-first-guard.test.mjs", "scripts/claude-launch.mjs", "scripts/claude-launch.test.mjs", "scripts/claude-permission-probe.mjs",
+  "docs/harness/AUTONOMOUS-BUILD.md", "docs/harness/DESENVOLVIMENTO.md", "docs/harness/DEVELOPMENT-TOOLS.md", "docs/harness/SYSTEM-TEST-USERS.md",
+  "tools/developer-harness/package.json", "tools/developer-harness/pnpm-workspace.yaml", "tools/developer-harness/pnpm-lock.yaml",
+  "packages/infra/test/design-agent-copy-draft-consumer.integration.test.ts", "packages/infra/test/outbox-dispatcher-cycle.integration.test.ts",
+  "packages/infra/test/outbox-claim-determinism.integration.test.ts",
+  "test/developer-harness.arquitetura.test.ts", "test/developer-harness.supply-chain.test.ts", "test/integration-fixtures-determinism.test.ts",
 ] as const;
 export const CR028_MIGRATION = "supabase/migrations/20260929000015_tenant_deletion_owner_guard.sql";
 /**
@@ -369,6 +381,70 @@ export function runCrossRegistryValidation(root: string): { checks: Check[]; cou
   ];
   const achados = CR030_DOCS.flatMap((p) => proibidos.filter(([, re]) => re.test(dl(p))).map(([id]) => `${p}:${id}`));
   add("DOCS-cr030-no-enablement-claims", "documentation", achados.length === 0, { findings: achados });
+
+  // CR-031: Developer Harness. Isolamento do tooling, guard e launcher, documentos e fixtures determinísticas.
+  for (const p of CR031_FILES) inputs.push({ path: p, sha256: sha256File(root, p), evidenceLevel: "direct" });
+  const hf = (p: string) => readFileSync(join(root, p), "utf8");
+  const hj = (p: string) => JSON.parse(hf(p)) as Json;
+  const rootPkg = hj("package.json");
+  const isolado = hj("tools/developer-harness/package.json");
+  const PACOTES_HARNESS = /@anthropic-ai\/claude-code|@playwright\/mcp|@upstash\/context7-mcp|@modelcontextprotocol\//;
+  const lockRaiz = hf("pnpm-lock.yaml");
+  const mcp = hj(".mcp.json");
+  const ciYml = hf(".github/workflows/ci.yml");
+  const isolamento = {
+    rootWithoutHarnessDeps: ["dependencies", "devDependencies"].every((k) => Object.keys(rootPkg[k] ?? {}).every((n) => !PACOTES_HARNESS.test(n))),
+    rootLockWithoutHarness: !PACOTES_HARNESS.test(lockRaiz) && !lockRaiz.includes("1.64.0-alpha") && !/@opentelemetry\/api@/.test(lockRaiz),
+    rootWorkspaceUnchanged: hf("pnpm-workspace.yaml") === 'packages:\n  - "apps/*"\n  - "packages/*"\n  - "experiments/*"\n',
+    isolatedFiles: JSON.stringify(readdirSync(join(root, "tools/developer-harness")).filter((n) => n !== "node_modules").sort()) === JSON.stringify(["package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"]),
+    isolatedPinsExact: isolado.private === true && isolado.scripts === undefined && Object.values(isolado.devDependencies as Record<string, string>).every((v) => /^\d+\.\d+\.\d+$/.test(v)) &&
+      Object.keys(isolado.devDependencies).length === 3,
+    isolatedWorkspace: hf("tools/developer-harness/pnpm-workspace.yaml") === "allowBuilds:\n  '@anthropic-ai/claude-code': true\n",
+    mcpByDirectory: Object.values(mcp.mcpServers as Record<string, Json>).every((v) => v.command === "corepack" && JSON.stringify(v.args.slice(0, 4)) === JSON.stringify(["pnpm", "--dir", "tools/developer-harness", "exec"])),
+    ciWithoutTooling: ciYml.includes("test ! -e tools/developer-harness/node_modules") && ciYml.includes("run: pnpm test:harness") && !/harness:install|developer-harness install|claude:local/.test(ciYml),
+  };
+  add("HARNESS-cr031-isolation", "harness", Object.values(isolamento).every(Boolean), isolamento);
+  const settings = hj(".claude/settings.json");
+  const guard = hf("scripts/claude-local-first-guard.mjs");
+  const launcher = hf("scripts/claude-launch.mjs");
+  const negados = ["browser_run_code_unsafe", "browser_evaluate", "browser_file_upload", "browser_drag", "browser_drop"];
+  const guardLauncher = {
+    hookAutonomous: /claude-local-first-guard\.mjs" --policy=autonomous$/.test(settings.hooks?.PreToolUse?.[0]?.hooks?.[0]?.command ?? ""),
+    noDefaultModeNoDisable: settings.permissions?.defaultMode === undefined && settings.disableAllHooks === undefined,
+    playwrightDenied: negados.every((t) => settings.permissions?.deny?.includes(`mcp__playwright__${t}`)),
+    gitMutationsDenied: ["push", "pull", "fetch", "add", "commit", "checkout", "switch", "reset", "restore", "clean", "merge", "rebase", "tag"].every((g) => settings.permissions?.deny?.includes(`Bash(git ${g} *)`)),
+    guardFailClosed: /POLICIES = Object\.freeze\(\["autonomous", "maintenance"\]\)/.test(guard) && /LF-CMD-NOT-ALLOWED/.test(guard) && !/--dangerously/.test(guard),
+    launcherModes: /ALLOWED_PERMISSION_MODES = Object\.freeze\(\["dontAsk", "manual"\]\)/.test(launcher) && /PERMISSION_MODE = decidePermissionMode\(PROBE_EVIDENCE\.proofs\)/.test(launcher),
+    probeEvidenceAllTrue: /proofs: Object\.freeze\(\{ P1: true, P2: true, P3: true, P4: true, P5: true, P6: true \}\)/.test(launcher),
+    rootScripts: rootPkg.scripts["claude:local"] === "node scripts/claude-launch.mjs" && rootPkg.scripts["claude:maintenance"] === "node scripts/claude-launch.mjs --maintenance",
+    // auditoria do CR-031: leituras fechadas, Context7 sem egress na sessão autônoma e dontAsk vinculado à versão instalada
+    hookCoversReadsAndMcp: ["Read", "Glob", "Grep", "mcp__.*"].every((t) => (settings.hooks?.PreToolUse?.[0]?.matcher ?? "").split("|").includes(t)),
+    readsClosed: /READ_TOOLS = new Set\(\["Read", "Glob", "Grep"\]\)/.test(guard) && /LF-READ-OUTSIDE/.test(guard) && /LF-READ-SECRET/.test(guard) && /LF-RG-OPTION/.test(guard),
+    context7NotAllowed: !(settings.permissions?.allow ?? []).some((r: string) => r.startsWith("mcp__context7")) &&
+      ["resolve-library-id", "query-docs"].every((t) => settings.permissions?.deny?.includes(`mcp__context7__${t}`)),
+    context7GuardedByPolicy: /CONTEXT7_PREFIX = "mcp__context7__"/.test(guard) && /LF-MCP-CONTEXT7/.test(guard) && /LF-MCP-UNKNOWN/.test(guard) && /MANUAL_HOOK_MODE = "default"/.test(guard),
+    launcherBindsModeToInstall: /export function inspectToolingBinding/.test(launcher) && /claudeVersion === probedCli/.test(launcher) && /LA-TOOLING-MISMATCH/.test(launcher) && /LA-TOOLING-ESCAPE/.test(launcher) &&
+      /export function resolvePermissionMode/.test(launcher) && /mode: kind === "maintenance" \? "manual" : resolvePermissionMode\(binding\)/.test(launcher),
+  };
+  add("HARNESS-cr031-guard-launcher", "harness", Object.values(guardLauncher).every(Boolean), guardLauncher);
+  const doc = (p: string) => hf(p);
+  const documentos = {
+    claudeStage: doc("CLAUDE.md").includes("## Estágio atual e limite de implementação") && !doc("CLAUDE.md").includes("Limite da etapa atual: discovery antes de implementação"),
+    readmeStage: !doc("README.md").includes("permanece arquitetural") && doc("README.md").includes("## Estágio atual e roadmap"),
+    toolsNoRemotePath: !doc("docs/harness/DEVELOPMENT-TOOLS.md").includes("sem autorização explícita") && /não é sandbox nem fronteira absoluta de segurança/i.test(doc("docs/harness/DEVELOPMENT-TOOLS.md")),
+    usersSynthetic: !doc("docs/harness/SYSTEM-TEST-USERS.md").includes("do prompt") && doc("docs/harness/SYSTEM-TEST-USERS.md").includes("não autoriza"),
+    autonomousDraft: /status: draft/.test(doc("docs/harness/AUTONOMOUS-BUILD.md")) && /executionEnabled: false/.test(doc("docs/harness/AUTONOMOUS-BUILD.md")),
+    developmentLinksExist: [...doc("docs/harness/DESENVOLVIMENTO.md").matchAll(/\]\(([^)#\s]+\.md)\)/g)].every((m) => existsSync(join(root, "docs/harness", m[1]!))),
+  };
+  add("DOCS-cr031-harness-documents", "documentation", Object.values(documentos).every(Boolean), documentos);
+  const migracao12 = "supabase/migrations/20260921000012_outbox_dispatcher_functions.sql";
+  const manifest220 = ler("contract-registry-manifest-v2.20.json");
+  const fixtures = {
+    seedsExplicitAvailableAt: ["packages/infra/test/design-agent-copy-draft-consumer.integration.test.ts", "packages/infra/test/outbox-dispatcher-cycle.integration.test.ts"].every((p) => /available_at\s*\n?\s*\)\s*values[\s\S]*?timestamptz\)/.test(hf(p))),
+    regressionTestsExist: /T2/.test(hf("packages/infra/test/outbox-claim-determinism.integration.test.ts")) && /T3/.test(hf("packages/infra/test/outbox-claim-determinism.integration.test.ts")) && /T4/.test(hf("packages/infra/test/outbox-claim-determinism.integration.test.ts")),
+    dispatcherMigrationUnchanged: manifest220.artifacts.find((a: Json) => a.path === migracao12)?.sha256 === sha256File(root, migracao12),
+  };
+  add("INTEGRATION-cr031-determinism-fixtures", "integration", Object.values(fixtures).every(Boolean), fixtures);
 
   // Manifest de integração
   const sim = ler("schema-integration-manifest.json");

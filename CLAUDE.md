@@ -9,8 +9,8 @@ A Oplyra é uma plataforma greenfield de Marketing Operations, SaaS multi-tenant
 ## Leitura inicial e referência
 
 1. Leia integralmente este arquivo e siga as instruções aqui reunidas.
-2. Leia integralmente o Documento de Transição v2.2, de 13/09/2026, em `docs/product/marketing-ops/00-documento-transicao.md`. Se não existir, localize a referência disponível e registre o caminho real; não presuma a existência de `sources/`.
-3. Leia `README.md`, `docs/product/marketing-ops/ATUALIZACOES.md` e o [índice de produto](docs/product/marketing-ops/README.md). Os documentos 01–18, os ADRs e o registro de decisões existem neste repositório: revise-os antes de propor mudanças. Decisões explícitas posteriores registradas no complemento prevalecem sobre os pontos correspondentes da v2.2. O pacote v2.3 citado em conversas anteriores não está disponível aqui; não declarar sua leitura. AGENTS.md é lido se existir; não presumir sua presença.
+2. Leia integralmente o Documento de Transição v2.3, de 16/09/2026, em `docs/product/marketing-ops/00-documento-transicao.md`. Esta é a referência protegida vigente, confirmada pelo usuário em 29/09/2026; não a edite.
+3. Leia `README.md`, `docs/product/marketing-ops/ATUALIZACOES.md`, `docs/product/marketing-ops/19-context-stack.md`, `docs/product/marketing-ops/20-agent-transaction-protocol.md` e o [índice de produto](docs/product/marketing-ops/README.md). Os documentos 01–20, os ADRs e o registro de decisões existem neste repositório: revise-os antes de propor mudanças. Decisões explícitas posteriores registradas no complemento prevalecem sobre os pontos correspondentes da v2.3. AGENTS.md é lido se existir; não presumir sua presença.
 4. Localize e leia as skills reais em `.claude/skills`, conforme a seção de skills abaixo.
 5. Leia `docs/harness/ESTADO.md` para retomar o trabalho e `docs/harness/DESENVOLVIMENTO.md` para executar a tarefa. Consulte `docs/harness/VERIFICACOES.md` antes de declarar uma entrega concluída.
 
@@ -26,11 +26,13 @@ O [manual de marca](docs/brand/oplyra_brand_system.md) é a fonte da identidade 
 
 A stack listada no guia é sugerida, não uma nova decisão arquitetural. Preserve a stack já aprovada no repositório ativo, as regras de domínio, permissões, entitlements e aprovações. Um frame não autoriza implementar módulos fora do incremento. Verifique a UI conforme [VERIFICACOES.md](docs/harness/VERIFICACOES.md) e registre evidências em [ESTADO.md](docs/harness/ESTADO.md).
 
-## Limite da etapa atual: discovery antes de implementação
+## Estágio atual e limite de implementação
 
-O trabalho inicial é documental e de discovery. A criação de README e CLAUDE não autoriza iniciar a construção da aplicação.
+O discovery foi concluído e o incremento I-01 foi aceito em 16/09/2026; o estado vigente e o que está autorizado em cada momento estão em [ESTADO.md](docs/harness/ESTADO.md). A implementação segue por **incrementos autorizados**: implementar apenas o escopo autorizado, sem estrutura, migration, publicação ou serviço remoto além dele, e registrar quem aprovou, o escopo e as pendências. A aprovação de documentos, o silêncio ou o tempo decorrido não substituem a autorização de um incremento. O runtime completo de agentes, filas e scheduler de produto, a integração Stripe, adapters reais e a produção continuam pendentes ou não autorizados.
 
-Antes de código estrutural:
+O gate de discovery abaixo já foi cumprido e permanece como registro do que ele exigiu:
+
+Antes de código estrutural (gate de discovery, cumprido):
 
 1. Defina problema, personas, jornada e critérios de sucesso; diferencie hipóteses de validações reais com clientes.
 2. Delimite o MVP Performance e o que ficará para Growth.
@@ -41,9 +43,9 @@ Antes de código estrutural:
 7. Documente fluxos de UX, decisões, riscos, custos, alternativas ainda abertas e sequência de execução.
 8. Apresente a proposta com os pontos que exigem decisão e **pare**.
 
-**Não criar nem aplicar migrations, DDL, tabelas, políticas RLS executáveis, scaffold da aplicação, runtime de agentes ou outra implementação estrutural antes da aprovação explícita da proposta de discovery.** Modelos conceituais, contratos propostos, protótipos de UX e especificações são entregas desta fase; não convertê-los automaticamente em implementação.
+**Não criar nem aplicar migrations, DDL, tabelas, políticas RLS executáveis, scaffold da aplicação, runtime de agentes ou outra implementação estrutural fora do escopo de um incremento explicitamente autorizado.** Modelos conceituais, contratos propostos, protótipos de UX e especificações não se convertem automaticamente em implementação.
 
-Registrar quem aprovou, o escopo aprovado e pendências. A aprovação de README/CLAUDE, o silêncio ou o tempo decorrido não substituem a aprovação do discovery. Depois da aprovação, implementar apenas o escopo autorizado, incrementalmente.
+Registrar quem aprovou, o escopo aprovado e pendências. Depois da aprovação, implementar apenas o escopo autorizado, incrementalmente.
 
 ## Skills obrigatórias e ordem de aplicação
 
@@ -70,7 +72,7 @@ Preservar a ordem DDD → Clean Architecture → verificação de qualidade. A s
 
 Mercado inicial: empresas SaaS B2B, sem dependência estrutural de segmento (DEC-018). Stripe é o provedor escolhido para billing, por adapter próprio. A arquitetura de IA contempla múltiplos modelos/provedores, Registry, Router, Eval Engine e Cost Ledger. Geração e edição de imagens integram o MVP. Vídeo não é gerado, editado ou renderizado nativamente, mas vídeos enviados pelo cliente são ativos de entrada para análise (DEC-014, DEC-015). Campanhas seguem o método de DEC-017.
 
-**Ancoragem das decisões:** citar `DEC-0xx` apenas quando o identificador corresponder à numeração real da v2.2 §27. Stripe, budgets, imagens e a arquitetura multimodelo são decisões posteriores **sem ID** na referência: citar [ATUALIZACOES](docs/product/marketing-ops/ATUALIZACOES.md), nunca atribuir um DEC por inferência. Budgets, evidências, limites relatados e pendências comerciais têm fonte única nesse complemento. Contratos e aceite ficam no harness.
+**Ancoragem das decisões:** citar `DEC-0xx` apenas quando o identificador corresponder à numeração real da v2.3 §27, que inclui DEC-001 a DEC-020. Stripe, budgets, imagens, arquitetura multimodelo e gateway OpenRouter são decisões posteriores **sem ID** na referência: citar [ATUALIZACOES](docs/product/marketing-ops/ATUALIZACOES.md), nunca atribuir um DEC por inferência. Budgets, evidências, limites relatados e pendências comerciais têm fonte única nesse complemento. Contratos e aceite ficam no harness.
 
 ### Greenfield
 
@@ -85,14 +87,14 @@ O MVP não terá CRM próprio. Receber leads, conversões e dados comerciais por
 - Casos de uso dependem de portas internas. Infraestrutura implementa essas portas, com adapters para Supabase e serviços externos.
 - Não importar SDK do Supabase, de IA, billing, anúncios ou CRM no domínio ou nos casos de uso.
 - Traduzir contratos externos na fronteira; não deixar payloads de fornecedores definirem o modelo interno.
-- Definir a estrutura de pastas no discovery. Não assumir linguagem, framework, ORM, gerenciador de pacotes ou topologia de serviços ainda não aprovados.
+- A estrutura de pastas e a stack aprovadas estão no repositório e no [ESTADO](docs/harness/ESTADO.md). Não assumir linguagem, framework, ORM, gerenciador de pacotes ou topologia de serviços ainda não aprovados.
 - Preferir limites claros e implementação proporcional ao MVP; arquitetura multiagentes não implica microserviços para cada agente.
 
 ### Supabase local via Docker e produção incremental
 
 **Supabase é o backend padrão obrigatório da Oplyra. Desenvolver e validar inicialmente com Supabase local via Docker. Publicar cada incremento aprovado para produção no Supabase, mantendo o desenvolvimento dos próximos módulos localmente.** Não começar com SQLite, Firebase, mocks como persistência definitiva ou um backend provisório para migrar depois.
 
-Após a aprovação do discovery:
+Regras vigentes desde a aprovação do discovery:
 
 - Configurar Supabase local via Docker próprio da Oplyra para PostgreSQL, Auth e Storage, sem usar infraestrutura de outro produto. Planejar e preparar também o projeto Supabase de produção conforme o escopo aprovado.
 - Documentar pré-requisitos, versões compatíveis de Supabase CLI e Docker e comandos reais de inicialização, parada e testes.
@@ -108,7 +110,7 @@ Mocks e fakes são permitidos para testes unitários de portas e contratos, mas 
 
 ### Publicação por incremento
 
-Seguir [PUBLICACAO.md](docs/harness/PUBLICACAO.md). O discovery deve definir ambientes, destino de frontend/workers, ordem de deploy, migrations compatíveis e recuperação. Após validar cada incremento, apresentar versão, alterações e evidências para aprovação que inclua sua publicação. Uma única aprovação pode cobrir aceite e deploy; não solicitar novamente quando já houver autorização explícita válida. Não esperar concluir todo o MVP para publicar. A fundação de autenticação, tenants, permissões e RLS deve estar validada antes do primeiro módulo.
+Seguir [PUBLICACAO.md](docs/harness/PUBLICACAO.md). O documento define ambientes, destino de frontend/workers, ordem de deploy, migrations compatíveis e recuperação. Após validar cada incremento, apresentar versão, alterações e evidências para aprovação que inclua sua publicação. Uma única aprovação pode cobrir aceite e deploy; não solicitar novamente quando já houver autorização explícita válida. Não esperar concluir todo o MVP para publicar. A fundação de autenticação, tenants, permissões e RLS deve estar validada antes do primeiro módulo.
 
 Manter credenciais, dados e destinos separados; promover alterações versionadas e configurações documentadas, nunca copiar o banco local ou seeds sintéticos para produção. Registrar publicação e verificações pós-deploy no estado do trabalho.
 
@@ -177,9 +179,13 @@ Regras de governança:
 
 ## Verificação e entrega
 
-O protocolo operacional está em [Harness de desenvolvimento](docs/harness/DESENVOLVIMENTO.md). Atualize o [estado do trabalho](docs/harness/ESTADO.md) em cada entrega ou interrupção relevante. A especificação do [harness dos agentes do produto](docs/harness/PRODUTO.md) será refinada no discovery; ela não autoriza construir o runtime. Estes documentos complementam este arquivo, sem ampliar a autorização da tarefa nem substituir o gate de discovery.
+O [Developer / AI Harness](docs/harness/DEVELOPMENT-TOOLS.md) é separado do Product Agent Runtime e do [Product AI Model Harness](docs/product/marketing-ops/13-ai-model-routing-finops.md). Context7 serve apenas à documentação externa version-aware. Playwright MCP é exploração/debugging; Playwright Test é a evidência E2E determinística. OpenRouter é o gateway inicial padrão do produto por adapter, sem exclusividade, atrás do AI Model Router interno; Test Adapter permanece obrigatório e adapters diretos continuam possíveis. Modelo, temperatura e demais parâmetros pertencem a Model Profiles versionados de `agent + action`, condicionados ao EXP-05, e não contaminam domínio, prompts ou identidade canônica dos agentes. O [Autonomous Build](docs/harness/AUTONOMOUS-BUILD.md) permanece desativado até validação e autorização explícitas.
 
-No discovery, verificar coerência entre requisitos, domínio, arquitetura, escopo e riscos, sem alegar execução de testes de uma aplicação inexistente.
+Para sessões de desenvolvimento com Claude Code, usar **somente** `pnpm claude:local`, o launcher oficial: ele valida o ambiente e as fontes de settings, falha fechado e carrega apenas os MCPs versionados do projeto, a partir do projeto de tooling isolado em `tools/developer-harness/`. Invocar `claude` diretamente fica fora das garantias. Context7 faz egress para um serviço externo e **não está disponível na sessão autônoma**: só a sessão de manutenção iniciada pelo proprietário (modo `manual`) pode consultá-lo, quando a decisão depender da API ou configuração de uma biblioteca/CLI em versão específica, sempre abaixo das fontes canônicas da Oplyra. Leituras ficam restritas ao repositório e sem segredos (`.env*`, `.npmrc`, credenciais, chaves, certificados). O hook Local First é defesa em profundidade, **não é sandbox nem fronteira absoluta de segurança**: não substitui revisão nem autorização e não deve ser contornado. O control plane do harness só é alterado em sessão de manutenção iniciada pelo proprietário (`pnpm claude:maintenance`); Git e execução fora da allowlist ficam com o proprietário. Detalhes em [DEVELOPMENT-TOOLS.md](docs/harness/DEVELOPMENT-TOOLS.md).
+
+O protocolo operacional está em [Harness de desenvolvimento](docs/harness/DESENVOLVIMENTO.md). Atualize o [estado do trabalho](docs/harness/ESTADO.md) em cada entrega ou interrupção relevante. A especificação do [harness dos agentes do produto](docs/harness/PRODUTO.md) não autoriza construir o runtime de produto. Estes documentos complementam este arquivo, sem ampliar a autorização da tarefa.
+
+Em tarefas documentais, verificar coerência entre requisitos, domínio, arquitetura, escopo e riscos sem apresentar especificação como evidência de runtime. Em tarefas de implementação, declarar somente os testes efetivamente executados na versão correspondente.
 
 Após aprovação e conforme cada incremento implementado, verificar:
 
@@ -194,4 +200,4 @@ Após aprovação e conforme cada incremento implementado, verificar:
 
 Executar os checks disponíveis e adequados à mudança; registrar resultados reais, falhas e o que não foi possível verificar. Não inventar comandos, cobertura, validações de clientes ou aplicação de skills ausentes.
 
-Ao entregar, informar o que mudou, quais arquivos foram produzidos, o que foi verificado, riscos ou pendências relevantes e o próximo passo autorizado. **Se a entrega conclui o discovery, o próximo passo é apresentar a proposta e aguardar aprovação; não começar migrations ou implementação estrutural.**
+Ao entregar, informar o que mudou, quais arquivos foram produzidos, o que foi verificado, riscos ou pendências relevantes e o próximo passo autorizado. **O próximo passo só é executado se estiver dentro de uma autorização vigente; caso contrário, apresentar a proposta e aguardar aprovação, sem migrations ou implementação estrutural.**

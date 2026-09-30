@@ -38,6 +38,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Assert the product install excludes the tooling project
+        run: test ! -e tools/developer-harness/node_modules
+
+      - name: Run harness guard and launcher tests (no external tooling)
+        run: pnpm test:harness
+
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v2
         with:

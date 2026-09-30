@@ -12,11 +12,11 @@ Oplyra é uma plataforma SaaS multi-tenant de Marketing Operations, construída 
 
 ## Referência e decisões
 
-Leia [Atualizações documentais](docs/product/marketing-ops/ATUALIZACOES.md) para as decisões posteriores e para a regra de ancoragem: Stripe, budgets internos, geração/edição de imagens e a arquitetura multimodelo são decisões **sem identificador DEC** na referência e devem citar esse complemento. Mercado SaaS B2B (DEC-018), vídeo como ativo de entrada (DEC-014, DEC-015) e método de campanha (DEC-017) estão numerados na v2.2. O [índice do produto](docs/product/marketing-ops/README.md) lista os documentos 00–18, os ADRs, as skills e os protótipos presentes neste repositório.
+Leia [Atualizações documentais](docs/product/marketing-ops/ATUALIZACOES.md) para as decisões posteriores e para a regra de ancoragem: Stripe, budgets internos, geração/edição de imagens, arquitetura multimodelo e gateway OpenRouter são decisões **sem identificador DEC** na referência e devem citar esse complemento. Mercado SaaS B2B (DEC-018), Context Stack (DEC-019) e protocolo transacional (DEC-020) estão numerados na v2.3. O [índice do produto](docs/product/marketing-ops/README.md) lista os documentos 00–20, os ADRs, as skills e os protótipos presentes neste repositório.
 
-Este README deriva do [Documento de Transição v2.2, de 13/09/2026](docs/product/marketing-ops/00-documento-transicao.md). O caminho canônico é `docs/product/marketing-ops/00-documento-transicao.md`. Preserve o documento de referência como somente leitura, independentemente da pasta. A existência de `sources/` não é requisito do projeto.
+Este README deriva do [Documento de Transição v2.3, de 16/09/2026](docs/product/marketing-ops/00-documento-transicao.md), confirmado como referência protegida vigente em 29/09/2026. O caminho canônico é `docs/product/marketing-ops/00-documento-transicao.md`. Preserve o documento de referência como somente leitura, independentemente da pasta. A existência de `sources/` não é requisito do projeto.
 
-A definição de **Supabase como backend padrão obrigatório, com desenvolvimento local via Docker e publicação incremental no Supabase de produção após aprovação**,  complementa o documento por orientação explícita do projeto. Os demais componentes da stack permanecem sujeitos ao discovery.
+A definição de **Supabase como backend padrão obrigatório, com desenvolvimento local via Docker e publicação incremental no Supabase de produção após aprovação**,  complementa o documento por orientação explícita do projeto. Os demais componentes da stack seguem as decisões registradas no [estado do trabalho](docs/harness/ESTADO.md) e nos ADRs.
 
 Decisões que orientam toda implementação:
 
@@ -28,7 +28,8 @@ Decisões que orientam toda implementação:
 6. **Multiagentes desde a fundação:** orquestrador, especialistas, revisão independente, limites de autonomia e rastreabilidade.
 7. **Performance primeiro:** Growth será adicionado progressivamente, sem construir os dois planos completos simultaneamente.
 8. **Entitlements configuráveis:** capacidades e limites não devem depender de condicionais de plano espalhadas pelo código. Preços e políticas comerciais permanecem pendentes; budgets definidos e limites relatados estão separados em ATUALIZACOES.
-9. **Discovery com parada obrigatória:** apresentar a proposta e obter aprovação explícita antes de criar ou aplicar migrations ou iniciar implementação estrutural.
+9. **Implementação por incremento autorizado:** o discovery foi concluído e o I-01 aceito em 16/09/2026; cada novo incremento exige autorização explícita do escopo antes de migrations ou de estrutura nova, e a publicação segue o processo aprovado.
+10. **Gateway de IA substituível:** OpenRouter é o gateway inicial padrão por adapter atrás do AI Model Router interno, sem exclusividade. Test Adapter permanece obrigatório; modelos e parâmetros pertencem a perfis versionados por `agent + action`, condicionados ao EXP-05.
 
 ## Interface e referência Figma
 
@@ -71,7 +72,7 @@ Ficam para etapas posteriores: automação de mídia com execução controlada, 
 
 O plano técnico deverá prever:
 
-- Supabase PostgreSQL para persistência, com migrations versionadas após a aprovação do discovery.
+- Supabase PostgreSQL para persistência, com migrations versionadas e aplicadas por incremento autorizado.
 - Supabase Auth para identidade e autenticação; memberships e permissões continuam sendo conceitos explícitos do domínio.
 - Supabase Storage para ativos, com políticas de acesso por tenant.
 - RLS como defesa obrigatória nas tabelas de dados dos tenants e políticas correspondentes para Storage.
@@ -85,14 +86,14 @@ O plano técnico deverá prever:
 ### Sequência de preparação
 
 1. Ler o documento de transição, [CLAUDE.md](CLAUDE.md), o [estado do trabalho](docs/harness/ESTADO.md) e as skills disponíveis.
-2. Concluir o discovery e registrar a configuração proposta para Supabase local, incluindo pré-requisitos, variáveis, isolamento e estratégia de testes.
-3. **Parar e submeter a proposta para aprovação.** Não criar nem aplicar migrations ou implementar a fundação nesta etapa.
-4. Após aprovação, preparar Supabase CLI e Docker compatível, registrar versões e configurar a instância local própria da Oplyra.
-5. Implementar adapters, migrations, RLS e seeds conforme o desenho aprovado; documentar os comandos reais de inicialização, verificação e testes à medida que existirem.
+2. Conferir a autorização vigente e o próximo incremento no estado do trabalho; o discovery e o I-01 (fundação local) já estão concluídos e aceitos.
+3. **Parar e submeter a proposta para aprovação** sempre que o trabalho sair do escopo autorizado. Não criar nem aplicar migrations ou estrutura nova fora dele.
+4. Usar a instância local própria da Oplyra (Supabase CLI e o ambiente de contêineres compatível, versões registradas) e os comandos reais de inicialização, verificação e testes documentados em [VERIFICACOES](docs/harness/VERIFICACOES.md).
+5. Implementar adapters, migrations, RLS e seeds conforme o desenho aprovado do incremento autorizado.
 6. Verificar autenticação, autorização, armazenamento e acesso entre tenants no ambiente local.
 7. Preparar a publicação do incremento, obter aprovação que inclua versão e destino, publicar e verificar em produção conforme [o fluxo de publicação](docs/harness/PUBLICACAO.md). Continuar o próximo módulo localmente.
 
-Este repositório ainda não fornece scripts de execução. Framework de frontend, runtime da aplicação, gerenciador de pacotes, filas e scheduler serão definidos no discovery. Essa definição não reabre a escolha do Supabase. O discovery deverá planejar desde o início o ambiente Supabase de produção e a publicação por incremento, com configurações e credenciais separadas. A primeira publicação depende da fundação validada e da aprovação que inclua seu deploy; não é necessário aguardar todo o MVP.
+O repositório já fornece workspace pnpm, scripts de execução/verificação, Supabase local, CI e componentes parciais de filas/runtime. O estado implementado e os limites de ativação estão em [ESTADO](docs/harness/ESTADO.md); runtime completo, scheduler e ambientes de aplicação remotos continuam condicionados aos incrementos, decisões e autorizações correspondentes. Essa evolução não reabre a escolha do Supabase. A primeira publicação continua dependendo de fundação validada e aprovação que inclua o deploy.
 
 ## Arquitetura e isolamento
 
@@ -132,40 +133,43 @@ As skills devem estar em `.claude/skills/<nome>/SKILL.md`. Leia integralmente os
 
 | Skill | Uso esperado |
 | --- | --- |
-| `ddd-rapido-arquiteto` | Primeiro: discovery de domínio, linguagem ubíqua, bounded contexts e invariantes. |
+| `ddd-rapido-arquiteto` | Primeiro: domínio, linguagem ubíqua, bounded contexts e invariantes. |
 | `clean-architecture-arquiteto` | Depois de DDD: camadas, dependências, portas, adapters e limites de infraestrutura. |
 | `verificacao-qualidade-codigo` | Em seguida e em cada fase: revisar decisões e entregas, com evidências de qualidade proporcionais ao estágio. |
 | `apple-design` | Ao trabalhar UX/UI: orientar fluxos, protótipos, hierarquia visual e design system; submeter a entrega à verificação de qualidade. |
 
-Preservar a sequência base DDD → Clean Architecture → verificação de qualidade. Aplicar `apple-design` nas atividades de design, inclusive protótipos do discovery. A experiência deve usar linguagem de negócio, onboarding progressivo, estados claros de rascunho/aprovação/publicação, revisão humana e foco operacional desktop com responsividade.
+Preservar a sequência base DDD → Clean Architecture → verificação de qualidade. Aplicar `apple-design` nas atividades de design, inclusive protótipos. A experiência deve usar linguagem de negócio, onboarding progressivo, estados claros de rascunho/aprovação/publicação, revisão humana e foco operacional desktop com responsividade.
 
 **Disponibilidade:** verificar os arquivos reais no repositório em uso e registrar o resultado em `docs/harness/ESTADO.md`; não presumir ausência com base em outro workspace. Se alguma skill estiver ausente, procurar fonte autorizada e registrar a limitação, sem inventar conteúdo ou alegar leitura.
 
 Aplicar apenas as orientações compatíveis com a Oplyra. Trechos específicos de CRM Imob L4S, L4S ou Lovable não autorizam importar stack, regras de negócio ou dependências desses produtos. Registrar os trechos desconsiderados e o motivo; a decisão greenfield e as instruções explícitas da Oplyra prevalecem.
 
-## Discovery e roadmap
+## Estágio atual e roadmap
 
 ### Harness: orientação, execução e verificação dos agentes
 
 A documentação do harness está organizada em:
 
 - [Desenvolvimento](docs/harness/DESENVOLVIMENTO.md): ciclo de trabalho, contexto, permissões, decisões, recuperação e critérios de conclusão.
+- [Developer / AI Harness](docs/harness/DEVELOPMENT-TOOLS.md): ferramentas, Context7, Playwright, Local First, versionamento e separação do runtime do produto.
+- [Usuários sintéticos](docs/harness/SYSTEM-TEST-USERS.md): tenants, personas, roles reais e taxonomia de testes de sistema.
+- [Autonomous Build](docs/harness/AUTONOMOUS-BUILD.md): preparação em draft, desativada, com hard blockers e critérios de ativação.
 - [Estado do trabalho](docs/harness/ESTADO.md): situação real, pendências, aprovações e próximo passo para retomada.
-- [Verificações](docs/harness/VERIFICACOES.md): gates documentais e cenários que deverão se tornar checks executáveis após o discovery.
+- [Verificações](docs/harness/VERIFICACOES.md): gates documentais e cenários que deverão se tornar checks executáveis por incremento.
 - [Publicação incremental](docs/harness/PUBLICACAO.md): ambientes, aprovação por versão, migrations, configuração, verificação e recuperação.
 - [Agentes do produto](docs/harness/PRODUTO.md): contratos e requisitos de execução, autorização, memória, avaliação e recuperação dos agentes de marketing.
 
-O harness documental está preparado para orientar o discovery. Scripts, CI, bloqueios de ferramentas e runtime ainda não estão implementados; instruções em Markdown não substituem controles executáveis. A disponibilidade e a aplicação das skills devem ser verificadas no repositório em uso e registradas no estado do trabalho.
+O Developer Harness possui scripts locais, CI, Claude Code, Context7 MCP e Playwright MCP configurados em versões fixas, com guard Local First e checks registrados no [estado](docs/harness/ESTADO.md). Inicie uma sessão com `pnpm claude:local`, o launcher oficial (falha fechado, MCPs do projeto e tooling isolado em `tools/developer-harness/`, fora do workspace do produto); o guard é defesa em profundidade, não sandbox. Quanto ao produto: a **arquitetura** do Product AI Model Harness segue o documento 13 e o ADR-0006; o **slice 1 do Product AI Model Harness** (portas, Test Adapter, Registry, Model Profiles, Router) e o **Cost Ledger persistente** estão implementados **somente localmente**; o **Product Agent Runtime** (existem componentes parciais), filas e scheduler de produto, integração Stripe, adapters reais e produção continuam **pendentes ou não autorizados**. Instruções em Markdown não substituem controles executáveis. A disponibilidade e a aplicação das skills devem ser verificadas no repositório em uso e registradas no estado do trabalho.
 
-O discovery deve entregar: problema e jornada validados, recorte do MVP, linguagem ubíqua, contextos e contratos, arquitetura com Supabase local via Docker e produção incremental, proposta de isolamento/RLS, billing e entitlements, integrações, catálogo e governança dos agentes, UX inicial, custos, riscos e questões abertas.
+O discovery entregou (registro histórico): problema e jornada validados, recorte do MVP, linguagem ubíqua, contextos e contratos, arquitetura com Supabase local via Docker e produção incremental, proposta de isolamento/RLS, billing e entitlements, integrações, catálogo e governança dos agentes, UX inicial, custos, riscos e questões abertas.
 
-A documentação prevista fica em `docs/product/marketing-ops/`: requisitos, discovery, domínio, arquitetura, modelo de dados conceitual, integrações, segurança, billing/entitlements, arquitetura e catálogo de agentes, governança e roadmap. Conferir quais documentos já existem antes de produzir ou atualizar entregas; preservar o documento de transição original.
+A documentação fica em `docs/product/marketing-ops/`: requisitos, discovery, domínio, arquitetura, modelo de dados conceitual, integrações, segurança, billing/entitlements, arquitetura e catálogo de agentes, governança e roadmap. Conferir o índice e o estado antes de produzir ou atualizar entregas; preservar o documento de transição original.
 
-**Ao concluir o discovery, parar e apresentar a proposta para aprovação explícita antes de migrations ou implementação estrutural.** Aprovar estes arquivos Markdown não equivale a aprovar uma arquitetura ainda não apresentada.
+**Fora do escopo de um incremento autorizado, parar e apresentar a proposta para aprovação explícita antes de migrations ou implementação estrutural.** Aprovar um documento não equivale a autorizar sua implementação.
 
 | Fase | Resultado esperado |
 | --- | --- |
-| 0 — Discovery | Validar produto e propor arquitetura; parada para aprovação. |
+| 0 — Discovery | Concluída: produto validado e arquitetura proposta; aprovação registrada no estado do trabalho. |
 | 1 — Fundação SaaS | Supabase local, identidade, tenancy, RBAC, entitlements, integração Stripe, auditoria e contratos de runtime/Registry/Router/Eval Engine/Cost Ledger, validados antes da ativação paga. |
 | 2 — Performance MVP | Estratégia, copy, geração/edição de imagens, aprovações, mídia em leitura, dashboard e conversões; avaliações e medição de custo dos workflows ativos. |
 | 3 — Performance operacional | Recomendações, alertas, atribuição básica, experimentos e relatórios agendados. |
@@ -173,4 +177,4 @@ A documentação prevista fica em `docs/product/marketing-ops/`: requisitos, dis
 | 5 — Comercialização | Onboarding self-service, templates, suporte, trial, billing completo e clientes beta. |
 | 6 — Escala | Conectores, parceiros, white-label, automação controlada e novos segmentos. |
 
-Permanecem abertas decisões sobre preços, excedentes, cobrança de pilotos, semântica e viabilidade dos limites, serviço humano, fornecedor de e-mail, modelos/adapters de IA, primeiro conector dedicado, stack complementar, política de dados para IA, suporte e SLAs. Mercado SaaS B2B, Stripe, Supabase, greenfield, multi-tenancy e Performance primeiro não são escolhas em aberto. Consulte ATUALIZACOES para budgets e pendências econômicas.
+Permanecem abertas decisões sobre preços, excedentes, cobrança de pilotos, semântica e viabilidade dos limites, serviço humano, fornecedor de e-mail, modelos concretos e parâmetros após o EXP-05, adapters diretos adicionais, primeiro conector dedicado, stack complementar, política de dados para IA, suporte e SLAs. OpenRouter como gateway inicial não exclusivo, mercado SaaS B2B, Stripe, Supabase, greenfield, multi-tenancy e Performance primeiro não são escolhas em aberto. Consulte ATUALIZACOES para budgets e pendências econômicas.

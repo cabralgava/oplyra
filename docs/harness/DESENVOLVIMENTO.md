@@ -2,16 +2,26 @@
 
 ## Finalidade e alcance
 
-Este protocolo orienta agentes que desenvolvem a Oplyra. Os agentes de marketing executados pela aplicação possuem outro contrato, descrito em [PRODUTO.md](PRODUTO.md). Não compartilhar automaticamente ferramentas, memória, credenciais ou autorizações entre esses dois ambientes.
+Este protocolo orienta agentes que desenvolvem a Oplyra. O catálogo e os limites das ferramentas estão em [DEVELOPMENT-TOOLS.md](DEVELOPMENT-TOOLS.md). Os agentes de marketing executados pela aplicação possuem outro contrato, descrito em [PRODUTO.md](PRODUTO.md). Não compartilhar automaticamente ferramentas, memória, credenciais ou autorizações entre esses dois ambientes.
 
-Estado operacional: consultar [ESTADO.md](ESTADO.md). A Fase 0 está concluída documentalmente e a implementação não foi iniciada; o escopo do I-01 aguarda decisão em [PREPARACAO-I01.md](PREPARACAO-I01.md). Nenhuma regra deste arquivo autoriza ultrapassar a aprovação exigida após o discovery em [CLAUDE.md](../../CLAUDE.md).
+Estado operacional: consultar [ESTADO.md](ESTADO.md). A Fase 0 e o I-01 foram concluídos e aceitos; novos incrementos dependem da autorização correspondente. Nenhuma regra deste arquivo amplia a autorização vigente.
+
+## Developer Harness e limites
+
+O Developer Harness é separado tanto do Product Agent Runtime quanto do Product AI Model Harness. Context7 consulta documentação externa version-aware (somente na sessão de manutenção, em modo manual; a sessão autônoma não tem egress); Playwright MCP explora e diagnostica; Playwright Test fornece evidência E2E reproduzível; Playwright CLI executa e depura specs. Nenhuma dessas ferramentas entra automaticamente em `tools.json` dos agents do produto.
+
+O trabalho é Local First: aplicação, Supabase e serviços do workspace locais por padrão. Produção, deploy, serviços remotos, dados reais, mensagens e gastos são negados sem autorização explícita. Produção não é fallback. Versões de ferramentas seguem consulta → compatibilidade → teste → registro → pin → atualização deliberada, sem adoção permanente de `@latest`.
+
+A sessão de desenvolvimento com Claude Code começa por `pnpm claude:local` (launcher oficial, falha fechado); invocar `claude` diretamente fica fora das garantias. O guard Local First e a allowlist de execução são defesa em profundidade, não sandbox. Git de escrita (`add`, `commit`, ramos, `push`) e comandos fora da allowlist são feitos pelo proprietário fora da sessão autônoma. As dependências do harness ficam isoladas em `tools/developer-harness/`, fora do workspace do produto; o produto compila e testa sem elas. Mudanças no control plane do harness exigem `pnpm claude:maintenance`, iniciada pelo proprietário.
+
+Identidades e cenários sintéticos: [SYSTEM-TEST-USERS.md](SYSTEM-TEST-USERS.md). O loop futuro está documentado, ainda desativado, em [AUTONOMOUS-BUILD.md](AUTONOMOUS-BUILD.md).
 
 ## Contexto e fontes de verdade
 
 | Informação | Fonte e regra |
 | --- | --- |
 | Escopo solicitado e autorização | Instrução explícita do usuário; registrar seu alcance sem ampliá-lo. |
-| Diretrizes permanentes | `CLAUDE.md`, a referência protegida v2.2 e [ATUALIZACOES](../product/marketing-ops/ATUALIZACOES.md), que fixa a precedência e a ancoragem dos identificadores DEC. Decisões explícitas posteriores prevalecem nos pontos atualizados; propostas continuam propostas. Supabase local via Docker e produção incremental permanecem obrigatórios. |
+| Diretrizes permanentes | `CLAUDE.md`, a referência protegida v2.3, [19 — Context Stack](../product/marketing-ops/19-context-stack.md), [20 — Agent Transaction Protocol](../product/marketing-ops/20-agent-transaction-protocol.md) e [ATUALIZACOES](../product/marketing-ops/ATUALIZACOES.md), que fixa a precedência e a ancoragem dos identificadores DEC. Decisões explícitas posteriores prevalecem nos pontos atualizados; propostas continuam propostas. Supabase local via Docker e produção incremental permanecem obrigatórios. |
 | Documentos derivados | 01–18, ADRs e registro de decisões, presentes neste repositório; ver o [índice](../product/marketing-ops/README.md). Detalham a referência, sem substituí-la. |
 | Situação operacional | `ESTADO.md`, confrontado com arquivos e resultados reais. |
 | Decisões novas | Registro versionado de decisão; hipóteses não têm status de aprovação. |

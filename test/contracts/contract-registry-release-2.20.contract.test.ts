@@ -1,26 +1,39 @@
-// Contract Registry Release 2.20 (CR-030): alinhamento da documentação de
-// produto de IA ao estado aplicado pelos CR-026 e CR-027. A cross-validation é
-// reexecutada e o manifest é conferido como mudança lógica sobre a Release 2.19
-// (verificada congelada pelo seu próprio teste). Este teste valida o CONTEÚDO
-// CORRENTE: artefatos do CR-030 e artefatos herdados dos CR-028/CR-029 conferem
-// com o disco; documentos operacionais e do Developer Harness (futuro CR-031)
-// ficam fora do manifest e do digest.
+// Contract Registry Release 2.20 (CR-030) — verificação do manifest CONGELADO.
+// Desde a Release 2.21 este teste não depende do conteúdo mutável do worktree
+// nem de objetos Git: fixa o SHA-256 do manifest, do aggregate digest, do
+// relatório e da base 2.19, e valida classificação, cadeia e propriedades do
+// próprio manifest. O conteúdo corrente dos documentos e artefatos é validado
+// pelo teste da Release 2.21.
 import { describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { CONTRACTS_DIR, CR030_DOCS, runCrossRegistryValidation } from "./cross-registry-validation.ts";
+import { CONTRACTS_DIR } from "./cross-registry-validation.ts";
+
+const CR030_DOCS = [
+  "docs/decisions/ADR-0006-runtime-de-agentes.md", "docs/decisions/ADR-0007-entitlements-e-billing.md", "docs/decisions/README.md",
+  ...["01-product-requirements", "02-discovery", "03-domain-model", "04-architecture", "05-data-model", "06-integrations", "07-security-lgpd",
+    "08-billing-entitlements", "09-agentic-architecture", "10-agent-catalog", "11-agent-governance", "12-roadmap", "13-ai-model-routing-finops",
+    "17-risks-costs", "18-technical-experiments", "ATUALIZACOES", "README"].map((n) => `docs/product/marketing-ops/${n}.md`),
+] as const;
+
 
 type Artefato = { path: string; category: string; sizeBytes: number; sha256: string; source: string };
 type Manifest = Record<string, any> & { artifacts: Artefato[] };
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const ler = (p: string): Record<string, any> => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
-const texto = (p: string) => readFileSync(join(ROOT, p), "utf8");
 const sha = (p: string) => createHash("sha256").update(readFileSync(join(ROOT, p))).digest("hex");
 const agregado = (artefatos: { path: string; sha256: string }[]) =>
   createHash("sha256").update([...artefatos].sort((a, b) => a.path.localeCompare(b.path)).map((a) => `${a.path}:${a.sha256}`).join("\n")).digest("hex");
+
+// Valores congelados da Release 2.20.
+const MANIFEST_SHA256 = "04933b7deded99000ce2f9dcae926fa50608650123dcfbe3ba4f44d1414b28c6";
+const AGGREGATE_DIGEST = "60344effb0632b78b777500b8faacfcbf332ae3a3ebfccbcf59a564f2ebc8d61";
+const REPORT_SHA256 = "28399aba1930e2c4ecbda949b4410d8a06bd2afc55aaec0e72e15b26d987b34a";
+const BASE_MANIFEST_SHA256 = "fb509e10f1561f0ffbcae277bc9b14281b0a72d794f377e7c4f5050404b67858";
+const BASE_AGGREGATE_DIGEST = "a15b086e9c6fb2209a8a950e94974a00a76ae67980effab6b4d34ae478660c38";
 
 const relatorio = ler(`${CONTRACTS_DIR}/cross-registry-validation-v2.20.json`);
 const m = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.20.json`) as Manifest;
@@ -58,23 +71,28 @@ export function classificar(release: Manifest, anterior: Manifest, fonte = FONTE
   return { herdados, modificados, adicionados, violacoes };
 }
 
-describe("cross-validation da Release 2.20", () => {
-  const atual = runCrossRegistryValidation(ROOT);
-
-  it("todos os checks passam", () => {
-    expect(atual.checks.filter((c) => c.status !== "passed")).toEqual([]);
-    expect(atual.checks.length).toBe(82);
+describe("Release 2.20 congelada: manifest, relatório e cadeia para a base 2.19", () => {
+  it("manifest, relatório e base 2.19 têm os SHA-256 fixados", () => {
+    expect(sha(`${CONTRACTS_DIR}/contract-registry-manifest-v2.20.json`)).toBe(MANIFEST_SHA256);
+    expect(sha(`${CONTRACTS_DIR}/cross-registry-validation-v2.20.json`)).toBe(REPORT_SHA256);
+    expect(sha(`${CONTRACTS_DIR}/contract-registry-manifest-v2.19.json`)).toBe(BASE_MANIFEST_SHA256);
   });
 
-  it("o relatório gravado é exatamente o resultado reexecutado", () => {
-    expect(relatorio.validation.checks).toEqual(atual.checks);
-    expect(relatorio.inputs).toEqual(atual.inputs);
-    expect(relatorio.counts).toEqual(atual.counts);
-    expect(relatorio).toMatchObject({ status: "passed", releaseVersion: "2.20", changeSet: "CR-030", validation: { checksFailed: 0, checksRun: 82 } });
+  it("o aggregate digest fixado é o recalculado a partir do manifest, e o da base 2.19 também", () => {
+    expect(m.artifactSummary.aggregateDigest).toBe(AGGREGATE_DIGEST);
+    expect(agregado(m.artifacts)).toBe(AGGREGATE_DIGEST);
+    expect(base.artifactSummary.aggregateDigest).toBe(BASE_AGGREGATE_DIGEST);
+    expect(agregado(base.artifacts)).toBe(BASE_AGGREGATE_DIGEST);
+  });
+
+  it("o relatório congelado registra 82 checks aprovados para a Release 2.20", () => {
+    expect(relatorio).toMatchObject({ status: "passed", releaseVersion: "2.20", changeSet: "CR-030", validation: { checksFailed: 0, checksRun: 82, checksPassed: 82 } });
+    expect(relatorio.validation.checks).toHaveLength(82);
+    expect(relatorio.validation.checks.filter((c: { status: string }) => c.status !== "passed")).toEqual([]);
   });
 
   it("a validação do Freeze v1 permanece intacta", () => {
-    const freeze = texto(`${CONTRACTS_DIR}/CONTRACT-REGISTRY-FREEZE-v1.md`);
+    const freeze = readFileSync(join(ROOT, `${CONTRACTS_DIR}/CONTRACT-REGISTRY-FREEZE-v1.md`), "utf8");
     const citado = freeze.match(/`([0-9a-f]{64})`/)![1];
     expect(sha(`${CONTRACTS_DIR}/cross-registry-validation.json`)).toBe(citado);
   });
@@ -133,12 +151,6 @@ describe("manifest v2.20 como mudança lógica sobre a 2.19", () => {
     expect(classificar(migracao, base).violacoes.some((v) => v.includes("20260929000015_tenant_deletion_owner_guard.sql"))).toBe(true);
   });
 
-  it("artefatos do CR-030 e os herdados dos CR-028/CR-029 conferem com o conteúdo atual em disco", () => {
-    const divergentes = m.artifacts.filter((a) => a.source === FONTE || (["cr_028", "cr_029"].includes(a.source) && c.herdados.includes(a.path)))
-      .filter((a) => !existsSync(join(ROOT, a.path)) || sha(a.path) !== a.sha256 || readFileSync(join(ROOT, a.path)).length !== a.sizeBytes);
-    expect(divergentes.map((a) => a.path)).toEqual([]);
-  });
-
   it("classificação: 439 herdados, 5 modificados (3 documentos governados, runner e teste da 2.19), 20 adicionados, 464 no total", () => {
     expect(m.artifactClassification).toEqual({ inheritedUnchanged: 439, modifiedByCr030: 5, addedByCr030: 20, unclassified: 0 });
     expect(m.artifactSummary.total).toBe(464);
@@ -190,7 +202,7 @@ describe("manifest v2.20 como mudança lógica sobre a 2.19", () => {
     expect(m.registryVersions).toEqual(base.registryVersions);
     expect(m.baseRelease).toEqual({
       version: "2.19", manifestPath: `${CONTRACTS_DIR}/contract-registry-manifest-v2.19.json`,
-      manifestSha256: sha(`${CONTRACTS_DIR}/contract-registry-manifest-v2.19.json`), aggregateDigest: base.artifactSummary.aggregateDigest,
+      manifestSha256: BASE_MANIFEST_SHA256, aggregateDigest: BASE_AGGREGATE_DIGEST,
     });
     expect(m.baseFreeze).toEqual(base.baseFreeze);
     expect(agregado(base.artifacts)).toBe(base.artifactSummary.aggregateDigest);
@@ -208,129 +220,5 @@ describe("manifest v2.20 como mudança lógica sobre a 2.19", () => {
     expect(m.changeSet).toMatchObject({
       remoteResourcesCreated: false, remoteMigrationsApplied: false, publicationPerformed: false, externalCallsPerformed: false, realKeysUsed: false, realDataUsed: false,
     });
-  });
-});
-
-describe("conteúdo corrente reconciliado (CR-029 herdado e CR-030)", () => {
-  it("doc 16 descreve o CR-028 e preserva o hunk aprovado do proprietário", () => {
-    const d = texto(DOC16);
-    for (const t of ["SUPABASE_PROJECT_REF", "OPLYRA_ENVIRONMENT_FINGERPRINT", "TrustedDeploymentContext", "<origem>/auth/v1", "/auth/v1/.well-known/jwks.json", "CR-028"]) expect(d, t).toContain(t);
-    expect(d).not.toMatch(/^\|\s*`OPLYRA_ALLOW_REMOTE`/m);
-    expect(d).not.toContain("sem `OPLYRA_ALLOW_REMOTE=true`");
-    // H16-1, aprovado sem alteração
-    expect(d).toContain("| `OPENROUTER_API_KEY` | Não | Worker | Credencial do gateway inicial;");
-    expect(d).toContain("Somente adapters diretos explicitamente habilitados; não são obrigatórias para o caminho inicial via OpenRouter");
-  });
-
-  it("PREPARACAO-SUPABASE-PRODUCAO registra a reconciliação como concluída e não a apresenta mais como adiada", () => {
-    const p = texto(PSP);
-    expect(p).not.toContain("Reconciliação documental adiada");
-    expect(p).toContain("**Reconciliação documental concluída (CR-029, Release 2.19, 30/09/2026).**");
-    expect(p).toContain("O `DEVELOPMENT-TOOLS.md` permanece como pendência operacional separada");
-    expect(p).toContain("nenhuma autorização de produção foi criada");
-    // restante do arquivo preservado: o parágrafo do CR-028 sobre o parsing e o requisito B-4 continuam
-    expect(p).toContain("Endurecimento do parsing (CR-028, Release 2.18)");
-    expect(p).toContain("Requisitos do bloqueio B-4 (atendidos pelo CR-028)");
-  });
-
-  it("TST-19 afirma recusa de qualquer endpoint remoto e da flag, sem sugerir opt-in", () => {
-    const l = texto(PLANO).split("\n").find((x) => x.startsWith("| TST-19 |"))!;
-    expect(l).toMatch(/`local`\/`ci` com qualquer endpoint remoto/);
-    expect(l).toMatch(/presença de `OPLYRA_ALLOW_REMOTE`, com qualquer valor, também falha/);
-    expect(l).not.toMatch(/opt-in|sem flag explícita|com flag/);
-  });
-
-  it("PREPARACAO-I01 preserva o aceite histórico e marca item 2 e A14 como superados", () => {
-    const p = texto("docs/harness/PREPARACAO-I01.md");
-    const a14 = p.split("\n").find((l) => l.startsWith("| A14 |"))!;
-    expect(a14).toContain("Configuração apontando para host remoto sem flag explícita falha na inicialização");
-    expect(a14).toMatch(/superado pelo CR-028/);
-    expect(p).toContain("validação de configuração que falha se apontar para host remoto sem `OPLYRA_ALLOW_REMOTE=true`. *Superado pelo CR-028");
-    expect(p).toContain("**Registro histórico de 15/09/2026.**"); // HP-1
-  });
-
-  it("VERIFICACOES usa a barreira Local First vigente, estados sem excesso e ponteiro para o ESTADO no lugar de contagens", () => {
-    const v = texto("docs/harness/VERIFICACOES.md");
-    expect(v).toContain("| Local First | Nenhum remoto como fallback; `local`/`ci` recusam qualquer endpoint remoto e a presença de `OPLYRA_ALLOW_REMOTE` falha (CR-028) |");
-    expect(v).toContain("Fronteira por portas implementada no slice 1 do I-02; adapter real pendente");
-    expect(v).toContain("Contratos e registry implementados desde a Release 2.16; vínculos produtivos dependem do EXP-05");
-    expect(v).toContain("Implementado no harness local para allowlist, capabilities, privacidade e orçamento; integração completa ao runtime produtivo pendente");
-    expect(v).toContain("Implementado e testado no harness local; provider real pendente");
-    expect(v).toContain("Cost Ledger persistente implementado no Supabase local pelo CR-027; integração produtiva pendente");
-    expect(v).not.toMatch(/\b(12 migrations|212 testes|87 assertions)\b|manifest v2\.15/);
-    expect(v).not.toMatch(/opt-in autorizado|sem `OPLYRA_ALLOW_REMOTE=true`/);
-    expect(v.match(/\]\(ESTADO\.md\)/g)?.length).toBeGreaterThanOrEqual(3);
-    // HV-1 e HV-6, aprovados sem alteração
-    expect(v).toContain("A fundação I-01 e seus checks locais existem;");
-    expect(v).toContain("| Guard Local First do Claude | `pnpm test:harness` | Implementado; 4 cenários em 29/09/2026 |");
-  });
-});
-
-describe("documentação de produto de IA alinhada (CR-030)", () => {
-  const M = (n: string) => texto(`docs/product/marketing-ops/${n}.md`);
-  const adr6 = () => texto("docs/decisions/ADR-0006-runtime-de-agentes.md");
-
-  it("doc 13: registry e schemas canônicos, Cost Ledger persistente local, versão 0.5 de 30/09/2026", () => {
-    const d = M("13-ai-model-routing-finops");
-    expect(d).toContain("**Versão documental:** 0.5");
-    expect(d).toContain("**Data:** 30 de setembro de 2026");
-    expect(d).not.toMatch(/representação executável de Model Profiles[^.]*ainda é proposta/);
-    expect(d).not.toMatch(/Cost Ledger persistido[^.]*continuam bloqueados/);
-    expect(d).not.toMatch(/proposta controlada/);
-    expect(d).not.toMatch(/manifest[^.\n]{0,40}v2\.15/);
-    for (const t of ["CR-026", "CR-027", "Cost Ledger persistente somente no Supabase local", "Product Agent Runtime, filas e scheduler de produto, integração Stripe, adapters reais"]) expect(d, t).toContain(t);
-  });
-
-  it("ADR-0006 distingue o Model Harness implementado do runtime/filas ainda propostos", () => {
-    const a = adr6();
-    expect(a).toContain("**Estado aplicado:**");
-    expect(a).toContain("somente localmente");
-    expect(a).not.toContain("não há implementação autorizada nesta revisão");
-    expect(a).toContain("Product Agent Runtime, filas/scheduler de produto e stack permanecem propostas");
-  });
-
-  it("OpenRouter é gateway inicial padrão e não exclusivo; EXP-05 condiciona modelos e parâmetros", () => {
-    for (const n of ["04-architecture", "06-integrations", "09-agentic-architecture", "13-ai-model-routing-finops", "ATUALIZACOES"]) expect(M(n), n).toMatch(/sem exclusividade|não exclusivo/);
-    expect(adr6()).toMatch(/não exclusivo/);
-    for (const n of ["01-product-requirements", "04-architecture", "13-ai-model-routing-finops", "ATUALIZACOES"]) expect(M(n), n).toContain("EXP-05");
-    expect(M("06-integrations")).toContain("adapters diretos");
-    expect(M("13-ai-model-routing-finops")).toMatch(/Test Adapter/);
-  });
-
-  it("ATUALIZACOES: 30/09/2026, ADRs 0001–0009 e estado aplicado; ponteiros para o Cost Ledger nos docs 04, 05 e 12", () => {
-    const t = M("ATUALIZACOES");
-    expect(t).toContain("**Última atualização:** 30/09/2026.");
-    expect(t).toContain("ADRs 0001–0009");
-    expect(t).not.toContain("ADRs 0001–0008");
-    expect(t).toContain("**Estado aplicado:**");
-    expect(M("04-architecture")).toContain("COST-LEDGER-CONTRACTS");
-    expect(M("05-data-model")).toContain("COST-LEDGER-CONTRACTS");
-    expect(M("12-roadmap")).toContain("**Entregue localmente (CR-026/027):**");
-    expect(M("12-roadmap")).toContain("**Pendentes:** Product Agent Runtime");
-  });
-
-  it("autoridade v2.3 nos cabeçalhos dos 20 arquivos; nenhuma afirmação de adapter real, chave, conta, produção ou vídeo nativo habilitados", () => {
-    for (const p of CR030_DOCS) {
-      const l = texto(p).split("\n").find((x) => x.startsWith("**Autoridade:**"));
-      if (l !== undefined) expect(l, p).toMatch(/v2\.3/), expect(l, p).not.toMatch(/v2\.2/);
-      const t = texto(p);
-      expect(t, p).not.toMatch(/(adapter real|OpenRouter Adapter|adapter direto)[^.|\n]{0,30}\b(habilitad[oa]|ativ[oa]|implementad[oa])\b/i);
-      expect(t, p).not.toMatch(/\b(chave|conta|créditos?)\b[^.|\n]{0,25}\b(configurad[oa]s?|criad[oa]s?|ativ[oa]s?)\b/i);
-      expect(t, p).not.toMatch(/produção[^.|\n]{0,20}\b(habilitada|ativa)\b/i);
-      expect(t, p).not.toMatch(/(suporta|inclui|permite|habilita|oferece|possui)[^.\n]{0,40}(geração|edição|renderização)[^.\n]{0,20}vídeo/i);
-    }
-    expect(M("01-product-requirements")).toContain("gerar, editar ou renderizar vídeo nativamente (DEC-014)");
-  });
-
-  it("links locais dos 20 arquivos resolvem", () => {
-    const quebrados: string[] = [];
-    for (const p of CR030_DOCS) {
-      for (const mt of texto(p).matchAll(/\]\(([^)#\s]+)(#[^)]*)?\)/g)) {
-        const alvo = mt[1]!;
-        if (/^\w+:\/\/|^mailto:/.test(alvo)) continue;
-        if (!existsSync(join(ROOT, dirname(p), alvo))) quebrados.push(`${p}: ${alvo}`);
-      }
-    }
-    expect(quebrados).toEqual([]);
   });
 });
