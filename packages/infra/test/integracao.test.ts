@@ -150,14 +150,14 @@ describe("configuração falha fechada", () => {
     expect(() => carregarConfig({
       OPLYRA_ENV: "local", DATABASE_URL_APP: "postgresql://u:p@db.supabase.co:5432/postgres",
       SUPABASE_URL: "https://abc.supabase.co",
-    } as NodeJS.ProcessEnv)).toThrow(/host remoto/);
+    } as NodeJS.ProcessEnv)).toThrow(/somente endpoints locais/);
   });
 
-  it("aceita quando a autorização é explícita", () => {
-    expect(carregarConfig({
+  it("recusa OPLYRA_ALLOW_REMOTE, mesmo com true (CR-028: sem exceção para remoto)", () => {
+    expect(() => carregarConfig({
       OPLYRA_ENV: "local", DATABASE_URL_APP: "postgresql://u:p@db.supabase.co:5432/postgres",
       SUPABASE_URL: "https://abc.supabase.co", OPLYRA_ALLOW_REMOTE: "true",
-    } as NodeJS.ProcessEnv).env).toBe("local");
+    } as NodeJS.ProcessEnv)).toThrow(/obsoleta/);
   });
 
   it("recusa produção com endereço local", () => {

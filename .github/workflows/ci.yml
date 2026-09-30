@@ -19,7 +19,6 @@ jobs:
     timeout-minutes: 30
     env:
       OPLYRA_ENV: ci
-      OPLYRA_ALLOW_REMOTE: "false"
       SUPABASE_URL: http://127.0.0.1:54421
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54421
       NEXT_PUBLIC_APP_URL: http://localhost:3100

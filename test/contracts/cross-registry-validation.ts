@@ -1,10 +1,11 @@
-// Cross-registry validation executável da Contract Registry Release 2.17.
+// Cross-registry validation executável da Contract Registry Release 2.18.
 // Reproduz as categorias da validação do Freeze v1 (envelope, identidade,
 // contagem, nomenclatura, referências, schemas, manifest de integração),
 // mantém as verificações do CR-026 e acrescenta as do CR-027 (Error Registry
 // 1.5, Model Profile Schema 1.1 e Registry 1.1, schemas do Cost Ledger,
-// migrations do Ledger). A Release 2.16 fica como evidência histórica em
-// cross-registry-validation-v2.16.json, conferida pelo manifest v2.16.
+// migrations do Ledger) e, desde a 2.18, as do CR-028 (migration 000015,
+// migrations anteriores imutáveis, identidade de ambiente). As Releases 2.16 e
+// 2.17 ficam como evidência histórica nos relatórios versionados de cada uma.
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -16,6 +17,7 @@ import {
 import type { AgentActionCatalog } from "../../packages/core/src/index.ts";
 import { leaseSecondsFor } from "../../packages/core/src/index.ts";
 import { LOCAL_TEST_MODEL_REGISTRY } from "../../packages/infra/src/ai-model-harness/local-test-catalog.ts";
+import { APPROVED_DEPLOYMENT_EVIDENCE } from "../../packages/infra/src/config.ts";
 import { budgetPeriodInvariants, costLedgerEntryInvariants, modelAttemptInvariants } from "./cost-ledger-invariants.ts";
 
 export type Check = { id: string; category: string; status: "passed" | "failed"; details: Record<string, unknown> };
@@ -60,6 +62,22 @@ export const CR027_MIGRATIONS = [
   "supabase/migrations/20260929000013_finops_ledger_schema.sql",
   "supabase/migrations/20260929000014_finops_ledger_functions.sql",
 ] as const;
+export const CR028_MIGRATION = "supabase/migrations/20260929000015_tenant_deletion_owner_guard.sql";
+/**
+ * Migrations do I-01 anteriores ao Contract Registry: não constam dos manifests.
+ * Hashes fixados a partir do commit 8063131 (base do CR-028); as 000009–000014
+ * são conferidas contra o manifest v2.17.
+ */
+export const PRE_REGISTRY_MIGRATIONS: Readonly<Record<string, string>> = {
+  "supabase/migrations/20260915000001_access_roles_and_context.sql": "3ae74c2085aa278929bacc013ac0d13d654734c69b488f7b7a5a2a547ac6bfa1",
+  "supabase/migrations/20260915000002_identity_and_tenancy.sql": "85882b6255944f617a3c6045e7cbadb812838f098d2c2e0ab9ff430cef9c1ed0",
+  "supabase/migrations/20260915000003_rls_policies.sql": "4fc7d844c7733358a63abfe0bdb394f15d42de5613ac7afc9d8c90c0e75918ea",
+  "supabase/migrations/20260915000004_storage_isolation.sql": "166766ec62b9c7d3520584c1de9e7183f7ad6eeec7d21b532f473c38ea98b966",
+  "supabase/migrations/20260915000005_last_owner_guard.sql": "6a2d5db2e4971c2488b2de4ed1443246cacd78a768d14da8627b6cdfb584fe01",
+  "supabase/migrations/20260915000006_identity_scoped_reads.sql": "53973b4a8c74f8268b747224dbe9a769cea1ad8f487210a12b51f4dcd6deb4b6",
+  "supabase/migrations/20260915000007_resolve_access_context.sql": "dd2458ba1d4316e9378164440cb535d29de42517c5250ebc18a57d4f0a38549f",
+  "supabase/migrations/20260915000008_operator_read_scope.sql": "f7a023c958c3eea55a41bba0c072ac5807300d72bd540301f379d1e571254297",
+};
 const LEDGER_FUNCTIONS = [
   "acquire_model_attempt", "close_model_attempt", "budget_remaining", "expire_next_model_attempt",
   "reconcile_model_attempt", "open_budget_period", "close_budget_period",
@@ -256,6 +274,39 @@ export function runCrossRegistryValidation(root: string): { checks: Check[]; cou
   add("DATABASE-cr027-ledger-migrations", "database",
     rlsForcada.length === tabelas.length && semGrantTabela && revogadas.length === LEDGER_FUNCTIONS.length && definer.length === LEDGER_FUNCTIONS.length,
     { forcedRls: rlsForcada.length, tableGrants: semGrantTabela ? 0 : "found", revokedFromPublic: revogadas.length, securityDefinerWithFixedSearchPath: definer.length });
+
+  // CR-028: migrations 000001–000014 imutáveis desde a Release 2.17; migration 000015; identidade de ambiente
+  const v217 = ler("contract-registry-manifest-v2.17.json");
+  const migracoesAnteriores = [
+    ...Object.entries(PRE_REGISTRY_MIGRATIONS).map(([path, sha256]) => ({ path, sha256 })),
+    ...v217.artifacts.filter((a: Json) => /^supabase\/migrations\/\d+_.*\.sql$/.test(a.path)),
+  ];
+  const alteradas = migracoesAnteriores.filter((a: Json) => sha256File(root, a.path) !== a.sha256).map((a: Json) => a.path);
+  const noDisco = readdirSync(join(root, "supabase/migrations")).filter((f) => f.endsWith(".sql")).sort();
+  const esperadasNoDisco = [...migracoesAnteriores.map((a: Json) => a.path.split("/").pop()), CR028_MIGRATION.split("/").pop()].sort();
+  add("FROZEN-migrations-000001-000014", "freeze",
+    migracoesAnteriores.length === 14 && alteradas.length === 0 && JSON.stringify(noDisco) === JSON.stringify(esperadasNoDisco),
+    { migrations: migracoesAnteriores.length, changed: alteradas, onDisk: noDisco.length });
+  inputs.push({ path: CR028_MIGRATION, sha256: sha256File(root, CR028_MIGRATION), evidenceLevel: "direct" });
+  const m15 = readFileSync(join(root, CR028_MIGRATION), "utf8");
+  const guardas = ["app.tenant_owner_guard", "finops.forbid_record_mutation", "finops.forbid_entry_mutation", "finops.forbid_direct_delete"];
+  const endurecidas = guardas.filter((f) => new RegExp(`function ${f.replace(".", "\\.")}\\(\\) returns trigger\\s+language plpgsql\\s+security definer\\s+set search_path = pg_catalog, pg_temp`).test(m15));
+  add("DATABASE-cr028-owner-guard-migration", "database",
+    endurecidas.length === 4 && !/pg_trigger_depth\(\)\s*[<>=!]/.test(m15) &&
+    /drop function app\.ensure_tenant_keeps_owner\(\);/.test(m15) && /create constraint trigger memberships_preserva_owner/.test(m15) &&
+    guardas.every((f) => m15.includes(`alter function ${f}() owner to postgres;`)),
+    { hardenedFunctions: endurecidas.length, triggerDepthInDecision: /pg_trigger_depth\(\)\s*[<>=!]/.test(m15) });
+  const configTs = readFileSync(join(root, "packages/infra/src/config.ts"), "utf8");
+  const ci = readFileSync(join(root, ".github/workflows/ci.yml"), "utf8");
+  const envExemplo = readFileSync(join(root, ".env.example"), "utf8");
+  for (const p of ["packages/infra/src/config.ts", ".github/workflows/ci.yml", ".env.example"]) inputs.push({ path: p, sha256: sha256File(root, p), evidenceLevel: "direct" });
+  add("CONFIG-cr028-environment-identity", "configuration",
+    APPROVED_DEPLOYMENT_EVIDENCE.length === 0 && /OPLYRA_ALLOW_REMOTE é obsoleta/.test(configTs) &&
+    !/^\s*OPLYRA_ALLOW_REMOTE\s*[:=]/m.test(ci) && !/^\s*OPLYRA_ALLOW_REMOTE\s*[:=]/m.test(envExemplo) &&
+    /TrustedDeploymentContext/.test(configTs) &&
+    /protocolo não aceito/.test(configTs) && /não aceita credenciais na URL/.test(configTs) && /não aceita query nem fragmento/.test(configTs) && /usuário malformado/.test(configTs) &&
+    /endpoint canônico de SUPABASE_URL/.test(configTs) && /não aceita path/.test(configTs),
+    { approvedDeploymentProviders: APPROVED_DEPLOYMENT_EVIDENCE.length, allowRemoteDefined: false, strictUrlParsing: true });
 
   // Manifest de integração
   const sim = ler("schema-integration-manifest.json");

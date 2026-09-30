@@ -24,6 +24,7 @@ const relatorio = ler(`${CONTRACTS_DIR}/cross-registry-validation-v2.16.json`);
 const m = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.16.json`) as Manifest;
 const base = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.15.json`) as Manifest;
 const v217 = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.17.json`) as Manifest;
+const v218 = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.18.json`) as Manifest;
 
 /** Classifica cada artefato da release; qualquer caso fora das três classes é violação. */
 export function classificar(release: Manifest, anterior: Manifest) {
@@ -110,9 +111,10 @@ describe("manifest v2.16 como mudança lógica sobre a 2.15", () => {
     expect(classificar(faltando, base).violacoes).toContain("docs/decisions/README.md: herdado ausente");
   });
 
-  it("artefatos do CR-026 conferem com o disco, salvo os modificados pelo CR-027 na Release 2.17", () => {
+  it("artefatos do CR-026 conferem com o disco, salvo os modificados por releases posteriores (2.17, 2.18)", () => {
     const modificadosCr027 = new Set<string>(v217.changeSet.modifiedArtifacts);
-    const divergentes = m.artifacts.filter((a) => a.source === "cr_026" && !modificadosCr027.has(a.path))
+    const modificadosDepois = new Set<string>([...modificadosCr027, ...v218.changeSet.modifiedArtifacts]);
+    const divergentes = m.artifacts.filter((a) => a.source === "cr_026" && !modificadosDepois.has(a.path))
       .filter((a) => !existsSync(join(ROOT, a.path)) || sha(a.path) !== a.sha256 || readFileSync(join(ROOT, a.path)).length !== a.sizeBytes);
     expect(divergentes.map((a) => a.path)).toEqual([]);
     for (const p of modificadosCr027) {

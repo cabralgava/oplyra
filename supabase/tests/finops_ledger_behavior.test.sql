@@ -259,8 +259,9 @@ select is(
   0, 'todo contador é a soma dos lançamentos do período');
 
 -- -------------------------------------- constraints e imutabilidade
-select throws_ok($$update finops.model_call_records set latency_ms = 1 where tenant_id = '11111111-1111-4111-8111-111111111111'$$,
-  '23514', null, 'registro é imutável');
+-- created_at fica fora da constraint de coerência do documento (000013): só a trigger de imutabilidade pode rejeitar.
+select throws_ok($$update finops.model_call_records set created_at = created_at + interval '1 second' where tenant_id = '11111111-1111-4111-8111-111111111111'$$,
+  '23514', 'model_call_records é imutável', 'registro é imutável');
 select throws_ok($$delete from finops.cost_ledger_entries where tenant_id = '11111111-1111-4111-8111-111111111111'$$,
   '23514', null, 'diário é append-only');
 select throws_ok($$update finops.model_attempts set status = 'released', actual_micro_usd = 10, lease_owner = null, lease_expires_at = null,

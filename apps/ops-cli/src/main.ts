@@ -5,7 +5,7 @@
 import { provisionTenant } from "@oplyra/core";
 import type { Deps, UserId } from "@oplyra/core";
 import {
-  criarUnitOfWork, tenantRepository, membershipRepository, invitationRepository,
+  carregarConfig, criarUnitOfWork, tenantRepository, membershipRepository, invitationRepository,
   auditLog, relogio, geradorDeToken, criarEntitlements,
 } from "@oplyra/infra";
 import { criarAuthAdmin } from "./auth-admin.ts";
@@ -66,10 +66,14 @@ async function main(): Promise<void> {
     return;
   }
 
-  const conexao = process.env.DATABASE_URL_OPS;
-  const api = process.env.SUPABASE_URL;
+  // Mesma validação de ambiente do runtime (CR-028): local/ci só endpoints
+  // locais; produção exige evidência confiável do deployment, ainda sem
+  // provedor aprovado, portanto falha fechada.
+  const config = carregarConfig(process.env, { databaseVar: "DATABASE_URL_OPS" });
+  const conexao = config.databaseUrl;
+  const api = config.supabaseUrl;
   const chave = process.env.OPS_ADMIN_CREDENTIAL;
-  if (!conexao || !api || !chave) throw new Error("faltam DATABASE_URL_OPS, SUPABASE_URL e OPS_ADMIN_CREDENTIAL");
+  if (!chave) throw new Error("falta OPS_ADMIN_CREDENTIAL");
 
   const uow = criarUnitOfWork({ connectionString: conexao, max: 2 });
   const deps: Deps = {

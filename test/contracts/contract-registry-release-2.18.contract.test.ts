@@ -1,14 +1,13 @@
-// Contract Registry Release 2.17 (CR-027), agora referência histórica: o
-// relatório gravado e o manifest são conferidos pela cadeia de hashes. A
-// cross-validation executável corrente é a da Release 2.18 (CR-028); os
-// artefatos do CR-027 que o CR-028 modificou são conferidos pelo manifest
-// v2.18, e os demais continuam idênticos ao disco.
+// Contract Registry Release 2.18 (CR-028): cross-validation reexecutada e
+// manifest conferido como mudança lógica sobre a Release 2.17. Artefato
+// herdado conserva exatamente a entrada da 2.17; somente os caminhos
+// autorizados no changeSet carregam conteúdo atual, conferido contra o disco.
 import { describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { CONTRACTS_DIR } from "./cross-registry-validation.ts";
+import { CONTRACTS_DIR, runCrossRegistryValidation } from "./cross-registry-validation.ts";
 
 type Artefato = { path: string; category: string; sizeBytes: number; sha256: string; source: string };
 type Manifest = Record<string, any> & { artifacts: Artefato[] };
@@ -16,15 +15,14 @@ type Manifest = Record<string, any> & { artifacts: Artefato[] };
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const ler = (p: string): Record<string, any> => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
 const sha = (p: string) => createHash("sha256").update(readFileSync(join(ROOT, p))).digest("hex");
-/** Precedente das Releases 1.x–2.16: linhas `path:sha256` em ordem localeCompare, unidas por \n. */
+/** Precedente das Releases 1.x–2.17: linhas `path:sha256` em ordem localeCompare, unidas por \n. */
 const agregado = (artefatos: { path: string; sha256: string }[]) =>
   createHash("sha256").update([...artefatos].sort((a, b) => a.path.localeCompare(b.path)).map((a) => `${a.path}:${a.sha256}`).join("\n")).digest("hex");
 
-const relatorio = ler(`${CONTRACTS_DIR}/cross-registry-validation-v2.17.json`);
-const m = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.17.json`) as Manifest;
-const base = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.16.json`) as Manifest;
-const v218 = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.18.json`) as Manifest;
-const FONTE = "cr_027";
+const relatorio = ler(`${CONTRACTS_DIR}/cross-registry-validation-v2.18.json`);
+const m = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.18.json`) as Manifest;
+const base = ler(`${CONTRACTS_DIR}/contract-registry-manifest-v2.17.json`) as Manifest;
+const FONTE = "cr_028";
 
 /** Classifica cada artefato da release; qualquer caso fora das três classes é violação. */
 export function classificar(release: Manifest, anterior: Manifest, fonte = FONTE) {
@@ -49,18 +47,19 @@ export function classificar(release: Manifest, anterior: Manifest, fonte = FONTE
   return { herdados, modificados, adicionados, violacoes };
 }
 
-describe("cross-registry validation da Release 2.17 (histórico)", () => {
-  it("o relatório gravado registra 75 checks aprovados", () => {
-    expect(relatorio.validation.checks).toHaveLength(75);
-    expect(relatorio.validation.checks.filter((c: { status: string }) => c.status !== "passed")).toEqual([]);
-    expect(relatorio).toMatchObject({ status: "passed", releaseVersion: "2.17", changeSet: "CR-027", validation: { checksFailed: 0, checksRun: 75 } });
+describe("cross-registry validation da Release 2.18", () => {
+  const atual = runCrossRegistryValidation(ROOT);
+
+  it("todos os checks passam", () => {
+    expect(atual.checks.filter((c) => c.status !== "passed")).toEqual([]);
+    expect(atual.checks.length).toBe(78);
   });
 
-  it("o relatório gravado é íntegro: hash igual ao do manifest v2.17 e herdado sem mudança na 2.18", () => {
-    const caminho = `${CONTRACTS_DIR}/cross-registry-validation-v2.17.json`;
-    const entrada = m.artifacts.find((a) => a.path === caminho)!;
-    expect(sha(caminho)).toBe(entrada.sha256);
-    expect(v218.artifacts.find((a) => a.path === caminho)).toEqual(entrada);
+  it("o relatório gravado é exatamente o resultado reexecutado", () => {
+    expect(relatorio.validation.checks).toEqual(atual.checks);
+    expect(relatorio.inputs).toEqual(atual.inputs);
+    expect(relatorio.counts).toEqual(atual.counts);
+    expect(relatorio).toMatchObject({ status: "passed", releaseVersion: "2.18", changeSet: "CR-028", validation: { checksFailed: 0, checksRun: 78 } });
   });
 
   it("a validação do Freeze v1 permanece intacta", () => {
@@ -70,14 +69,14 @@ describe("cross-registry validation da Release 2.17 (histórico)", () => {
   });
 });
 
-describe("manifest v2.17 como mudança lógica sobre a 2.16", () => {
+describe("manifest v2.18 como mudança lógica sobre a 2.17", () => {
   const c = classificar(m, base);
 
-  it("todo artefato é herdado sem mudança, modificado pelo CR-027 ou adicionado pelo CR-027", () => {
+  it("todo artefato é herdado sem mudança, modificado pelo CR-028 ou adicionado pelo CR-028", () => {
     expect(c.violacoes).toEqual([]);
     expect(c.herdados.length + c.modificados.length + c.adicionados.length).toBe(m.artifacts.length);
     expect(m.artifactClassification).toEqual({
-      inheritedUnchanged: c.herdados.length, modifiedByCr027: c.modificados.length, addedByCr027: c.adicionados.length, unclassified: 0,
+      inheritedUnchanged: c.herdados.length, modifiedByCr028: c.modificados.length, addedByCr028: c.adicionados.length, unclassified: 0,
     });
   });
 
@@ -86,7 +85,7 @@ describe("manifest v2.17 como mudança lógica sobre a 2.16", () => {
     expect(m.artifactClassification.unclassified).toBe(0);
   });
 
-  it("o change set autorizado é exatamente o conjunto de artefatos cr_027", () => {
+  it("o change set autorizado é exatamente o conjunto de artefatos cr_028", () => {
     const cr = m.artifacts.filter((a) => a.source === FONTE).map((a) => a.path).sort();
     expect([...c.modificados, ...c.adicionados].sort()).toEqual(cr);
     expect([...m.changeSet.modifiedArtifacts, ...m.changeSet.addedArtifacts].sort()).toEqual(cr);
@@ -95,7 +94,7 @@ describe("manifest v2.17 como mudança lógica sobre a 2.16", () => {
   it("guarda: hash diferente da base fora do change set, novo não autorizado, herdado ausente ou alteração externa são violações", () => {
     const adulterado = structuredClone(m);
     adulterado.artifacts.find((a) => a.path === "package.json")!.sha256 = "0".repeat(64);
-    expect(classificar(adulterado, base).violacoes).toContain("package.json: difere da base 2.16 fora do change set autorizado");
+    expect(classificar(adulterado, base).violacoes).toContain("package.json: difere da base 2.17 fora do change set autorizado");
 
     const intruso = structuredClone(m);
     intruso.artifacts.push({ path: "docs/product/marketing-ops/13-ai-model-routing-finops.md", category: "contract_documentation", sizeBytes: 1, sha256: "1".repeat(64), source: FONTE });
@@ -109,22 +108,18 @@ describe("manifest v2.17 como mudança lógica sobre a 2.16", () => {
     faltando.artifacts = faltando.artifacts.filter((a) => a.path !== "docs/decisions/README.md");
     expect(classificar(faltando, base).violacoes).toContain("docs/decisions/README.md: herdado ausente");
 
-    const esquema10 = structuredClone(m);
-    esquema10.artifacts.find((a) => a.path.endsWith("ai-model-harness/model-profile.schema.json"))!.sha256 = "2".repeat(64);
-    expect(classificar(esquema10, base).violacoes.some((v) => v.includes("model-profile.schema.json"))).toBe(true);
+    const migracao = structuredClone(m);
+    migracao.artifacts.find((a) => a.path.endsWith("20260929000014_finops_ledger_functions.sql"))!.sha256 = "2".repeat(64);
+    expect(classificar(migracao, base).violacoes.some((v) => v.includes("20260929000014_finops_ledger_functions.sql"))).toBe(true);
   });
 
-  it("artefatos do CR-027 conferem com o disco, salvo os modificados pelo CR-028 na Release 2.18", () => {
-    const modificadosDepois = new Set<string>(v218.changeSet.modifiedArtifacts);
-    for (const p of modificadosDepois) {
-      if (m.artifacts.some((a) => a.path === p && a.source === FONTE)) expect(v218.artifacts.find((a) => a.path === p)!.source, p).toBe("cr_028");
-    }
-    const divergentes = m.artifacts.filter((a) => a.source === FONTE && !modificadosDepois.has(a.path))
+  it("artefatos do CR-028 conferem com o conteúdo atual em disco", () => {
+    const divergentes = m.artifacts.filter((a) => a.source === FONTE)
       .filter((a) => !existsSync(join(ROOT, a.path)) || sha(a.path) !== a.sha256 || readFileSync(join(ROOT, a.path)).length !== a.sizeBytes);
     expect(divergentes.map((a) => a.path)).toEqual([]);
   });
 
-  it("edições pendentes do worktree fora do CR ficam na release com a entrada da 2.16", () => {
+  it("edições pendentes do worktree fora do CR ficam na release com a entrada da 2.17", () => {
     const b = new Map(base.artifacts.map((a) => [a.path, a]));
     for (const p of [
       "docs/decisions/README.md", "docs/product/marketing-ops/16-environments-release.md", "docs/product/marketing-ops/17-risks-costs.md",
@@ -133,22 +128,42 @@ describe("manifest v2.17 como mudança lógica sobre a 2.16", () => {
     ]) {
       expect(m.artifacts.find((a) => a.path === p), p).toEqual(b.get(p));
     }
-    for (const fora of ["docs/product/marketing-ops/13-ai-model-routing-finops.md", "docs/harness/ESTADO.md"]) {
+    for (const fora of ["docs/product/marketing-ops/13-ai-model-routing-finops.md", "docs/harness/ESTADO.md", "docs/harness/PREPARACAO-I01.md", "docs/harness/VERIFICACOES.md"]) {
       expect(m.artifacts.some((a) => a.path === fora), fora).toBe(false);
     }
   });
 
-  it("Model Profile Schema 1.0 herdado sem mudança; 1.1, Ledger schemas e migrations adicionados pelo CR-027", () => {
-    const d = `${CONTRACTS_DIR}/schemas/ai-model-harness`;
-    expect(c.herdados).toContain(`${d}/model-profile.schema.json`);
-    for (const n of ["model-profile-1.1", "budget-period", "cost-ledger-entry", "model-attempt"]) {
-      expect(c.adicionados).toContain(`${d}/${n}.schema.json`);
-      expect(c.adicionados).toContain(`${d}/${n}.validation.json`);
+  it("migrations 000001–000014 herdadas ou fora do registry sem mudança; 000015, testes e configuração adicionados pelo CR-028", () => {
+    for (const mig of ["supabase/migrations/20260929000013_finops_ledger_schema.sql", "supabase/migrations/20260929000014_finops_ledger_functions.sql",
+      "supabase/migrations/20260921000009_content_repository.sql", "supabase/migrations/20260921000012_outbox_dispatcher_functions.sql"]) {
+      expect(c.herdados).toContain(mig);
     }
-    for (const mig of ["supabase/migrations/20260929000013_finops_ledger_schema.sql", "supabase/migrations/20260929000014_finops_ledger_functions.sql"]) {
-      expect(c.adicionados).toContain(mig);
+    for (const novo of ["supabase/migrations/20260929000015_tenant_deletion_owner_guard.sql", "supabase/tests/tenant_deletion_owner_guard.test.sql",
+      "packages/infra/src/config.ts", "packages/infra/test/config-environment.test.ts", "packages/infra/test/tenant-deletion-cascade.integration.test.ts",
+      `${CONTRACTS_DIR}/changes/CR-028-production-readiness-hardening.md`]) {
+      expect(c.adicionados).toContain(novo);
     }
-    expect(c.modificados).toEqual(expect.arrayContaining([`${CONTRACTS_DIR}/registries/errors.json`, `${CONTRACTS_DIR}/registries/model-profiles.json`]));
+    expect(c.modificados).toEqual(expect.arrayContaining([".github/workflows/ci.yml", "test/contracts/cross-registry-validation.ts"]));
+    // Registries e schemas não mudam no CR-028.
+    for (const a of m.artifacts.filter((x) => x.category === "registry" || x.category === "schema")) expect(c.herdados).toContain(a.path);
+  });
+
+  it("release ativa não carrega exceção de digest: sem campo excludedFromDigest* e sem edição do CR-028 nos documentos mistos", () => {
+    expect(Object.keys(m.changeSet).filter((k) => /excluded/i.test(k))).toEqual([]);
+    expect(JSON.stringify(m)).not.toMatch(/excludedFromDigest/);
+    expect(c.herdados).toContain("docs/product/marketing-ops/16-environments-release.md");
+    // Reconciliação adiada pelo worktree misto: nenhum trecho do CR-028 permanece nesses três arquivos.
+    for (const p of ["docs/product/marketing-ops/16-environments-release.md", "docs/harness/PREPARACAO-I01.md", "docs/harness/VERIFICACOES.md"]) {
+      expect(readFileSync(join(ROOT, p), "utf8"), p).not.toContain("CR-028");
+    }
+  });
+
+  it("o teste comportamental do CR-027 é modificado pelo CR-028 e não mascara a imutabilidade do registro", () => {
+    expect(c.modificados).toContain("supabase/tests/finops_ledger_behavior.test.sql");
+    const sql = readFileSync(join(ROOT, "supabase/tests/finops_ledger_behavior.test.sql"), "utf8");
+    expect(sql).toContain("set created_at = created_at + interval '1 second'");
+    expect(sql).toContain("'model_call_records é imutável', 'registro é imutável'");
+    expect(sql).not.toMatch(/update finops\.model_call_records set latency_ms/);
   });
 
   it("aggregateDigest, resumo por categoria e ordenação recalculados conferem", () => {
@@ -164,35 +179,37 @@ describe("manifest v2.17 como mudança lógica sobre a 2.16", () => {
 
   it("envelope, versões e base seguem o precedente", () => {
     expect(m).toMatchObject({
-      manifest: "oplyra-contract-registry-release", manifestVersion: "2.17", schemaVersion: "1.0", releaseVersion: "2.17",
-      changeSet: { id: "CR-027", path: `${CONTRACTS_DIR}/changes/CR-027-persistent-cost-ledger.md` },
+      manifest: "oplyra-contract-registry-release", manifestVersion: "2.18", schemaVersion: "1.0", releaseVersion: "2.18",
+      changeSet: { id: "CR-028", path: `${CONTRACTS_DIR}/changes/CR-028-production-readiness-hardening.md` },
     });
     expect(m.registryVersions).toEqual({
       agents: "1.0", permissions: "1.0", tools: "1.0", actions: "2.0", events: "1.2", errors: "1.5", handoffs: "1.0", qualityGates: "1.0", modelProfiles: "1.1",
     });
     expect(m.baseRelease).toEqual({
-      version: "2.16", manifestPath: `${CONTRACTS_DIR}/contract-registry-manifest-v2.16.json`,
-      manifestSha256: sha(`${CONTRACTS_DIR}/contract-registry-manifest-v2.16.json`), aggregateDigest: base.artifactSummary.aggregateDigest,
+      version: "2.17", manifestPath: `${CONTRACTS_DIR}/contract-registry-manifest-v2.17.json`,
+      manifestSha256: sha(`${CONTRACTS_DIR}/contract-registry-manifest-v2.17.json`), aggregateDigest: base.artifactSummary.aggregateDigest,
     });
     expect(m.baseFreeze).toEqual(base.baseFreeze);
+    expect(sha(`${CONTRACTS_DIR}/contract-registry-manifest-v2.17.json`)).toBe("0870c3afaea6d0ba40c0185883f8b7ebae7b90789efd58de36fc284eaa983076");
     expect(agregado(base.artifacts)).toBe(base.artifactSummary.aggregateDigest);
   });
 
   it("exclui o próprio manifest e os anteriores do hash", () => {
-    for (const v of ["2.15", "2.16", "2.17"]) {
+    for (const v of ["2.15", "2.16", "2.17", "2.18"]) {
       expect(m.exclusions).toContainEqual({ path: `${CONTRACTS_DIR}/contract-registry-manifest-v${v}.json`, reason: "manifest_self_reference_is_not_hashed" });
       expect(m.artifacts.some((a) => a.path.endsWith(`contract-registry-manifest-v${v}.json`))).toBe(false);
     }
   });
 
-  it("autoriza somente o Ledger local: sem provider real, recurso remoto, publicação nem dado real", () => {
+  it("autoriza somente correções locais: sem projeto remoto, migration remota, credencial real, publicação ou runtime produtivo", () => {
     expect(m.implementationBoundary).toMatchObject({
       realProviderEnabled: false, visualCapabilityEnabled: false, productiveFingerprintKeyLoaded: false,
       costLedgerPersisted: true, costLedgerEnvironment: "local_supabase_only",
+      productionRuntimeEnabled: false, approvedDeploymentProviders: 0, allowRemoteFlagSupported: false,
     });
     expect(m.changeSet).toMatchObject({
-      migrationsAdded: 2, databaseChanged: true, remoteResourcesCreated: false, externalCallsPerformed: false, realKeysUsed: false, realDataUsed: false,
-      publicationPerformed: false,
+      migrationsAdded: 1, databaseChanged: true, remoteResourcesCreated: false, externalCallsPerformed: false, realKeysUsed: false, realDataUsed: false,
+      publicationPerformed: false, remoteMigrationsApplied: false,
     });
   });
 });

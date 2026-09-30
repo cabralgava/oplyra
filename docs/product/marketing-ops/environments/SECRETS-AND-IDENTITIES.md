@@ -21,7 +21,7 @@ Every login identity maps to a non-login execution role where supported. Product
 
 ## Canonical configuration names
 
-The existing names from `16-environments-release.md` remain canonical, including `OPLYRA_ENV`, `SUPABASE_URL`, `DATABASE_URL_POOLED`, `DATABASE_URL_MIGRATIONS`, `WORKER_DB_ROLE`, `OPS_ADMIN_CREDENTIAL`, provider API keys, OTLP configuration and `OPLYRA_ALLOW_REMOTE`.
+The existing names from `16-environments-release.md` remain canonical, including `OPLYRA_ENV`, `SUPABASE_URL`, `DATABASE_URL_POOLED`, `DATABASE_URL_MIGRATIONS`, `WORKER_DB_ROLE`, `OPS_ADMIN_CREDENTIAL`, provider API keys, OTLP configuration, `SUPABASE_PROJECT_REF` and `OPLYRA_ENVIRONMENT_FINGERPRINT`. `OPLYRA_ALLOW_REMOTE` was removed by CR-028: its presence stops startup.
 
 Additional runtime-plan names proposed for implementation:
 
@@ -55,6 +55,8 @@ Rotate immediately on suspected exposure, personnel access change or provider in
 ## Environment fingerprint
 
 Each process validates a non-secret fingerprint containing environment, database project identity and deployment identity. A mismatch stops startup. A preview or local build cannot use a production fingerprint even if other credentials are accidentally supplied.
+
+Implemented by CR-028: `OPLYRA_ENVIRONMENT_FINGERPRINT` = `ofp1:<environment>:<projectRef>:<deploymentId>` is untrusted configuration and is validated against a `TrustedDeploymentContext` (`environment`, `deploymentId`, `provider`, `evidenceSource`) that the composition root obtains from reserved, documented metadata of the deployment provider through an evidence policy, never from an application variable. The productive allowlist of providers is empty until a web/worker destination and its metadata adapter are approved, so the production runtime fails closed. This guards against configuration mistakes; it is not protection against deliberate forgery and does not replace secret isolation. The migration flow is separate and the runtime never accepts the migration credential.
 
 ## Pending decisions
 

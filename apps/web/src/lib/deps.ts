@@ -1,12 +1,14 @@
 // Composition root da web. É o único lugar que conhece adapters concretos.
 import {
-  carregarConfig, criarUnitOfWork, tenantRepository, membershipRepository,
+  carregarConfig, politicaSemProvedorAprovado, criarUnitOfWork, tenantRepository, membershipRepository,
   invitationRepository, auditLog, relogio, geradorDeToken, criarEntitlements,
   criarAuthGateway, criarAccessContextResolver,
 } from "@oplyra/infra";
 import type { Deps } from "@oplyra/core";
 
-const config = carregarConfig();
+// Evidência de deployment: nenhum provedor aprovado ainda (CR-028); em
+// produção a inicialização falha fechada até existir adapter aprovado.
+const config = carregarConfig(process.env, { evidencia: politicaSemProvedorAprovado });
 const uow = criarUnitOfWork({ connectionString: config.databaseUrl, max: 10 });
 
 export const deps: Deps = {
