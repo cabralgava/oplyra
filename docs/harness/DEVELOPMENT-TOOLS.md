@@ -25,7 +25,7 @@ Regras explícitas:
 ### 2.1 Repository & Execution
 
 - filesystem e shell: inspeção e execução local dentro do escopo autorizado e da allowlist da §5;
-- Git: **somente leitura** na sessão autônoma (`status`, `diff`, `show`, `log`, `rev-parse`, `ls-files`, `ls-tree`, `cat-file`). `add`, `commit`, ramos, `push`, `pull`, `fetch`, `checkout`, `reset`, `merge`, `rebase`, `tag` e qualquer subcomando mutável ou remoto são feitos pelo proprietário fora da sessão;
+- Git: **somente leitura** na sessão autônoma (`status`, `diff`, `show`, `log`, `rev-parse`, `ls-files`, `ls-tree`, `cat-file`). `add`, `commit`, ramos, `push`, `pull`, `fetch`, `checkout`, `reset`, `merge`, `rebase`, `tag` e qualquer subcomando mutável ou remoto são feitos pelo proprietário fora da sessão (política completa na §8);
 - pnpm: somente os scripts enumerados na §5;
 - Supabase local: somente pelos scripts `db:*` do projeto (o CLI direto e o ambiente de contêineres não são chamados pelo agente).
 
@@ -157,3 +157,16 @@ O teste de supply chain compara este registro com o `pnpm-workspace.yaml` do pro
 Não usar `--dangerously-skip-permissions`. A ativação de execução autônoma permanece sujeita a [AUTONOMOUS-BUILD.md](AUTONOMOUS-BUILD.md), que continua `draft` com `executionEnabled: false`.
 
 Identidades sintéticas e cenários canônicos: [SYSTEM-TEST-USERS.md](SYSTEM-TEST-USERS.md). Protocolo de trabalho: [DESENVOLVIMENTO.md](DESENVOLVIMENTO.md).
+
+## 8. Ciclo de vida Git e responsabilidades do proprietário
+
+Política aprovada no [CR-032](../product/marketing-ops/contracts/changes/CR-032-developer-harness-git-lifecycle.md); esta seção é a reconciliação textual do slice S1. **Descreve a política, não a impõe:** ruleset, template de PR, CODEOWNERS, preflight, testes de regressão do guard e blockers executáveis (slices S2–S7) não existem e não estão autorizados. Nenhum guard, hook, setting ou script foi alterado.
+
+- **Escritas Git são exclusivas do proprietário:** criar branch, staging, commit, push, criar e fechar PR, atestar, mesclar e excluir branch. Isso vale para a sessão autônoma e para a de manutenção; a manutenção não autoriza staging, commit nem ação remota. `gh` permanece fora da allowlist.
+- **O agente trabalha somente em branch criada pelo proprietário** (nunca em `main`) e termina em **"ready for owner"**, entregando o pacote de handoff: branch, SHA da base, lista de arquivos, mensagens de commit propostas, evidência de verificação (comandos, resultados, SHA testado, o que não foi verificado), rascunho do corpo do PR e proveniência (modo de permissão e versões das ferramentas).
+- **PR:** criado pelo proprietário em draft; só passa a Ready for review com os checks verdes e a evidência anexada. O check obrigatório é o job `validate`; um check verde é necessário e nunca suficiente para o merge.
+- **Atestação e revisão:** a atestação do proprietário, vinculada ao SHA da cabeça e dada após o último `validate` verde, é registro de governança, **não é revisão independente**. Revisão por IA é consultiva e não aprova nem dispensa a atestação. **HB-13 (evidência de revisão independente) permanece não atendido.** Outro revisor humano ou uma identidade de autoria separada são exigidos antes de qualquer proposta de `executionEnabled: true`.
+- **Merge e rollback:** squash merge, somente pelo proprietário, com exclusão da branch. Reversão por novo PR com `git revert` do commit de squash; force push, reset e reescrita de histórico em `main` nunca são método de rollback.
+- **Retomada e recuperação:** verificar com Git de leitura antes de agir; parar diante de rebase, merge ou cherry-pick em andamento; se `main` avançou, o proprietário atualiza a branch e a evidência anterior é refeita. No máximo três tentativas diagnosticadas por check com falha, uma reexecução apenas para classificar flaky, e parada diante de conflito fora do próprio change set.
+- **Checkpoint D-6:** um PR documental registra o SHA do incremento **anterior**; o checkpoint não é recursivo e não cria obrigação de registrar o próprio SHA em outro PR.
+- **Fora desta seção:** configurações do GitHub e a avaliação do Turborepo (DP-02b2, adiada) continuam decisões separadas do proprietário.

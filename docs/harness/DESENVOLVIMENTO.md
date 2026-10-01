@@ -12,7 +12,7 @@ O Developer Harness é separado tanto do Product Agent Runtime quanto do Product
 
 O trabalho é Local First: aplicação, Supabase e serviços do workspace locais por padrão. Produção, deploy, serviços remotos, dados reais, mensagens e gastos são negados sem autorização explícita. Produção não é fallback. Versões de ferramentas seguem consulta → compatibilidade → teste → registro → pin → atualização deliberada, sem adoção permanente de `@latest`.
 
-A sessão de desenvolvimento com Claude Code começa por `pnpm claude:local` (launcher oficial, falha fechado); invocar `claude` diretamente fica fora das garantias. O guard Local First e a allowlist de execução são defesa em profundidade, não sandbox. Git de escrita (`add`, `commit`, ramos, `push`) e comandos fora da allowlist são feitos pelo proprietário fora da sessão autônoma. As dependências do harness ficam isoladas em `tools/developer-harness/`, fora do workspace do produto; o produto compila e testa sem elas. Mudanças no control plane do harness exigem `pnpm claude:maintenance`, iniciada pelo proprietário.
+A sessão de desenvolvimento com Claude Code começa por `pnpm claude:local` (launcher oficial, falha fechado); invocar `claude` diretamente fica fora das garantias. O guard Local First e a allowlist de execução são defesa em profundidade, não sandbox. Git de escrita (`add`, `commit`, ramos, `push`) e comandos fora da allowlist são feitos pelo proprietário fora da sessão autônoma; o ciclo de vida completo está em [Git, entrega e retomada](#git-entrega-e-retomada). As dependências do harness ficam isoladas em `tools/developer-harness/`, fora do workspace do produto; o produto compila e testa sem elas. Mudanças no control plane do harness exigem `pnpm claude:maintenance`, iniciada pelo proprietário.
 
 Identidades e cenários sintéticos: [SYSTEM-TEST-USERS.md](SYSTEM-TEST-USERS.md). O loop futuro está documentado, ainda desativado, em [AUTONOMOUS-BUILD.md](AUTONOMOUS-BUILD.md).
 
@@ -41,7 +41,7 @@ Consultar [GUIA-INTERFACE-FIGMA.md](../product/marketing-ops/GUIA-INTERFACE-FIGM
 3. **Preparar:** identificar skills aplicáveis, dependências e verificações. Verificar disponibilidade no repositório atual e registrar ausências reais sem inventar conteúdo. Registrar instruções específicas de outros produtos desconsideradas por conflito com a Oplyra; não presumir que a ausência ou leitura em outro workspace vale para esta execução. Resolver escolhas rotineiras dentro do escopo; perguntar somente quando faltar informação indispensável ou autorização real.
 4. **Executar:** trabalhar em incrementos pequenos e preservar mudanças alheias. Antes do gate de discovery, produzir apenas documentação, modelos conceituais e protótipos permitidos.
 5. **Verificar:** aplicar os gates pertinentes de `VERIFICACOES.md`, registrar resultados e revisar o diff. Depois de qualquer alteração que invalide uma evidência, repetir a verificação afetada.
-6. **Entregar:** explicar resultado, evidências, limitações e próximo passo autorizado; atualizar `ESTADO.md`. Ao finalizar discovery, apresentar a proposta e aguardar aprovação.
+6. **Entregar:** explicar resultado, evidências, limitações e próximo passo autorizado; atualizar `ESTADO.md`. Ao finalizar discovery, apresentar a proposta e aguardar aprovação. O agente encerra em "ready for owner" com o pacote de handoff (ver [Git, entrega e retomada](#git-entrega-e-retomada)); staging, commit, push, PR e merge são do proprietário.
 
 Não iniciar tarefas independentes só porque surgiram durante a revisão; registrá-las como pendências. Mudança de objetivo pelo usuário deve atualizar o estado e preservar o que continua válido.
 
@@ -56,6 +56,7 @@ Esta matriz orienta o trabalho; bloqueios reais dependem das permissões do ambi
 | Editar código, configurar serviços e criar/aplicar migrations | Somente depois de aprovação explícita do discovery e dentro do incremento autorizado. |
 | Executar verificações locais sem efeitos externos | Permitido no incremento autorizado; inspecionar o que o comando executa antes de rodá-lo. |
 | Resetar banco local | Apenas instância descartável de teste, identificada como tal e com dados sintéticos; banco local compartilhado ou com dados úteis exige autorização específica. |
+| Escritas Git: criar branch, staging, commit, push, criar ou fechar PR, atestar, mesclar, excluir branch | **Exclusivas do proprietário.** O agente usa somente Git de leitura, em branch criada pelo proprietário, e entrega o pacote de handoff. |
 | Publicar, fazer deploy, enviar mensagens, gastar ou alterar serviços externos | Exige autorização explícita aplicável à ação e ao destino; preparar resultado revisável antes de solicitá-la. |
 | Alterar permissões, remover dados ou reescrever histórico compartilhado | Exige escopo explícito e recuperação definida; não inferir autorização a partir de uma tarefa genérica. |
 | Delegar para agentes de desenvolvimento | Somente quando autorizado e suportado pelo ambiente; não é consequência automática da arquitetura multiagentes do produto. |
@@ -102,10 +103,24 @@ Na retomada, conferir alterações parciais e efeitos já executados antes de re
 - Reverter apenas alterações próprias identificadas, preservando mudanças do usuário. Não usar limpeza destrutiva como recuperação genérica.
 - Se faltar skill, credencial, decisão ou acesso indispensável, registrar exatamente o que falta e pedir apenas o necessário; não simular sucesso.
 
+## Git, entrega e retomada
+
+Política aprovada no [CR-032](../product/marketing-ops/contracts/changes/CR-032-developer-harness-git-lifecycle.md). Este texto é a reconciliação documental (slice S1); **nenhum mecanismo executável foi implementado** (preflight, ruleset, template de PR, CODEOWNERS e blockers executáveis são os slices S2–S7, não autorizados) e nada aqui amplia a autorização vigente.
+
+- **Escritas Git são exclusivas do proprietário:** criação de branch, staging, commit, push, criação e fechamento de PR, atestação, merge e exclusão de branch. O agente usa somente Git de leitura.
+- **Branch:** o agente trabalha somente em branch criada pelo proprietário para o incremento autorizado, nunca em `main`. Se a branch atual for `main`, não corresponder à combinada ou o worktree ou o índice não estiverem limpos no início, parar e relatar.
+- **Fim da iteração, "ready for owner":** o agente para ao entregar o pacote de handoff — nome da branch, SHA da base, lista de arquivos, mensagens de commit propostas (Conventional Commits), evidência de verificação (comandos exatos, resultados, SHA testado e o que não foi verificado), rascunho do corpo do PR e proveniência. Nunca faz staging, commit, push, PR, merge nem exclusão de branch.
+- **PR (proprietário):** começa em draft. Só passa a Ready for review com os checks verdes (`validate`) e a evidência anexada; a atestação do proprietário vem depois do último check verde no SHA da cabeça e perde validade com novo push.
+- **Atestação não é revisão independente:** é registro de governança e porta de merge. Quando o proprietário é o autor do PR, nunca conta como revisão independente. Revisão por IA é apenas consultiva. O **HB-13 permanece não atendido**.
+- **Merge:** squash, somente pelo proprietário, seguido da exclusão da branch. Reversão por novo PR com `git revert`; reset, reescrita de histórico e force push não são método de rollback.
+- **Registro do SHA (D-6):** um PR documental `docs(harness): record <id>` registra o SHA do incremento anterior. O checkpoint D-6 **não é recursivo**: não gera obrigação de abrir outro PR para registrar o próprio SHA.
+- **Retomada:** com Git de leitura, conferir a branch, `status`, `log` contra a base e `diff --stat`; parar se houver rebase, merge ou cherry-pick em andamento ou alterações que não sejam da própria branch. Se `main` avançou, o proprietário atualiza a branch, a evidência anterior é invalidada e as verificações afetadas são refeitas; resultado de outro SHA nunca é reaproveitado.
+- **Recuperação de falha de CI:** falha corrigível é diagnosticada e corrigida no escopo, com no máximo três tentativas diagnosticadas por check; depois, parar e registrar o bloqueio. Reexecutar uma única vez, apenas para classificar flaky, registrado como tal. Conflito que atinja arquivo fora do próprio change set: parar e relatar. Branch sem commits por 14 dias: o proprietário decide retomar, pausar ou abandonar, registrando o SHA da ponta antes de excluí-la.
+
 ## Critérios de conclusão
 
 Uma entrega só está concluída quando atende ao escopo e aos critérios combinados, possui revisão do diff, evidências pertinentes e estado atualizado. Resultado desconhecido ou teste não executado deve ser registrado como tal. Pendência que impede um critério obrigatório impede a conclusão daquele incremento.
 
 Para documentação: coerência com a referência, links internos válidos, caminhos reais separados de caminhos planejados e distinção entre proposta, aprovação e implementação.
 
-Para implementação futura: comportamento verificável, gates aplicáveis aprovados, nenhuma regressão relevante aberta, configuração local reproduzível e evidência associada à versão entregue. Revisão do próprio autor não deve ser apresentada como revisão independente. Se esta for exigida e não estiver disponível, registrar a pendência.
+Para implementação futura: comportamento verificável, gates aplicáveis aprovados, nenhuma regressão relevante aberta, configuração local reproduzível e evidência associada à versão entregue. Revisão do próprio autor não deve ser apresentada como revisão independente, e a atestação do proprietário também não é revisão independente. Se esta for exigida e não estiver disponível, registrar a pendência.

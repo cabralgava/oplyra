@@ -1,4 +1,4 @@
-// Cross-registry validation executável da Contract Registry Release 2.21.
+// Cross-registry validation executável da Contract Registry Release 2.22.
 // Reproduz as categorias da validação do Freeze v1 (envelope, identidade,
 // contagem, nomenclatura, referências, schemas, manifest de integração),
 // mantém as verificações do CR-026 e acrescenta as do CR-027 (Error Registry
@@ -8,8 +8,9 @@
 // da reconciliação documental do CR-029 e, desde a 2.20, as do alinhamento da
 // documentação de produto de IA do CR-030 e, desde a 2.21, as do Developer
 // Harness do CR-031 (isolamento do tooling, guard e launcher, documentos, fixtures
-// determinísticas). As Releases 2.16 a 2.20 ficam como evidência histórica nos
-// relatórios versionados de cada uma.
+// determinísticas) e, desde a 2.22, as do slice S1 do CR-032 (reconciliação
+// textual da política Git do harness; nenhum mecanismo executável). As Releases
+// 2.16 a 2.21 ficam como evidência histórica nos relatórios versionados de cada uma.
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -83,7 +84,10 @@ export const CR031_FILES = [
   "packages/infra/test/outbox-claim-determinism.integration.test.ts",
   "test/developer-harness.arquitetura.test.ts", "test/developer-harness.supply-chain.test.ts", "test/integration-fixtures-determinism.test.ts",
 ] as const;
-export const CR028_MIGRATION = "supabase/migrations/20260929000015_tenant_deletion_owner_guard.sql";
+/** Documentos reconciliados pelo slice S1 do CR-032 e o próprio CR. */
+export const CR032_S1_DOCS = ["docs/harness/DESENVOLVIMENTO.md", "docs/harness/DEVELOPMENT-TOOLS.md", "docs/harness/AUTONOMOUS-BUILD.md"] as const;
+export const CR032_DOC = `${CONTRACTS_DIR}/changes/CR-032-developer-harness-git-lifecycle.md`;
+export const CR028_MIGRATION ="supabase/migrations/20260929000015_tenant_deletion_owner_guard.sql";
 /**
  * Migrations do I-01 anteriores ao Contract Registry: não constam dos manifests.
  * Hashes fixados a partir do commit 8063131 (base do CR-028); as 000009–000014
@@ -135,6 +139,32 @@ function recordInvariants(r: Json): string[] {
   if (r.classificationProvenance.some((x: Json) => x.tenantId !== r.tenantId)) p.push("provenance_other_tenant");
   if (r.callId !== attemptCallId(r.tenantId, r.actionKey, r.invocationId, r.attempt)) p.push("call_id_scope");
   return p;
+}
+
+/** Regras textuais do slice S1 do CR-032 (puras: recebem o texto, para que as mutações documentais as exerçam). */
+export function avaliarCr032S1(t: { cr032: string; dev: string; tools: string; auto: string }): Record<string, boolean> {
+  const { cr032, dev, tools, auto } = t;
+  const docs = [dev, tools, auto];
+  const matriz = (s: string) => cr032.split("\n").find((l) => l.startsWith(`| ${s} |`)) ?? "";
+  const dod = auto.split("## 4.")[1] ?? "";
+  return {
+    crStatusPreserved: cr032.includes("**Status:** `approved`\n") && !/\*\*Status:\*\* `approved_and_applied`/.test(cr032),
+    matrixS1Applied: /\*\*applied\*\* \(Release 2\.22\)/.test(matriz("S1")),
+    matrixS2toS7NotApplied: ["S2", "S3", "S4", "S5", "S6", "S7"].every((s) => /\| no \| not applied \|$/.test(matriz(s))),
+    autonomousDraftDisabled: /status: draft/.test(auto) && /executionEnabled: false/.test(auto) && !/executionEnabled: true/.test(auto),
+    dodUntouched: (dod.match(/^- \[x\]/gm) ?? []).length === 9 && (dod.match(/^- \[ \]/gm) ?? []).length === 4,
+    oldAgentFlowRemoved: !/→ (create branch|commit|PR|merge|sync main)\b/.test(auto) && !/→ repeat\b/.test(auto),
+    loopStopsReadyForOwner: auto.includes("ready for owner  (the loop stops here)") && docs.every((d) => d.includes("ready for owner")),
+    ownerOnlyGitWrites: docs.every((d) => /exclusiv/.test(d) && /staging/.test(d) && /commit/.test(d) && /push/.test(d) && /merge/.test(d)),
+    ownerOnlyBranchCreation: docs.every((d) => /branch criada pelo proprietário|criar branch|criação de branch|criação da branch/.test(d)),
+    prDraftAndGreenChecks: docs.every((d) => /draft/.test(d) && /Ready for review/.test(d) && /verdes/.test(d)),
+    attestationNotIndependent: docs.every((d) => /não é revisão independente|não conta como revisão independente/.test(d)),
+    hb13Unmet: docs.every((d) => /HB-13[^.\n]*não atendido/.test(d)),
+    squashOwnerOnly: docs.every((d) => /squash/.test(d) && /proprietário/.test(d)),
+    d6NotRecursive: docs.every((d) => /não é recursivo/.test(d)),
+    resumeAndRecovery: docs.every((d) => /rebase/.test(d) && /três tentativas diagnosticadas/.test(d)),
+    noMechanismClaimed: docs.every((d) => /S2–S7/.test(d)),
+  };
 }
 
 export function runCrossRegistryValidation(root: string): { checks: Check[]; counts: Json; inputs: { path: string; sha256: string; evidenceLevel: "direct" }[] } {
@@ -445,6 +475,23 @@ export function runCrossRegistryValidation(root: string): { checks: Check[]; cou
     dispatcherMigrationUnchanged: manifest220.artifacts.find((a: Json) => a.path === migracao12)?.sha256 === sha256File(root, migracao12),
   };
   add("INTEGRATION-cr031-determinism-fixtures", "integration", Object.values(fixtures).every(Boolean), fixtures);
+
+  // CR-032, slice S1: reconciliação textual da política Git. Só afirma conteúdo estático; nenhum mecanismo executável existe.
+  inputs.push({ path: CR032_DOC, sha256: sha256File(root, CR032_DOC), evidenceLevel: "direct" });
+  entrada("contract-registry-manifest-v2.21.json");
+  const manifest221 = ler("contract-registry-manifest-v2.21.json");
+  const s1 = avaliarCr032S1({
+    cr032: hf(CR032_DOC), dev: hf("docs/harness/DESENVOLVIMENTO.md"), tools: hf("docs/harness/DEVELOPMENT-TOOLS.md"), auto: hf("docs/harness/AUTONOMOUS-BUILD.md"),
+  });
+  add("DOCS-cr032-s1-git-lifecycle", "documentation", Object.values(s1).every(Boolean), s1);
+  const ESCOPO_S1_INALTERADO = [
+    ".claude/settings.json", ".mcp.json", "CLAUDE.md", "README.md", "package.json", "pnpm-lock.yaml", ".github/workflows/ci.yml",
+    "scripts/claude-local-first-guard.mjs", "scripts/claude-launch.mjs", "scripts/claude-permission-probe.mjs",
+    "tools/developer-harness/package.json", "tools/developer-harness/pnpm-lock.yaml", "tools/developer-harness/pnpm-workspace.yaml",
+  ] as const;
+  const alterados032 = ESCOPO_S1_INALTERADO.filter((p) => manifest221.artifacts.find((a: Json) => a.path === p)?.sha256 !== sha256File(root, p));
+  const ausentes = [".github/CODEOWNERS", ".github/pull_request_template.md", ".github/PULL_REQUEST_TEMPLATE.md", ".githooks", "docs/harness/KILL-SWITCH"].filter((p) => existsSync(join(root, p)));
+  add("HARNESS-cr032-s1-no-executable-mechanism", "harness", alterados032.length === 0 && ausentes.length === 0, { changedSinceRelease221: alterados032, unexpectedPresent: ausentes });
 
   // Manifest de integração
   const sim = ler("schema-integration-manifest.json");
