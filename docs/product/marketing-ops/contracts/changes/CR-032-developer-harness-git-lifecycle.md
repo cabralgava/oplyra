@@ -1,11 +1,11 @@
 # CR-032 — Developer Harness Git Lifecycle Policy
 
 **Status:** `approved`
-**Approved by:** project owner, 2026-09-30 — approval of the policy text and of decisions D-1 to D-10 of §16, as revised. The CR is approved but **not applied**. **Slices S1–S7 of D-10 are not authorized and none is implemented**: each one needs its own individual authorization. `AUTONOMOUS-BUILD.md` stays `draft` with `executionEnabled: false`, and HB-13 stays unmet.
+**Approved by:** project owner, 2026-09-30 — approval of the policy text and of decisions D-1 to D-10 of §16, as revised. The CR status stays `approved`: the repository has no canonical status for partial application, so none was invented. **Only slice S1 of D-10 was authorized and applied (2026-10-01, Contract Registry Release 2.22); slices S2–S7 are not authorized and none is implemented**: each one needs its own individual authorization (matrix in §19). `AUTONOMOUS-BUILD.md` stays `draft` with `executionEnabled: false`, and HB-13 stays unmet.
 **Classification:** `developer_tooling_git_lifecycle_policy_approved_not_applied_no_registry_or_schema_change`
 **Issued at:** 2026-09-30
 **Base:** commit `fd1971656657bb49a9f8b4473f5ab61de62198fc` (`origin/main`, synchronized), Contract Registry Release 2.21 (CR-031)
-**Target:** none yet. When one or more authorized slices are implemented, a later release packages the result; Release 2.21 and its manifest stay unchanged.
+**Target:** Contract Registry Release 2.22 packages slice S1 only, as a logical change set over Release 2.21; Release 2.21 and its manifest stay unchanged. When further authorized slices (S2–S7) are implemented, later releases package them.
 **Origin:** next Developer Harness increment recorded in [ESTADO](../../../../harness/ESTADO.md) (pending items 1 and 6); open Definition-of-Done items of [AUTONOMOUS-BUILD](../../../../harness/AUTONOMOUS-BUILD.md) §4.
 
 ## 1. Objective and non-goals
@@ -239,4 +239,24 @@ The owner approved the decisions below, with the corrections of this revision, o
 
 ## 18. Preservation and scope of this document
 
-Delivered as a new file only. No CR, registry, schema, manifest, script, hook, setting, CI file, contract or code was modified; `AUTONOMOUS-BUILD.md` is unchanged; nothing was staged, committed, tagged, pushed or deployed; no external call was made. The CR is not part of Contract Registry Release 2.21 and will enter a manifest only if approved and packaged in a later release.
+Delivered as a new file only. No CR, registry, schema, manifest, script, hook, setting, CI file, contract or code was modified; `AUTONOMOUS-BUILD.md` is unchanged; nothing was staged, committed, tagged, pushed or deployed; no external call was made. The CR is not part of Contract Registry Release 2.21 and will enter a manifest only if approved and packaged in a later release. *(Superseded for S1 by §19: the CR entered Release 2.22 with S1 applied; this §18 describes the original delivery.)*
+
+## 19. Application record — slice S1 (2026-10-01)
+
+**Authorization.** The owner authorized only slice S1 of D-10 and its mandatory contractual packaging as Contract Registry Release 2.22. Nothing else was authorized.
+
+**Applied (S1).** Textual reconciliation of `DESENVOLVIMENTO.md`, `DEVELOPMENT-TOOLS.md` and `AUTONOMOUS-BUILD.md` with the owner-only policy of this CR: every Git write stays with the owner; the agent works only on a branch the owner created and ends at "ready for owner" with the handoff package; PRs start as draft and checks must be green before Ready for review and attestation; the owner's attestation is not independent review and HB-13 stays unmet; squash merge is owner-only; resume and recovery follow §8; the D-6 checkpoint is not recursive. In `AUTONOMOUS-BUILD.md` the old flow in which the agent created the branch, committed, opened the PR and merged was replaced, `status: draft` and `executionEnabled: false` were preserved, and no Definition-of-Done item was ticked.
+
+**Status.** `approved` is preserved. The application matrix below is the record of partial application.
+
+| Slice | Content (D-10) | Authorized | Applied |
+| --- | --- | --- | --- |
+| S1 | Textual reconciliation of `DESENVOLVIMENTO.md`, `DEVELOPMENT-TOOLS.md` and `AUTONOMOUS-BUILD.md` | **yes** | **applied** (Release 2.22) |
+| S2 | GitHub settings (owner) | no | not applied |
+| S3 | CI additions (C-1 to C-9) | no | not applied |
+| S4 | PR template and CODEOWNERS (visibility only) | no | not applied |
+| S5 | Preflight and guard regression tests | no | not applied |
+| S6 | Executable blockers HB-01…HB-15 | no | not applied |
+| S7 | Recovery rehearsal | no | not applied |
+
+**Unchanged by S1.** `AUTONOMOUS-BUILD.md` is `draft` with `executionEnabled: false`; HB-01…HB-15 are still not implemented and HB-13 is still unmet; no script, hook, CI file, setting, `.mcp.json`, `CLAUDE.md`, registry, schema, fixture, migration, product code, dependency or workspace file was changed; no ruleset, CODEOWNERS, PR template, preflight, guard, kill switch or executable blocker was created; DP-02b2 stays postponed. The classification token in the header is kept as originally approved. No staging, commit, push, PR, merge, tag or deploy was performed by the agent that prepared this application, and no external service was used.
