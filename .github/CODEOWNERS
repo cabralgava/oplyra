@@ -1,0 +1,8 @@
+# CR-033 — visibilidade apenas: a proteção real é o ruleset do GitHub (P-2), não este arquivo.
+/.github/                                   @cabralgava
+/scripts/claude-*                           @cabralgava
+/.claude/                                   @cabralgava
+/CLAUDE.md                                  @cabralgava
+/tools/developer-harness/                   @cabralgava
+/docs/harness/                              @cabralgava
+/docs/product/marketing-ops/contracts/      @cabralgava

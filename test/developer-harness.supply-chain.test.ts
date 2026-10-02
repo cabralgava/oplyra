@@ -89,7 +89,11 @@ describe("produto sem o tooling (CR-031)", () => {
     for (const s of ["test:harness", "harness:install", "harness:tools", "harness:mcp", "claude:local", "claude:maintenance"]) expect(p.scripts[s], s).toBeDefined();
     expect(p.scripts["claude:local"]).toBe("node scripts/claude-launch.mjs");
     expect(p.scripts["claude:maintenance"]).toBe("node scripts/claude-launch.mjs --maintenance");
-    expect(p.scripts["test:harness"]).toBe("node --test scripts/claude-local-first-guard.test.mjs scripts/claude-launch.test.mjs");
+    expect(p.scripts["test:harness"]).toBe("node --test scripts/claude-local-first-guard.test.mjs scripts/claude-launch.test.mjs scripts/claude-delivery.test.mjs");
+    // CR-033: wrappers tipados da entrega delegada; nenhum aceita argumento cru e nenhum chama git/gh diretamente
+    for (const [nome, verbo] of [["git:branch", "branch"], ["git:stage", "stage"], ["git:commit", "commit"], ["git:push", "push"], ["gh:pr-create", "pr-create"], ["gh:pr-update", "pr-update"], ["gh:ci-status", "ci-status"], ["gh:ci-log", "ci-log"], ["gh:ci-diagnose", "ci-diagnose"], ["gh:doctor", "doctor"]]) {
+      expect(p.scripts[nome], nome).toBe(`node scripts/claude-git.mjs ${verbo}`);
+    }
     expect(p.scripts["harness:install"]).toBe("corepack pnpm --dir tools/developer-harness install --frozen-lockfile");
     for (const nome of ["claude:local", "claude:maintenance", "harness:tools", "harness:mcp"]) expect(p.scripts[nome], nome).not.toMatch(/--permission-mode|--dangerously|--bare/);
   });

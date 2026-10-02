@@ -20,15 +20,15 @@ owner creates the branch for the authorized increment
 → ready for owner  (the loop stops here)
 ```
 
-O que acontece depois é do **proprietário**: staging, commit, push, criação do PR em draft, CI, correção se necessário, Ready for review com os checks verdes, atestação, squash merge, exclusão da branch e sincronização de `main`. Uma nova iteração só começa com nova autorização e nova branch criada pelo proprietário.
+O que acontece depois é do **proprietário**: staging, commit, push, criação do PR em draft, CI, correção se necessário, Ready for review com os checks verdes, atestação, squash merge, exclusão da branch e sincronização de `main`. Uma nova iteração só começa com nova autorização e nova branch criada pelo proprietário. **Exceção distinta deste loop:** a *entrega delegada* (CR-033), que é outro conceito — sessão iniciada pelo proprietário, para um incremento autorizado, com os verbos tipados `git:branch`, `git:stage`, `git:commit`, `git:push`, `gh:pr-create`, `gh:pr-update`, `gh:ci-status`, `gh:ci-log`, `gh:ci-diagnose` e `gh:doctor` sob registro de autorização aprovado fora do repositório (criado por `scripts/claude-authorize.mjs`; `--increment=<ref>` só o seleciona). Ela tem chave própria, `delegatedDelivery` (`.claude/delegated-delivery.json`), **desligada por padrão**, e não ativa este loop.
 
-Este loop **não está ativo**. O documento não concede permissão para criar branch, fazer staging ou commit, push, abrir ou mesclar PR, deploy, recurso remoto ou gasto: todas as escritas Git permanecem exclusivas do proprietário.
+Este loop **não está ativo**. O documento não concede permissão para criar branch, fazer staging ou commit, push, abrir ou mesclar PR, deploy, recurso remoto ou gasto: todas as escritas Git permanecem exclusivas do proprietário, exceto as da entrega delegada, que não depende deste documento nem de `executionEnabled` e está desligada por padrão. Merge automático não está autorizado em nenhum dos conceitos.
 
 ### 1.1 Política Git do loop (CR-032, slice S1)
 
 Política aprovada no [CR-032](../product/marketing-ops/contracts/changes/CR-032-developer-harness-git-lifecycle.md); esta seção é a reconciliação textual e **não implementa nenhum mecanismo** (preflight, ruleset, template de PR, CODEOWNERS e blockers executáveis são os slices S2–S7, não autorizados).
 
-- **Escritas Git exclusivas do proprietário:** criação de branch, staging, commit, push, criação e fechamento de PR, atestação, merge e exclusão de branch. O agente usa somente Git de leitura.
+- **Escritas Git exclusivas do proprietário:** criação de branch, staging, commit, push, criação e fechamento de PR, atestação, merge e exclusão de branch. O agente usa somente Git de leitura. No loop autônomo isso não muda; a entrega delegada (CR-033) é um modo separado e desligado por padrão, e merge, aprovação, ready-for-review, rerun de CI e force push seguem do proprietário nela.
 - **Branch:** o agente trabalha somente em branch criada pelo proprietário para o incremento, nunca em `main`; se a branch, o nome ou a limpeza do worktree não corresponderem ao esperado, o loop para.
 - **Pacote de handoff:** branch, SHA da base, lista de arquivos, mensagens de commit propostas, evidência de verificação (comandos, resultados, SHA testado, o que não foi verificado), rascunho do corpo do PR e proveniência. Ao entregá-lo, o loop termina em "ready for owner".
 - **PR:** começa em draft; Ready for review só com checks verdes; a atestação do proprietário, vinculada ao SHA da cabeça, vem depois dos checks verdes.
