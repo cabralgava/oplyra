@@ -1,0 +1,146 @@
+{
+  "schema": "oplyra-gen-2.22-evidence/1",
+  "baseCommit": "69efb5c",
+  "reportSha256": "66d0da802a86315a59d86bc10123b99cde9e9a4e032d2d98609da114c349a5fc",
+  "intermediateManifestSha256": "1d84f66ddcbbe8d5eccb2b81578a757f19f7527e8133b788c892d4498b538744",
+  "aggregateDigest": "6267ff67dfb7427f177dbee13b7b1370d9a836a3888aaa5fbed143fc259a98c8",
+  "gates": [
+    {
+      "id": "release-tests",
+      "command": "pnpm test test/contracts/contract-registry-release-2.21.contract.test.ts test/contracts/contract-registry-release-2.22.contract.test.ts",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "files": 2,
+        "run": 58,
+        "passed": 58
+      }
+    },
+    {
+      "id": "cross-validation",
+      "command": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "checks": 88,
+        "run": 42,
+        "passed": 42
+      }
+    },
+    {
+      "id": "contract-tests",
+      "command": "pnpm test test/contracts",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "files": 18,
+        "run": 300,
+        "passed": 300
+      }
+    },
+    {
+      "id": "harness",
+      "command": "pnpm test:harness",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "run": 53,
+        "passed": 53
+      }
+    },
+    {
+      "id": "db-reset",
+      "command": "pnpm db:reset",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {}
+    },
+    {
+      "id": "db-roles",
+      "command": "pnpm db:roles",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {}
+    },
+    {
+      "id": "verificar",
+      "command": "pnpm verificar",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "vitestFiles": 51,
+        "vitestRun": 835,
+        "vitestPassed": 835,
+        "pgFiles": 8,
+        "pgRun": 240,
+        "pgPassed": 240,
+        "e2eRun": 16,
+        "e2ePassed": 16
+      }
+    },
+    {
+      "id": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {}
+    },
+    {
+      "id": "local-links",
+      "command": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts -t links",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "run": 2,
+        "passed": 2
+      }
+    },
+    {
+      "id": "secret-scan-tracked",
+      "command": "pnpm scan:secrets",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {}
+    },
+    {
+      "id": "secret-scan-untracked",
+      "command": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts -t secret-scan-untracked",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "run": 2,
+        "passed": 2
+      }
+    },
+    {
+      "id": "independent-recompute",
+      "command": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts -t independent-recompute",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "run": 1,
+        "passed": 1
+      }
+    },
+    {
+      "id": "release-2.21-preserved",
+      "command": "pnpm test test/contracts/contract-registry-release-2.21.contract.test.ts -t release-2.21-congelada",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "run": 4,
+        "passed": 4
+      }
+    },
+    {
+      "id": "documentary-mutations",
+      "command": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts -t mutações",
+      "exitCode": 0,
+      "status": "passed",
+      "counts": {
+        "run": 16,
+        "detected": 16
+      }
+    }
+  ]
+}

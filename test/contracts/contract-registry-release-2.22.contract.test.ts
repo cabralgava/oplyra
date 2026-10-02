@@ -13,11 +13,14 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { avaliarCr032S1, CONTRACTS_DIR, CR030_DOCS, CR032_DOC, runCrossRegistryValidation } from "./cross-registry-validation.ts";
+import { frozenSnapshotRoot, REPO_ROOT, snapshotCommitOf } from "./frozen-snapshot.ts";
 
 type Artefato = { path: string; category: string; sizeBytes: number; sha256: string; source: string };
 type Manifest = Record<string, any> & { artifacts: Artefato[] };
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
+// CR-033 §8: a Release 2.22 está congelada e é verificada contra o snapshot governado da sua receita (commit do squash do PR #4),
+// não contra a árvore de trabalho. Mudanças autorizadas posteriores no control plane não a invalidam nem entram nela.
+const ROOT = frozenSnapshotRoot(snapshotCommitOf("2.22"));
 const ler = (p: string): Record<string, any> => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
 const texto = (p: string) => readFileSync(join(ROOT, p), "utf8");
 const sha = (p: string) => createHash("sha256").update(readFileSync(join(ROOT, p))).digest("hex");
@@ -283,8 +286,9 @@ describe("secret-scan-untracked: arquivos não versionados e não ignorados", ()
   });
 
   it("secret-scan-untracked: nenhum arquivo não versionado e não ignorado contém padrão de segredo", () => {
-    const lista = execFileSync("git", ["ls-files", "--others", "--exclude-standard", "-z"], { cwd: ROOT, encoding: "utf8" }).split("\0").filter(Boolean);
-    const arquivos = lista.map((caminho) => ({ caminho, conteudo: readFileSync(join(ROOT, caminho)) }));
+    // estado CORRENTE: a varredura de não versionados olha o repositório de trabalho, não o snapshot
+    const lista = execFileSync("git", ["ls-files", "--others", "--exclude-standard", "-z"], { cwd: REPO_ROOT, encoding: "utf8" }).split("\0").filter(Boolean);
+    const arquivos = lista.map((caminho) => ({ caminho, conteudo: readFileSync(join(REPO_ROOT, caminho)) }));
     expect(varrer(arquivos, padroesDoScript())).toEqual([]);
   });
 });

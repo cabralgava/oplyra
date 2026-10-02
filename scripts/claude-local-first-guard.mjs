@@ -29,6 +29,40 @@ export const ALLOWED_PNPM_SCRIPTS = Object.freeze([
 export const MAINTENANCE_PNPM_SCRIPTS = Object.freeze(["harness:install"]);
 /** Scripts que aceitam argumentos de caminho (filtros de teste). */
 const SCRIPTS_WITH_PATH_ARGS = new Set(["test"]);
+/**
+ * Entrega delegada (CR-033): wrappers tipados de Git/GitHub. Só a sessão autônoma os chama (a manutenção nunca),
+ * cada um com gramática de argumentos fechada. Git mutável cru e `gh` continuam negados.
+ */
+export const DELIVERY_PNPM_SCRIPTS = Object.freeze([
+  "git:branch", "git:stage", "git:commit", "git:push", "gh:pr-create", "gh:pr-update", "gh:ci-status", "gh:ci-log", "gh:ci-diagnose", "gh:doctor",
+]);
+/** `gh:ci-log --check <nome>`: só um NOME de verificação; ids numéricos e URLs nunca vêm do agente (o wrapper resolve o job pela API). */
+const checkNameArg = (a) => SAFE_TEXT_ARG.test(a) && !/^\d+$/.test(a) && !a.includes("://") && !a.startsWith("/");
+const SAFE_TEXT_ARG = /^[A-Za-z0-9 _.,:()/#+'-]{1,120}$/;
+const deliveryPathArg = (a) =>
+  /^[A-Za-z0-9_@%+=:.,/-]+$/.test(a) && !a.startsWith("-") && a !== "." && !a.split("/").includes("..") && !path.isAbsolute(a);
+/** Gramática de argumentos por script de entrega. `flags`: nome → validador; `min`: quantos pares são obrigatórios. */
+const DELIVERY_FLAGS = Object.freeze({
+  "git:commit": { flags: { "--message-file": deliveryPathArg }, required: ["--message-file"] },
+  "gh:pr-create": { flags: { "--title": (a) => SAFE_TEXT_ARG.test(a), "--body-file": deliveryPathArg }, required: ["--title", "--body-file"] },
+  "gh:pr-update": { flags: { "--title": (a) => SAFE_TEXT_ARG.test(a), "--body-file": deliveryPathArg, "--comment-file": deliveryPathArg }, required: [], atLeastOne: true },
+  "gh:ci-log": { flags: { "--check": (a) => checkNameArg(a) }, required: ["--check"] },
+  "gh:ci-diagnose": { flags: { "--diagnosis-file": deliveryPathArg }, required: ["--diagnosis-file"] },
+  "gh:ci-status": { flags: { "--wait": (a) => /^\d{1,4}$/.test(a) && Number(a) >= 1 && Number(a) <= 1200 }, required: [] },
+});
+function deliveryArgsOk(script, extra) {
+  if (script === "git:stage") return extra.length >= 1 && extra.length <= 50 && extra.every(deliveryPathArg);
+  const grammar = DELIVERY_FLAGS[script];
+  if (!grammar) return extra.length === 0; // git:branch, git:push, gh:doctor
+  const seen = new Set();
+  for (let k = 0; k < extra.length; k += 2) {
+    const validator = Object.prototype.hasOwnProperty.call(grammar.flags, extra[k]) ? grammar.flags[extra[k]] : null;
+    if (!validator || seen.has(extra[k]) || extra[k + 1] === undefined || !validator(extra[k + 1])) return false;
+    seen.add(extra[k]);
+  }
+  if (grammar.atLeastOne && !seen.size) return false;
+  return grammar.required.every((f) => seen.has(f));
+}
 
 export const GIT_READONLY = Object.freeze(["status", "diff", "show", "log", "rev-parse", "ls-files", "ls-tree", "cat-file"]);
 const GIT_MUTATING = new Set([
@@ -240,12 +274,17 @@ function validateReadTool(name, input, projectRoot) {
 const ALWAYS_PROTECTED_EXACT = new Set(["docs/product/marketing-ops/00-documento-transicao.md"]);
 const CONTROL_PLANE_EXACT = new Set([
   ".mcp.json", "claude.md", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml",
-  "docs/harness/development-tools.md", "docs/harness/autonomous-build.md", ".claude",
+  "docs/harness/development-tools.md", "docs/harness/autonomous-build.md", ".claude", ".git",
 ]);
-const CONTROL_PLANE_PREFIX = [".claude/", "tools/developer-harness/", "scripts/claude-", ".github/"];
+// `.git/` (CR-033): hooks, `config` (filter, diff, alias, core.*) e atributos executam código quando o wrapper roda `git`; o agente nunca os escreve
+const CONTROL_PLANE_PREFIX = [".claude/", "tools/developer-harness/", "scripts/claude-", ".github/", ".git/"];
 
 export function isControlPlane(rel) {
   return CONTROL_PLANE_EXACT.has(rel) || CONTROL_PLANE_PREFIX.some((p) => rel.startsWith(p));
+}
+/** `sources/` e a referência protegida: nunca entram em uma entrega delegada. `rel`: relativo, minúsculo, com `/`. */
+export function isProtectedReference(rel) {
+  return rel === "sources" || rel.startsWith("sources/") || ALWAYS_PROTECTED_EXACT.has(rel);
 }
 function isSecretFile(rel) {
   const base = rel.split("/").pop() ?? "";
@@ -563,6 +602,9 @@ const RULES = {
   pnpm(args, ctx) {
     const script = args[0];
     if (!script || script.startsWith("-")) return deny("LF-CMD-NOT-ALLOWED");
+    if (DELIVERY_PNPM_SCRIPTS.includes(script)) {
+      return ctx.policy === "autonomous" && deliveryArgsOk(script, args.slice(1)) ? allow() : deny("LF-CMD-NOT-ALLOWED");
+    }
     const permitted = ALLOWED_PNPM_SCRIPTS.includes(script) || (ctx.policy === "maintenance" && MAINTENANCE_PNPM_SCRIPTS.includes(script));
     if (!permitted) return deny("LF-CMD-NOT-ALLOWED");
     const extra = args.slice(1);

@@ -490,6 +490,8 @@ async function mutant(from, to, nth = 1) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "oplyra-launch-mut-"));
   const file = path.join(dir, "claude-launch.mjs");
   fs.writeFileSync(file, src.slice(0, idx) + to + src.slice(idx + from.length));
+  // dependências locais do launcher (CR-033): o registro de autorização e o guard de que ele depende
+  for (const dep of ["claude-delivery-record.mjs", "claude-local-first-guard.mjs"]) fs.copyFileSync(path.join(here, dep), path.join(dir, dep));
   return import(pathToFileURL(file).href);
 }
 

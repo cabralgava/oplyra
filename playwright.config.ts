@@ -2,6 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
+  // fora de test-results/: o Playwright limpa o outputDir e já apagou estado/evidência de release (CR-033 A-5)
+  outputDir: ".oplyra/playwright",
   fullyParallel: false,
   workers: 1,
   timeout: 30_000,

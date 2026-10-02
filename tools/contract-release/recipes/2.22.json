@@ -1,0 +1,200 @@
+{
+  "schema": "oplyra-contract-release-recipe/1",
+  "release": "2.22",
+  "frozen": true,
+  "base": {
+    "release": "2.21",
+    "manifestPath": "docs/product/marketing-ops/contracts/contract-registry-manifest-v2.21.json",
+    "manifestSha256": "e83544f159f15dfd3d48b406ede0b91e3d4617f9c550866082cd11666619330f",
+    "reportPath": "docs/product/marketing-ops/contracts/cross-registry-validation-v2.21.json",
+    "reportSha256": "8d049bc23a262bd9228d94798f469d206d1ee95eac002dfd7fd925c9cfc57408",
+    "artifactCount": 487,
+    "aggregateDigest": "306cfd3b48b8fe2d2943499a43205d9606517d523ca1020cf4072b101c7d7bb2"
+  },
+  "snapshot": {
+    "commit": "7107ade60a98edfd42eda56f2909e4e2cc3bdbfc",
+    "exportPaths": [
+      ".claude", ".env.example", ".github", ".mcp.json", "CLAUDE.md", "README.md", "apps", "docs", "e2e", "experiments", "package.json",
+      "packages", "playwright.config.ts", "pnpm-lock.yaml", "pnpm-workspace.yaml", "scripts", "supabase", "test", "tools", "tsconfig.base.json", "vitest.config.ts"
+    ],
+    "informationalCommits": {
+      "originalReleaseCommit": "545d6ea",
+      "evidenceBaseCommit": "69efb5c",
+      "note": "PR #4 was squash-merged; the snapshot is its squash commit on main. The original commit is informational only."
+    }
+  },
+  "generatedAt": "2026-10-01T13:50:12Z",
+  "changeSet": {
+    "source": "cr_032",
+    "modified": [
+      "docs/harness/AUTONOMOUS-BUILD.md",
+      "docs/harness/DESENVOLVIMENTO.md",
+      "docs/harness/DEVELOPMENT-TOOLS.md",
+      "test/contracts/contract-registry-release-2.21.contract.test.ts",
+      "test/contracts/cross-registry-validation.ts"
+    ],
+    "added": [
+      { "path": "docs/product/marketing-ops/contracts/changes/CR-032-developer-harness-git-lifecycle.md", "category": "change_proposal" },
+      { "path": "docs/product/marketing-ops/contracts/cross-registry-validation-v2.22.json", "category": "contract_documentation" },
+      { "path": "test/contracts/contract-registry-release-2.22.contract.test.ts", "category": "contract_test" }
+    ],
+    "reportPath": "docs/product/marketing-ops/contracts/cross-registry-validation-v2.22.json",
+    "manifestPath": "docs/product/marketing-ops/contracts/contract-registry-manifest-v2.22.json"
+  },
+  "crossValidation": {
+    "expectedChecks": 88,
+    "requiredIds": ["DOCS-cr032-s1-git-lifecycle", "HARNESS-cr032-s1-no-executable-mechanism"]
+  },
+  "gates": {
+    "release-tests": { "cmd": "pnpm test test/contracts/contract-registry-release-2.21.contract.test.ts test/contracts/contract-registry-release-2.22.contract.test.ts", "kind": "vitest-json", "counts": { "files": 2, "run": "pos", "passed": "pos" }, "eq": [["run", "passed"]] },
+    "cross-validation": { "cmd": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts", "kind": "vitest-json", "counts": { "checks": 88, "run": "pos", "passed": "pos" }, "eq": [["run", "passed"]] },
+    "contract-tests": { "cmd": "pnpm test test/contracts", "kind": "vitest-json", "counts": { "files": "pos", "run": "pos", "passed": "pos" }, "eq": [["run", "passed"]] },
+    "harness": { "cmd": "pnpm test:harness", "kind": "node-test", "counts": { "run": "pos", "passed": "pos" }, "eq": [["run", "passed"]] },
+    "db-reset": { "cmd": "pnpm db:reset", "kind": "none", "counts": {}, "eq": [] },
+    "db-roles": { "cmd": "pnpm db:roles", "kind": "none", "counts": {}, "eq": [] },
+    "verificar": {
+      "cmd": "pnpm verificar",
+      "kind": "verificar",
+      "counts": { "vitestFiles": "pos", "vitestRun": "pos", "vitestPassed": "pos", "pgFiles": 8, "pgRun": 240, "pgPassed": 240, "e2eRun": 16, "e2ePassed": 16 },
+      "eq": [["vitestRun", "vitestPassed"]]
+    },
+    "diff-check": { "cmd": "git diff --check", "kind": "none", "counts": {}, "eq": [] },
+    "local-links": { "cmd": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts -t links", "kind": "vitest-json", "counts": { "run": "pos", "passed": "pos" }, "eq": [["run", "passed"]] },
+    "secret-scan-tracked": { "cmd": "pnpm scan:secrets", "kind": "none", "counts": {}, "eq": [] },
+    "secret-scan-untracked": { "cmd": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts -t secret-scan-untracked", "kind": "vitest-json", "counts": { "run": 2, "passed": 2 }, "eq": [["run", "passed"]] },
+    "independent-recompute": { "cmd": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts -t independent-recompute", "kind": "vitest-json", "counts": { "run": 1, "passed": 1 }, "eq": [["run", "passed"]] },
+    "release-2.21-preserved": { "cmd": "pnpm test test/contracts/contract-registry-release-2.21.contract.test.ts -t release-2.21-congelada", "kind": "vitest-json", "counts": { "run": 4, "passed": 4 }, "eq": [["run", "passed"]] },
+    "documentary-mutations": { "cmd": "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts -t mutações", "kind": "vitest-json", "counts": { "run": { "min": 16 }, "detected": { "min": 16 } }, "eq": [["run", "detected"]] }
+  },
+  "report": {
+    "changeSetId": "CR-032",
+    "appliedSlices": ["S1"],
+    "notAppliedSlices": ["S2", "S3", "S4", "S5", "S6", "S7"],
+    "supportingArtifacts": [
+      "contract-registry-manifest-v2.21.json",
+      "docs/product/marketing-ops/contracts/changes/CR-032-developer-harness-git-lifecycle.md",
+      "docs/harness/AUTONOMOUS-BUILD.md",
+      "docs/harness/DESENVOLVIMENTO.md",
+      "docs/harness/DEVELOPMENT-TOOLS.md"
+    ],
+    "evidencePolicy": {
+      "freezeEvidencePreserved": "The Freeze v1 artifact cross-registry-validation.json and the Release 2.16, 2.17, 2.18, 2.19, 2.20 and 2.21 reports are historical evidence and are not modified.",
+      "operationalDocuments": "PREPARACAO-I01, VERIFICACOES and ESTADO are operational documents outside the manifest and the digest; DEVELOPMENT-TOOLS, DESENVOLVIMENTO and AUTONOMOUS-BUILD are governed (development_tool) artifacts of the manifest.",
+      "gitLifecycleS1": "The CR-032 file and the three documents reconciled by slice S1 are hashed as inputs; DOCS-cr032-s1-git-lifecycle and HARNESS-cr032-s1-no-executable-mechanism read their static content. They state nothing about enforcement: no executable Git mechanism exists and slices S2-S7 are not applied."
+    },
+    "decision": {
+      "result": "passed",
+      "reason": "All 88 direct cross-registry, schema, fixture, derived-report, migration, environment-identity, documentation and Developer Harness checks passed for Contract Registry Release 2.22 (CR-032, slice S1 only).",
+      "releaseEligible": true
+    }
+  },
+  "manifest": {
+    "changeSet": {
+      "id": "CR-032",
+      "path": "docs/product/marketing-ops/contracts/changes/CR-032-developer-harness-git-lifecycle.md",
+      "classification": "developer_tooling_git_lifecycle_policy_s1_textual_reconciliation_no_registry_or_schema_change",
+      "approvedBy": "project_owner",
+      "approvedOn": "2026-09-30",
+      "slice1AuthorizedOn": "2026-10-01",
+      "representation": "logical_change_set_over_release_2.21",
+      "crStatus": "approved",
+      "crStatusNote": "no canonical status for partial application exists in the repository; approved is preserved and the S1-S7 matrix is recorded in the CR body (section 19) and in ESTADO",
+      "appliedSlices": ["S1"],
+      "notAppliedSlices": ["S2", "S3", "S4", "S5", "S6", "S7"],
+      "slicesNotAuthorized": ["S2", "S3", "S4", "S5", "S6", "S7"],
+      "registriesModified": [],
+      "registriesAdded": [],
+      "schemasAdded": 0,
+      "schemasUpdated": 0,
+      "errorCodesAdded": 0,
+      "migrationsAdded": 0,
+      "migrationsModified": 0,
+      "databaseTestsAdded": 0,
+      "databaseChanged": false,
+      "privilegesChanged": false,
+      "productCodeChanged": false,
+      "developerToolingChanged": false,
+      "developerHarnessDocumentationChanged": true,
+      "executableMechanismsCreated": false,
+      "executionEnabledChanged": false,
+      "autonomousBuildStatus": "draft",
+      "executionEnabled": false,
+      "hb13Status": "unmet",
+      "gitWritesPerformedByAgent": false,
+      "remoteResourcesCreated": false,
+      "remoteMigrationsApplied": false,
+      "publicationPerformed": false,
+      "externalCallsPerformed": false,
+      "realKeysUsed": false,
+      "realDataUsed": false,
+      "networkAccessUsed": "none",
+      "operationalDocumentsUpdatedOutsideRelease": ["docs/harness/ESTADO.md"],
+      "operationalDocumentsUntouched": [".claude/settings.local.json"]
+    },
+    "classificationKeys": { "modified": "modifiedByCr032", "added": "addedByCr032" },
+    "newLimit": "CR-032 slice S1 was authorized by the project owner on 2026-10-01 as a textual reconciliation of DESENVOLVIMENTO, DEVELOPMENT-TOOLS and AUTONOMOUS-BUILD only: slices S2-S7 are not authorized and not implemented; no script, hook, CI file, setting, .mcp.json, CLAUDE.md, registry, schema, fixture, migration, product code, dependency or workspace file changed; no ruleset, CODEOWNERS, PR template, preflight, guard, kill switch or executable blocker was created; AUTONOMOUS-BUILD stays draft with executionEnabled false and HB-13 stays unmet; the CR keeps the status approved",
+    "replacedLimitPrefix": "This manifest represents the selective CR-031 change set",
+    "replacementLimit": "This manifest represents the selective CR-032 (S1) change set over Release 2.21, not the working tree. docs/harness/ESTADO.md is updated as an operational record outside the release and digest; .claude/settings.local.json is untouched and outside the release; the root pnpm-lock.yaml and pnpm-workspace.yaml stay as in Release 2.21",
+    "pendingValidation": { "status": "pending_gate_evidence", "gatesDeclaredPassed": false, "crossRegistryChecksRun": 88, "crossRegistryChecksPassed": 88, "crossRegistryChecksFailed": 0 },
+    "compatibility": {
+      "classification": "developer_tooling_git_lifecycle_policy_s1_textual_reconciliation_no_registry_or_schema_change",
+      "registryVersionBumpRequired": false,
+      "schemaVersionBumpRequired": false,
+      "callerMigrationRequired": false,
+      "activeExternalCallers": 0,
+      "operationalBehaviorChanged": false,
+      "gitLifecycle": { "slicesApplied": ["S1"], "slicesNotApplied": ["S2", "S3", "S4", "S5", "S6", "S7"], "executionEnabled": false, "hb13": "unmet", "enforcementMechanisms": "none" }
+    }
+  },
+  "validationMap": {
+    "status": "passed",
+    "crossRegistryChecksRun": 88,
+    "crossRegistryChecksPassed": 88,
+    "crossRegistryChecksFailed": 0,
+    "contractTestFiles": { "$count": ["contract-tests", "files"] },
+    "contractTestsRun": { "$count": ["contract-tests", "run"] },
+    "contractTestsPassed": { "$count": ["contract-tests", "passed"] },
+    "fullVitestFiles": { "$count": ["verificar", "vitestFiles"] },
+    "fullVitestTestsRun": { "$count": ["verificar", "vitestRun"] },
+    "fullVitestTestsPassed": { "$count": ["verificar", "vitestPassed"] },
+    "databaseTestFiles": { "$count": ["verificar", "pgFiles"] },
+    "databaseTestsRun": { "$count": ["verificar", "pgRun"] },
+    "databaseTestsPassed": { "$count": ["verificar", "pgPassed"] },
+    "localResetFromEmptyDatabase": true,
+    "playwrightScenariosRun": { "$count": ["verificar", "e2eRun"] },
+    "playwrightScenariosPassed": { "$count": ["verificar", "e2ePassed"] },
+    "harnessGuardTestsRun": { "$count": ["harness", "run"] },
+    "harnessGuardTestsPassed": { "$count": ["harness", "passed"] },
+    "typecheckErrors": 0,
+    "productionBuildPassed": true,
+    "secretScanFindings": 0,
+    "secretScanIncludedUntrackedFiles": { "$eq": ["secret-scan-untracked", "passed", 2] },
+    "gitDiffCheckClean": true,
+    "localLinksChecked": true,
+    "artifactHashMismatches": 0,
+    "independentVerificationTool": "node:crypto reading all 490 artifacts from disk (test independent-recompute)",
+    "independentAggregateDigestRecomputed": { "$eq": ["independent-recompute", "passed", 1] },
+    "release221Preserved": { "$eq": ["release-2.21-preserved", "passed", 4] },
+    "artifactsOutsideAuthorizedChangeSet": 0,
+    "externalCallsPerformed": false,
+    "directedMutationsRun": { "$count": ["documentary-mutations", "run"] },
+    "directedMutationsDetected": { "$count": ["documentary-mutations", "detected"] },
+    "previousReleaseEvidence": { "release": "2.21", "directedMutationsDetected": "40 of 40", "fullVitestTestsRun": 809, "contractTestsRun": 274 },
+    "permissionProbe": { "rerun": false, "note": "unchanged since Release 2.21; no script, hook, setting or CLI version changed" }
+  },
+  "evidence": {
+    "path": "tools/contract-release/evidence/gen-2.22-evidence.json",
+    "sha256": "0f46329f620856a903842800145527d9311a23df5eef1c4867574d0f476b7815",
+    "schema": "oplyra-gen-2.22-evidence/1",
+    "baseCommit": "69efb5c",
+    "retiredGeneratorSha256": "91ebd4c46d1fad89d22c3eaf8eb97a0bfa55305d515b6a41986c76ecb116ed52"
+  },
+  "expected": {
+    "reportSha256": "66d0da802a86315a59d86bc10123b99cde9e9a4e032d2d98609da114c349a5fc",
+    "manifestSha256": "2d68a995ad57f657225b2f70860b5783a78a288d1a27a316e41108d975e8cdd6",
+    "intermediateManifestSha256": "1d84f66ddcbbe8d5eccb2b81578a757f19f7527e8133b788c892d4498b538744",
+    "aggregateDigest": "6267ff67dfb7427f177dbee13b7b1370d9a836a3888aaa5fbed143fc259a98c8",
+    "artifactCount": 490,
+    "classification": { "inheritedUnchanged": 482, "modifiedByCr032": 5, "addedByCr032": 3, "unclassified": 0 }
+  }
+}

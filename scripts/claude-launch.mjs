@@ -18,6 +18,8 @@ import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { DELIVERY_ENV, REF_PATTERN, RecordError, selectRecord } from "./claude-delivery-record.mjs";
+
 export const PROOF_IDS = Object.freeze(["P1", "P2", "P3", "P4", "P5", "P6"]);
 
 /** Algoritmo determinístico: `dontAsk` somente se as seis provas forem inequivocamente `true`. */
@@ -61,6 +63,11 @@ export const FORBIDDEN_FLAGS = Object.freeze([
 export const FORBIDDEN_ENV = Object.freeze([
   "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_BASE_URL", "CLAUDE_CODE_USE_BEDROCK", "CLAUDE_CODE_USE_VERTEX",
   "CLAUDE_CODE_USE_FOUNDRY", "OPENROUTER_API_KEY", "CLAUDE_CODE_SIMPLE", "CLAUDE_CODE_SAFE_MODE", "CLAUDE_CONFIG_DIR",
+  // CR-033: credenciais pessoais do proprietário e a chave do GitHub App nunca chegam à sessão; só o wrapper lê a chave, de um arquivo
+  "GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GH_HOST", "GIT_ASKPASS",
+  "OPLYRA_GITHUB_APP_ID", "OPLYRA_GITHUB_APP_INSTALLATION_ID", "OPLYRA_GITHUB_APP_PRIVATE_KEY", "OPLYRA_GITHUB_APP_KEY_FILE",
+  // só o launcher define estas (a partir do registro verificado); herdadas do ambiente seriam forjadas
+  "OPLYRA_DELIVERY_REF", "OPLYRA_DELIVERY_RECORD", "OPLYRA_DELIVERY_RECORD_SHA256",
 ]);
 
 /** Chaves proibidas nas fontes de settings que não sejam a do projeto. */
@@ -93,6 +100,7 @@ export const MESSAGES = Object.freeze({
   "LA-TOOLING-ESCAPE": "manifest ou executável do tooling resolve para fora de tools/developer-harness",
   "LA-TOOLING-MISMATCH": "versão instalada diverge do manifest isolado",
   "LA-CLI-UNPROVEN": "Claude Code sem prova de permissões vigente para esta versão: modo manual",
+  "LA-INCREMENT": "registro de autorização da entrega delegada ausente, inválido, expirado ou inseguro (o código DR-* indica o motivo)",
 });
 
 class Refusal extends Error {
@@ -106,9 +114,17 @@ const refuse = (code, name) => {
   throw new Refusal(code, name);
 };
 
+/** `--increment=<ref>` (CR-033): única forma com valor; só SELECIONA o registro de autorização da entrega delegada. */
+export function parseIncrement(argv) {
+  if (argv.length !== 1) return null;
+  const m = /^--increment=(.+)$/.exec(argv[0]);
+  return m && REF_PATTERN.test(m[1]) ? m[1] : null;
+}
+
 export function classifyArgv(argv) {
   const key = argv.join(" ");
   if (argv.some((a) => FORBIDDEN_FLAGS.some((f) => a === f || a.startsWith(`${f}=`)))) return null;
+  if (parseIncrement(argv)) return "session";
   return Object.prototype.hasOwnProperty.call(ALLOWED_ARGVS, key) ? ALLOWED_ARGVS[key] : null;
 }
 
@@ -221,7 +237,7 @@ function readJson(file) {
 }
 
 /** Valida tudo o que precisa ser verdade antes de iniciar o CLI. Lança Refusal; nunca imprime. */
-export function preflight({ repoRoot, homeDir, env, argv, runSelfTests, isTTY = false }) {
+export function preflight({ repoRoot, homeDir, env, argv, runSelfTests, isTTY = false, recordDir, now }) {
   const kind = classifyArgv(argv);
   if (!kind) refuse("LA-ARGS");
   if (!["dontAsk", "manual"].includes(PERMISSION_MODE) || !ALLOWED_PERMISSION_MODES.includes(PERMISSION_MODE)) refuse("LA-MODE");
@@ -256,7 +272,30 @@ export function preflight({ repoRoot, homeDir, env, argv, runSelfTests, isTTY = 
   if (binding.refusal) refuse(binding.refusal, binding.name);
   if (kind === "maintenance" && !isTTY) refuse("LA-TTY");
   if (runSelfTests && !runSelfTests()) refuse("LA-SELFTEST");
-  return { kind, mode: kind === "maintenance" ? "manual" : resolvePermissionMode(binding), cliProven: binding.cliProven === true };
+  // entrega delegada (CR-033): `--increment=<ref>` carrega e fixa o registro aprovado; a manutenção nunca chega aqui com incremento
+  let delivery = null;
+  const increment = parseIncrement(argv);
+  if (increment) {
+    try {
+      delivery = selectRecord({ ref: increment, recordDir, now });
+    } catch (e) {
+      if (e instanceof RecordError) refuse("LA-INCREMENT", e.code);
+      throw e;
+    }
+  }
+  return { kind, mode: kind === "maintenance" ? "manual" : resolvePermissionMode(binding), cliProven: binding.cliProven === true, ...(delivery ? { delivery } : {}) };
+}
+
+/** Ambiente do filho: sem herdar variáveis de entrega; só o registro verificado as define (e só na sessão com incremento). */
+export function buildChildEnv(env, delivery) {
+  const out = { ...env };
+  for (const name of Object.values(DELIVERY_ENV)) delete out[name];
+  if (delivery) {
+    out[DELIVERY_ENV.ref] = delivery.record.ref;
+    out[DELIVERY_ENV.file] = delivery.file;
+    out[DELIVERY_ENV.sha256] = delivery.sha256;
+  }
+  return out;
 }
 
 export function harnessBin(repoRoot, name) {
@@ -302,13 +341,13 @@ async function confirmTyped(prompt) {
 /** Ponto de entrada testável: todas as dependências externas são injetáveis. */
 export async function run({
   argv = process.argv.slice(2), repoRoot, homeDir = os.homedir(), env = process.env, isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY),
-  runSelfTests, spawn = nodeSpawn, confirm = confirmTyped, write = (s) => process.stderr.write(s),
+  runSelfTests, spawn = nodeSpawn, confirm = confirmTyped, write = (s) => process.stderr.write(s), recordDir, now,
 } = {}) {
   const root = repoRoot ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   try {
     if (env.OPLYRA_LAUNCH_SELFTEST) refuse("LA-SELFTEST"); // o launcher não roda dentro dos próprios autotestes
-    const { kind, mode, cliProven } = preflight({
-      repoRoot: root, homeDir, env, argv, isTTY,
+    const { kind, mode, cliProven, delivery } = preflight({
+      repoRoot: root, homeDir, env, argv, isTTY, recordDir, now,
       runSelfTests: runSelfTests ?? defaultSelfTests(root),
     });
     if (kind === "session" && !cliProven && PERMISSION_MODE === "dontAsk") write(`Oplyra launcher: LA-CLI-UNPROVEN (${MESSAGES["LA-CLI-UNPROVEN"]})\n`);
@@ -329,7 +368,8 @@ export async function run({
     }
     if (kind === "mcp-list") args = ["mcp", "list"];
     else args = buildSessionArgs({ kind, mode, projectSettings: project });
-    const child = spawn(bin, args, { cwd: root, stdio: "inherit" });
+    if (delivery) write(`Entrega delegada: registro ${delivery.record.ref} (SHA-256 ${delivery.sha256}) carregado. A chave delegatedDelivery decide se as escritas são executadas.\n`);
+    const child = spawn(bin, args, { cwd: root, stdio: "inherit", env: buildChildEnv(env, delivery) });
     return await waitExit(child);
   } catch (e) {
     if (e instanceof Refusal) {
