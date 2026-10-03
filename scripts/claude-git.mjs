@@ -22,7 +22,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { DELIVERY_ENV, REPOSITORY, RecordError, RECORD_MESSAGES, contractsPathProblem, hasContractsSegment, loadRecord, pathAllowedByRecord } from "./claude-delivery-record.mjs";
+import { DELIVERY_ENV, REPOSITORY, RecordError, RECORD_MESSAGES, contractsPathProblem, hasContractsSegment, isExactLogHost, loadGrant, loadRecord, pathAllowedByRecord } from "./claude-delivery-record.mjs";
 import { isControlPlane, isProtectedReference, isSensitiveRel } from "./claude-local-first-guard.mjs";
 
 export const VERBS = Object.freeze(["branch", "stage", "commit", "push", "pr-create", "pr-update", "ci-status", "ci-log", "ci-diagnose", "doctor"]);
@@ -51,7 +51,7 @@ const UNTRUSTED_LIMIT = 300;
 export const MESSAGES = Object.freeze({
   "DD-VERB": "verbo desconhecido",
   "DD-ARGS": "argumentos fora da gramática fechada do verbo",
-  "DD-DISABLED": "entrega delegada desligada (delegatedDelivery=false): nenhuma escrita é executada",
+  "DD-DISABLED": "entrega delegada desligada (delegatedDelivery=false e sem concessão de ensaio válida vinculada ao registro): nenhuma escrita é executada",
   "DD-KILL": "kill switch ativo: a entrega delegada está suspensa",
   "DD-NO-RECORD": "sessão sem registro de autorização (use `pnpm claude:local --increment=<ref>`)",
   "DD-RECORD": "registro de autorização inválido (o código DR-* indica o motivo)",
@@ -394,7 +394,7 @@ export async function execute(verb, rawArgs, ports = {}) {
     return s;
   };
   const say = (line) => out.push(redact(line));
-  const run = { p, say, secrets, record: null, sha256: null, state: null, token: null, keys: null, head: null, handoff: false, logRead: false, pr: null, diagnosisAudit: null };
+  const run = { p, say, secrets, record: null, sha256: null, state: null, token: null, keys: null, head: null, handoff: false, logRead: false, pr: null, diagnosisAudit: null, enabledBy: null, grantSha256: null, grantLogHosts: [] };
   let outcome = "ok";
   let code = 0;
   try {
@@ -433,26 +433,51 @@ function audit(run, verb, outcome, refusal) {
   const { p } = run;
   try {
     p.fs.mkdirSync(p.stateDir, { recursive: true, mode: 0o700 });
-    const line = JSON.stringify({ ts: p.now().toISOString(), verb, outcome, refusal, ref: run.record?.ref ?? null, recordSha256: run.sha256, head: run.head, handoff: run.handoff === true, logRead: run.logRead === true, diagnosis: run.diagnosisAudit ?? null });
+    const line = JSON.stringify({ ts: p.now().toISOString(), verb, outcome, refusal, ref: run.record?.ref ?? null, recordSha256: run.sha256, head: run.head, handoff: run.handoff === true, logRead: run.logRead === true, diagnosis: run.diagnosisAudit ?? null, enabledBy: run.enabledBy, grantSha256: run.grantSha256 });
     p.fs.appendFileSync(path.join(p.stateDir, "audit.jsonl"), `${line}\n`, { mode: 0o600 });
   } catch {
     // a auditoria nunca deve esconder a decisão
   }
 }
 
+/**
+ * Habilitação (CR-033; D-25). Duas formas, nunca misturadas:
+ *  - definitiva: `delegatedDelivery: true` no repositório (control plane, PR do proprietário com segunda aprovação);
+ *  - temporária de ensaio: repositório em `false` (arquivo legível e válido) E concessão `<ref>.enable.json` fora do repositório, vinculada
+ *    ao SHA-256 do registro carregado, só `ops-*`, ≤ 24 h. Reverificada a cada chamada e registrada na auditoria (`enabledBy`).
+ * O kill switch prevalece sobre as duas. Sem nenhuma das duas: DD-DISABLED, sem tocar em Git, rede, chaves nem estado persistido.
+ */
 function assertEnabled(run) {
   const { p } = run;
-  let cfg;
+  let cfg = null;
   try {
     cfg = JSON.parse(p.fs.readFileSync(path.join(p.repoRoot, ".claude", "delegated-delivery.json"), "utf8"));
   } catch {
+    cfg = null;
+  }
+  if (!cfg || cfg.schema !== "oplyra-delegated-delivery/1") refuse("DD-DISABLED");
+  if (cfg.delegatedDelivery === true) {
+    run.enabledBy = "repository";
+  } else if (cfg.delegatedDelivery === false) {
+    try {
+      loadRunRecord(run);
+      const g = loadGrant({ record: run.record, recordSha256: run.sha256, recordDir: p.recordDir, now: p.now(), fsImpl: p.fs });
+      run.enabledBy = "rehearsal-grant";
+      run.grantSha256 = g.sha256;
+      run.grantLogHosts = g.logHosts;
+    } catch (e) {
+      // sem concessão válida o wrapper está simplesmente desligado: nada carregado fica para trás (nem estado, nem disjuntor)
+      Object.assign(run, { record: null, sha256: null, enabledBy: null, grantSha256: null, grantLogHosts: [] });
+      refuse("DD-DISABLED", e instanceof RecordError && e.code === "DR-GRANT" && e.detail ? `concessão: ${e.detail}` : undefined);
+    }
+  } else {
     refuse("DD-DISABLED");
   }
-  if (!cfg || cfg.schema !== "oplyra-delegated-delivery/1" || cfg.delegatedDelivery !== true) refuse("DD-DISABLED");
   if (p.fs.existsSync(p.killFile)) refuse("DD-KILL");
 }
 
-function loadSession(run) {
+/** Carrega e verifica o registro selecionado pelo launcher (variáveis de entrega); recusa credenciais herdadas. */
+function loadRunRecord(run) {
   const { p } = run;
   for (const name of Object.keys(p.env)) {
     if (FORBIDDEN_ENV_PREFIX.some((x) => name.startsWith(x)) || FORBIDDEN_ENV_NAMES.includes(name)) refuse("DD-ENV", name);
@@ -464,6 +489,11 @@ function loadSession(run) {
   const loaded = loadRecord({ ref, file, expectedSha256: sha, recordDir: p.recordDir, now: p.now(), fsImpl: p.fs });
   run.record = loaded.record;
   run.sha256 = loaded.sha256;
+}
+
+function loadSession(run) {
+  if (!run.record) loadRunRecord(run);
+  const { p } = run;
   run.state = loadState(run);
   // o relógio da entrega começa na PRIMEIRA chamada com o registro carregado e fica no estado persistido: retomar não o zera
   if (!run.state.startedAt) run.state.startedAt = p.now().toISOString();
@@ -789,20 +819,34 @@ async function mintToken(run) {
   run.token = j.token;
 }
 
-/** Proteções efetivas de `main` (só rulesets; falha fechada se ausentes, ilegíveis ou incompletas). */
+/**
+ * Proteções efetivas de `main` (só rulesets; falha fechada se ausentes, ilegíveis ou incompletas). D-26: além dos TIPOS de regra,
+ *  - toda regra `pull_request` exige `required_approving_review_count` inteiro seguro ≥ 1 (valor malformado numa regra recusa, mesmo havendo outra válida);
+ *  - toda regra `pull_request` tem `dismiss_stale_reviews_on_push === true` (booleano estrito; ausente, false ou outro tipo recusa);
+ *  - toda regra `required_status_checks` que lista `validate` tem `strict_required_status_checks_policy === true` (booleano estrito, na MESMA regra).
+ * Devolve os valores efetivos lidos (contagem mínima e estrito) para o `gh:doctor` os imprimir.
+ */
 async function checkProtection(run) {
   const res = await api(run, "GET", `/repos/${REPOSITORY}/rules/branches/main`);
   if (res.status !== 200 || !Array.isArray(res.json)) refuse("DD-PROTECTION");
   const rules = res.json;
   const types = new Set(rules.map((r) => r?.type));
   for (const t of REQUIRED_RULE_TYPES) if (!types.has(t)) refuse("DD-PROTECTION", t);
-  const checks = rules.filter((r) => r?.type === "required_status_checks").flatMap((r) => r?.parameters?.required_status_checks ?? []);
-  if (!checks.some((c) => c?.context === REQUIRED_CHECK)) refuse("DD-PROTECTION", REQUIRED_CHECK);
+  const approvals = rules.filter((r) => r?.type === "pull_request").map((r) => r?.parameters?.required_approving_review_count);
+  if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 1)) refuse("DD-PROTECTION", "required_approving_review_count");
+  // a aprovação precisa ser descartada quando há push novo: sem isso uma aprovação antiga cobriria código que o revisor nunca viu
+  if (rules.filter((r) => r?.type === "pull_request").some((r) => r?.parameters?.dismiss_stale_reviews_on_push !== true)) refuse("DD-PROTECTION", "dismiss_stale_reviews_on_push");
+  const listing = rules
+    .filter((r) => r?.type === "required_status_checks")
+    .filter((r) => Array.isArray(r?.parameters?.required_status_checks) && r.parameters.required_status_checks.some((c) => c?.context === REQUIRED_CHECK));
+  if (!listing.length) refuse("DD-PROTECTION", REQUIRED_CHECK);
+  if (listing.some((r) => r.parameters.strict_required_status_checks_policy !== true)) refuse("DD-PROTECTION", "strict_required_status_checks_policy");
+  return { approvals: Math.min(...approvals), strict: true, dismissStale: true };
 }
 
 async function doctorChecks(run) {
   await mintToken(run);
-  await checkProtection(run);
+  run.protection = await checkProtection(run);
 }
 
 /* ----------------------------------------------------------------------- verbos */
@@ -817,6 +861,8 @@ async function verbDoctor(_args, run) {
   await doctorChecks(run);
   run.state.consecutiveRefusals = 0;
   run.say("doctor: ok (permissões do token, repositório único e proteções efetivas de main verificados)");
+  run.say(`proteções efetivas de main: aprovações exigidas = ${run.protection.approvals}; validate estrito = ${run.protection.strict}; aprovação obsoleta descartada no push = ${run.protection.dismissStale}`);
+  run.say(`habilitação: ${run.enabledBy}`);
 }
 
 async function verbBranch(_args, run) {
@@ -981,12 +1027,10 @@ async function verbPrUpdate(args, run) {
 
 /** A lista de hosts do download: hostnames EXATOS e minúsculos; nenhum sufixo, curinga, IP, porta ou caminho. Inválida = recusa. */
 export function validateLogHosts(list) {
-  const label = "[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?";
-  const exact = new RegExp(`^${label}(\\.${label})+$`);
   if (!Array.isArray(list)) refuse("DD-LOG-HOST", "lista inválida");
   const seen = new Set();
   for (const h of list) {
-    if (typeof h !== "string" || h.length > 253 || !exact.test(h) || /^\d+(\.\d+){3}$/.test(h) || seen.has(h)) refuse("DD-LOG-HOST", "lista inválida");
+    if (!isExactLogHost(h) || seen.has(h)) refuse("DD-LOG-HOST", "lista inválida");
     seen.add(h);
   }
   return [...seen];
@@ -1093,7 +1137,8 @@ async function resolveFailedJob(run, name, sha) {
 
 async function verbCiLog(args, run) {
   // a configuração da lista de hosts é conferida antes de qualquer Git ou rede: lista inválida nunca chega a pedir nada
-  const hosts = validateLogHosts(run.p.logHosts);
+  // D-25: a concessão de ensaio acrescenta hosts EXATOS aprovados pelo proprietário; a lista em código segue como está (vazia até o ensaio)
+  const hosts = [...new Set([...validateLogHosts(run.p.logHosts), ...run.grantLogHosts])];
   writePreflight(run);
   const { record } = run;
   const name = args["--check"];

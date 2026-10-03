@@ -10,13 +10,13 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { AUTHORIZE_PHRASE, CLEAR_PHRASE, run as authorize } from "./claude-authorize.mjs";
+import { AUTHORIZE_PHRASE, CLEAR_PHRASE, GRANT_PHRASE, run as authorize } from "./claude-authorize.mjs";
 import {
   BREAKER_LIMIT, EVIDENCE_TTL_SECONDS, EXPECTED_PERMISSIONS, FIXED_PATH, HANDOFF_MAX_BYTES, GIT_CANDIDATES, GIT_HARDENING, LOG_HOSTS, LOG_MAX_BYTES, REQUIRED_CHECK, childEnv, defaultHttp, resolveGit, validateLogHosts, endpointAllowed, execute, normalizeRemote, parseVerbArgs, scanDiff, scanText,
   untrusted, validateCommitMessage,
 } from "./claude-git.mjs";
 import {
-  CEILINGS, DELIVERY_ENV, OWNER_CEILINGS, OWNER_DEFAULTS, REPOSITORY, RecordError, buildRecord, loadRecord, selectRecord, validatePaths, validateRecord, writeRecord,
+  CEILINGS, DELIVERY_ENV, GRANT_MAX_MS, OWNER_CEILINGS, OWNER_DEFAULTS, REPOSITORY, RecordError, buildGrant, buildRecord, grantFile, loadGrant, loadRecord, selectRecord, validatePaths, validateRecord, writeGrant, writeRecord,
 } from "./claude-delivery-record.mjs";
 import { DELIVERY_PNPM_SCRIPTS, evaluate } from "./claude-local-first-guard.mjs";
 import { FORBIDDEN_ENV, PROBE_EVIDENCE, buildChildEnv, classifyArgv, inspectEnv, parseIncrement, run as launch } from "./claude-launch.mjs";
@@ -51,8 +51,8 @@ const isGetUrl = (args) => {
 /* --------------------------------------------------------------- HTTP falso */
 
 const GOOD_RULES = [
-  { type: "pull_request" }, { type: "non_fast_forward" }, { type: "deletion" }, { type: "required_linear_history" },
-  { type: "required_status_checks", parameters: { required_status_checks: [{ context: REQUIRED_CHECK }] } },
+  { type: "pull_request", parameters: { required_approving_review_count: 1, dismiss_stale_reviews_on_push: true } }, { type: "non_fast_forward" }, { type: "deletion" }, { type: "required_linear_history" },
+  { type: "required_status_checks", parameters: { required_status_checks: [{ context: REQUIRED_CHECK }], strict_required_status_checks_policy: true } },
 ];
 
 function fakeHttp(over = {}) {
@@ -115,7 +115,7 @@ const LOG_HOST_FOR_TESTS = "logs.example.test";
  * Monta um `origin` bare (com hook que simula o ruleset: recusa `main`, não-fast-forward e exclusão),
  * um clone de trabalho com `main` publicada, um registro aprovado e as portas injetáveis.
  */
-function scenario({ enabled = true, paths = ["docs/feature/"], recordOver = {}, http, remoteUrl = "https://github.com/cabralgava/oplyra.git", launcher = false, logHosts = [LOG_HOST_FOR_TESTS] } = {}) {
+function scenario({ enabled = true, paths = ["docs/feature/"], recordOver = {}, http, remoteUrl = "https://github.com/cabralgava/oplyra.git", launcher = false, logHosts = [LOG_HOST_FOR_TESTS], ref = REF, branch = BRANCH } = {}) {
   const tmp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "oplyra-delivery-")));
   const origin = path.join(tmp, "origin.git");
   const work = path.join(tmp, "work");
@@ -159,9 +159,9 @@ function scenario({ enabled = true, paths = ["docs/feature/"], recordOver = {}, 
   const recordDir = path.join(tmp, "home", ".oplyra", "delivery");
   // duração e iterações não têm padrão: todo registro de teste os informa, como o proprietário faria
   const { budgets: budgetsOver, ...restOver } = recordOver;
-  const record = buildRecord({ ref: REF, branch: BRANCH, baseSha, paths, confirmation: AUTHORIZE_PHRASE, budgets: { ...OWNER_LIMITS, ...(budgetsOver ?? {}) }, ...restOver });
+  const record = buildRecord({ ref, branch, baseSha, paths, confirmation: AUTHORIZE_PHRASE, budgets: { ...OWNER_LIMITS, ...(budgetsOver ?? {}) }, ...restOver });
   const { file, sha256 } = writeRecord(record, { recordDir });
-  const env = { PATH: process.env.PATH, [DELIVERY_ENV.ref]: REF, [DELIVERY_ENV.file]: file, [DELIVERY_ENV.sha256]: sha256 };
+  const env = { PATH: process.env.PATH, [DELIVERY_ENV.ref]: ref, [DELIVERY_ENV.file]: file, [DELIVERY_ENV.sha256]: sha256 };
   const realGit = (args, opts) => {
     const r = spawnSync("git", args, { cwd: work, env: opts.env, input: opts.input, encoding: "utf8" });
     return { status: r.status ?? 1, stdout: String(r.stdout ?? ""), stderr: String(r.stderr ?? "") };
@@ -181,7 +181,7 @@ function scenario({ enabled = true, paths = ["docs/feature/"], recordOver = {}, 
   const call = (verb, ...args) => execute(verb, args, ports);
   // zera o disjuntor entre recusas de laços de teste (o disjuntor em si é testado à parte)
   const reset = () => {
-    const f = path.join(ports.stateDir, `${REF}.json`);
+    const f = path.join(ports.stateDir, `${ref}.json`);
     if (!fs.existsSync(f)) return;
     fs.writeFileSync(f, JSON.stringify({ ...JSON.parse(fs.readFileSync(f, "utf8")), consecutiveRefusals: 0, open: false }));
   };
@@ -2378,6 +2378,424 @@ test("stage e commit também verificam token, repositório e proteções efetiva
 
 /* ============================================================ mutações (§11) */
 
+/* ---- D-26: proteções efetivas de main exigem aprovação e `validate` estrito ---- */
+
+const STRICT = "strict_required_status_checks_policy";
+const VALIDATE_ONLY = [{ context: REQUIRED_CHECK }];
+const ruleSet = (type, fn) => GOOD_RULES.map((r) => (r.type === type ? fn(r) : r));
+const withApprovals = (params) => ruleSet("pull_request", (r) => ({ type: r.type, ...(params === undefined ? {} : { parameters: params }) }));
+/** Parâmetros de `pull_request` válidos com UMA alteração: cada caso negativo isola a barreira que deve recusá-lo. */
+const prParams = (over = {}) => ({ required_approving_review_count: 1, dismiss_stale_reviews_on_push: true, ...over });
+const DISMISS = "dismiss_stale_reviews_on_push";
+const withStatusChecks = (params) => ruleSet("required_status_checks", (r) => ({ type: r.type, parameters: params }));
+const D26_BAD = [
+  ["parameters ausente", withApprovals(undefined)], ["contagem ausente", withApprovals(prParams({ required_approving_review_count: undefined }))], ["contagem 0", withApprovals(prParams({ required_approving_review_count: 0 }))],
+  ["contagem negativa", withApprovals(prParams({ required_approving_review_count: -1 }))], ["contagem decimal", withApprovals(prParams({ required_approving_review_count: 1.5 }))],
+  ["contagem em string", withApprovals(prParams({ required_approving_review_count: "1" }))], ["contagem null", withApprovals(prParams({ required_approving_review_count: null }))],
+  ["contagem NaN", withApprovals(prParams({ required_approving_review_count: Number.NaN }))], ["contagem infinita", withApprovals(prParams({ required_approving_review_count: Infinity }))],
+  ["contagem acima do inteiro seguro", withApprovals(prParams({ required_approving_review_count: 2 ** 60 }))],
+  // dismiss_stale_reviews_on_push: booleano estrito true em TODA regra pull_request; contagem válida em todos estes casos
+  ["dismiss_stale ausente", withApprovals(prParams({ [DISMISS]: undefined }))], ["dismiss_stale false", withApprovals(prParams({ [DISMISS]: false }))],
+  ["dismiss_stale em string", withApprovals(prParams({ [DISMISS]: "true" }))], ["dismiss_stale numérico", withApprovals(prParams({ [DISMISS]: 1 }))],
+  ["dismiss_stale null", withApprovals(prParams({ [DISMISS]: null }))], ["dismiss_stale objeto", withApprovals(prParams({ [DISMISS]: {} }))],
+  ["só a contagem, sem dismiss_stale", withApprovals({ required_approving_review_count: 1 })],
+  ["regra pull_request duplicada sem dismiss_stale", [...GOOD_RULES, { type: "pull_request", parameters: prParams({ [DISMISS]: false }) }]],
+  ["estrito ausente", withStatusChecks({ required_status_checks: VALIDATE_ONLY })], ["estrito false", withStatusChecks({ required_status_checks: VALIDATE_ONLY, [STRICT]: false })],
+  ["estrito em string", withStatusChecks({ required_status_checks: VALIDATE_ONLY, [STRICT]: "true" })], ["estrito numérico", withStatusChecks({ required_status_checks: VALIDATE_ONLY, [STRICT]: 1 })],
+  ["validate não estrito e outra regra estrita sem validate", [
+    ...GOOD_RULES.filter((r) => r.type !== "required_status_checks"),
+    { type: "required_status_checks", parameters: { required_status_checks: VALIDATE_ONLY, [STRICT]: false } },
+    { type: "required_status_checks", parameters: { required_status_checks: [{ context: "outro" }], [STRICT]: true } },
+  ]],
+  ["validate também numa segunda regra não estrita", [...GOOD_RULES, { type: "required_status_checks", parameters: { required_status_checks: VALIDATE_ONLY } }]],
+  ["regra pull_request duplicada com contagem malformada", [...GOOD_RULES, { type: "pull_request", parameters: prParams({ required_approving_review_count: "1" }) }]],
+  ["regra pull_request duplicada sem parâmetros", [...GOOD_RULES, { type: "pull_request" }]],
+  ["lista de checks que não é lista", withStatusChecks({ required_status_checks: { context: REQUIRED_CHECK }, [STRICT]: true })],
+];
+
+test("D-26 proteção de main: aprovação ≥ 1 (inteiro seguro), dismiss_stale_reviews_on_push true e validate estrito na mesma regra; qualquer valor malformado recusa e nada é criado", async () => {
+  for (const [label, rules] of D26_BAD) {
+    const s = scenario({ http: fakeHttp({ rules }) });
+    refused(await s.call("doctor"), "DD-PROTECTION");
+    const b = await s.call("branch");
+    refused(b, "DD-PROTECTION");
+    assert.equal(sh(s.work, "branch", "--list", BRANCH), "", `${label}: nenhuma branch sem proteção verificada`);
+  }
+  // positivos: contagem 1 e estrito true; contagem maior; duas regras pull_request (vale o mínimo); o doctor imprime os valores efetivos lidos
+  const ok = [
+    [GOOD_RULES, 1], [withApprovals(prParams({ required_approving_review_count: 2 })), 2],
+    [[...GOOD_RULES, { type: "pull_request", parameters: prParams({ required_approving_review_count: 3 }) }], 1],
+  ];
+  for (const [rules, min] of ok) {
+    const r = await scenario({ http: fakeHttp({ rules }) }).call("doctor");
+    assert.equal(r.code, 0, r.out);
+    assert.match(r.out, new RegExp(`aprovações exigidas = ${min}; validate estrito = true; aprovação obsoleta descartada no push = true`));
+  }
+});
+
+/* ---- D-25: concessão temporária de ensaio, fora do repositório e vinculada ao registro ---- */
+
+const OPS_REF = "ops-1";
+const OPS_BRANCH = "agent/chore/ops-1-ensaio-teste";
+/** Repositório com a chave em `false` e registro `ops-1`: só uma concessão válida o habilita. */
+const opsScenario = (over = {}) => scenario({ enabled: false, ref: OPS_REF, branch: OPS_BRANCH, ...over });
+const opsState = (s) => path.join(s.ports.stateDir, `${s.record.ref}.json`);
+const grantPathOf = (s) => grantFile(s.recordDir, s.record.ref);
+const readAudit = (s) => (fs.existsSync(path.join(s.ports.stateDir, "audit.jsonl")) ? fs.readFileSync(path.join(s.ports.stateDir, "audit.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l)) : []);
+/** Concessão válida para o registro do cenário, gravada como o script do proprietário a gravaria. */
+function grantFor(s, { logHosts, now } = {}) {
+  const loaded = selectRecord({ ref: s.record.ref, recordDir: s.recordDir });
+  const grant = buildGrant({ record: loaded.record, recordSha256: loaded.sha256, logHosts, confirmation: GRANT_PHRASE }, { now });
+  return { grant, ...writeGrant(grant, { recordDir: s.recordDir }) };
+}
+/** Regrava a concessão com um defeito (mantendo modo 0600), para provar que cada barreira recusa. */
+const tamper = (s, fn) => {
+  const f = grantPathOf(s);
+  const next = fn(JSON.parse(fs.readFileSync(f, "utf8")));
+  fs.writeFileSync(f, typeof next === "string" ? next : JSON.stringify(next));
+  fs.chmodSync(f, 0o600);
+};
+const noEffects = (s) => {
+  assert.equal(s.http.calls.length, 0, "recusa de habilitação não chega à rede");
+  assert.equal(fs.existsSync(opsState(s)), false, "sem habilitação não há estado nem disjuntor");
+};
+
+test("D-25: com a chave do repositório em false só a concessão vinculada ao registro habilita; auditada; revogar = apagar; a árvore fica limpa", async () => {
+  const s = opsScenario();
+  // sem concessão: DD-DISABLED, quantas vezes forem; o disjuntor nunca abre porque nada é carregado nem gravado
+  for (let k = 0; k <= BREAKER_LIMIT; k += 1) refused(await s.call("doctor"), "DD-DISABLED");
+  noEffects(s);
+  const { sha256 } = grantFor(s);
+  assert.equal(fs.statSync(grantPathOf(s)).mode & 0o777, 0o600);
+  const d = await s.call("doctor");
+  assert.equal(d.code, 0, d.out);
+  assert.match(d.out, /habilitação: rehearsal-grant/);
+  assert.equal((await s.call("branch")).code, 0, "a árvore está limpa: o repositório continua em false");
+  assert.equal(JSON.parse(fs.readFileSync(path.join(s.work, ".claude", "delegated-delivery.json"), "utf8")).delegatedDelivery, false);
+  assert.equal(sh(s.work, "status", "--porcelain", "--untracked-files=all"), "");
+  s.write("docs/feature/a.md");
+  s.write("msg.txt", MSG);
+  assert.equal((await s.call("stage", "docs/feature/a.md")).code, 0);
+  assert.equal((await s.call("commit", "--message-file", "msg.txt")).code, 0);
+  assert.equal((await s.call("push")).code, 0);
+  assert.equal(sh(s.origin, "rev-parse", "refs/heads/main"), s.baseSha, "main do origin intacta");
+  // auditoria: toda chamada habilitada registra o modo e o hash da concessão; as recusas anteriores, nenhum
+  const audit = readAudit(s);
+  assert.ok(audit.slice(0, BREAKER_LIMIT + 1).every((a) => a.refusal === "DD-DISABLED" && a.enabledBy === null && a.grantSha256 === null && a.recordSha256 === null));
+  const enabled = audit.slice(BREAKER_LIMIT + 1);
+  assert.ok(enabled.length >= 5 && enabled.every((a) => a.enabledBy === "rehearsal-grant" && a.grantSha256 === sha256 && a.recordSha256 === s.sha256));
+  assert.ok(!JSON.stringify(audit).includes(CANARY_TOKEN));
+  // revogar = apagar o arquivo; a sessão seguinte volta a ser recusada
+  fs.rmSync(grantPathOf(s));
+  s.reset();
+  refused(await s.call("doctor"), "DD-DISABLED");
+});
+
+test("D-25: a chave definitiva do repositório continua sendo a única habilitação definitiva e ignora a concessão", async () => {
+  const s = scenario();
+  const d = await s.call("doctor");
+  assert.equal(d.code, 0, d.out);
+  assert.match(d.out, /habilitação: repository/);
+  const last = readAudit(s).pop();
+  assert.deepEqual([last.enabledBy, last.grantSha256], ["repository", null]);
+  // com a chave em true, uma concessão (válida ou inválida) é irrelevante: vale a chave, e o hash da concessão não entra na auditoria
+  const t = opsScenario({ enabled: true });
+  grantFor(t);
+  const r = await t.call("doctor");
+  assert.equal(r.code, 0, r.out);
+  assert.match(r.out, /habilitação: repository/);
+  assert.equal(readAudit(t).pop().grantSha256, null);
+});
+
+test("D-25: concessão ausente, de outro ref, de outro hash, expirada (fronteira exata), insegura, adulterada ou fora de ops-* NÃO habilita", async () => {
+  const day = 24 * 3_600_000;
+  const cases = [
+    ["outro ref", (s) => tamper(s, (g) => ({ ...g, ref: "ops-2" }))],
+    ["outro hash de registro", (s) => tamper(s, (g) => ({ ...g, recordSha256: "0".repeat(64) }))],
+    ["hash em maiúsculas", (s) => tamper(s, (g) => ({ ...g, recordSha256: g.recordSha256.toUpperCase() }))],
+    ["campo extra", (s) => tamper(s, (g) => ({ ...g, extra: 1 }))],
+    ["campo ausente", (s) => tamper(s, ({ confirmation, ...g }) => g)],
+    ["frase errada", (s) => tamper(s, (g) => ({ ...g, confirmation: "AUTORIZAR-ENTREGA-DELEGADA" }))],
+    ["autor que não é o proprietário", (s) => tamper(s, (g) => ({ ...g, authorizedBy: "agent" }))],
+    ["esquema errado", (s) => tamper(s, (g) => ({ ...g, schema: "oplyra-rehearsal-grant/2" }))],
+    ["validade acima de 24 h", (s) => tamper(s, (g) => ({ ...g, expiresAt: new Date(Date.parse(g.issuedAt) + day + 1000).toISOString() }))],
+    // registro de 1 dia: a concessão emitida junto dele (≤ 24 h) só passa do registro por 1 s, sem cair nas outras checagens de validade
+    ["validade além da do registro", (s) => tamper(s, (g) => {
+      const expires = Date.parse(s.record.expiresAt) + 1000;
+      return { ...g, issuedAt: new Date(expires - day).toISOString(), expiresAt: new Date(expires).toISOString() };
+    }), { recordOver: { expiresInDays: 1 } }],
+    ["emitida no futuro", (s) => tamper(s, (g) => ({ ...g, issuedAt: new Date(Date.now() + 3_600_000).toISOString(), expiresAt: new Date(Date.now() + 2 * 3_600_000).toISOString() }))],
+    ["fim antes do início", (s) => tamper(s, (g) => ({ ...g, expiresAt: g.issuedAt }))],
+    ["data inválida", (s) => tamper(s, (g) => ({ ...g, expiresAt: "amanhã" }))],
+    ["JSON inválido", (s) => tamper(s, () => "{")],
+    ["não é objeto", (s) => tamper(s, () => "[]")],
+    ["host de log com curinga", (s) => tamper(s, (g) => ({ ...g, logHosts: ["*.example.test"] }))],
+    ["host de log IP", (s) => tamper(s, (g) => ({ ...g, logHosts: ["127.0.0.1"] }))],
+    ["host de log com porta", (s) => tamper(s, (g) => ({ ...g, logHosts: ["logs.example.test:443"] }))],
+    ["host de log em maiúsculas", (s) => tamper(s, (g) => ({ ...g, logHosts: ["LOGS.example.test"] }))],
+    ["hosts de log duplicados", (s) => tamper(s, (g) => ({ ...g, logHosts: ["logs.example.test", "logs.example.test"] }))],
+    ["hosts de log que não é lista", (s) => tamper(s, (g) => ({ ...g, logHosts: "logs.example.test" }))],
+    ["arquivo com modo de grupo", (s) => fs.chmodSync(grantPathOf(s), 0o640)],
+    ["arquivo legível por todos", (s) => fs.chmodSync(grantPathOf(s), 0o644)],
+    // modos EXATOS: só 0600 no arquivo e 0700 no diretório (0400, 0700 e 0500 não têm acesso de grupo/outros, mas também não servem)
+    ["arquivo 0400", (s) => fs.chmodSync(grantPathOf(s), 0o400)],
+    ["arquivo 0700", (s) => fs.chmodSync(grantPathOf(s), 0o700)],
+    ["diretório 0500", (s) => fs.chmodSync(s.recordDir, 0o500)],
+    // a concessão nunca carrega escopo próprio: caminhos e orçamentos vêm só do registro
+    ["caminhos na concessão", (s) => tamper(s, (g) => ({ ...g, paths: ["README.md"] }))],
+    ["orçamentos na concessão", (s) => tamper(s, (g) => ({ ...g, budgets: { commits: 20 } }))],
+    ["branch na concessão", (s) => tamper(s, (g) => ({ ...g, branch: "agent/chore/ops-1-outra-coisa" }))],
+    ["symlink para uma concessão válida", (s) => {
+      const copy = path.join(s.tmp, "copia.json");
+      fs.copyFileSync(grantPathOf(s), copy);
+      fs.chmodSync(copy, 0o600);
+      fs.rmSync(grantPathOf(s));
+      fs.symlinkSync(copy, grantPathOf(s));
+    }],
+    ["diretório com modo inseguro", (s) => fs.chmodSync(s.recordDir, 0o750)],
+    ["concessão removida", (s) => fs.rmSync(grantPathOf(s))],
+  ];
+  for (const [label, apply, opts] of cases) {
+    const s = opsScenario(opts);
+    grantFor(s, { logHosts: ["logs.example.test"] });
+    apply(s);
+    refused(await s.call("doctor"), "DD-DISABLED");
+    noEffects(s);
+    assert.equal(readAudit(s).pop().enabledBy, null, label);
+    fs.chmodSync(s.recordDir, 0o700);
+  }
+  // fronteira exata da expiração: um milissegundo antes vale; no instante exato já expirou (inclusive)
+  const s = opsScenario();
+  const { grant } = grantFor(s);
+  const expires = Date.parse(grant.expiresAt);
+  assert.ok(expires - Date.parse(grant.issuedAt) <= GRANT_MAX_MS);
+  const before = opsScenario();
+  const beforeGrant = grantFor(before).grant;
+  before.ports.now = () => new Date(Date.parse(beforeGrant.expiresAt) - 1);
+  const live = await before.call("doctor");
+  assert.equal(live.code, 0, live.out);
+  s.ports.now = () => new Date(expires);
+  refused(await s.call("doctor"), "DD-DISABLED");
+  noEffects(s);
+  s.ports.now = () => new Date(expires + 86_400_000);
+  refused(await s.call("doctor"), "DD-DISABLED");
+  // a validade nunca passa de 24 h nem da do registro (a concessão é emitida com a menor das duas)
+  const short = opsScenario({ recordOver: { expiresInDays: 1 } });
+  const g = grantFor(short).grant;
+  assert.ok(Date.parse(g.expiresAt) <= Date.parse(short.record.expiresAt) && Date.parse(g.expiresAt) - Date.parse(g.issuedAt) <= GRANT_MAX_MS);
+  const long = opsScenario({ recordOver: { expiresInDays: 7 } });
+  const lg = grantFor(long).grant;
+  assert.equal(Date.parse(lg.expiresAt) - Date.parse(lg.issuedAt), GRANT_MAX_MS);
+});
+
+test("D-25: só referências ops-*; a chave do repositório precisa estar legível e em false; registro adulterado ou outro hash desabilita", async () => {
+  // ref `cr-099` (e qualquer não ops-*): nem o script nem uma concessão escrita à mão habilitam
+  const c = scenario({ enabled: false });
+  assert.throws(() => buildGrant({ record: c.record, recordSha256: c.sha256, confirmation: GRANT_PHRASE }), (e) => e.code === "DR-GRANT");
+  for (const ref of ["cr-099", "i01", "dp-x"]) assert.throws(() => loadGrant({ record: { ...c.record, ref }, recordSha256: c.sha256, recordDir: c.recordDir }), (e) => e.code === "DR-GRANT", ref);
+  const now = new Date();
+  fs.writeFileSync(path.join(c.recordDir, "cr-099.enable.json"), JSON.stringify({
+    schema: "oplyra-rehearsal-grant/1", ref: "cr-099", recordSha256: c.sha256, issuedAt: now.toISOString(), expiresAt: new Date(now.getTime() + 3_600_000).toISOString(), authorizedBy: "project_owner", confirmation: GRANT_PHRASE,
+  }), { mode: 0o600 });
+  refused(await c.call("doctor"), "DD-DISABLED");
+  noEffects({ ...c, record: { ref: "cr-099" } });
+  // a chave do repositório ausente, ilegível, sem esquema ou com outro valor NÃO é "false": falha fechada mesmo com concessão válida
+  const f = (s) => path.join(s.work, ".claude", "delegated-delivery.json");
+  for (const content of ["{", JSON.stringify({ schema: "oplyra-delegated-delivery/1", delegatedDelivery: "false" }), JSON.stringify({ delegatedDelivery: false }), JSON.stringify({ schema: "oplyra-delegated-delivery/1" }), JSON.stringify({ schema: "oplyra-delegated-delivery/1", delegatedDelivery: 0 }), null]) {
+    const s = opsScenario();
+    grantFor(s);
+    if (content === null) fs.rmSync(f(s));
+    else fs.writeFileSync(f(s), content);
+    refused(await s.call("doctor"), "DD-DISABLED");
+    noEffects(s);
+  }
+  // registro adulterado depois da sessão (o hash fixado não bate): a concessão vinculada ao hash antigo não o salva
+  const t = opsScenario();
+  grantFor(t);
+  fs.writeFileSync(t.file, JSON.stringify({ ...JSON.parse(fs.readFileSync(t.file, "utf8")), paths: ["docs/feature/", "docs/outro/"] }));
+  refused(await t.call("doctor"), "DD-DISABLED");
+  noEffects(t);
+  // credencial herdada no ambiente continua recusada, e sem registro selecionado não há concessão a verificar
+  const u = opsScenario();
+  grantFor(u);
+  refused(await execute("doctor", [], { ...u.ports, env: { ...u.env, GITHUB_TOKEN: "x" } }), "DD-DISABLED");
+  refused(await execute("doctor", [], { ...u.ports, env: { PATH: process.env.PATH } }), "DD-DISABLED");
+});
+
+test("D-25: o kill switch prevalece sobre a concessão", async () => {
+  const s = opsScenario();
+  grantFor(s);
+  fs.writeFileSync(s.ports.killFile, "");
+  refused(await s.call("doctor"), "DD-KILL");
+  for (const verb of ["branch", "push", "ci-status"]) refused(await s.call(verb), "DD-KILL");
+  assert.equal(s.http.calls.length, 0);
+  fs.rmSync(s.ports.killFile);
+  assert.equal((await s.call("doctor")).code, 0);
+});
+
+test("D-25: logHosts da concessão acrescentam hosts EXATOS aprovados pelo proprietário ao gh:ci-log; sem eles segue fechado e a lista em código continua vazia", async () => {
+  assert.deepEqual([...LOG_HOSTS], []);
+  const s = scenario({ ref: OPS_REF, branch: OPS_BRANCH, http: fakeHttp({ prHeadRef: OPS_BRANCH }), logHosts: "producao" });
+  await logReady(LIVE, s, { logText: LOG_TEXT });
+  s.http.cfg.runs[0].head_branch = OPS_BRANCH;
+  // a partir daqui só a concessão habilita: o repositório volta a false (a árvore não importa para ler logs)
+  fs.writeFileSync(path.join(s.work, ".claude", "delegated-delivery.json"), JSON.stringify({ schema: "oplyra-delegated-delivery/1", delegatedDelivery: false }));
+  s.reset();
+  refused(await s.call("ci-log", "--check", "validate"), "DD-DISABLED");
+  const reads = () => JSON.parse(fs.readFileSync(opsState(s), "utf8")).logReads;
+  assert.equal(reads(), 0);
+  grantFor(s);
+  s.reset();
+  refused(await s.call("ci-log", "--check", "validate"), "DD-LOG-HOST");
+  assert.equal(s.dl.calls.length, 0);
+  grantFor(s, { logHosts: [LOG_HOST_FOR_TESTS] }); // o proprietário observou o hostname e o aprovou: regrava a concessão
+  s.reset();
+  const r = await s.call("ci-log", "--check", "validate");
+  assert.equal(r.code, 0, r.out);
+  assert.equal(new URL(s.dl.calls[0].url).hostname, LOG_HOST_FOR_TESTS);
+  assert.equal(reads(), 2);
+  // um host fora da lista da concessão continua recusado
+  s.http.cfg.logLocation = "https://outro.example.test/blob/x?sig=ZZ";
+  s.reset();
+  refused(await s.call("ci-log", "--check", "validate"), "DD-LOG-HOST");
+  assert.ok(!fs.readFileSync(path.join(s.ports.stateDir, "audit.jsonl"), "utf8").includes("ZZ"));
+});
+
+test("D-25: a concessão não amplia caminhos, orçamentos nem branch do registro; o registro segue mandando em tudo", async () => {
+  const s = opsScenario({ paths: ["docs/feature/a.md"], recordOver: { budgets: { commits: 1 } } });
+  const { grant } = grantFor(s);
+  assert.deepEqual(Object.keys(grant).sort(), ["authorizedBy", "confirmation", "expiresAt", "issuedAt", "recordSha256", "ref", "schema"], "sem paths, budgets nem branch");
+  assert.equal((await s.call("branch")).code, 0);
+  for (const rel of ["docs/feature/b.md", "README.md", "scripts/claude-x.mjs", "package.json"]) {
+    s.write(rel, "x\n");
+    s.reset();
+    refused(await s.call("stage", rel), "DD-PATH");
+  }
+  s.write("docs/feature/a.md");
+  s.write("msg.txt", MSG);
+  s.reset();
+  assert.equal((await s.call("stage", "docs/feature/a.md")).code, 0);
+  assert.equal((await s.call("commit", "--message-file", "msg.txt")).code, 0);
+  s.write("docs/feature/a.md", "outra\n");
+  assert.equal((await s.call("stage", "docs/feature/a.md")).code, 0);
+  refused(await s.call("commit", "--message-file", "msg.txt"), "DD-BUDGET"); // commits: 1, mesmo com a concessão
+  // outra branch além da do registro continua recusada, e o registro não foi tocado
+  sh(s.work, "switch", "-c", "agent/chore/ops-1-outra-coisa");
+  s.reset();
+  refused(await s.call("push"), "DD-BRANCH");
+  assert.equal(crypto.createHash("sha256").update(fs.readFileSync(s.file)).digest("hex"), s.sha256);
+});
+
+test("authorize --enable-rehearsal: regravar para acrescentar hosts PRESERVA a janela original; expirada, adulterada ou insegura recusa; estado e relógio não são tocados", async () => {
+  const tmp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "oplyra-grant-win-")));
+  const recordDir = path.join(tmp, "delivery");
+  const stateDir = path.join(tmp, "state");
+  fs.mkdirSync(stateDir);
+  const stateBefore = JSON.stringify({ commits: 2, pushes: 1, startedAt: "2026-10-02T10:00:00.000Z", iterations: 1, logReads: 3 });
+  fs.writeFileSync(path.join(stateDir, `${OPS_REF}.json`), stateBefore);
+  fs.writeFileSync(path.join(stateDir, "audit.jsonl"), "{}\n");
+  const snapshot = () => [`${OPS_REF}.json`, "audit.jsonl"].map((f) => fs.readFileSync(path.join(stateDir, f), "utf8")).join("|");
+  const before = snapshot();
+  const out = [];
+  const h = (n) => n * 3_600_000;
+  const t0 = new Date();
+  const base = { env: {}, isTTY: true, recordDir, stateDir, write: (x) => out.push(x) };
+  assert.equal(await authorize({ ...base, now: t0, confirm: async () => AUTHORIZE_PHRASE, argv: [`--ref=${OPS_REF}`, `--branch=${OPS_BRANCH}`, `--base-sha=${"b".repeat(40)}`, "--paths=docs/feature/", "--max-wall-clock-seconds=7200", "--max-iterations=4", "--expires-days=2"] }), 0);
+  const enable = (now, ...extra) => authorize({ ...base, now, confirm: async () => GRANT_PHRASE, argv: [`--enable-rehearsal=${OPS_REF}`, ...extra] });
+  const file = path.join(recordDir, `${OPS_REF}.enable.json`);
+  const read = () => JSON.parse(fs.readFileSync(file, "utf8"));
+  assert.equal(await enable(t0), 0);
+  const first = read();
+  assert.equal(Date.parse(first.expiresAt) - Date.parse(first.issuedAt), h(24));
+  // regravações horas depois: mesma janela (nada de nova emissão nem de prazo renovado); os hosts mudam
+  out.length = 0;
+  assert.equal(await enable(new Date(t0.getTime() + h(3)), "--log-hosts=logs.example.test"), 0);
+  assert.match(out.join(""), /janela original foi PRESERVADA/);
+  const second = read();
+  assert.deepEqual([second.issuedAt, second.expiresAt], [first.issuedAt, first.expiresAt]);
+  assert.deepEqual(second.logHosts, ["logs.example.test"]);
+  assert.equal(await enable(new Date(t0.getTime() + h(23)), "--log-hosts=pipelines.example.org"), 0);
+  const third = read();
+  assert.deepEqual([third.issuedAt, third.expiresAt], [first.issuedAt, first.expiresAt]);
+  assert.deepEqual(third.logHosts, ["pipelines.example.org"]);
+  assert.equal(fs.statSync(file).mode & 0o777, 0o600);
+  assert.equal(snapshot(), before, "estado, relógio, contadores e auditoria da entrega intactos");
+  // expirada (instante exato incluído): recusa e não regrava; a renovação exige apagar a concessão de propósito
+  const bytes = fs.readFileSync(file);
+  for (const at of [new Date(Date.parse(first.expiresAt)), new Date(Date.parse(first.expiresAt) + h(2))]) {
+    assert.equal(await enable(at, "--log-hosts=outro.example.test"), 2);
+    assert.deepEqual(fs.readFileSync(file), bytes);
+  }
+  // adulterada, com modo inseguro ou symlink: recusa sem tocar no arquivo
+  fs.writeFileSync(file, "{", { mode: 0o600 });
+  assert.equal(await enable(t0, "--log-hosts=outro.example.test"), 2);
+  assert.equal(fs.readFileSync(file, "utf8"), "{");
+  fs.writeFileSync(file, bytes, { mode: 0o600 });
+  fs.chmodSync(file, 0o644);
+  assert.equal(await enable(t0), 2);
+  fs.chmodSync(file, 0o600);
+  const copy = path.join(tmp, "copia.json");
+  fs.copyFileSync(file, copy);
+  fs.rmSync(file);
+  fs.symlinkSync(copy, file);
+  assert.equal(await enable(t0), 2);
+  assert.ok(fs.lstatSync(file).isSymbolicLink(), "o symlink não foi substituído");
+  assert.equal(snapshot(), before);
+  // sem a concessão antiga, o proprietário emite uma nova (nova janela, de propósito)
+  fs.rmSync(file);
+  const t1 = new Date(t0.getTime() + h(30));
+  assert.equal(await enable(t1), 0);
+  assert.equal(read().issuedAt, t1.toISOString());
+  assert.equal(snapshot(), before);
+});
+
+test("authorize --enable-rehearsal: só ops-* com registro, em terminal do proprietário, com a frase HABILITAR-ENSAIO; regrava para acrescentar hosts", async () => {
+  const tmp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "oplyra-grant-")));
+  const recordDir = path.join(tmp, "delivery");
+  const out = [];
+  const base = { env: {}, isTTY: true, recordDir, confirm: async () => AUTHORIZE_PHRASE, write: (x) => out.push(x) };
+  const record = (ref, branch) => authorize({ ...base, argv: [`--ref=${ref}`, `--branch=${branch}`, `--base-sha=${"b".repeat(40)}`, "--paths=docs/feature/", "--max-wall-clock-seconds=7200", "--max-iterations=4", "--expires-days=2"] });
+  assert.equal(await record(OPS_REF, OPS_BRANCH), 0);
+  assert.equal(await record(REF, BRANCH), 0);
+  const enable = (argv, over = {}) => authorize({ ...base, confirm: async () => GRANT_PHRASE, ...over, argv });
+  const file = path.join(recordDir, `${OPS_REF}.enable.json`);
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`], { env: { CLAUDECODE: "1" } }), 2);
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`], { env: { CLAUDE_PROJECT_DIR: "/x" } }), 2);
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`], { isTTY: false }), 2);
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`], { confirm: async () => "sim" }), 2);
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`], { confirm: async () => AUTHORIZE_PHRASE }), 2);
+  assert.equal(await enable([`--enable-rehearsal=${REF}`]), 2, "cr-099 tem registro, mas não é ops-*");
+  assert.equal(await enable(["--enable-rehearsal=ops-2"]), 2, "ops-2 não tem registro");
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`, `--ref=${OPS_REF}`]), 2);
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`, "--paths=README.md"]), 2);
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`, "--log-hosts=*.example.test"]), 2);
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`, "--log-hosts=127.0.0.1"]), 2);
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`, `--enable-rehearsal=${OPS_REF}`]), 2);
+  assert.equal(await authorize({ ...base, argv: ["--log-hosts=logs.example.test"] }), 2, "--log-hosts só existe junto de --enable-rehearsal");
+  assert.equal(fs.existsSync(file), false, "nenhuma recusa grava a concessão");
+  assert.equal(fs.existsSync(path.join(recordDir, `${REF}.enable.json`)), false);
+  out.length = 0;
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`]), 0, out.join(""));
+  assert.equal(fs.statSync(file).mode & 0o777, 0o600);
+  assert.match(out.join(""), /SHA-256 do registro: [0-9a-f]{64}/);
+  assert.match(out.join(""), /SHA-256 da concessão: [0-9a-f]{64}/);
+  const sha = crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
+  assert.ok(out.join("").includes(sha), "imprime o hash da concessão gravada");
+  const loaded = selectRecord({ ref: OPS_REF, recordDir });
+  const first = loadGrant({ record: loaded.record, recordSha256: loaded.sha256, recordDir });
+  assert.deepEqual(first.logHosts, []);
+  assert.equal(first.grant.recordSha256, loaded.sha256);
+  assert.ok(Date.parse(first.grant.expiresAt) - Date.parse(first.grant.issuedAt) <= GRANT_MAX_MS);
+  // regrava com hosts exatos aprovados (substitui a anterior, nova emissão)
+  assert.equal(await enable([`--enable-rehearsal=${OPS_REF}`, "--log-hosts=pipelines.example.org,logs.example.test"]), 0);
+  assert.deepEqual(loadGrant({ record: loaded.record, recordSha256: loaded.sha256, recordDir }).logHosts, ["pipelines.example.org", "logs.example.test"]);
+  assert.ok(!fs.existsSync(`${file}.tmp`));
+  // o script não está na allowlist do guard e o diretório de autorizações continua fora do alcance do agente
+  assert.equal(evaluate({ toolName: "Bash", toolInput: { command: `node scripts/claude-authorize.mjs --enable-rehearsal=${OPS_REF}` }, projectRoot: "/workspace/oplyra" }).code, "LF-CMD-NOT-ALLOWED");
+  assert.equal(evaluate({ toolName: "Write", toolInput: { file_path: "/Users/dono/.oplyra/delivery/ops-1.enable.json" }, projectRoot: "/workspace/oplyra" }).code, "LF-WRITE-OUTSIDE");
+  assert.equal(evaluate({ toolName: "Read", toolInput: { file_path: "/Users/dono/.oplyra/delivery/ops-1.enable.json" }, projectRoot: "/workspace/oplyra" }).code, "LF-READ-OUTSIDE");
+});
+
 /** Copia os módulos para um diretório temporário com UMA alteração e os importa. A âncora precisa existir: senão a mutação seria vácua. */
 async function mutate(file, from, to) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "oplyra-delivery-mut-"));
@@ -2437,7 +2855,7 @@ const refusesWith = (fn, code) => {
  * verificação, precisa FALHAR nela. Uma mutação não detectada é um teste que não protege nada.
  */
 const MUTATIONS = [
-  ["M01-chave-desligada-ignorada", GIT, "|| cfg.delegatedDelivery !== true", "", async (m) => isRefusal(await scenario({ enabled: false }).exec(m.git, "doctor"), "DD-DISABLED")],
+  ["M01-chave-desligada-ignorada", GIT, 'refuse("DD-DISABLED", e instanceof RecordError && e.code === "DR-GRANT" && e.detail ? `concessão: ${e.detail}` : undefined);', 'run.enabledBy = "ignorado";', async (m) => isRefusal(await scenario({ enabled: false }).exec(m.git, "doctor"), "DD-DISABLED")],
   ["M02-kill-switch-ignorado", GIT, 'if (p.fs.existsSync(p.killFile)) refuse("DD-KILL");', "", async (m) => {
     const s = scenario();
     fs.writeFileSync(s.ports.killFile, "");
@@ -2487,7 +2905,7 @@ const MUTATIONS = [
   ["M11-permissoes-do-token", GIT, "|| !samePermissions(j.permissions)", "", async (m) => isRefusal(await scenario({ http: fakeHttp({ permissions: { ...EXPECTED_PERMISSIONS, actions: "write" } }) }).exec(m.git, "doctor"), "DD-PERMS")],
   ["M12-selecao-de-repositorio", GIT, 'j.repository_selection !== "selected" ||', "", async (m) => isRefusal(await scenario({ http: fakeHttp({ selection: "all" }) }).exec(m.git, "doctor"), "DD-PERMS")],
   ["M13-regras-essenciais-de-main", GIT, 'for (const t of REQUIRED_RULE_TYPES) if (!types.has(t)) refuse("DD-PROTECTION", t);', "", async (m) => isRefusal(await scenario({ http: fakeHttp({ rules: rulesWithout("non_fast_forward") }) }).exec(m.git, "doctor"), "DD-PROTECTION")],
-  ["M14-check-validate-obrigatorio", GIT, 'if (!checks.some((c) => c?.context === REQUIRED_CHECK)) refuse("DD-PROTECTION", REQUIRED_CHECK);', "", async (m) => {
+  ["M14-check-validate-obrigatorio", GIT, 'if (!listing.length) refuse("DD-PROTECTION", REQUIRED_CHECK);', "", async (m) => {
     const rules = GOOD_RULES.map((r) => (r.type === "required_status_checks" ? { type: r.type, parameters: { required_status_checks: [{ context: "outro" }] } } : r));
     return isRefusal(await scenario({ http: fakeHttp({ rules }) }).exec(m.git, "doctor"), "DD-PROTECTION");
   }],
@@ -2814,7 +3232,7 @@ const MUTATIONS = [
   }],
   ["L24-id-ou-url-do-agente", GIT, '!/^\\d+$/.test(value) && !value.includes("://") && !value.startsWith("/")', "true", async (m) =>
     refusesWith(() => m.git.parseVerbArgs("ci-log", ["--check", "12345"]), "DD-ARGS") && refusesWith(() => m.git.parseVerbArgs("ci-log", ["--check", "https://logs.example.test/x"]), "DD-ARGS")],
-  ["L25-lista-de-hosts-so-exatos", GIT, "|| !exact.test(h) ||", "||", async (m) =>
+  ["L25-lista-de-hosts-so-exatos", GIT, "if (!isExactLogHost(h) ||", "if (", async (m) =>
     isRefusal((await logAttempt(m, null, { scenarioOpts: { logHosts: [LOG_HOST_FOR_TESTS, "*.example.test"] } })).r, "DD-LOG-HOST")],
   ["L26-lista-de-producao-vazia", GIT, "export const LOG_HOSTS = Object.freeze([]);", 'export const LOG_HOSTS = Object.freeze(["logs.example.test"]);', async (m) =>
     isRefusal((await logAttempt(m, null, { scenarioOpts: { logHosts: "producao" } })).r, "DD-LOG-HOST")],
@@ -3055,6 +3473,146 @@ const MUTATIONS = [
     sh(s.work, "config", "filter.x.clean", "cat");
     return isRefusal(await s.exec(m.git, "branch"), "DD-GITCONFIG");
   }],
+  // ---- D-26: proteções efetivas de main ----
+  ...(() => {
+    const refusesDoctor = (rules) => async (m) => isRefusal(await scenario({ http: fakeHttp({ rules }) }).exec(m.git, "doctor"), "DD-PROTECTION");
+    const named = (label) => D26_BAD.find(([l]) => l === label)[1];
+    const COUNT_CHECK = 'if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 1)) refuse("DD-PROTECTION", "required_approving_review_count");';
+    const DISMISS_CHECK = 'if (rules.filter((r) => r?.type === "pull_request").some((r) => r?.parameters?.dismiss_stale_reviews_on_push !== true)) refuse("DD-PROTECTION", "dismiss_stale_reviews_on_push");';
+    const STRICT_CHECK ='if (listing.some((r) => r.parameters.strict_required_status_checks_policy !== true)) refuse("DD-PROTECTION", "strict_required_status_checks_policy");';
+    return [
+      ["P01-aprovacoes-minimo-1", GIT, "|| n < 1)", "|| n < 0)", refusesDoctor(named("contagem 0"))],
+      ["P02-contagem-de-aprovacoes-exigida", GIT, COUNT_CHECK, "", refusesDoctor(named("contagem ausente"))],
+      ["P03-contagem-em-string", GIT, "!Number.isSafeInteger(n) ||", "", refusesDoctor(named("contagem em string"))],
+      ["P04-contagem-decimal-ou-infinita", GIT, "!Number.isSafeInteger(n) ||", "typeof n !== \"number\" ||", async (m) => (await refusesDoctor(named("contagem decimal"))(m)) && (await refusesDoctor(named("contagem infinita"))(m))],
+      ["P05-regra-pull-request-duplicada-malformada", GIT, "approvals.some((n) => !Number.isSafeInteger(n) || n < 1)", "approvals.every((n) => !Number.isSafeInteger(n) || n < 1)", refusesDoctor(named("regra pull_request duplicada com contagem malformada"))],
+      ["P06-contagem-vale-o-minimo", GIT, "approvals: Math.min(...approvals)", "approvals: Math.max(...approvals)", async (m) => {
+        const r = await scenario({ http: fakeHttp({ rules: [...GOOD_RULES, { type: "pull_request", parameters: prParams({ required_approving_review_count: 3 }) }] }) }).exec(m.git, "doctor");
+        return r.code === 0 && /aprovações exigidas = 1;/.test(r.out);
+      }],
+      ["P07-validate-estrito-exigido", GIT, STRICT_CHECK, "", refusesDoctor(named("estrito false"))],
+      ["P08-estrito-ausente", GIT, STRICT_CHECK, "", refusesDoctor(named("estrito ausente"))],
+      ["P09-estrito-booleano-estrito", GIT, "strict_required_status_checks_policy !== true))", "strict_required_status_checks_policy != true))", async (m) => (await refusesDoctor(named("estrito numérico"))(m))],
+      ["P10-estrito-na-mesma-regra", GIT, "if (listing.some((r) => r.parameters.strict_required_status_checks_policy !== true))", "if (!rules.some((r) => r?.parameters?.strict_required_status_checks_policy === true))", refusesDoctor(named("validate não estrito e outra regra estrita sem validate"))],
+      ["P11-validate-em-regra-nao-estrita-duplicada", GIT, "if (listing.some((r) => r.parameters.strict_required_status_checks_policy !== true))", "if (listing.every((r) => r.parameters.strict_required_status_checks_policy !== true))", refusesDoctor(named("validate também numa segunda regra não estrita"))],
+      ["P12-doctor-imprime-os-valores-efetivos", GIT, "run.say(`proteções efetivas de main: aprovações exigidas = ${run.protection.approvals}; validate estrito = ${run.protection.strict}; aprovação obsoleta descartada no push = ${run.protection.dismissStale}`);", "", async (m) =>
+        /aprovações exigidas = 1; validate estrito = true; aprovação obsoleta descartada no push = true/.test((await scenario().exec(m.git, "doctor")).out)],
+      ["P13-dismiss-stale-exigido", GIT, DISMISS_CHECK, "", async (m) => (await refusesDoctor(named("dismiss_stale false"))(m)) && (await refusesDoctor(named("dismiss_stale ausente"))(m))],
+      ["P14-dismiss-stale-booleano-estrito", GIT, "dismiss_stale_reviews_on_push !== true)) refuse(", "dismiss_stale_reviews_on_push != true)) refuse(", refusesDoctor(named("dismiss_stale numérico"))],
+      ["P15-dismiss-stale-em-toda-regra", GIT, '.filter((r) => r?.type === "pull_request").some((r) => r?.parameters?.dismiss_stale_reviews_on_push', '.filter((r) => r?.type === "pull_request").every((r) => r?.parameters?.dismiss_stale_reviews_on_push', refusesDoctor(named("regra pull_request duplicada sem dismiss_stale"))],
+    ];
+  })(),
+  // ---- D-25: concessão temporária de ensaio ----
+  ...(() => {
+    const grantRefusal = (apply, opts) => async (m) => {
+      const s = opsScenario(opts);
+      grantFor(s, { logHosts: ["logs.example.test"] });
+      apply(s);
+      return isRefusal(await s.exec(m.git, "doctor"), "DD-DISABLED");
+    };
+    const DAY = 24 * 3_600_000;
+    return [
+      ["G01-hash-do-registro-na-concessao", REC, ' || grant.recordSha256 !== recordSha256) fail("DR-GRANT", "hash do registro");', ') fail("DR-GRANT", "hash do registro");', grantRefusal((s) => tamper(s, (g) => ({ ...g, recordSha256: "0".repeat(64) })))],
+      ["G02-expiracao-da-concessao", REC, 'if (expires <= now.getTime()) fail("DR-GRANT", "expirada");', "", async (m) => {
+        const s = opsScenario();
+        const { grant } = grantFor(s);
+        s.ports.now = () => new Date(Date.parse(grant.expiresAt));
+        return isRefusal(await s.exec(m.git, "doctor"), "DD-DISABLED");
+      }],
+      ["G03-concessao-so-para-ops", REC, "export const GRANT_REF_PATTERN = /^ops-[0-9]+$/;", "export const GRANT_REF_PATTERN = /^(ops-[0-9]+|cr-[0-9]{3})$/;", async (m) => {
+        const s = scenario({ enabled: false });
+        const now = new Date();
+        fs.writeFileSync(path.join(s.recordDir, "cr-099.enable.json"), JSON.stringify({
+          schema: "oplyra-rehearsal-grant/1", ref: "cr-099", recordSha256: s.sha256, issuedAt: now.toISOString(), expiresAt: new Date(now.getTime() + 3_600_000).toISOString(), authorizedBy: "project_owner", confirmation: GRANT_PHRASE,
+        }), { mode: 0o600 });
+        return isRefusal(await s.exec(m.git, "doctor"), "DD-DISABLED");
+      }],
+      ["G04-kill-switch-sobre-a-concessao", GIT, 'if (p.fs.existsSync(p.killFile)) refuse("DD-KILL");', "", async (m) => {
+        const s = opsScenario();
+        grantFor(s);
+        fs.writeFileSync(s.ports.killFile, "");
+        return isRefusal(await s.exec(m.git, "doctor"), "DD-KILL");
+      }],
+      ["G05-auditoria-do-modo-de-habilitacao", GIT, "enabledBy: run.enabledBy, grantSha256: run.grantSha256 });", "});", async (m) => {
+        const s = opsScenario();
+        const { sha256 } = grantFor(s);
+        assert.equal((await s.exec(m.git, "doctor")).code, 0);
+        const last = readAudit(s).pop();
+        return last.enabledBy === "rehearsal-grant" && last.grantSha256 === sha256;
+      }],
+      ["G06-dono-modo-e-symlink-da-concessao", REC, 'if (dirStat.isSymbolicLink() || fileStat.isSymbolicLink() || !ownedAndPrivate(dirStat, uid, true) || !ownedAndPrivate(fileStat, uid, false)) fail("DR-GRANT", "dono, modo ou symlink");', "", async (m) => {
+        // o modo exato (G16) já recusa 0644 e symlink; o que só esta checagem cobre é o DONO do arquivo e do diretório
+        const s = opsScenario();
+        grantFor(s);
+        const loaded = selectRecord({ ref: OPS_REF, recordDir: s.recordDir });
+        const args = { record: loaded.record, recordSha256: loaded.sha256, recordDir: s.recordDir };
+        m.record.loadGrant({ ...args, uid: process.getuid() }); // o dono certo passa
+        return refusesWith(() => m.record.loadGrant({ ...args, uid: process.getuid() + 1 }), "DR-GRANT");
+      }],
+      ["G16-modo-exato-0600-0700", REC, 'if ((fileStat.mode & 0o777) !== 0o600 || (dirStat.mode & 0o777) !== 0o700) fail("DR-GRANT", "modo diferente de 0600/0700");', "", async (m) => {
+        const refusals = [];
+        for (const apply of [(s) => fs.chmodSync(grantPathOf(s), 0o400), (s) => fs.chmodSync(s.recordDir, 0o500)]) {
+          const s = opsScenario();
+          grantFor(s);
+          apply(s);
+          refusals.push(isRefusal(await s.exec(m.git, "doctor"), "DD-DISABLED"));
+          fs.chmodSync(s.recordDir, 0o700);
+        }
+        return refusals.every(Boolean);
+      }],
+      ["G17-regravar-preserva-o-inicio-da-janela", REC, "issuedAt: window ? window.issuedAt : now.toISOString(),", "issuedAt: now.toISOString(),", async (m) => {
+        const t0 = new Date(Date.now() - 3_600_000);
+        const record = { ref: OPS_REF, expiresAt: new Date(t0.getTime() + 7 * DAY).toISOString() };
+        const first = m.record.buildGrant({ record, recordSha256: "a".repeat(64), confirmation: GRANT_PHRASE }, { now: t0 });
+        try {
+          const again = m.record.buildGrant({ record, recordSha256: "a".repeat(64), confirmation: GRANT_PHRASE, logHosts: ["logs.example.test"], window: { issuedAt: first.issuedAt, expiresAt: first.expiresAt } }, { now: new Date() });
+          return again.issuedAt === first.issuedAt;
+        } catch {
+          return false; // a janela alterada deixou de passar pelas verificações: a mutação foi detectada
+        }
+      }],
+      ["G18-regravar-nao-renova-a-expiracao", REC, "expiresAt: window ? window.expiresAt : new Date(expires).toISOString(),", "expiresAt: new Date(Math.min(now.getTime() + GRANT_MAX_MS, Date.parse(record.expiresAt))).toISOString(),", async (m) => {
+        const t0 = new Date(Date.now() - 3_600_000);
+        const record = { ref: OPS_REF, expiresAt: new Date(t0.getTime() + 7 * DAY).toISOString() };
+        const first = m.record.buildGrant({ record, recordSha256: "a".repeat(64), confirmation: GRANT_PHRASE }, { now: t0 });
+        try {
+          const again = m.record.buildGrant({ record, recordSha256: "a".repeat(64), confirmation: GRANT_PHRASE, logHosts: ["logs.example.test"], window: { issuedAt: first.issuedAt, expiresAt: first.expiresAt } }, { now: new Date() });
+          return again.expiresAt === first.expiresAt;
+        } catch {
+          return false; // a expiração renovada estourou as 24 h da janela original: a mutação foi detectada
+        }
+      }],
+      ["G07-validade-maxima-24h", REC, ' || expires - issued > GRANT_MAX_MS) fail("DR-GRANT", "validade");', ') fail("DR-GRANT", "validade");', grantRefusal((s) => tamper(s, (g) => ({ ...g, expiresAt: new Date(Date.parse(g.issuedAt) + DAY + 1000).toISOString() })))],
+      ["G08-validade-alem-do-registro", REC, 'if (expires > Date.parse(record.expiresAt)) fail("DR-GRANT", "além da validade do registro");', "", grantRefusal((s) => tamper(s, (g) => {
+        const expires = Date.parse(s.record.expiresAt) + 1000;
+        return { ...g, issuedAt: new Date(expires - DAY).toISOString(), expiresAt: new Date(expires).toISOString() };
+      }), { recordOver: { expiresInDays: 1 } })],
+      ["G09-campos-fechados-da-concessao", REC, 'if (keys.some((k) => !GRANT_KEYS.includes(k) && k !== "logHosts") || GRANT_KEYS.some((k) => !(k in grant))) fail("DR-GRANT", "campos");', "", grantRefusal((s) => tamper(s, (g) => ({ ...g, extra: 1 })))],
+      ["G10-host-exato-na-concessao", REC, ' || !hosts.every(isExactLogHost)) fail("DR-GRANT", "logHosts");', ') fail("DR-GRANT", "logHosts");', grantRefusal((s) => tamper(s, (g) => ({ ...g, logHosts: ["*.example.test"] })))],
+      ["G11-frase-da-concessao", REC, ' || grant.confirmation !== GRANT_PHRASE) fail("DR-GRANT", "confirmação");', ') fail("DR-GRANT", "confirmação");', grantRefusal((s) => tamper(s, (g) => ({ ...g, confirmation: "sim" })))],
+      ["G12-concessao-so-com-chave-false", GIT, "} else if (cfg.delegatedDelivery === false) {", "} else if (cfg.delegatedDelivery !== true) {", async (m) => {
+        const s = opsScenario();
+        grantFor(s);
+        fs.writeFileSync(path.join(s.work, ".claude", "delegated-delivery.json"), JSON.stringify({ schema: "oplyra-delegated-delivery/1", delegatedDelivery: "true" }));
+        return isRefusal(await s.exec(m.git, "doctor"), "DD-DISABLED");
+      }],
+      ["G13-hosts-de-log-da-concessao", GIT, ", ...run.grantLogHosts])]", "])]", async (m) => {
+        const s = scenario({ ref: OPS_REF, branch: OPS_BRANCH, http: fakeHttp({ prHeadRef: OPS_BRANCH }), logHosts: "producao" });
+        await logReady(m, s, { logText: LOG_TEXT });
+        s.http.cfg.runs[0].head_branch = OPS_BRANCH;
+        fs.writeFileSync(path.join(s.work, ".claude", "delegated-delivery.json"), JSON.stringify({ schema: "oplyra-delegated-delivery/1", delegatedDelivery: false }));
+        grantFor(s, { logHosts: [LOG_HOST_FOR_TESTS] });
+        s.reset();
+        return (await s.exec(m.git, "ci-log", "--check", "validate")).code === 0;
+      }],
+      ["G14-nada-carregado-sem-concessao", GIT, "Object.assign(run, { record: null, sha256: null, enabledBy: null, grantSha256: null, grantLogHosts: [] });", "", async (m) => {
+        const s = opsScenario();
+        const r = await s.exec(m.git, "doctor");
+        const last = readAudit(s).pop();
+        return isRefusal(r, "DD-DISABLED") && last.recordSha256 === null && last.enabledBy === null && !fs.existsSync(opsState(s));
+      }],
+    ];
+  })(),
   ["G3-escrita-em-dot-git", "claude-local-first-guard.mjs", '"scripts/claude-", ".github/", ".git/"];', '"scripts/claude-", ".github/"];', async (m) =>
     m.guard.evaluate({ toolName: "Write", toolInput: { file_path: ".git/hooks/post-commit" }, projectRoot: "/workspace/oplyra", policy: "autonomous" }).allowed === false],
   ["G1-wrappers-so-na-sessao-autonoma", "claude-local-first-guard.mjs", 'ctx.policy === "autonomous" && deliveryArgsOk(script, args.slice(1))', "deliveryArgsOk(script, args.slice(1))", async (m) =>

@@ -13,6 +13,7 @@
 //     [--contracts-cr=cr-033 --contracts-scope=<arquivo explícito sob contracts>,…] [--expires-days=3] [--max-commits=10] [--max-pushes=5]
 //   `--ref` é o INCREMENTO; `--contracts-cr` é o CR autorizado a ser tocado (podem diferir) e só vale junto com `--contracts-scope`.
 //   node scripts/claude-authorize.mjs --clear-undiagnosed=<ref>   # libera o bloqueio de diagnóstico (N-2), depois de fornecer os logs
+//   node scripts/claude-authorize.mjs --enable-rehearsal=ops-<n> [--log-hosts=host.exato,outro.exato]   # concessão temporária do ensaio (D-25)
 
 import fs from "node:fs";
 import os from "node:os";
@@ -21,14 +22,15 @@ import readline from "node:readline";
 import { pathToFileURL } from "node:url";
 
 import {
-  CEILINGS, OWNER_BUDGETS, OWNER_CEILINGS, OWNER_DEFAULTS, REF_PATTERN, RECORD_MESSAGES, RecordError, buildRecord, defaultRecordDir, writeRecord,
+  CEILINGS, GRANT_PHRASE, GRANT_REF_PATTERN, OWNER_BUDGETS, OWNER_CEILINGS, OWNER_DEFAULTS, REF_PATTERN, RECORD_MESSAGES, RecordError, buildGrant, buildRecord, defaultRecordDir, grantFile, loadGrant, selectRecord, writeGrant, writeRecord,
 } from "./claude-delivery-record.mjs";
 
 export const AUTHORIZE_PHRASE = "AUTORIZAR-ENTREGA-DELEGADA";
 export const CLEAR_PHRASE = "LIBERAR-DIAGNOSTICO";
+export { GRANT_PHRASE };
 const FLAGS = new Set([
   "ref", "branch", "base-sha", "paths", "contracts-cr", "contracts-scope", "expires-days", "max-commits", "max-pushes", "max-fix-attempts", "max-ci-wait",
-  "max-wall-clock-seconds", "max-iterations", "max-log-reads", "clear-undiagnosed",
+  "max-wall-clock-seconds", "max-iterations", "max-log-reads", "clear-undiagnosed", "enable-rehearsal", "log-hosts",
 ]);
 
 export const AUTH_MESSAGES = Object.freeze({
@@ -108,6 +110,50 @@ async function clearUndiagnosed({ args, homeDir, now, confirm, write, stateDir, 
   return 0;
 }
 
+/**
+ * D-25: concessão temporária de habilitação para o ensaio, vinculada ao SHA-256 do registro `ops-<n>` e fora do repositório. Só `ops-*`,
+ * validade ≤ 24 h e ≤ a do registro. `--log-hosts` (opcional) lista hostnames EXATOS que o proprietário observou e aprovou para `gh:ci-log`;
+ * pode ser acrescentado depois regravando a concessão, que PRESERVA a janela original (sem renovar). Revogar = apagar o arquivo.
+ */
+async function enableRehearsal({ args, homeDir, now, confirm, write, recordDir, refuseWith }) {
+  const ref = args["enable-rehearsal"];
+  if (!Object.keys(args).every((k) => k === "enable-rehearsal" || k === "log-hosts") || !GRANT_REF_PATTERN.test(ref)) return refuseWith("DA-ARGS", AUTH_MESSAGES["DA-ARGS"]);
+  const dir = recordDir ?? defaultRecordDir(homeDir);
+  const logHosts = args["log-hosts"] === undefined ? undefined : args["log-hosts"].split(",").filter(Boolean);
+  let loaded;
+  let grant;
+  let preserved = false;
+  try {
+    loaded = selectRecord({ ref, recordDir: dir, now });
+    // regravar NÃO renova a janela: se já existe uma concessão, ela precisa estar válida e a nova herda issuedAt/expiresAt. Concessão
+    // existente expirada, adulterada ou insegura recusa: o proprietário a apaga explicitamente antes de emitir outra (nunca renovação silenciosa)
+    let window;
+    let exists = true;
+    try {
+      fs.lstatSync(grantFile(dir, ref));
+    } catch {
+      exists = false;
+    }
+    if (exists) {
+      const previous = loadGrant({ record: loaded.record, recordSha256: loaded.sha256, recordDir: dir, now });
+      window = { issuedAt: previous.grant.issuedAt, expiresAt: previous.grant.expiresAt };
+      preserved = true;
+    }
+    grant = buildGrant({ record: loaded.record, recordSha256: loaded.sha256, logHosts, confirmation: GRANT_PHRASE, window }, { now });
+  } catch (e) {
+    if (e instanceof RecordError) return refuseWith(e.code, `${RECORD_MESSAGES[e.code]}${e.detail ? ` [${e.detail}]` : ""}`);
+    throw e;
+  }
+  write(`Concessão de ENSAIO para ${ref}\nRegistro: ${loaded.file}\nSHA-256 do registro: ${loaded.sha256}\nBranch única: ${loaded.record.branch}\nCaminhos permitidos:\n${loaded.record.paths.map((p) => `  - ${p}`).join("\n")}\n`);
+  write(`Hosts de log aprovados: ${logHosts?.length ? logHosts.join(", ") : "nenhum (gh:ci-log continua fechado)"}\n`);
+  write(`Vale até: ${grant.expiresAt} (máximo 24 h e nunca além do registro)${preserved ? "; regravação: a janela original foi PRESERVADA, não renovada; estado, relógio e contadores da entrega não são tocados" : ""}\n`);
+  write("Habilita, SÓ para este registro e enquanto a concessão existir, os wrappers com delegatedDelivery=false no repositório. Não é a habilitação definitiva. O kill switch prevalece; para revogar, apague o arquivo da concessão.\n");
+  if ((await confirm(`Digite ${GRANT_PHRASE} para gravar a concessão: `)) !== GRANT_PHRASE) return refuseWith("DA-CONFIRM", AUTH_MESSAGES["DA-CONFIRM"]);
+  const { file, sha256 } = writeGrant(grant, { recordDir: dir });
+  write(`Concessão gravada em ${file}\nSHA-256 da concessão: ${sha256}\nInicie a sessão com: pnpm claude:local --increment=${ref}\n`);
+  return 0;
+}
+
 /** Ponto de entrada testável: todas as dependências externas são injetáveis. */
 export async function run({
   argv = process.argv.slice(2), env = process.env, isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY),
@@ -124,6 +170,10 @@ export async function run({
   if (args["clear-undiagnosed"] !== undefined) {
     return clearUndiagnosed({ args, homeDir, now, confirm, write, stateDir, refuseWith });
   }
+  if (args["enable-rehearsal"] !== undefined) {
+    return enableRehearsal({ args, homeDir, now, confirm, write, recordDir, refuseWith });
+  }
+  if (args["log-hosts"] !== undefined) return refuseWith("DA-ARGS", AUTH_MESSAGES["DA-ARGS"]);
   // padrões de duração e iterações (D-23): o script os APRESENTA e a confirmação digitada os aceita; o registro grava valores explícitos
   const input = inputFromArgs(args);
   const defaulted = OWNER_BUDGETS.filter((key) => input.budgets[key] === undefined);
