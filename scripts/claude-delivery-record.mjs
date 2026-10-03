@@ -60,6 +60,7 @@ export const RECORD_MESSAGES = Object.freeze({
   "DR-CONTRACTS": "vínculo de contratos inválido: contractsCr e contractsScope devem vir juntos e explícitos; só arquivos novos ou o documento do próprio CR; nunca release congelada, registry, schema, fixture, migration nem outro CR",
   "DR-BUDGETS": "orçamentos ausentes, acima dos tetos ou sem os limites de duração e iterações definidos pelo proprietário",
   "DR-EXISTS": "já existe um registro para esta referência: crie um novo com outra referência ou remova o antigo manualmente",
+  "DR-GRANT": "concessão de ensaio ausente ou inválida (o detalhe indica o motivo)",
 });
 
 export class RecordError extends Error {
@@ -285,6 +286,117 @@ export function writeRecord(record, { recordDir = defaultRecordDir(), fsImpl = f
   }
   fsImpl.chmodSync(file, 0o600);
   return { file, sha256: sha256File(Buffer.from(body, "utf8")) };
+}
+
+/* ------------------------------------------------------------ concessão de ensaio (D-25) */
+
+/**
+ * Concessão TEMPORÁRIA de habilitação para o ensaio (D-25). Arquivo `<ref>.enable.json` ao lado do registro, fora do repositório (diretório
+ * 0700, arquivo 0600, dono atual, sem symlink), criado só por `claude-authorize.mjs --enable-rehearsal=<ref>` com frase digitada. Vale
+ * apenas para o registro cujo SHA-256 ela carrega, só para referências `ops-<n>`, por no máximo 24 h e nunca além da validade do registro.
+ * Não substitui `delegatedDelivery: true` (habilitação definitiva, que continua exclusivamente a chave do repositório); revogar = apagar o arquivo.
+ */
+export const GRANT_SCHEMA = "oplyra-rehearsal-grant/1";
+export const GRANT_PHRASE = "HABILITAR-ENSAIO";
+export const GRANT_REF_PATTERN = /^ops-[0-9]+$/;
+export const GRANT_MAX_MS = 24 * 3_600_000;
+const GRANT_KEYS = ["schema", "ref", "recordSha256", "issuedAt", "expiresAt", "authorizedBy", "confirmation"];
+const SHA256_PATTERN = /^[0-9a-f]{64}$/;
+
+/** Hostname EXATO e minúsculo: nenhum sufixo, curinga, IP, porta ou caminho. Compartilhado com `validateLogHosts` (claude-git). */
+export function isExactLogHost(h) {
+  const label = "[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?";
+  return typeof h === "string" && h.length <= 253 && new RegExp(`^${label}(\\.${label})+$`).test(h) && !/^\d+(\.\d+){3}$/.test(h);
+}
+
+export function grantFile(recordDir, ref) {
+  return path.join(recordDir, `${ref}.enable.json`);
+}
+
+function validateGrant(grant, { now, record, recordSha256 }) {
+  if (!grant || typeof grant !== "object" || Array.isArray(grant)) fail("DR-GRANT", "formato");
+  const keys = Object.keys(grant);
+  if (keys.some((k) => !GRANT_KEYS.includes(k) && k !== "logHosts") || GRANT_KEYS.some((k) => !(k in grant))) fail("DR-GRANT", "campos");
+  if (grant.schema !== GRANT_SCHEMA) fail("DR-GRANT", "esquema");
+  if (typeof grant.ref !== "string" || !GRANT_REF_PATTERN.test(grant.ref)) fail("DR-GRANT", "ref fora de ops-*");
+  if (grant.ref !== record.ref) fail("DR-GRANT", "ref diverge do registro");
+  if (typeof grant.recordSha256 !== "string" || !SHA256_PATTERN.test(grant.recordSha256) || grant.recordSha256 !== recordSha256) fail("DR-GRANT", "hash do registro");
+  if (grant.authorizedBy !== AUTHORIZED_BY || grant.confirmation !== GRANT_PHRASE) fail("DR-GRANT", "confirmação");
+  const issued = Date.parse(grant.issuedAt);
+  const expires = Date.parse(grant.expiresAt);
+  if (Number.isNaN(issued) || Number.isNaN(expires) || expires <= issued || expires - issued > GRANT_MAX_MS) fail("DR-GRANT", "validade");
+  if (issued > now.getTime() + 5 * 60_000) fail("DR-GRANT", "emitida no futuro");
+  if (expires > Date.parse(record.expiresAt)) fail("DR-GRANT", "além da validade do registro");
+  if (expires <= now.getTime()) fail("DR-GRANT", "expirada");
+  if ("logHosts" in grant) {
+    const hosts = grant.logHosts;
+    if (!Array.isArray(hosts) || hosts.length > 20 || new Set(hosts).size !== hosts.length || !hosts.every(isExactLogHost)) fail("DR-GRANT", "logHosts");
+  }
+  return grant;
+}
+
+/**
+ * Cria o objeto da concessão para um registro já carregado (sem gravar). `window` ({ issuedAt, expiresAt }) preserva a janela de uma
+ * concessão anterior ao regravá-la (ex.: acrescentar `logHosts`): a validade original NÃO é renovada, e a janela passa pelas mesmas
+ * verificações (≤ 24 h, ≤ registro, não expirada). A concessão nunca carrega caminhos nem orçamentos: o escopo é sempre o do registro.
+ */
+export function buildGrant({ record, recordSha256, logHosts, confirmation, window }, { now = new Date() } = {}) {
+  const expires = window ? Date.parse(window.expiresAt) : Math.min(now.getTime() + GRANT_MAX_MS, Date.parse(record.expiresAt));
+  const grant = {
+    schema: GRANT_SCHEMA,
+    ref: record.ref,
+    recordSha256,
+    issuedAt: window ? window.issuedAt : now.toISOString(),
+    expiresAt: window ? window.expiresAt : new Date(expires).toISOString(),
+    ...(logHosts === undefined ? {} : { logHosts }),
+    authorizedBy: AUTHORIZED_BY,
+    confirmation: String(confirmation ?? ""),
+  };
+  return validateGrant(grant, { now, record, recordSha256 });
+}
+
+/** Grava a concessão de forma atômica (0600, diretório 0700). Substitui a anterior da mesma `ref` (ex.: para acrescentar `logHosts`). */
+export function writeGrant(grant, { recordDir = defaultRecordDir(), fsImpl = fs } = {}) {
+  fsImpl.mkdirSync(recordDir, { recursive: true, mode: 0o700 });
+  fsImpl.chmodSync(recordDir, 0o700);
+  const file = grantFile(recordDir, grant.ref);
+  const body = `${JSON.stringify(grant, null, 2)}\n`;
+  const tmp = `${file}.tmp`;
+  fsImpl.writeFileSync(tmp, body, { mode: 0o600 });
+  fsImpl.chmodSync(tmp, 0o600);
+  fsImpl.renameSync(tmp, file);
+  return { file, sha256: sha256File(Buffer.from(body, "utf8")) };
+}
+
+/**
+ * Carrega e verifica a concessão do registro `record` (já verificado, com `recordSha256` fixado pelo launcher). Cada chamada reverifica tudo:
+ * local, dono, modo, symlink, campos fechados, vínculo com o hash do registro, `ref` ops-*, frase, validade (a fronteira exata já expirou).
+ * Qualquer falha lança `RecordError("DR-GRANT", motivo)`.
+ */
+export function loadGrant({ record, recordSha256, recordDir, now = new Date(), uid = typeof process.getuid === "function" ? process.getuid() : undefined, fsImpl = fs }) {
+  if (!record || typeof record.ref !== "string" || !GRANT_REF_PATTERN.test(record.ref)) fail("DR-GRANT", "ref fora de ops-*");
+  const dir = recordDir ?? defaultRecordDir();
+  const file = grantFile(dir, record.ref);
+  let dirStat;
+  let fileStat;
+  try {
+    dirStat = fsImpl.lstatSync(dir);
+    fileStat = fsImpl.lstatSync(file);
+  } catch {
+    fail("DR-GRANT", "ausente");
+  }
+  if (dirStat.isSymbolicLink() || fileStat.isSymbolicLink() || !ownedAndPrivate(dirStat, uid, true) || !ownedAndPrivate(fileStat, uid, false)) fail("DR-GRANT", "dono, modo ou symlink");
+  // modos EXATOS (mais estrito que o do registro): arquivo 0600 e diretório 0700; 0400, 0700 ou 0750 não servem
+  if ((fileStat.mode & 0o777) !== 0o600 || (dirStat.mode & 0o777) !== 0o700) fail("DR-GRANT", "modo diferente de 0600/0700");
+  const bytes = fsImpl.readFileSync(file);
+  let parsed;
+  try {
+    parsed = JSON.parse(bytes.toString("utf8"));
+  } catch {
+    fail("DR-GRANT", "JSON inválido");
+  }
+  const grant = validateGrant(parsed, { now, record, recordSha256 });
+  return { grant, sha256: sha256File(bytes), logHosts: grant.logHosts ?? [] };
 }
 
 /** `staged` está dentro da lista permitida do registro? `p`: caminho relativo normalizado, com `/`. */
