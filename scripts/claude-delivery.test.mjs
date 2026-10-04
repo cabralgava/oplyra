@@ -12,7 +12,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { AUTHORIZE_PHRASE, CLEAR_PHRASE, GRANT_PHRASE, run as authorize } from "./claude-authorize.mjs";
 import {
-  BREAKER_LIMIT, EVIDENCE_TTL_SECONDS, EXPECTED_PERMISSIONS, FIXED_PATH, HANDOFF_MAX_BYTES, GIT_CANDIDATES, GIT_HARDENING, LOG_HOSTS, LOG_MAX_BYTES, REQUIRED_CHECK, childEnv, defaultHttp, resolveGit, validateLogHosts, endpointAllowed, execute, normalizeRemote, parseVerbArgs, scanDiff, scanText,
+  BREAKER_LIMIT, EVIDENCE_TTL_SECONDS, EXPECTED_PERMISSIONS, FIXED_PATH, HANDOFF_MAX_BYTES, GIT_CANDIDATES, GIT_HARDENING, LOG_HOSTS, LOG_MAX_BYTES, REQUIRED_CHECK, childEnv, defaultHttp, isForbiddenEnv, resolveGit, validateLogHosts, endpointAllowed, execute, normalizeRemote, parseVerbArgs, scanDiff, scanText,
   untrusted, validateCommitMessage,
 } from "./claude-git.mjs";
 import {
@@ -2555,11 +2555,13 @@ test("D-25: concessão ausente, de outro ref, de outro hash, expirada (fronteira
     ["diretório com modo inseguro", (s) => fs.chmodSync(s.recordDir, 0o750)],
     ["concessão removida", (s) => fs.rmSync(grantPathOf(s))],
   ];
+  // diretório compartilhado inseguro invalida primeiro o REGISTRO (DR-MODE → DD-RECORD, sem mascaramento); os demais defeitos são da concessão
+  const recordLevel = new Set(["diretório com modo inseguro"]);
   for (const [label, apply, opts] of cases) {
     const s = opsScenario(opts);
     grantFor(s, { logHosts: ["logs.example.test"] });
     apply(s);
-    refused(await s.call("doctor"), "DD-DISABLED");
+    refused(await s.call("doctor"), recordLevel.has(label) ? "DD-RECORD" : "DD-DISABLED");
     noEffects(s);
     assert.equal(readAudit(s).pop().enabledBy, null, label);
     fs.chmodSync(s.recordDir, 0o700);
@@ -2613,13 +2615,84 @@ test("D-25: só referências ops-*; a chave do repositório precisa estar legív
   const t = opsScenario();
   grantFor(t);
   fs.writeFileSync(t.file, JSON.stringify({ ...JSON.parse(fs.readFileSync(t.file, "utf8")), paths: ["docs/feature/", "docs/outro/"] }));
-  refused(await t.call("doctor"), "DD-DISABLED");
+  refused(await t.call("doctor"), "DD-RECORD");
   noEffects(t);
-  // credencial herdada no ambiente continua recusada, e sem registro selecionado não há concessão a verificar
+  // credencial herdada no ambiente e ausência de registro selecionado mantêm o código específico (não são "concessão ausente")
   const u = opsScenario();
   grantFor(u);
-  refused(await execute("doctor", [], { ...u.ports, env: { ...u.env, GITHUB_TOKEN: "x" } }), "DD-DISABLED");
-  refused(await execute("doctor", [], { ...u.ports, env: { PATH: process.env.PATH } }), "DD-DISABLED");
+  refused(await execute("doctor", [], { ...u.ports, env: { ...u.env, GITHUB_TOKEN: "x" } }), "DD-ENV");
+  refused(await execute("doctor", [], { ...u.ports, env: { PATH: process.env.PATH } }), "DD-NO-RECORD");
+  noEffects(u);
+});
+
+/* ===== GIT_EDITOR=true injetado pelo Claude Code =====
+ * Causa CONFIRMADA da recusa do ensaio ops-1: a ferramenta Bash recebe `GIT_EDITOR=true`, `loadRunRecord` recusava todo `GIT_*` e `assertEnabled`
+ * mascarava o DD-ENV como DD-DISABLED. A hipótese anterior (perda das variáveis de entrega entre o processo `claude` e o shell) NÃO foi
+ * reproduzida pela sonda e não é a causa desta recusa. */
+const withEnv = (s, extra) => ({ ...s.ports, env: { ...s.env, ...extra } });
+
+test("GIT_EDITOR=true: tolerado só com o valor literal, nunca chega ao Git (allowlist do ambiente do filho)", async () => {
+  assert.equal(isForbiddenEnv("GIT_EDITOR", "true"), false);
+  assert.equal(childEnv({ GIT_EDITOR: "true", LANG: "C" }).GIT_EDITOR, undefined);
+  const s = scenario();
+  const seen = [];
+  const inner = s.ports.git;
+  const r = await execute("branch", [], { ...withEnv(s, { GIT_EDITOR: "true" }), git: (args, opts) => (seen.push(opts.env), inner(args, opts)) });
+  assert.equal(r.code, 0, r.out);
+  assert.ok(seen.length > 0);
+  for (const e of seen) assert.ok(!("GIT_EDITOR" in e), "GIT_EDITOR não vai para o Git");
+});
+
+test("GIT_EDITOR=true + delegatedDelivery=false + concessão válida: o ensaio é habilitado, auditado e a árvore fica limpa", async () => {
+  const s = opsScenario();
+  const { sha256 } = grantFor(s);
+  const ports = withEnv(s, { GIT_EDITOR: "true" });
+  const d = await execute("doctor", [], ports);
+  assert.equal(d.code, 0, d.out);
+  assert.match(d.out, /habilitação: rehearsal-grant/);
+  assert.equal((await execute("branch", [], ports)).code, 0);
+  const last = readAudit(s).pop();
+  assert.deepEqual([last.enabledBy, last.grantSha256, last.recordSha256], ["rehearsal-grant", sha256, s.sha256]);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(s.work, ".claude", "delegated-delivery.json"), "utf8")).delegatedDelivery, false);
+  assert.equal(sh(s.work, "status", "--porcelain", "--untracked-files=all"), "");
+});
+
+test("GIT_EDITOR: qualquer outro valor e os demais GIT_* seguem em DD-ENV, só com o nome, com a chave ligada ou desligada", async () => {
+  const CANARY = "valor-canario-xyz";
+  const bad = [
+    ["GIT_EDITOR", "vim"], ["GIT_EDITOR", ""], ["GIT_EDITOR", "TRUE"], ["GIT_EDITOR", "true "], ["GIT_EDITOR", " true"], ["GIT_EDITOR", "/usr/bin/true"], ["GIT_EDITOR", "1"], ["GIT_EDITOR", CANARY],
+    ["GIT_PAGER", "true"], ["GIT_DIR", "true"], ["GIT_SSH_COMMAND", "true"], ["GIT_SEQUENCE_EDITOR", "true"], ["GIT_ASKPASS", "true"], ["GIT_EDITORX", "true"], ["GIT_DIR", CANARY],
+  ];
+  for (const make of [() => scenario(), () => { const s = opsScenario(); grantFor(s); return s; }]) {
+    const s = make();
+    for (const [name, value] of bad) {
+      const r = await execute("doctor", [], withEnv(s, { [name]: value }));
+      refused(r, "DD-ENV");
+      assert.ok(r.out.includes(`[${name}]`), r.out);
+      assert.ok(!r.out.includes(CANARY), "o valor nunca é exposto");
+      s.reset();
+    }
+    assert.ok(!JSON.stringify(readAudit(s)).includes(CANARY));
+  }
+  // GIT_EDITOR=true não abre a porta para os outros: junto de outro GIT_* a recusa permanece
+  const s = scenario();
+  refused(await execute("doctor", [], withEnv(s, { GIT_EDITOR: "true", GIT_PAGER: "cat" })), "DD-ENV");
+});
+
+test("D-25 sem mascaramento: com a chave em false, ambiente, registro ausente e registro adulterado mantêm o código específico; só a concessão ausente é DD-DISABLED", async () => {
+  const s = opsScenario();
+  // registro válido, sem concessão: DD-DISABLED (mesmo com GIT_EDITOR=true)
+  refused(await execute("doctor", [], withEnv(s, { GIT_EDITOR: "true" })), "DD-DISABLED");
+  noEffects(s);
+  grantFor(s);
+  refused(await execute("doctor", [], withEnv(s, { GIT_EDITOR: "vim" })), "DD-ENV");
+  refused(await execute("doctor", [], withEnv(s, { GITHUB_TOKEN: "x" })), "DD-ENV");
+  refused(await execute("doctor", [], { ...s.ports, env: { PATH: process.env.PATH, GIT_EDITOR: "true" } }), "DD-NO-RECORD");
+  refused(await execute("doctor", [], withEnv(s, { [DELIVERY_ENV.sha256]: "0".repeat(64) })), "DD-RECORD");
+  noEffects(s);
+  const audit = readAudit(s);
+  assert.ok(audit.every((a) => a.enabledBy === null && a.grantSha256 === null && a.recordSha256 === null));
+  assert.ok(!JSON.stringify(audit).includes(CANARY_TOKEN));
 });
 
 test("D-25: o kill switch prevalece sobre a concessão", async () => {
@@ -2982,9 +3055,37 @@ const MUTATIONS = [
     assert.equal((await s.exec(m.git, "stage", "docs/feature/b.md")).code, 0);
     return isRefusal(await s.exec(m.git, "commit", "--message-file", "msg.txt"), "DD-BUDGET");
   }],
-  ["M26-ambiente-GIT-e-tokens", GIT, 'if (FORBIDDEN_ENV_PREFIX.some((x) => name.startsWith(x)) || FORBIDDEN_ENV_NAMES.includes(name)) refuse("DD-ENV", name);', "", async (m) => {
+  ["M26-ambiente-GIT-e-tokens", GIT, 'if (isForbiddenEnv(name, value)) refuse("DD-ENV", name);', "", async (m) => {
     const s = scenario();
     return isRefusal(await m.git.execute("doctor", [], { ...s.ports, env: { ...s.env, GIT_DIR: "/x" } }), "DD-ENV");
+  }],
+  // ---- GIT_EDITOR=true injetado pelo Claude Code (causa confirmada da recusa do ensaio ops-1) ----
+  ["E01-tolerancia-ao-GIT_EDITOR-true", GIT, 'const TOLERATED_ENV = Object.freeze({ GIT_EDITOR: "true" });', "const TOLERATED_ENV = Object.freeze({});", async (m) => {
+    const s = opsScenario();
+    grantFor(s);
+    const r = await m.git.execute("doctor", [], withEnv(s, { GIT_EDITOR: "true" }));
+    return r.code === 0 && readAudit(s).pop()?.enabledBy === "rehearsal-grant";
+  }],
+  ["E02-so-o-valor-literal-true", GIT, "value === TOLERATED_ENV[name]) return false;", "true) return false;", async (m) => {
+    const s = scenario();
+    return isRefusal(await m.git.execute("doctor", [], withEnv(s, { GIT_EDITOR: "vim" })), "DD-ENV");
+  }],
+  ["E03-so-o-nome-GIT_EDITOR", GIT, "if (Object.prototype.hasOwnProperty.call(TOLERATED_ENV, name) && value === TOLERATED_ENV[name]) return false;", 'if (name.startsWith("GIT_") && value === "true") return false;', async (m) => {
+    const s = scenario();
+    return isRefusal(await m.git.execute("doctor", [], withEnv(s, { GIT_PAGER: "true" })), "DD-ENV");
+  }],
+  ["E04-sem-mascarar-ambiente-e-registro", GIT, "      clear();\n      throw e;", '      clear();\n      refuse("DD-DISABLED");', async (m) => {
+    const s = opsScenario();
+    grantFor(s);
+    return isRefusal(await m.git.execute("doctor", [], withEnv(s, { GIT_DIR: "/x" })), "DD-ENV")
+      && isRefusal(await m.git.execute("doctor", [], { ...s.ports, env: { PATH: process.env.PATH } }), "DD-NO-RECORD");
+  }],
+  ["E05-GIT_EDITOR-nunca-chega-ao-git", GIT, 'const CHILD_ENV_KEYS = ["LANG", "LC_ALL", "LC_CTYPE", "TMPDIR"];', 'const CHILD_ENV_KEYS = ["LANG", "LC_ALL", "LC_CTYPE", "TMPDIR", "GIT_EDITOR"];', async (m) => {
+    const s = scenario();
+    const seen = [];
+    const inner = s.ports.git;
+    const r = await m.git.execute("branch", [], { ...withEnv(s, { GIT_EDITOR: "true" }), git: (args, opts) => (seen.push(opts.env), inner(args, opts)) });
+    return r.code === 0 && seen.length > 0 && seen.every((e) => !("GIT_EDITOR" in e));
   }],
   ["M27-config-git-proibida", GIT, 'if (cfg.status !== 1) refuse("DD-GITCONFIG");', "", async (m) => {
     const s = scenario();
@@ -3605,7 +3706,7 @@ const MUTATIONS = [
         s.reset();
         return (await s.exec(m.git, "ci-log", "--check", "validate")).code === 0;
       }],
-      ["G14-nada-carregado-sem-concessao", GIT, "Object.assign(run, { record: null, sha256: null, enabledBy: null, grantSha256: null, grantLogHosts: [] });", "", async (m) => {
+      ["G14-nada-carregado-sem-concessao", GIT, "const clear = () => Object.assign(run, { record: null, sha256: null, enabledBy: null, grantSha256: null, grantLogHosts: [] });", "const clear = () => undefined;", async (m) => {
         const s = opsScenario();
         const r = await s.exec(m.git, "doctor");
         const last = readAudit(s).pop();

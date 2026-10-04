@@ -56,7 +56,7 @@ export const MESSAGES = Object.freeze({
   "DD-NO-RECORD": "sessão sem registro de autorização (use `pnpm claude:local --increment=<ref>`)",
   "DD-RECORD": "registro de autorização inválido (o código DR-* indica o motivo)",
   "DD-BREAKER": "disjuntor aberto após recusas consecutivas: a entrega terminou com handoff; só o proprietário a reabre",
-  "DD-ENV": "variável de ambiente proibida (GIT_*, tokens do GitHub)",
+  "DD-ENV": "variável de ambiente proibida (GIT_* exceto GIT_EDITOR=true, tokens do GitHub)",
   "DD-GITCONFIG": "configuração Git proibida (hooks, insteadOf, credential, fsmonitor, sshCommand, include…)",
   "DD-REMOTE": "origin não é exclusivamente github.com/cabralgava/oplyra",
   "DD-DIRTY": "worktree ou índice sujo",
@@ -169,6 +169,13 @@ export const GIT_CANDIDATES = Object.freeze(["/usr/bin/git", "/opt/homebrew/bin/
 /** Endurecimento de TODA chamada Git do wrapper: nunca roda hooks locais nem fsmonitor/pager (código controlável pelo agente). */
 export const GIT_HARDENING = Object.freeze(["-c", "core.hooksPath=/dev/null", "-c", "core.fsmonitor=false", "-c", "core.pager=cat"]);
 const FORBIDDEN_ENV_PREFIX = ["GIT_"];
+/**
+ * Causa CONFIRMADA da recusa no ensaio ops-1: o Claude Code injeta `GIT_EDITOR=true` na ferramenta Bash, e a recusa de `GIT_*` (DD-ENV) era
+ * mascarada como DD-DISABLED. É a única exceção, só com este valor literal. Nunca é repassada ao Git: `childEnv` é allowlist.
+ * A hipótese anterior de perda das variáveis de entrega entre o processo `claude` e o shell NÃO foi reproduzida pela sonda (Bash e `!`
+ * receberam as três variáveis); não é a causa desta recusa.
+ */
+const TOLERATED_ENV = Object.freeze({ GIT_EDITOR: "true" });
 const FORBIDDEN_ENV_NAMES = ["GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GH_HOST", "OPLYRA_GITHUB_APP_ID", "OPLYRA_GITHUB_APP_INSTALLATION_ID", "OPLYRA_GITHUB_APP_PRIVATE_KEY", "OPLYRA_GITHUB_APP_KEY_FILE"];
 
 /** Ambiente do filho Git: allowlist, sem config global/sistema (anula insteadOf, credential helper e afins do usuário). */
@@ -459,15 +466,22 @@ function assertEnabled(run) {
   if (cfg.delegatedDelivery === true) {
     run.enabledBy = "repository";
   } else if (cfg.delegatedDelivery === false) {
+    const clear = () => Object.assign(run, { record: null, sha256: null, enabledBy: null, grantSha256: null, grantLogHosts: [] });
     try {
       loadRunRecord(run);
+    } catch (e) {
+      // ambiente proibido, registro ausente ou inválido mantêm o código específico (DD-ENV, DD-NO-RECORD, DD-RECORD): não são "concessão ausente"
+      clear();
+      throw e;
+    }
+    try {
       const g = loadGrant({ record: run.record, recordSha256: run.sha256, recordDir: p.recordDir, now: p.now(), fsImpl: p.fs });
       run.enabledBy = "rehearsal-grant";
       run.grantSha256 = g.sha256;
       run.grantLogHosts = g.logHosts;
     } catch (e) {
       // sem concessão válida o wrapper está simplesmente desligado: nada carregado fica para trás (nem estado, nem disjuntor)
-      Object.assign(run, { record: null, sha256: null, enabledBy: null, grantSha256: null, grantLogHosts: [] });
+      clear();
       refuse("DD-DISABLED", e instanceof RecordError && e.code === "DR-GRANT" && e.detail ? `concessão: ${e.detail}` : undefined);
     }
   } else {
@@ -476,11 +490,17 @@ function assertEnabled(run) {
   if (p.fs.existsSync(p.killFile)) refuse("DD-KILL");
 }
 
+/** Nome proibido no ambiente herdado; só o par exato de `TOLERATED_ENV` é aceito. O valor nunca sai daqui. */
+export function isForbiddenEnv(name, value) {
+  if (Object.prototype.hasOwnProperty.call(TOLERATED_ENV, name) && value === TOLERATED_ENV[name]) return false;
+  return FORBIDDEN_ENV_PREFIX.some((x) => name.startsWith(x)) || FORBIDDEN_ENV_NAMES.includes(name);
+}
+
 /** Carrega e verifica o registro selecionado pelo launcher (variáveis de entrega); recusa credenciais herdadas. */
 function loadRunRecord(run) {
   const { p } = run;
-  for (const name of Object.keys(p.env)) {
-    if (FORBIDDEN_ENV_PREFIX.some((x) => name.startsWith(x)) || FORBIDDEN_ENV_NAMES.includes(name)) refuse("DD-ENV", name);
+  for (const [name, value] of Object.entries(p.env)) {
+    if (isForbiddenEnv(name, value)) refuse("DD-ENV", name);
   }
   const ref = p.env[DELIVERY_ENV.ref];
   const file = p.env[DELIVERY_ENV.file];
