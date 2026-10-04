@@ -42,7 +42,10 @@ export default async function Empresas({ searchParams }: { searchParams: Promise
                   <td>{e.name}</td>
                   <td><span className="selo">{e.roleKey}</span></td>
                   <td style={{ textAlign: "right" }}>
-                    <Link className="btn secundario" href={`/e/${e.tenantId}/equipe`}>Abrir equipe</Link>
+                    <span className="linha" style={{ justifyContent: "flex-end" }}>
+                      <Link className="btn secundario" href={`/e/${e.tenantId}`}>Abrir início</Link>
+                      <Link className="btn secundario" href={`/e/${e.tenantId}/equipe`}>Abrir equipe</Link>
+                    </span>
                   </td>
                 </tr>
               ))}
