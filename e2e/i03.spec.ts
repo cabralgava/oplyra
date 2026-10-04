@@ -24,13 +24,15 @@ test.describe("estados vazios e permissões", () => {
     await page.goto(`/e/${TENANT_B}`);
     await expect(page.getByRole("heading", { name: "Próximo passo" })).toBeVisible();
     // A Beta já tem duas pessoas ativas (fato real); a marca ainda não foi publicada.
-    await expect(page.getByText("1 de 2 passos concluídos")).toBeVisible();
+    await expect(page.getByText("1 de 4 passos concluídos")).toBeVisible();
     const itens = page.locator(".passo");
     await expect(itens.filter({ hasText: "Convidar a equipe" })).toContainText("Concluído");
     await expect(itens.filter({ hasText: "Cadastrar a marca mínima" })).toContainText("Pendente");
-    await expect(itens.filter({ hasText: "Definir o objetivo" })).toContainText("Em breve");
+    await expect(itens.filter({ hasText: "Definir o objetivo" })).toContainText("Pendente");
+    await expect(itens.filter({ hasText: "Conectar mídia" })).toContainText("Em breve");
     await expect(itens.filter({ hasText: "Conectar mídia" })).toContainText("opcional");
-    await expect(page.getByRole("link", { name: "Ir para a marca" })).toBeVisible();
+    await expect(itens.filter({ hasText: "Pedir a primeira copy" })).toContainText("Em breve");
+    await expect(page.getByRole("link", { name: "Fazer agora" })).toHaveAttribute("href", `/e/${TENANT_B}/marca`);
   });
 
   test("leitor consulta, mas não cria rascunho nem abre o editor", async ({ page }) => {
@@ -117,10 +119,10 @@ test.describe("fluxo do Owner: rascunho, regras e publicação", () => {
   test("o checklist de ativação reflete a marca publicada", async ({ page }) => {
     await entrar(page, "b-owner@local.test");
     await page.goto(`/e/${TENANT_B}`);
-    await expect(page.getByText("2 de 2 passos concluídos")).toBeVisible();
+    await expect(page.getByText("2 de 4 passos concluídos")).toBeVisible();
     await expect(page.locator(".passo").filter({ hasText: "Cadastrar a marca mínima" })).toContainText("Concluído");
-    await expect(page.getByText("A ativação disponível está concluída.")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Ir para a marca" })).toHaveCount(0);
+    // O próximo passo agora é o objetivo (I-04), não mais a marca.
+    await expect(page.getByRole("link", { name: "Fazer agora" })).toHaveAttribute("href", `/e/${TENANT_B}/estrategia`);
   });
 
   test("a versão publicada não muda: alterações vão num novo rascunho, e produto futuro bloqueia disponibilidade", async ({ page }) => {

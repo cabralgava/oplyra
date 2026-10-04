@@ -11,10 +11,11 @@ export interface ActivationFactsReader {
 
 export type ActivationDeps = { uow: UnitOfWork; facts: ActivationFactsReader };
 
-/** Os fatos vêm de marca e equipe; a leitura exige poder ver as duas. */
+/** Os fatos vêm de marca, equipe e estratégia; a leitura exige poder ver as três. */
 export async function getActivationChecklist(deps: ActivationDeps, ctx: AccessContext): Promise<ActivationChecklist> {
   exigirPermissao(ctx, "brand.read");
   exigirPermissao(ctx, "member.read");
+  exigirPermissao(ctx, "strategy.read");
   const fatos = await deps.uow.withUserTransaction(ctx, (tx) => deps.facts.read(tx, ctx.tenantId));
   return montarChecklist(fatos);
 }

@@ -13,6 +13,8 @@ export function NavEmpresa({ tenantId }: { tenantId: string }) {
   const itens = [
     { href: base, rotulo: "Início", exato: true },
     { href: `${base}/marca`, rotulo: "Marca", exato: false },
+    { href: `${base}/estrategia`, rotulo: "Estratégia", exato: false },
+    { href: `${base}/campanhas`, rotulo: "Campanhas", exato: false },
     { href: `${base}/equipe`, rotulo: "Equipe", exato: false },
   ];
   return (

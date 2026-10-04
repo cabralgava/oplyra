@@ -178,7 +178,7 @@ describe("checklist de ativação com eventos reais", () => {
 
   it("empresa nova: nada feito, próximo passo é publicar a marca", async () => {
     const c = await checklist(OWNER_Z);
-    expect(c).toMatchObject({ done: 0, total: 2, complete: false, next: { key: "brand_published" } });
+    expect(c).toMatchObject({ done: 0, total: 4, complete: false, next: { key: "brand_published" } });
   });
 
   it("rascunho não conta: só a marca PUBLICADA conclui o passo", async () => {
@@ -189,14 +189,15 @@ describe("checklist de ativação com eventos reais", () => {
     await publishBrandVersion(deps, { ctx: dono, versionId: salvo.id, expectedRevision: salvo.revision });
     const c = await checklist(OWNER_Z);
     expect(c.steps.find((s) => s.key === "brand_published")!.state).toBe("done");
-    expect(c).toMatchObject({ done: 1, next: { key: "team_invited" } });
+    expect(c).toMatchObject({ done: 1, next: { key: "objective_defined" } });
   });
 
   it("o convite real conclui o passo da equipe e completa o checklist", async () => {
     const dono = await ctx(OWNER_Z, TZ);
     await inviteMember(coreDeps, { ctx: dono, email: `checklist-${Date.now()}@local.test`, roleKey: "viewer" });
     const c = await checklist(OWNER_Z);
-    expect(c).toMatchObject({ done: 2, total: 2, complete: true, next: null });
+    // Marca e equipe feitas; objetivo e campanha seguem pendentes (a estratégia tem seu próprio teste de integração).
+    expect(c).toMatchObject({ done: 2, total: 4, complete: false, next: { key: "objective_defined" } });
   });
 
   it("mais de uma pessoa ativa também conta como equipe, e o leitor vê o checklist", async () => {

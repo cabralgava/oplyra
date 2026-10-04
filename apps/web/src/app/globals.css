@@ -108,7 +108,18 @@ label.inline input { width: auto; }
 .lista > li:first-child { border-top: 0; }
 .evidencias { margin: .35rem 0 0; padding-left: 1.1rem; font-size: .9rem; }
 .evidencias a { overflow-wrap: anywhere; }
-@media (max-width: 40rem) { .grade { grid-template-columns: 1fr; } }
+/* Cabeçalhos com título e ação quebram em linhas estreitas, em vez de empurrar a página para o lado. */
+.entre { flex-wrap: wrap; }
+/* Tabelas largas rolam dentro da própria região, nunca a página (guia de interface: rolagem localizada). */
+.rolavel { overflow-x: auto; position: relative; } /* relative: o texto só-para-leitor (absolute) fica contido na região */
+.rolavel table { min-width: 34rem; }
+.definicoes { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: .4rem 1.25rem; margin: 0; }
+.definicoes > div { display: contents; }
+.definicoes dt { color: var(--text-3); font-size: .9rem; }
+.definicoes dd { margin: 0; overflow-wrap: anywhere; }
+.so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+code { overflow-wrap: anywhere; }
+@media (max-width: 40rem) { .grade { grid-template-columns: 1fr; } .definicoes { grid-template-columns: 1fr; } }
 @media (prefers-contrast: more) {
   .nav-secoes a, fieldset.item, .sucesso { border: 2px solid var(--text-3); }
 }
