@@ -113,7 +113,9 @@ describe("manifest v2.16 como mudança lógica sobre a 2.15", () => {
 
   it("artefatos do CR-026 conferem com o disco, salvo os modificados por releases posteriores (2.17, 2.18)", () => {
     const modificadosCr027 = new Set<string>(v217.changeSet.modifiedArtifacts);
-    const modificadosDepois = new Set<string>([...modificadosCr027, ...v218.changeSet.modifiedArtifacts]);
+    // CR-034 (aprovado em 04/10/2026; Release 2.24 ainda não gerada): entrada `./brand` em infra/package.json.
+    const MODIFICADOS_PELO_CR034 = ["packages/infra/package.json"];
+    const modificadosDepois = new Set<string>([...modificadosCr027, ...v218.changeSet.modifiedArtifacts, ...MODIFICADOS_PELO_CR034]);
     const divergentes = m.artifacts.filter((a) => a.source === "cr_026" && !modificadosDepois.has(a.path))
       .filter((a) => !existsSync(join(ROOT, a.path)) || sha(a.path) !== a.sha256 || readFileSync(join(ROOT, a.path)).length !== a.sizeBytes);
     expect(divergentes.map((a) => a.path)).toEqual([]);
