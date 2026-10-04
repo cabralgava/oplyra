@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./ai-model-harness": "./src/ai-model-harness/index.ts",
-    "./brand": "./src/brand-repository.ts"
+    "./brand": "./src/brand-repository.ts",
+    "./strategy": "./src/strategy-repository.ts"
   },
   "dependencies": {
     "@oplyra/core": "workspace:*",
