@@ -73,3 +73,42 @@ th { color: var(--text-3); font-weight: 600; border-top: 0; }
 }
 
 .btn[aria-busy="true"] { opacity: .7; cursor: progress; }
+
+/* ---- Brand OS (I-03) -------------------------------------------------------------------
+   Estado nunca depende só de cor: todo selo traz texto. Valores derivados dos tokens acima. */
+:root { --ok-text: #3ddc97; }
+textarea {
+  width: 100%; padding: .6rem .7rem; border-radius: 10px; font: inherit; resize: vertical;
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--line);
+}
+.nav-secoes ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+.nav-secoes a {
+  display: inline-block; padding: .45rem .9rem; border-radius: 999px; text-decoration: none;
+  color: var(--text-2); border: 1px solid var(--line);
+}
+.nav-secoes a:hover { color: var(--text); border-color: var(--text-3); }
+.nav-secoes a.ativo { color: var(--text); background: var(--elevated); border-color: var(--accent-hover); font-weight: 600; }
+.sucesso { border-left: 3px solid var(--ok); color: var(--ok-text); padding: .6rem .8rem; background: var(--surface-2); border-radius: 8px; }
+.selo.ok { color: var(--ok-text); }
+.selo.pendente { color: var(--warn); }
+.selo.proibido { color: var(--bad-text); }
+.passos { list-style: none; margin: .75rem 0 0; padding: 0; }
+.passo { display: flex; gap: .75rem; align-items: baseline; padding: .55rem 0; border-top: 1px solid var(--line); }
+.passo:first-child { border-top: 0; }
+.passo .selo { min-width: 5.5rem; text-align: center; }
+fieldset.item { border: 1px solid var(--line); border-radius: 12px; padding: .9rem 1rem 1rem; margin: 0; }
+fieldset.item > * + * { margin-top: .75rem; }
+fieldset.item legend { padding: 0 .4rem; color: var(--text-2); font-size: .9rem; }
+.grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+label.inline { display: flex; gap: .5rem; align-items: center; margin: 0; }
+label.inline input { width: auto; }
+.texto { white-space: pre-wrap; overflow-wrap: anywhere; margin: .25rem 0 0; }
+.lista { list-style: none; margin: .5rem 0 0; padding: 0; }
+.lista > li { padding: .65rem 0; border-top: 1px solid var(--line); }
+.lista > li:first-child { border-top: 0; }
+.evidencias { margin: .35rem 0 0; padding-left: 1.1rem; font-size: .9rem; }
+.evidencias a { overflow-wrap: anywhere; }
+@media (max-width: 40rem) { .grade { grid-template-columns: 1fr; } }
+@media (prefers-contrast: more) {
+  .nav-secoes a, fieldset.item, .sucesso { border: 2px solid var(--text-3); }
+}

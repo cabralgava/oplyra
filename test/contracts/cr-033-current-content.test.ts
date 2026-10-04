@@ -16,6 +16,8 @@ const AUTORIZADOS_PELO_CR033 = new Set([
   ".claude/settings.json", "package.json", "scripts/claude-launch.mjs", "scripts/claude-launch.test.mjs", "scripts/claude-local-first-guard.mjs",
   "CLAUDE.md", ".github/workflows/ci.yml", "docs/harness/DESENVOLVIMENTO.md", "docs/harness/DEVELOPMENT-TOOLS.md", "docs/harness/AUTONOMOUS-BUILD.md",
   "test/contracts/contract-registry-release-2.22.contract.test.ts", "test/developer-harness.supply-chain.test.ts",
+  // CR-034 (Brand OS, I-03; aprovado em 04/10/2026, Release 2.24 ainda não gerada): duas entradas `./brand` e o ajuste da exceção da 2.16.
+  "packages/core/package.json", "packages/infra/package.json", "test/contracts/contract-registry-release-2.16.contract.test.ts",
 ]);
 
 describe("CR-033: a árvore corrente só diverge da Release 2.22 onde o escopo aprovado permite", () => {
