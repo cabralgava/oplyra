@@ -1,0 +1,19 @@
+{
+  "schema": "oplyra-missions/1",
+  "missions": [
+    {
+      "id": "ms-001",
+      "type": "test",
+      "title": "Verificar recuperacao de tentativas expiradas",
+      "goal": "Reforçar os testes do caso de uso recoverExpiredAttempts já implementado no I-02/CR-027. Ler ESTADO, os contratos CR-027 e o plano 15-test-plan. Preservar contratos e comportamento aprovado; não ativar providers reais, scheduler produtivo ou migrations.",
+      "paths": ["packages/core/test/"],
+      "dependsOn": [],
+      "acceptance": [
+        "Testes adversariais cobrem isolamento do tenant encaminhado à porta, limite do lote e erro da porta, sem chamar provider real.",
+        "Os testes acrescentam cobertura relevante ao caso de uso existente, sem duplicar testes já presentes nem remover ou enfraquecer cenários.",
+        "pnpm typecheck e a suíte Vitest pertinente passam; testes de portas simuladas são identificados como unitários e não como prova de RLS.",
+        "Nenhum snapshot, contrato congelado, migration ou arquivo de configuração é alterado."
+      ]
+    }
+  ]
+}

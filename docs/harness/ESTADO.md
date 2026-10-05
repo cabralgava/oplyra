@@ -2,6 +2,14 @@
 
 Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivos reais e contra a autorização vigente ao retomar. Não substituir este registro por checkpoint de outro workspace.
 
+## Consentimento inicial Codex pelo chat — 05/10/2026
+
+O proprietário pediu remover o gate de confirmação inicial em terminal. Implementado `scripts/codex-authorize.mjs`, com perfil inicial fechado: `packages/core/test/`, sete dias de validade, cinco missões, cinco merges por execução, três sessões por missão, uma hora por missão e um dia de execução. Conserva registro externo privado, referência da conversa e hash da mensagem, recusa sobrescrita e respeita revogação e kill switch. A referência não é autenticação; a autorização deve vir do proprietário na conversa e a emissão é administrativa, fora do worker. O script legado continua disponível para outros fluxos; não é pré-requisito do Codex.
+
+Verificação focalizada: 45 testes aprovados, incluindo seis novos cenários de emissão real sem TTY em HOME sintético, proveniência e limites, argumentos inválidos, sobrescrita, revogação, kill switch, diretório público e symlink. **A gravação real foi rejeitada pela revisão automática de permissões**: entendeu que o pedido de retirar TTY não explicitou o aceite desse perfil exato. Registro não criado; nenhum serviço ativado. Proposta permanece revisável em CODEX-CONTINUOUS; não simular aceite nem contornar a rejeição.
+
+A PR #11 na cabeça anterior `5a80f06` está pronta para revisão com CI remoto verde (980 Vitest, 240 pgTAP, 16 E2E, 152 harness), logs reais sanitizados e fontes protegidas preservadas. Esta adaptação precisa do CI em sua própria cabeça. O merge ainda depende da aprovação válida exigida pelo GitHub. Somente cabralgava foi encontrado como colaborador; ele é autor do PR. Esta sessão implementou as mudanças e sua própria revisão não constitui aprovação independente. O checkout isolado permanece preparado, sem serviço instalado. Os checkpoints seguintes preservam o histórico anterior.
+
 ## Checkpoint de infraestrutura — Supabase production — 02/10/2026
 
 O proprietário informou a criação do projeto **`oplyra-production`**, project ref **`hysigyhfpyyydycxxpsm`**, e autorizou seu registro documental. Dashboard: [Supabase](https://supabase.com/dashboard/project/hysigyhfpyyydycxxpsm). Estado operacional: **`project_created_pending_preflight`**; ver [registro de produção](SUPABASE-PRODUCTION-REGISTRO.md).
@@ -9,6 +17,16 @@ O proprietário informou a criação do projeto **`oplyra-production`**, project
 A criação foi informada pelo proprietário, sem inspeção remota pelo agente nesta atualização. Organização, região, plano, compute, custos, MFA, backups e opções finais de segurança ainda precisam de confirmação no painel. Não se declara histórico remoto vazio nem aplicação de migrations sem evidência. As afirmações históricas abaixo de que nenhum projeto havia sido criado ficam superadas **somente quanto à criação deste projeto**.
 
 Desenvolvimento e CI permanecem locais; não houve alteração do guard, de credenciais ou da política Local First por este registro. Preflight, aplicação de migrations sem seed e ativação de aplicação/serviços continuam sujeitos ao plano e às autorizações específicas. A entrega delegada Git/GitHub do CR-033 não autoriza deployment ou acesso autônomo ao Supabase de produção. O plano e os manifests congelados permanecem intactos.
+
+## Checkpoint Codex — 05/10/2026
+
+O proprietário autorizou a resolução do bootstrap após a auditoria local da PR #11 (base auditada `deec3b601a1973b3baad441f34aa894c49728808`). O trabalho local existente foi preservado e consolidado nesta entrega. O executor padrão agora usa Codex CLI diretamente; o supervisor opera os wrappers de entrega e conserva os gates de autorização, CI, revisão e integração. Arquivos, evidências e limites por item estão em [CODEX-CONTINUOUS](CODEX-CONTINUOUS.md).
+
+Implementados: proteção do control plane Codex e das instruções aninhadas; autorização revalidada antes dos efeitos; lock sem tomada de PID vivo; limite total persistido na retomada; encerramento do grupo de processos; resultado estruturado sem logs brutos; compatibilidade com a revisão real do GitHub; supervisor que reobserva a aprovação pendente; serviço launchd preparado com instalação condicionada à autorização válida e à integração do bootstrap; backlog inicial de testes do caso de uso do CR-027. Nenhum ruleset, switch global, contrato congelado, snapshot ou referência protegida foi alterado.
+
+Evidência inicial desta entrega: `pnpm verificar` passou com typecheck, **974/974 Vitest em 58 arquivos**, **240 pgTAP em 8 arquivos**, **16/16 Playwright**, secret scan e build. Usou o Supabase local saudável, sem reset nem produção. O ajuste preexistente de uma linha em branco no ADR-0006 foi preservado em stash durante os gates e é reposto ao final; não faz parte da entrega validada. Testes adicionais do supervisor e da correção de CI usam Git e wrappers reais, com GitHub e modelo simulados. A suíte completa foi novamente validada com `pnpm test`: **977/977 em 58 arquivos**; os três cenários adicionais de versão/transporte passaram no foco posterior de 36 testes; `pnpm test:harness`: **152/152**, incluindo as mutações, com barreiras redundantes testadas em conjunto. Um ensaio separado usou o **Codex CLI real 0.160.0** e escreveu a fixture autorizada em repositório temporário, preservando o controle. A sonda adversarial real também confirmou as negações de escrita em package.json e de leitura de .env exclusivamente sintético; nenhum valor de credencial real foi lido ou exibido.
+
+Integração e ativação: **pendentes**, até confirmação no GitHub. A PR #11 era draft, de autoria de `cabralgava`, com validate verde no head antigo. O ruleset observado exige **1 aprovação**, validate estrito e descarte de revisão após push, sem bypass. O autor não aprova o próprio PR como revisão independente. Os arquivos externos do GitHub App estão presentes (somente metadados conferidos); a autorização contínua real ainda não foi emitida. Nenhum serviço do SO foi instalado nem ativado. A confirmação única do registro pelo proprietário, a revisão real e o ensaio remoto completo continuam necessários. Os registros abaixo são históricos; AGENTS e AUTONOMOUS-BUILD definem a autorização vigente.
 
 ## Situação atual — 30/09/2026
 

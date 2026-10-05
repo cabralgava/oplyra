@@ -14,6 +14,28 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  # Todo caminho elevado precisa de um dono no CODEOWNERS. O runner lê as exigências reais de revisão do GitHub.
+  # Cobertura não substitui aprovação; este job não muda rulesets. Só Node, sem dependências instaladas.
+  risk-gate:
+    name: risk-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Classify the change and verify CODEOWNERS coverage
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: node scripts/claude-risk.mjs gate --base "origin/${BASE_REF}"
+
+      - name: Nothing to classify outside pull requests
+        if: github.event_name != 'pull_request'
+        run: echo "risk-gate classifies pull requests; push to main is covered by validate"
+
   validate:
     name: validate
     runs-on: ubuntu-latest
