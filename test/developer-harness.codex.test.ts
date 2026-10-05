@@ -19,6 +19,8 @@ describe("adaptador Codex", () => {
     expect(cfg).toContain('approval_policy="never"'); expect(cfg).toContain("network.enabled=false");
     expect(cfg).toContain(`"${dir}/docs/"="write"`); expect(cfg).toContain(`"${dir}/AGENTS.md"="read"`);
     expect(cfg).toContain('**/.env"="deny"'); expect(cfg).not.toContain('":root"="read"');
+    expect(cfg).toContain('**/*.pem"="deny"'); expect(cfg).toContain('**/credentials*"="deny"');
+    expect(cfg).toContain(`"${dir}/.git/config"="deny"`);
     fs.symlinkSync(os.tmpdir(), path.join(dir, "outside"));
     expect(() => codexConfig(dir, { paths: ["outside/"] })).toThrow("codex-symlink");
     for (const p of ["AGENTS.md", ".codex/", ".agents/", "scripts/", "../outside/"]) expect(() => codexConfig(dir, { paths: [p] })).toThrow();

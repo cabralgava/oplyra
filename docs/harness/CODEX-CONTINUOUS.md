@@ -9,7 +9,7 @@ O supervisor mantém os registros externos e opera os wrappers existentes, sem e
 | Item | Arquivo/configuração | Evidência | Status |
 | --- | --- | --- | --- |
 | Codex e sandbox | `scripts/codex-agent.mjs`; permissões efetivas da sessão | CLI 0.160.0 real executou sondas sintéticas em repositórios temporários: escrita autorizada permitida, tentativa de escrita em package.json negada, leitura de .env sintético negada e JSON retornado. A sonda adversarial registrou 8 ocorrências de negação e não observou o marcador sintético protegido. Perfil nega segredos e conserva controles existentes em leitura; testes de portas cobrem invocação, symlink e encerramento do grupo | Implementado; ensaio local real; testes simulados adicionais |
-| Skills | `AGENTS.md`, `.agents/skills/`, `.claude/skills/` | DDD, arquitetura e qualidade lidas explicitamente; cópias locais preservadas. Não há prova de equivalência de hooks ou MCPs | Implementado como instruções; MCPs não equivalentes |
+| Skills | `AGENTS.md`, `.agents/skills/`, `.claude/skills/` | DDD, arquitetura e qualidade lidas explicitamente; cópias locais preservadas; apenas whitespace foi normalizado em três exports Codex para passar git diff --check, com originais .claude intactos e cópias iniciais guardadas. Não há prova de equivalência de hooks ou MCPs | Implementado como instruções; MCPs não equivalentes |
 | Implementar → PR → CI → merge → próxima missão | `scripts/claude-runner.mjs`, `codex-agent.mjs`, `claude-git.mjs`, `claude-integrate.mjs` | Duas missões e integrações testadas com Git e wrappers reais, modelo e GitHub simulados. Runner padrão usa Codex nativo | Implementado e testado em simulação; ponta a ponta remoto pendente |
 | Autorização, limites e retomada | `claude-standing.mjs`; registro externo `~/.oplyra/standing/authorization.json` | Validação de escopo/risco, vínculo por hash, revogação antes de efeitos, contadores e relógio persistidos; registro real ausente na auditoria | Implementado e testado; emissão real pendente |
 | Política GitHub | ruleset main 24384328; `claude-gates.mjs`, `claude-git.mjs` | Leitura real: 1 aprovação, validate estrito, descarte de revisão após push, sem bypass. O fluxo implementa e aguarda revisão válida no SHA atual. Contagem efetiva usa a maior exigência das regras | Compatível com revisão; modo sem aprovação humana não habilitado |
@@ -52,7 +52,7 @@ Testes criados ou atualizados: invocação direta, escopo e symlink, processo em
 
 Comandos executados: pnpm verificar; pnpm test (árvore final); pnpm test:harness; git diff --check; codex-service prepare; plutil -lint; codex-service install (recusado ST-MISSING); sondas Codex reais em repositórios temporários.
 
-Resultados: gate completo inicial 974 Vitest, 240 pgTAP, 16 E2E, tipos, secrets e build; árvore final 977 Vitest; harness 152. Nenhuma divergência em 416 arquivos versionados de produto, referência e snapshots em relação a deec3b6.
+Resultados: gate completo inicial 974 Vitest, 240 pgTAP, 16 E2E, tipos, secrets e build; suíte completa posterior 977 Vitest; três cenários adicionais de versão/transporte passaram na execução focalizada de 36 testes; harness 152. Nenhuma divergência em 416 arquivos versionados de produto, referência e snapshots em relação a deec3b6.
 
 Requisitos comprovados: implementação local e cenários determinísticos; CLI Codex real com fixture autorizada; preservação das fontes congeladas.
 

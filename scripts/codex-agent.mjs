@@ -6,6 +6,7 @@ import { spawn as nodeSpawn, spawnSync } from "node:child_process";
 import { DELIVERY_ENV, selectRecord, pathAllowedByRecord } from "./claude-delivery-record.mjs";
 import { execute, defaultGit, childEnv } from "./claude-git.mjs";
 import { classifyPath } from "./claude-risk.mjs";
+import { isSensitiveRel } from "./claude-local-first-guard.mjs";
 
 export const CODEX_BINARY = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex";
 export const CODEX_VERSION = "0.160.0";
@@ -30,12 +31,16 @@ export function codexConfig(repoRoot, record) {
   }
   for (const rel of [".git", ".claude", ".codex", ".agents", ".oplyra", ".github", "scripts", "tools", "supabase", "docs/harness", "docs/decisions", "sources", "test/contracts", "docs/product/marketing-ops/contracts", "docs/product/marketing-ops/00-documento-transicao.md"]) entries.push([path.join(root, rel), "read"]);
   for (const pattern of ["**/.env", "**/.env.*", "**/.npmrc", "**/*private*.pem", "**/auth.json", "**/credentials.json"]) entries.push([`${root}/${pattern}`, "deny"]);
+  for (const ext of ["pem", "key", "p12", "pfx", "jks", "keystore", "crt", "cer", "der", "csr", "p7b", "p7c", "gpg", "asc"]) entries.push([`${root}/**/*.${ext}`, "deny"]);
+  for (const name of [".netrc", "_netrc", ".pgpass", ".pypirc", ".git-credentials", ".htpasswd", "credentials*", ".credentials*", "*-credentials.*", "*_credentials.*", "service-account*.json", "service_account*.json", "id_rsa*", "id_dsa*", "id_ecdsa*", "id_ed25519*", ".ssh/**", ".aws/**", ".gnupg/**", ".kube/**", ".docker/**"]) entries.push([`${root}/**/${name}`, "deny"]);
+  entries.push([path.join(root, ".git/config"), "deny"]);
   const controlName = /^(AGENTS\.md|CLAUDE\.md|package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|tsconfig.*\.json|(vitest|playwright|next)\.config\..*)$/;
   const scan = (dir) => {
     if (!fs.existsSync(dir)) return;
     for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
       if (["node_modules", ".git", ".next", ".oplyra"].includes(ent.name) || ent.isSymbolicLink()) continue;
       const abs = path.join(dir, ent.name);
+      if (isSensitiveRel(path.relative(root, abs).toLowerCase())) { entries.push([abs, "deny"]); continue; }
       if ([".agents", ".codex", ".claude"].includes(ent.name)) { entries.push([abs, "read"]); continue; }
       if (ent.isDirectory()) scan(abs);
       else if (controlName.test(ent.name)) entries.push([abs, "read"]);
