@@ -273,14 +273,14 @@ function validateReadTool(name, input, projectRoot) {
 
 const ALWAYS_PROTECTED_EXACT = new Set(["docs/product/marketing-ops/00-documento-transicao.md"]);
 const CONTROL_PLANE_EXACT = new Set([
-  ".mcp.json", "claude.md", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml",
+  ".mcp.json", "claude.md", "agents.md", ".agents", ".codex", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml",
   "docs/harness/development-tools.md", "docs/harness/autonomous-build.md", ".claude", ".git",
 ]);
 // `.git/` (CR-033): hooks, `config` (filter, diff, alias, core.*) e atributos executam código quando o wrapper roda `git`; o agente nunca os escreve
-const CONTROL_PLANE_PREFIX = [".claude/", "tools/developer-harness/", "scripts/claude-", ".github/", ".git/"];
+const CONTROL_PLANE_PREFIX = [".claude/", ".agents/", ".codex/", "tools/developer-harness/", "scripts/claude-", "scripts/codex-", ".github/", ".git/"];
 
 export function isControlPlane(rel) {
-  return CONTROL_PLANE_EXACT.has(rel) || CONTROL_PLANE_PREFIX.some((p) => rel.startsWith(p));
+  return CONTROL_PLANE_EXACT.has(rel) || CONTROL_PLANE_PREFIX.some((p) => rel.startsWith(p)) || /(^|\/)(agents|claude)\.md$/.test(rel) || /(^|\/)\.(agents|codex|claude)(\/|$)/.test(rel);
 }
 /** `sources/` e a referência protegida: nunca entram em uma entrega delegada. `rel`: relativo, minúsculo, com `/`. */
 export function isProtectedReference(rel) {

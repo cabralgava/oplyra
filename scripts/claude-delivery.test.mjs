@@ -2421,15 +2421,15 @@ test("D-26 proteção de main: aprovação ≥ 1 (inteiro seguro), dismiss_stale
     refused(b, "DD-PROTECTION");
     assert.equal(sh(s.work, "branch", "--list", BRANCH), "", `${label}: nenhuma branch sem proteção verificada`);
   }
-  // positivos: contagem 1 e estrito true; contagem maior; duas regras pull_request (vale o mínimo); o doctor imprime os valores efetivos lidos
+  // positivos: contagem 1 e estrito true; contagem maior; duas regras pull_request (vale o máximo); o doctor imprime os valores efetivos lidos
   const ok = [
     [GOOD_RULES, 1], [withApprovals(prParams({ required_approving_review_count: 2 })), 2],
-    [[...GOOD_RULES, { type: "pull_request", parameters: prParams({ required_approving_review_count: 3 }) }], 1],
+    [[...GOOD_RULES, { type: "pull_request", parameters: prParams({ required_approving_review_count: 3 }) }], 3],
   ];
   for (const [rules, min] of ok) {
     const r = await scenario({ http: fakeHttp({ rules }) }).call("doctor");
     assert.equal(r.code, 0, r.out);
-    assert.match(r.out, new RegExp(`aprovações exigidas = ${min}; validate estrito = true; aprovação obsoleta descartada no push = true`));
+    assert.match(r.out, new RegExp(`aprovações exigidas = ${min}; revisão do dono do código obrigatória = false; validate estrito = true; aprovação obsoleta descartada no push = true`));
   }
 });
 
@@ -2872,11 +2872,13 @@ test("authorize --enable-rehearsal: só ops-* com registro, em terminal do propr
 /** Copia os módulos para um diretório temporário com UMA alteração e os importa. A âncora precisa existir: senão a mutação seria vácua. */
 async function mutate(file, from, to) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "oplyra-delivery-mut-"));
-  for (const f of ["claude-git.mjs", "claude-delivery-record.mjs", "claude-local-first-guard.mjs"]) {
+  for (const f of ["claude-git.mjs", "claude-delivery-record.mjs", "claude-local-first-guard.mjs", "claude-standing.mjs", "claude-risk.mjs"]) {
     let src = fs.readFileSync(path.join(here, f), "utf8");
-    if (f === file) {
-      assert.ok(src.includes(from), `âncora de mutação ausente em ${f}: ${from.slice(0, 70)}`);
-      src = src.replace(from, to);
+    // Barreiras redundantes exigem mutação conjunta para remover a propriedade inteira.
+    const patches = Array.isArray(from) ? from : [[file, from, to]];
+    for (const [target, anchor, replacement] of patches) if (f === target) {
+      assert.ok(src.includes(anchor), `âncora de mutação ausente em ${f}: ${anchor.slice(0, 70)}`);
+      src = src.replace(anchor, replacement);
     }
     fs.writeFileSync(path.join(dir, f), src);
   }
@@ -2929,7 +2931,7 @@ const refusesWith = (fn, code) => {
  */
 const MUTATIONS = [
   ["M01-chave-desligada-ignorada", GIT, 'refuse("DD-DISABLED", e instanceof RecordError && e.code === "DR-GRANT" && e.detail ? `concessão: ${e.detail}` : undefined);', 'run.enabledBy = "ignorado";', async (m) => isRefusal(await scenario({ enabled: false }).exec(m.git, "doctor"), "DD-DISABLED")],
-  ["M02-kill-switch-ignorado", GIT, 'if (p.fs.existsSync(p.killFile)) refuse("DD-KILL");', "", async (m) => {
+  ["M02-kill-switch-ignorado", GIT, [[GIT, 'if (p.fs.existsSync(p.killFile)) refuse("DD-KILL");', ""], [GIT, 'if (run.p.fs.existsSync(run.p.killFile)) refuse("DD-KILL");', ""]], "", async (m) => {
     const s = scenario();
     fs.writeFileSync(s.ports.killFile, "");
     return isRefusal(await s.exec(m.git, "doctor"), "DD-KILL");
@@ -2938,7 +2940,7 @@ const MUTATIONS = [
     const s = scenario();
     return isRefusal(await m.git.execute("doctor", [], { ...s.ports, env: { ...s.env, [DELIVERY_ENV.sha256]: "0".repeat(64) } }), "DD-RECORD");
   }],
-  ["M04-expiracao-ignorada", REC, 'if (expires <= now.getTime()) fail("DR-EXPIRED");', "", async (m) => {
+  ["M04-expiracao-ignorada", REC, [[REC, 'if (expires <= now.getTime()) fail("DR-EXPIRED");', ""], [GIT, 'if (Date.parse(run.record.expiresAt) <= run.p.now().getTime()) refuse("DD-RECORD", "DR-EXPIRED");', ""]], "", async (m) => {
     const s = scenario();
     return isRefusal(await m.git.execute("doctor", [], { ...s.ports, now: () => new Date(Date.now() + 8 * 86_400_000) }), "DD-RECORD");
   }],
@@ -3578,26 +3580,26 @@ const MUTATIONS = [
   ...(() => {
     const refusesDoctor = (rules) => async (m) => isRefusal(await scenario({ http: fakeHttp({ rules }) }).exec(m.git, "doctor"), "DD-PROTECTION");
     const named = (label) => D26_BAD.find(([l]) => l === label)[1];
-    const COUNT_CHECK = 'if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 1)) refuse("DD-PROTECTION", "required_approving_review_count");';
+    const COUNT_CHECK = 'if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 0 || (n === 0 && !(ownerGated && riskGated)))) refuse("DD-PROTECTION", "required_approving_review_count");';
     const DISMISS_CHECK = 'if (rules.filter((r) => r?.type === "pull_request").some((r) => r?.parameters?.dismiss_stale_reviews_on_push !== true)) refuse("DD-PROTECTION", "dismiss_stale_reviews_on_push");';
     const STRICT_CHECK ='if (listing.some((r) => r.parameters.strict_required_status_checks_policy !== true)) refuse("DD-PROTECTION", "strict_required_status_checks_policy");';
     return [
-      ["P01-aprovacoes-minimo-1", GIT, "|| n < 1)", "|| n < 0)", refusesDoctor(named("contagem 0"))],
+      ["P01-aprovacoes-minimo-1", GIT, "|| (n === 0 && !(ownerGated && riskGated))", "", refusesDoctor(named("contagem 0"))],
       ["P02-contagem-de-aprovacoes-exigida", GIT, COUNT_CHECK, "", refusesDoctor(named("contagem ausente"))],
       ["P03-contagem-em-string", GIT, "!Number.isSafeInteger(n) ||", "", refusesDoctor(named("contagem em string"))],
       ["P04-contagem-decimal-ou-infinita", GIT, "!Number.isSafeInteger(n) ||", "typeof n !== \"number\" ||", async (m) => (await refusesDoctor(named("contagem decimal"))(m)) && (await refusesDoctor(named("contagem infinita"))(m))],
-      ["P05-regra-pull-request-duplicada-malformada", GIT, "approvals.some((n) => !Number.isSafeInteger(n) || n < 1)", "approvals.every((n) => !Number.isSafeInteger(n) || n < 1)", refusesDoctor(named("regra pull_request duplicada com contagem malformada"))],
-      ["P06-contagem-vale-o-minimo", GIT, "approvals: Math.min(...approvals)", "approvals: Math.max(...approvals)", async (m) => {
+      ["P05-regra-pull-request-duplicada-malformada", GIT, "approvals.some((n) => !Number.isSafeInteger(n) || n < 0 || (n === 0 && !(ownerGated && riskGated)))", "approvals.every((n) => !Number.isSafeInteger(n) || n < 0 || (n === 0 && !(ownerGated && riskGated)))", refusesDoctor(named("regra pull_request duplicada com contagem malformada"))],
+      ["P06-contagem-vale-o-maximo", GIT, "approvals: Math.max(...approvals)", "approvals: Math.min(...approvals)", async (m) => {
         const r = await scenario({ http: fakeHttp({ rules: [...GOOD_RULES, { type: "pull_request", parameters: prParams({ required_approving_review_count: 3 }) }] }) }).exec(m.git, "doctor");
-        return r.code === 0 && /aprovações exigidas = 1;/.test(r.out);
+        return r.code === 0 && /aprovações exigidas = 3;/.test(r.out);
       }],
       ["P07-validate-estrito-exigido", GIT, STRICT_CHECK, "", refusesDoctor(named("estrito false"))],
       ["P08-estrito-ausente", GIT, STRICT_CHECK, "", refusesDoctor(named("estrito ausente"))],
       ["P09-estrito-booleano-estrito", GIT, "strict_required_status_checks_policy !== true))", "strict_required_status_checks_policy != true))", async (m) => (await refusesDoctor(named("estrito numérico"))(m))],
       ["P10-estrito-na-mesma-regra", GIT, "if (listing.some((r) => r.parameters.strict_required_status_checks_policy !== true))", "if (!rules.some((r) => r?.parameters?.strict_required_status_checks_policy === true))", refusesDoctor(named("validate não estrito e outra regra estrita sem validate"))],
       ["P11-validate-em-regra-nao-estrita-duplicada", GIT, "if (listing.some((r) => r.parameters.strict_required_status_checks_policy !== true))", "if (listing.every((r) => r.parameters.strict_required_status_checks_policy !== true))", refusesDoctor(named("validate também numa segunda regra não estrita"))],
-      ["P12-doctor-imprime-os-valores-efetivos", GIT, "run.say(`proteções efetivas de main: aprovações exigidas = ${run.protection.approvals}; validate estrito = ${run.protection.strict}; aprovação obsoleta descartada no push = ${run.protection.dismissStale}`);", "", async (m) =>
-        /aprovações exigidas = 1; validate estrito = true; aprovação obsoleta descartada no push = true/.test((await scenario().exec(m.git, "doctor")).out)],
+      ["P12-doctor-imprime-os-valores-efetivos", GIT, "run.say(`proteções efetivas de main: aprovações exigidas = ${run.protection.approvals}; revisão do dono do código obrigatória = ${run.protection.ownerGated}; validate estrito = ${run.protection.strict}; aprovação obsoleta descartada no push = ${run.protection.dismissStale}`);", "", async (m) =>
+        /aprovações exigidas = 1; revisão do dono do código obrigatória = false; validate estrito = true; aprovação obsoleta descartada no push = true/.test((await scenario().exec(m.git, "doctor")).out)],
       ["P13-dismiss-stale-exigido", GIT, DISMISS_CHECK, "", async (m) => (await refusesDoctor(named("dismiss_stale false"))(m)) && (await refusesDoctor(named("dismiss_stale ausente"))(m))],
       ["P14-dismiss-stale-booleano-estrito", GIT, "dismiss_stale_reviews_on_push !== true)) refuse(", "dismiss_stale_reviews_on_push != true)) refuse(", refusesDoctor(named("dismiss_stale numérico"))],
       ["P15-dismiss-stale-em-toda-regra", GIT, '.filter((r) => r?.type === "pull_request").some((r) => r?.parameters?.dismiss_stale_reviews_on_push', '.filter((r) => r?.type === "pull_request").every((r) => r?.parameters?.dismiss_stale_reviews_on_push', refusesDoctor(named("regra pull_request duplicada sem dismiss_stale"))],
@@ -3628,7 +3630,7 @@ const MUTATIONS = [
         }), { mode: 0o600 });
         return isRefusal(await s.exec(m.git, "doctor"), "DD-DISABLED");
       }],
-      ["G04-kill-switch-sobre-a-concessao", GIT, 'if (p.fs.existsSync(p.killFile)) refuse("DD-KILL");', "", async (m) => {
+      ["G04-kill-switch-sobre-a-concessao", GIT, [[GIT, 'if (p.fs.existsSync(p.killFile)) refuse("DD-KILL");', ""], [GIT, 'if (run.p.fs.existsSync(run.p.killFile)) refuse("DD-KILL");', ""]], "", async (m) => {
         const s = opsScenario();
         grantFor(s);
         fs.writeFileSync(s.ports.killFile, "");
@@ -3714,7 +3716,7 @@ const MUTATIONS = [
       }],
     ];
   })(),
-  ["G3-escrita-em-dot-git", "claude-local-first-guard.mjs", '"scripts/claude-", ".github/", ".git/"];', '"scripts/claude-", ".github/"];', async (m) =>
+  ["G3-escrita-em-dot-git", "claude-local-first-guard.mjs", '"scripts/claude-", "scripts/codex-", ".github/", ".git/"];', '"scripts/claude-", "scripts/codex-", ".github/"];', async (m) =>
     m.guard.evaluate({ toolName: "Write", toolInput: { file_path: ".git/hooks/post-commit" }, projectRoot: "/workspace/oplyra", policy: "autonomous" }).allowed === false],
   ["G1-wrappers-so-na-sessao-autonoma", "claude-local-first-guard.mjs", 'ctx.policy === "autonomous" && deliveryArgsOk(script, args.slice(1))', "deliveryArgsOk(script, args.slice(1))", async (m) =>
     m.guard.evaluate({ toolName: "Bash", toolInput: { command: "pnpm git:push" }, projectRoot: "/workspace/oplyra", policy: "maintenance" }).allowed === false],

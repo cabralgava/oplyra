@@ -101,6 +101,7 @@ export const MESSAGES = Object.freeze({
   "LA-TOOLING-MISMATCH": "versão instalada diverge do manifest isolado",
   "LA-CLI-UNPROVEN": "Claude Code sem prova de permissões vigente para esta versão: modo manual",
   "LA-INCREMENT": "registro de autorização da entrega delegada ausente, inválido, expirado ou inseguro (o código DR-* indica o motivo)",
+  "LA-PROMPT": "arquivo de prompt da sessão não interativa fora do diretório do runner, inseguro, grande demais ou inexistente",
 });
 
 class Refusal extends Error {
@@ -121,9 +122,39 @@ export function parseIncrement(argv) {
   return m && REF_PATTERN.test(m[1]) ? m[1] : null;
 }
 
+/**
+ * Sessão não interativa do runner de desenvolvimento contínuo (política de 04/10/2026): `--increment=<ref> --prompt-file=<arquivo>`, nesta
+ * ordem. O arquivo é lido pelo launcher (nunca repassado como argumento ao CLI) e só vale dentro do diretório de prompts do runner.
+ */
+export function parseHeadless(argv) {
+  if (argv.length !== 2) return null;
+  const inc = /^--increment=(.+)$/.exec(argv[0]);
+  const file = /^--prompt-file=(.+)$/.exec(argv[1]);
+  return inc && file && REF_PATTERN.test(inc[1]) ? { ref: inc[1], promptFile: file[1] } : null;
+}
+export const PROMPT_MAX_BYTES = 32 * 1024;
+
+/** O prompt é um arquivo do proprietário em `~/.oplyra/runner/prompts/<ref>-<n>.md` (0600, dono atual, regular, sem symlink, ≤ 32 KiB). */
+export function inspectPromptFile({ homeDir, ref, file, uid = typeof process.getuid === "function" ? process.getuid() : undefined, fsImpl = fs }) {
+  const dir = path.join(homeDir, ".oplyra", "runner", "prompts");
+  const resolved = path.resolve(file);
+  if (path.dirname(resolved) !== dir || !new RegExp(`^${ref}-[0-9]{1,3}\\.md$`).test(path.basename(resolved))) refuse("LA-PROMPT");
+  let st;
+  let dirSt;
+  try {
+    dirSt = fsImpl.lstatSync(dir);
+    st = fsImpl.lstatSync(resolved);
+  } catch {
+    refuse("LA-PROMPT");
+  }
+  if (dirSt.isSymbolicLink() || !dirSt.isDirectory() || st.isSymbolicLink() || !st.isFile() || st.size > PROMPT_MAX_BYTES || (st.mode & 0o077) !== 0 || (uid !== undefined && (st.uid !== uid || dirSt.uid !== uid))) refuse("LA-PROMPT");
+  return fsImpl.readFileSync(resolved, "utf8");
+}
+
 export function classifyArgv(argv) {
   const key = argv.join(" ");
   if (argv.some((a) => FORBIDDEN_FLAGS.some((f) => a === f || a.startsWith(`${f}=`)))) return null;
+  if (parseHeadless(argv)) return "headless";
   if (parseIncrement(argv)) return "session";
   return Object.prototype.hasOwnProperty.call(ALLOWED_ARGVS, key) ? ALLOWED_ARGVS[key] : null;
 }
@@ -274,7 +305,8 @@ export function preflight({ repoRoot, homeDir, env, argv, runSelfTests, isTTY = 
   if (runSelfTests && !runSelfTests()) refuse("LA-SELFTEST");
   // entrega delegada (CR-033): `--increment=<ref>` carrega e fixa o registro aprovado; a manutenção nunca chega aqui com incremento
   let delivery = null;
-  const increment = parseIncrement(argv);
+  const headless = parseHeadless(argv);
+  const increment = headless ? headless.ref : parseIncrement(argv);
   if (increment) {
     try {
       delivery = selectRecord({ ref: increment, recordDir, now });
@@ -283,7 +315,8 @@ export function preflight({ repoRoot, homeDir, env, argv, runSelfTests, isTTY = 
       throw e;
     }
   }
-  return { kind, mode: kind === "maintenance" ? "manual" : resolvePermissionMode(binding), cliProven: binding.cliProven === true, ...(delivery ? { delivery } : {}) };
+  const prompt = headless ? inspectPromptFile({ homeDir, ref: headless.ref, file: headless.promptFile }) : undefined;
+  return { kind, mode: kind === "maintenance" ? "manual" : resolvePermissionMode(binding), cliProven: binding.cliProven === true, ...(delivery ? { delivery } : {}), ...(prompt !== undefined ? { prompt } : {}) };
 }
 
 /** Ambiente do filho: sem herdar variáveis de entrega; só o registro verificado as define (e só na sessão com incremento). */
@@ -319,6 +352,8 @@ export function buildSessionArgs({ kind, mode = PERMISSION_MODE, projectSettings
     };
     return [...common, "--setting-sources", "user", "--settings", JSON.stringify(settings)];
   }
+  // sessão não interativa (runner): mesmo modo e mesmas fontes de settings; o prompt entra pela entrada padrão, nunca como argumento
+  if (kind === "headless") return [...common, "--setting-sources", "project", "-p"];
   return [...common, "--setting-sources", "project"];
 }
 
@@ -346,11 +381,11 @@ export async function run({
   const root = repoRoot ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   try {
     if (env.OPLYRA_LAUNCH_SELFTEST) refuse("LA-SELFTEST"); // o launcher não roda dentro dos próprios autotestes
-    const { kind, mode, cliProven, delivery } = preflight({
+    const { kind, mode, cliProven, delivery, prompt } = preflight({
       repoRoot: root, homeDir, env, argv, isTTY, recordDir, now,
       runSelfTests: runSelfTests ?? defaultSelfTests(root),
     });
-    if (kind === "session" && !cliProven && PERMISSION_MODE === "dontAsk") write(`Oplyra launcher: LA-CLI-UNPROVEN (${MESSAGES["LA-CLI-UNPROVEN"]})\n`);
+    if ((kind === "session" || kind === "headless") && !cliProven && PERMISSION_MODE === "dontAsk") write(`Oplyra launcher: LA-CLI-UNPROVEN (${MESSAGES["LA-CLI-UNPROVEN"]})\n`);
     if (kind === "maintenance") {
       write("Sessão de manutenção do control plane do harness: modo manual; o proprietário aprova cada ação. Não autoriza staging, commit nem ação remota.\n");
       if (!(await confirm(`Digite ${MAINTENANCE_PHRASE} para continuar: `))) refuse("LA-CONFIRM");
@@ -369,6 +404,11 @@ export async function run({
     if (kind === "mcp-list") args = ["mcp", "list"];
     else args = buildSessionArgs({ kind, mode, projectSettings: project });
     if (delivery) write(`Entrega delegada: registro ${delivery.record.ref} (SHA-256 ${delivery.sha256}) carregado. A chave delegatedDelivery decide se as escritas são executadas.\n`);
+    if (kind === "headless") {
+      const child = spawn(bin, args, { cwd: root, stdio: ["pipe", "inherit", "inherit"], env: buildChildEnv(env, delivery) });
+      child?.stdin?.end?.(prompt);
+      return await waitExit(child);
+    }
     const child = spawn(bin, args, { cwd: root, stdio: "inherit", env: buildChildEnv(env, delivery) });
     return await waitExit(child);
   } catch (e) {

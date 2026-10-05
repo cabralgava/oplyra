@@ -19,7 +19,8 @@ import { isControlPlane, isProtectedReference, isSensitiveRel } from "./claude-l
 export const RECORD_SCHEMA = "oplyra-delivery-authorization/1";
 export const REPOSITORY = "cabralgava/oplyra";
 export const BASE_REF = "main";
-export const REF_PATTERN = /^(i[0-9]{2}|cr-[0-9]{3}|dp-[0-9a-z]+|ops-[0-9]+)$/;
+/** `ms-NNN[N]`: missão derivada da autorização contínua de 04/10/2026 (claude-standing.mjs); as demais formas são as históricas do CR-033. */
+export const REF_PATTERN = /^(i[0-9]{2}|cr-[0-9]{3}|dp-[0-9a-z]+|ops-[0-9]+|ms-[0-9]{3,4})$/;
 export const SHA_PATTERN = /^[0-9a-f]{40}$/;
 export const AUTHORIZED_BY = "project_owner";
 export const MAX_EXPIRY_DAYS = 7;

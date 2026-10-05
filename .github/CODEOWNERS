@@ -1,8 +1,33 @@
-# CR-033 — visibilidade apenas: a proteção real é o ruleset do GitHub (P-2), não este arquivo.
+# Política de 04/10/2026 (AUTONOMOUS-BUILD): estes donos são a FRONTEIRA entre mudança rotineira e de risco elevado.
+# O job risk-gate exige dono para todo caminho elevado. O runner lê a política GitHub efetiva; CODEOWNERS não habilita merge sozinho.
+# A política vigente exige 1 aprovação humana também para entregas rotineiras. Nenhum ruleset é alterado por este arquivo.
+# Sintaxe limitada ao subconjunto que scripts/claude-risk.mjs interpreta (falha fechada em qualquer outra).
 /.github/                                   @cabralgava
-/scripts/claude-*                           @cabralgava
+/scripts/                                   @cabralgava
 /.claude/                                   @cabralgava
-/CLAUDE.md                                  @cabralgava
-/tools/developer-harness/                   @cabralgava
+/.mcp.json                                  @cabralgava
+CLAUDE.md                                   @cabralgava
+AGENTS.md                                   @cabralgava
+/.agents/                                   @cabralgava
+/.codex/                                    @cabralgava
+**/.agents/                                 @cabralgava
+**/.codex/                                  @cabralgava
+**/.claude/                                 @cabralgava
+/test/developer-harness.*                    @cabralgava
+/tools/                                     @cabralgava
+/supabase/                                  @cabralgava
 /docs/harness/                              @cabralgava
+/docs/decisions/                            @cabralgava
 /docs/product/marketing-ops/contracts/      @cabralgava
+/test/contracts/                            @cabralgava
+/sources/                                   @cabralgava
+/docs/product/marketing-ops/00-documento-transicao.md @cabralgava
+**/package.json                             @cabralgava
+**/pnpm-lock.yaml                           @cabralgava
+**/pnpm-workspace.yaml                      @cabralgava
+**/.npmrc                                   @cabralgava
+**/contracts/                               @cabralgava
+**/vitest.config.*                          @cabralgava
+**/playwright.config.*                      @cabralgava
+**/next.config.*                            @cabralgava
+**/tsconfig*.json                           @cabralgava
