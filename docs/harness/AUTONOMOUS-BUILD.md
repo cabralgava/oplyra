@@ -4,6 +4,8 @@
 
 **Mandato aprovado pelo proprietário em 04/10/2026:** produzir o sistema já especificado no automático, sem exigir operação manual de branch, commit, PR e merge a cada missão. A autorização cobre o desenvolvimento incremental do escopo aprovado e a correção do seu mecanismo de entrega; não é autorização irrestrita para serviços externos, custos, produção ou ações destrutivas.
 
+**Decisão posterior em 05/10/2026:** o proprietário pediu remover a confirmação inicial em terminal. O bootstrap Codex oferece emissão administrativa com proveniência da autorização explícita no chat, pelo `scripts/codex-authorize.mjs`. Isso substitui o requisito de TTY para esse fluxo inicial; não elimina o registro externo, escopo, validade, limites, revogação nem os gates GitHub. A referência da conversa é uma atestação de origem, não autenticação criptográfica. O worker de implementação não pode escrever no emissor nem no diretório externo. A emissão efetiva do perfil proposto continua pendente de aprovação da sessão: a revisão automática recusou a gravação por não considerar explícito o aceite dos limites exatos. A revisão técnica pelo Codex permanece identificada como IA e não é uma aprovação humana fabricada.
+
 A política de continuidade está aprovada. A ativação técnica ainda não foi comprovada. O bloco abaixo descreve o **estado da implementação do loop**, não uma pendência de nova autorização de negócio:
 
 ```yaml

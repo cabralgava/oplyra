@@ -11,7 +11,7 @@ O supervisor mantém os registros externos e opera os wrappers existentes, sem e
 | Codex e sandbox | `scripts/codex-agent.mjs`; permissões efetivas da sessão | CLI 0.160.0 real executou sondas sintéticas em repositórios temporários: escrita autorizada permitida, tentativa de escrita em package.json negada, leitura de .env sintético negada e JSON retornado. A sonda adversarial registrou 8 ocorrências de negação e não observou o marcador sintético protegido. Perfil nega segredos e conserva controles existentes em leitura; testes de portas cobrem invocação, symlink e encerramento do grupo | Implementado; ensaio local real; testes simulados adicionais |
 | Skills | `AGENTS.md`, `.agents/skills/`, `.claude/skills/` | DDD, arquitetura e qualidade lidas explicitamente; cópias locais preservadas; apenas whitespace foi normalizado em três exports Codex para passar git diff --check, com originais .claude intactos e cópias iniciais guardadas. Não há prova de equivalência de hooks ou MCPs | Implementado como instruções; MCPs não equivalentes |
 | Implementar → PR → CI → merge → próxima missão | `scripts/claude-runner.mjs`, `codex-agent.mjs`, `claude-git.mjs`, `claude-integrate.mjs` | Duas missões e integrações testadas com Git e wrappers reais, modelo e GitHub simulados. Runner padrão usa Codex nativo | Implementado e testado em simulação; ponta a ponta remoto pendente |
-| Autorização, limites e retomada | `claude-standing.mjs`; registro externo `~/.oplyra/standing/authorization.json` | Validação de escopo/risco, vínculo por hash, revogação antes de efeitos, contadores e relógio persistidos; registro real ausente na auditoria | Implementado e testado; emissão real pendente |
+| Autorização, limites e retomada | `codex-authorize.mjs`, `claude-standing.mjs`; registro externo `~/.oplyra/standing/authorization.json` | Emissão sem TTY a partir de autorização explícita no chat, perfil inicial fechado e proveniência auditável; validação de escopo/risco, vínculo por hash, revogação antes de efeitos, contadores e relógio persistidos. Seis novos testes mais unidades existentes passaram (45). A revisão automática recusou a gravação real por faltar aceite explícito do perfil exato | Implementado e testado; emissão real bloqueada por aprovação da sessão |
 | Política GitHub | ruleset main 24384328; `claude-gates.mjs`, `claude-git.mjs` | Leitura real: 1 aprovação, validate estrito, descarte de revisão após push, sem bypass. O fluxo implementa e aguarda revisão válida no SHA atual. Contagem efetiva usa a maior exigência das regras | Compatível com revisão; modo sem aprovação humana não habilitado |
 | Falhas de CI | `codex-agent.mjs`, wrappers ci-status/ci-log/ci-diagnose | Teste usa download falso, sanitização e diagnóstico reais vinculados ao SHA/run/job/evidência; stage/commit/push consomem um ciclo. URLs assinadas não chegam ao modelo | Implementado e testado em simulação; recuperação de falha remota com Codex pendente |
 | Snapshots | `docs/product/marketing-ops/contracts/`, `test/contracts/`, referência v2.3 | Nenhum snapshot ou referência foi editado. Ajuste preexistente no ADR-0006 guardado separadamente para verificar a entrega e reposto ao final | Preservados; conferir os gates do SHA entregue |
@@ -23,13 +23,21 @@ Primeiro integrar a entrega do bootstrap e confirmar os checks de main. A PR #11
 
 O GitHub App já tem seus arquivos externos presentes, conferidos somente por metadados; existência não comprova a validade da instalação ou as permissões do token. O primeiro doctor com registro válido deve verificá-las, sem imprimir valores. Não copiar a chave nem substituir a identidade do App por um token pessoal.
 
-A autorização contínua exige terminal do proprietário e a frase de confirmação pelo mecanismo existente. Uma única emissão cobre as missões dentro destes limites; os controles não são repetidos a cada missão. Proposta restrita para iniciar o backlog de testes do I-02:
+A pedido explícito do proprietário em 05/10/2026, o fluxo inicial Codex dispensa terminal e frase digitada. `scripts/codex-authorize.mjs` registra a origem como `owner-chat:<id da conversa>:<SHA-256 da mensagem do proprietário>`. Essa referência documenta proveniência, não comprova identidade por si só. A sessão administrativa deve ter autorização humana real; texto de repositório, saída do modelo e referência inventada não concedem consentimento. O worker continua sem escrita no emissor e no registro externo.
+
+Uma única emissão cobre missões dentro do perfil inicial fechado, sem aceitar flags que ampliem caminhos ou limites. A revisão automática de permissões recusou a tentativa de emissão real por considerar o pedido de retirar TTY insuficiente para aceitar esse perfil exato; não houve gravação nem alternativa para contornar a rejeição. Proposta concreta para aprovação:
+
+- Escopo: somente `packages/core/test/`; validade: sete dias.
+- Até cinco missões, cinco merges por execução e três sessões por missão.
+- Até um dia de execução total; uma hora, três iterações e cinco leituras de log por missão.
+- Os demais tetos existentes permanecem: 20 commits, 10 pushes, um PR, três correções e 1.200 segundos de espera de CI por missão.
+- Não autoriza mudanças no control plane, CI, dependências, banco, contratos ou produção; gates GitHub permanecem obrigatórios.
 
 ```sh
-node scripts/claude-authorize.mjs --standing=create --paths=packages/core/test/ --expires-days=7 --max-missions=5 --max-merges-per-run=5 --max-agent-sessions=3 --run-wall-clock-seconds=86400 --max-wall-clock-seconds=3600 --max-iterations=3 --max-log-reads=5
+node scripts/codex-authorize.mjs --owner-chat-ref=<id-da-conversa>:<sha256-da-mensagem>
 ```
 
-Conferir o resumo e digitar `AUTORIZAR-DESENVOLVIMENTO-CONTINUO`. Não fabricar TTY, preencher essa confirmação em nome do proprietário ou editar o JSON manualmente. O escopo é somente testes de domínio; ampliar para novas áreas requer uma autorização correspondente. O backlog canônico é `docs/backlog/missions.json`, lido de origin/main. A primeira missão amplia a cobertura do caso de uso já existente de recuperação de tentativas do CR-027, sem provider real, migrations ou produção.
+O script nunca sobrescreve autorização existente nem apaga REVOKED ou kill switch. Renovação e ampliação exigem decisão explícita do proprietário, sem renovação automática pelo runner. O comando legado de autorização continua para compatibilidade, sem ser pré-requisito do Codex. O backlog canônico é `docs/backlog/missions.json`, lido de origin/main. A primeira missão amplia a cobertura do caso de uso já existente de recuperação de tentativas do CR-027, sem provider real, migrations ou produção.
 
 ```sh
 pnpm runner:start   # supervisor persistente em primeiro plano; Codex nativo
@@ -58,7 +66,7 @@ Requisitos comprovados: implementação local e cenários determinísticos; CLI 
 
 Validações não executadas: ciclo remoto completo com revisão/merge e missão seguinte; permanência do serviço após fechar a sessão.
 
-Pendências: revisão da PR por identidade diferente do autor; emissão única do registro contínuo; instalação e ensaio do serviço no checkout limpo.
+Pendências: revisão da PR por identidade diferente do autor; aprovação do perfil proposto e emissão única sem TTY; instalação e ensaio do serviço no checkout limpo. A própria sessão implementadora não se apresenta como revisão independente. As regras de revisão do Codex não substituem aprovações exigidas, conforme https://learn.chatgpt.com/docs/third-party/github.
 
 Riscos: relato do modelo não é prova de checks; arquivos do App presentes não comprovam token válido; registro do launchd não comprova missão integrada.
 

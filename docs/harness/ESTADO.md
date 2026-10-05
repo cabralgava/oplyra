@@ -2,6 +2,14 @@
 
 Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivos reais e contra a autorização vigente ao retomar. Não substituir este registro por checkpoint de outro workspace.
 
+## Consentimento inicial Codex pelo chat — 05/10/2026
+
+O proprietário pediu remover o gate de confirmação inicial em terminal. Implementado `scripts/codex-authorize.mjs`, com perfil inicial fechado: `packages/core/test/`, sete dias de validade, cinco missões, cinco merges por execução, três sessões por missão, uma hora por missão e um dia de execução. Conserva registro externo privado, referência da conversa e hash da mensagem, recusa sobrescrita e respeita revogação e kill switch. A referência não é autenticação; a autorização deve vir do proprietário na conversa e a emissão é administrativa, fora do worker. O script legado continua disponível para outros fluxos; não é pré-requisito do Codex.
+
+Verificação focalizada: 45 testes aprovados, incluindo seis novos cenários de emissão real sem TTY em HOME sintético, proveniência e limites, argumentos inválidos, sobrescrita, revogação, kill switch, diretório público e symlink. **A gravação real foi rejeitada pela revisão automática de permissões**: entendeu que o pedido de retirar TTY não explicitou o aceite desse perfil exato. Registro não criado; nenhum serviço ativado. Proposta permanece revisável em CODEX-CONTINUOUS; não simular aceite nem contornar a rejeição.
+
+A PR #11 na cabeça anterior `5a80f06` está pronta para revisão com CI remoto verde (980 Vitest, 240 pgTAP, 16 E2E, 152 harness), logs reais sanitizados e fontes protegidas preservadas. Esta adaptação precisa do CI em sua própria cabeça. O merge ainda depende da aprovação válida exigida pelo GitHub. Somente cabralgava foi encontrado como colaborador; ele é autor do PR. Esta sessão implementou as mudanças e sua própria revisão não constitui aprovação independente. O checkout isolado permanece preparado, sem serviço instalado. Os checkpoints seguintes preservam o histórico anterior.
+
 ## Checkpoint de infraestrutura — Supabase production — 02/10/2026
 
 O proprietário informou a criação do projeto **`oplyra-production`**, project ref **`hysigyhfpyyydycxxpsm`**, e autorizou seu registro documental. Dashboard: [Supabase](https://supabase.com/dashboard/project/hysigyhfpyyydycxxpsm). Estado operacional: **`project_created_pending_preflight`**; ver [registro de produção](SUPABASE-PRODUCTION-REGISTRO.md).
