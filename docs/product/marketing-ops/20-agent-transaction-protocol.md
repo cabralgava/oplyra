@@ -2221,3 +2221,7 @@ Qual próximo passo foi sugerido?
 > **A linguagem natural explica intenção. O JSON transacional governa execução.**
 
 Isso permite que a Oplyra mantenha agentes flexíveis na interpretação e rígidos na integração, governança, auditoria e execução.
+
+## Idiomas e billing internacional — CR-034
+
+**Revisão documental CR-034, 28/10/2026; envelope e schemaVersion publicados preservados.** Locale/currency não são novas propriedades de raiz ou do bloco context. Idioma de entrega e dados de billing pertencem a inputs/outputs ou slices com schema específico versionado, ainda a publicar pela governança pós-Freeze. Valores financeiros carregam moeda e unidade; assinatura em minor units não se confunde com custo de IA em microUSD. Webhooks Stripe entram por adapter validado, mapping confiável de tenant/conta/ambiente e eventos internos registrados; idempotência, trace, autorização e audit são estruturais. Ver [fluxos Stripe](billing/STRIPE-FLOWS.md). Não adicionar action/event/error de billing implicitamente nem reutilizar revenue.recorded para mensalidade da plataforma.

@@ -1,7 +1,9 @@
 # Oplyra — Agent Governance
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-034)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## 1. Objetivo
@@ -136,3 +138,7 @@ O `execute` genérico do 00 não é quinto nível nem autorização implícita. 
 Duas pessoas (DP-12b, proposta): operações destrutivas/recuperação e exceções que ampliem gasto ou autorização exigem separação entre solicitante e autorizador conforme risco. Definir catálogo antes da capacidade entrar em operação. Aprovação expirada, revogada ou ligada a payload anterior é inválida.
 
 Limites e fallback são definidos em 13; franquias/medidores em 08. Um aceite humano não contorna restrição de tenant, fornecedor ou budget.
+
+## Idiomas e billing internacional — CR-034
+
+Nenhuma escolha de locale/currency aumenta autonomy ou permission. Operações financeiras da assinatura da plataforma exigem identidade/contrato de serviço, autorização, política/approval, idempotência e auditoria; não podem ser decididas pelo LLM. `operational_gate` continua determinístico sob policy-engine; Strategy & Quality não se autoaprova e quality pass não autoriza cobrança. Tradução que altera a peça executada exige nova versão/revisão/approval aplicável. Ver [ADR-0010](../../decisions/ADR-0010-i18n-pricing-billing-us.md).

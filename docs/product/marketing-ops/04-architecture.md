@@ -1,7 +1,9 @@
 # Oplyra — Architecture
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-034)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## 1. Direção
@@ -141,3 +143,7 @@ Medir:
 ## 12. Stack final
 
 Supabase PostgreSQL, Auth e Storage com RLS são obrigatórios por CLAUDE e ADR-0001; Stripe pela decisão de billing registrada em [ATUALIZACOES](ATUALIZACOES.md). A stack complementar de ADR-0002 e os destinos de ADR-0005 continuam propostas condicionadas. O 00 não é a única fonte de diretrizes: ver ATUALIZACOES.
+
+## Idiomas e billing internacional — CR-034
+
+Preservar domínio/casos de uso independentes de SDK. Política de preço e entitlement permanece interna; o adapter Stripe traduz locale/IDs/estados e trata conta US, webhooks e liquidação. UI não define valor nem concede direito. Preferências e Context Assembly resolvem apresentação e output por tarefa sem mudar contrato financeiro. Ingestão durável, serialização, reconciliação de efeito incerto e auditoria são especificadas como desenho proposto em [fluxos Stripe](billing/STRIPE-FLOWS.md); não são runtime implementado.

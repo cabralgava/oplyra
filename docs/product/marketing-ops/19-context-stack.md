@@ -2795,3 +2795,7 @@ Qual ação é segura e permitida?
 > **O agente não “sabe tudo”. Ele recebe o contexto correto, na versão correta, para o tenant correto, com a autoridade correta, para executar uma tarefa específica.**
 
 Essa regra é a fundação contextual da arquitetura multiagentes da Oplyra.
+
+## Idiomas e billing internacional — CR-034
+
+**Revisão documental CR-034, 28/10/2026; sem alteração de schemaVersion.** L1 identity.language/currency/timezone descreve a empresa e mantém provenance/versão. Não confundir com preferência da pessoa, uiLocale, outputLocale ou billingCurrency da assinatura Oplyra. O idioma da entrega deriva da tarefa/iniciativa/canal e da verdade de marca aplicável; o da UI não reescreve L1/L2. Idioma/país de checkout não é confirmação automática de Foundation. A promoção continua Learning Record → Context Update Candidate → Review/Approval → Context Promotion. Recorte contextual financeiro é mínimo e tenant-specific. [Spec i18n](i18n/I18N-SPEC.md) descreve campos candidatos; sua operação exige contratos específicos futuros, sem usar metadata aberta como comportamento crítico implícito.

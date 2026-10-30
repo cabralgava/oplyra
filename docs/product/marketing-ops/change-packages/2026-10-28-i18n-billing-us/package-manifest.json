@@ -1,0 +1,99 @@
+{
+  "documentType": "change_package_integrity_manifest",
+  "packageId": "CP-I18N-BILLING-US-2026-10-28",
+  "packageVersion": "1.0",
+  "date": "2026-10-28",
+  "isContractRegistryManifest": false,
+  "status": "documentation_prepared_implementation_proposed",
+  "hashAlgorithm": "sha256",
+  "exclusions": [
+    "package-manifest.json (self-reference)"
+  ],
+  "files": [
+    {
+      "path": "00-BASELINE-E-PRECEDENCIA.md",
+      "sizeBytes": 4518,
+      "sha256": "fbe7a727789fbd378339c0f41a578fed1aa5fcd8f2bfd49f58794c96ac89e141"
+    },
+    {
+      "path": "01-ADR-PROPOSED-i18n-billing-us.md",
+      "sizeBytes": 6395,
+      "sha256": "79d87988671c461d7f8e9d448d391dd1ae2dfcfecec0536d6bdfca26c2f09998"
+    },
+    {
+      "path": "02-CR-PROPOSED-i18n-billing-us.md",
+      "sizeBytes": 5784,
+      "sha256": "e8c09326a9c2115957a4f7001b4fc751fc0918edb6e291f22e05a009853dee28"
+    },
+    {
+      "path": "03-I18N-SPEC.md",
+      "sizeBytes": 8967,
+      "sha256": "d1acd91b8cb3d41622331458ffdce2b12ab5b5b89eab95847f9d0aa706bf9c3c"
+    },
+    {
+      "path": "04-PRICING-BILLING-SPEC.md",
+      "sizeBytes": 9781,
+      "sha256": "86cccefe6339e9c34c0b0f6574721bd72c9455dcf90f50d6989dfb8f01f1448e"
+    },
+    {
+      "path": "05-STRIPE-FLOWS.md",
+      "sizeBytes": 12891,
+      "sha256": "b604c47b3ee262b6fd5e40ac3bea6a263a6c8f072116b8dfaf26a1ef130ed6b9"
+    },
+    {
+      "path": "06-CONTRACTS-AND-IMPACT.md",
+      "sizeBytes": 10943,
+      "sha256": "947315ec7348eb019104d650ce857f79b7154cf091c83bb863010e41572985a0"
+    },
+    {
+      "path": "07-MIGRATION-ROLLOUT-ROLLBACK.md",
+      "sizeBytes": 7235,
+      "sha256": "eec07f4efdc1bdfff731c7aeaf4faf11b52a2f203f18ad434b096e1d72cdab33"
+    },
+    {
+      "path": "08-RISKS-ASSUMPTIONS-OPEN-ITEMS.md",
+      "sizeBytes": 8361,
+      "sha256": "713cb7010b3be836b91734541710d5a9d02b1b65ae520c55075b9daada36298f"
+    },
+    {
+      "path": "09-ACCEPTANCE-AND-TESTS.md",
+      "sizeBytes": 11441,
+      "sha256": "e7f83a35672b8d651511b850197e4d02fca64c6a0c7af29e01262ce5a26d1549"
+    },
+    {
+      "path": "10-CANONICAL-UPDATE-PLAN.md",
+      "sizeBytes": 7396,
+      "sha256": "8f17e10d3f42d046866191d637a4f8f345dd4d275ecaa8bcaf5545ed54e84994"
+    },
+    {
+      "path": "11-SOURCES.md",
+      "sizeBytes": 5014,
+      "sha256": "f40e1f5be849bfcdadbd0311cedbf65f21cd7a83c20dbf483bf3905c4d083209"
+    },
+    {
+      "path": "README.md",
+      "sizeBytes": 4294,
+      "sha256": "03cd8da2f51c69ea989509be047c330292e42f4d0ef960b155ec36f76cfc9271"
+    },
+    {
+      "path": "VALIDATION.md",
+      "sizeBytes": 3614,
+      "sha256": "e5a07983e02f0d04f19a7f0789844d2c724ef9f6689ef8039875a86200e63164"
+    },
+    {
+      "path": "package-validation.json",
+      "sizeBytes": 3179,
+      "sha256": "c7547512cdd15aa9ab3c749d98bf91866455e5811836996f1cf86c3edf3c2648"
+    },
+    {
+      "path": "pricing-catalog.proposed.json",
+      "sizeBytes": 2794,
+      "sha256": "f5f8fdd15c40a07fb7a6501f3d45bd1d522c0358b07aac8c457ba71735fdd68a"
+    },
+    {
+      "path": "source-audit.json",
+      "sizeBytes": 21689,
+      "sha256": "6041c55120994e148fc94112ccf138e756e3900340d5d90b086e4084313d6a55"
+    }
+  ]
+}

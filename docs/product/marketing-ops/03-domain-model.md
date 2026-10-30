@@ -1,7 +1,9 @@
 # Oplyra — Domain Model
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-034)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 **Status:** modelo conceitual inicial; refinar com DDD durante discovery
@@ -218,3 +220,7 @@ Consolidação para rastreabilidade desta revisão; não é transcrição das ve
 | agent-operations | Agentic Operations; seleção e custo em AI Routing & FinOps |
 
 Esses nomes históricos não criam contextos adicionais implicitamente. Contratos cruzam fronteiras por IDs/eventos, sem acesso direto aos agregados internos de outro contexto.
+
+## Idiomas e billing internacional — CR-034
+
+A mudança estende Identity & Tenancy e Subscription & Entitlements existentes, sem criar novo bounded context. Separar preferências da pessoa, idioma da entrega, idioma/moeda empresarial L1 e billingCurrency da assinatura Oplyra. PriceVersion e billing profile são conceitos propostos com identidade/versão próprias, ainda sem contrato operacional. Receita da plataforma, receita dos tenants e custo econômico de IA são modelos distintos. Ver [ADR-0010](../../decisions/ADR-0010-i18n-pricing-billing-us.md) e [pricing/billing](billing/PRICING-BILLING-SPEC.md).

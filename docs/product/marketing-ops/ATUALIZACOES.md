@@ -1,8 +1,8 @@
 # Atualizações documentais — Oplyra
 
 **Referência protegida:** [Documento de Transição v2.3, de 16/09/2026](00-documento-transicao.md), SHA-256 `59a2b9495d770f4fc621dc626369a86aed55d03e77d616c3f4ad5f69e9c78bfc`.
-**Última atualização:** 30/09/2026.
-**Escopo:** complemento documental. Registra decisões explícitas posteriores à referência. Não aprova implementação, cobrança ou publicação.
+**Última atualização:** 28/10/2026 (incorporação documental CR-034).
+**Escopo:** complemento documental. Registra decisões explícitas posteriores à referência e sua incorporação. Não comprova implementação, cobrança ou publicação.
 
 ## 1. Precedência
 
@@ -147,3 +147,15 @@ Não manter duas referências visuais concorrentes: o protótipo conceitual em t
 Substitui `oplyra.com.br` e `app.oplyra.com.br` (DEC-009) para novas especificações e configurações. As menções antigas na referência protegida permanecem como registro histórico e não prevalecem. Não se presume propriedade, registro ou redirecionamento dos domínios anteriores.
 
 Na implementação, usar configuração por ambiente para URLs públicas, links do site para o app, autenticação, recuperação de senha, URLs de retorno e origens permitidas. Desenvolvimento local continua com endereços locais; não apontar testes para produção por causa desta definição. O registro é documental: não comprova DNS, TLS, hospedagem ou publicação.
+
+## 10. Idiomas e operação comercial internacional — 28/10/2026
+
+**Aprovado pelo proprietário:** lançamento em `pt-BR` e `en-US`; preços fixos, explícitos e independentes em BRL e USD por plano, sem conversão cambial dinâmica para determinar preço. Valores e periodicidades ainda precisam ser definidos em DP-11a; os preços da assessoria e budgets de COGS não são preços do SaaS.
+
+A Oplyra LLC americana será a entidade vendedora. A conta Stripe americana da LLC será usada para billing, invoices e recibos comerciais, com liquidação bancária nos EUA; USD é a configuração de settlement proposta a verificar na conta. O fluxo planejado não inclui emissão de NFS-e brasileira. Isso não conclui inexistência de obrigações fiscais no Brasil ou nos EUA: entidade, operação, impostos e documentação exigem validação jurídica/contábil. Conversão financeira na liquidação não recalcula o preço contratado em BRL/USD.
+
+Locale da interface, idioma da entrega, moeda da assinatura, fuso e contexto empresarial são distintos. Preservam-se tenant isolation, provenance, entitlements configuráveis, idempotência, aprovação/política, auditoria e controles determinísticos. A mudança não habilita Growth nem amplia a autonomia dos agentes.
+
+A decisão está registrada na [ADR-0010](../../decisions/ADR-0010-i18n-pricing-billing-us.md) e a incorporação documental no [CR-034](contracts/changes/CR-034-i18n-pricing-billing-us-documentation.md). Specs de trabalho: [i18n](i18n/I18N-SPEC.md), [pricing/billing](billing/PRICING-BILLING-SPEC.md), [fluxos Stripe](billing/STRIPE-FLOWS.md) e [migração/rollback](billing/MIGRATION-ROLLOUT.md). Desenho técnico proposto e valores/condições pendentes mantêm seus status; DP-29/30/31 não foram aprovadas por associação.
+
+O Freeze v1 já emitido permanece marco obrigatório; a mudança segue governança pós-Freeze. Nenhum registry/schema, manifest histórico, runtime, cobrança ou deploy foi alterado por este adendo. A nova release contratual depende da validação integral do delta futuro. Ver [registro e evidência de incorporação](I18N-BILLING-US-INCORPORACAO.md).

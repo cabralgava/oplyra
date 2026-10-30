@@ -1,5 +1,21 @@
 # Estado do trabalho — Oplyra
 
+## Versionamento da documentação de idiomas e billing — 30/10/2026
+
+**Autorização:** pedido explícito do proprietário neste chat para commitar e registrar a entrega. Este checkpoint integra o commit local documental da ADR-0010 e do CR-034, com os 52 arquivos identificados no [registro de incorporação](../product/marketing-ops/I18N-BILLING-US-INCORPORACAO.md). Para identificar seu SHA, consultar o histórico deste arquivo e a mensagem `docs: register bilingual launch and US billing decision (CR-034)`; não inserir SHA autorreferente no conteúdo do próprio commit.
+
+**Validação:** conferência documental, JSON, links, escopo do diff e integridade das fontes protegidas. Testes de produto/Stripe e cross-validation completa não foram executados. Os 58 cenários permanecem especificação futura. Registries, schemas, fixtures, Freeze e manifests históricos permanecem preservados; alterações de scripts, CI e demais trabalhos ficam fora deste commit.
+
+**Limites:** commit local não é push, PR, merge, deploy, nova release contratual ou ativação de cobranças. Valores/condições comerciais e contratos específicos continuam pendentes conforme ADR-0010/CR-034. O checkpoint de 28/10 abaixo registra a gravação anterior ao versionamento.
+
+## Incorporação documental de idiomas e billing — 28/10/2026
+
+**Escopo autorizado:** atualizar e gravar a documentação do pacote preparado, por pedido explícito do proprietário no chat. **Resultado local:** ADR-0010, CR-034, specs de i18n/pricing/Stripe/migração e adendos nos documentos afetados; pacote original preservado como histórico. A [evidência e lista de arquivos](../product/marketing-ops/I18N-BILLING-US-INCORPORACAO.md) distinguem gravação local de integração/publicação.
+
+Diretrizes aprovadas: pt-BR/en-US, preços independentes BRL/USD, seller LLC/Stripe US, liquidação EUA e documentos comerciais sem NFS-e no fluxo planejado. Valores/condições, enquadramento jurídico/fiscal, conta/banco e detalhes técnicos pendentes mantêm seus status. Registries, schemas, fixtures, migrations, fonte protegida, Freeze e manifests históricos preservados. Não houve teste de produto/Stripe, cross-validation completa, nova release, commit/push/PR/merge ou deploy nesta incorporação. Alterações de terceiros não foram incorporadas ou desfeitas.
+
+**Próxima etapa:** resolver pendências comerciais e contratos específicos; antes de publicar release/implementar estruturas afetadas, cumprir compatibilidade, cross-validation e versionamento pós-Freeze. Os checkpoints anteriores abaixo permanecem históricos, sem reativação de runtime ou de mecanismos de entrega.
+
 Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivos reais e contra a autorização vigente ao retomar. Não substituir este registro por checkpoint de outro workspace.
 
 ## Consentimento inicial Codex pelo chat — 05/10/2026

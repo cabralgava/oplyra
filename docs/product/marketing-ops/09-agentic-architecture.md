@@ -1,7 +1,9 @@
 # Oplyra — Agentic Architecture
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-034)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## 1. Objetivo
@@ -137,3 +139,7 @@ Agent Run: [05 §9](05-data-model.md#9-agentic-operations). Registry/Router/Eval
 Scheduler materializa ocorrência única por tenant/schedule/horário, persiste antes de enfileirar e aplica política de capacidade de [08 §12](08-billing-entitlements.md#12-cadência-dos-check-ins--proposta-dp-30). Não gerar quinta chamada paga silenciosamente. Lease, fencing por tentativa, checkpoints e efeitos incertos são verificados em EXP-02. `waiting_human` pertence ao Workflow Run; Agent Run suspenso para aprovação usa `waiting_approval`.
 
 Alertas mínimos: budget esgotado, custo pendente de conciliação, taxa anômala de retries/escalonamento, modelo/provedor indisponível, dead-letter crescente e coleta atrasada. Thresholds e destino operacional são configuração de DP-15/DP-32; não habilitar alertas fictícios como observabilidade implementada.
+
+## Idiomas e billing internacional — CR-034
+
+O idioma de interface não escolhe o idioma da entrega nem altera entitlement ou budget. Context Assembly deve resolver output por tarefa/mercado/voz aprovada conforme [i18n](i18n/I18N-SPEC.md). Jobs financeiros futuros exigem contratos, ownership de serviço e execução determinística; não são atribuições novas do Orchestrator ou especialistas. Nenhum agente de billing é criado; autonomia e segregação permanecem intactas.

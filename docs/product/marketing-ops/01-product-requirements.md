@@ -1,7 +1,9 @@
 # Oplyra — Product Requirements
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-034)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 **Status:** baseline de produto derivado do Documento de Transição v2.3
@@ -173,3 +175,7 @@ Priorizar o núcleo do Performance:
 ## 10. Decisões pendentes
 
 Ver [registro de decisões](../../decisions/README.md) e [02](02-discovery.md); o posicionamento imobiliário em aberto no 00 foi substituído.
+
+## Idiomas e billing internacional — CR-034
+
+O lançamento inclui pt-BR/en-US nas superfícies do escopo efetivamente entregue. A escolha de idioma não altera moeda, preço ou entitlement. Cada plano terá valores independentes BRL/USD; a oferta real depende de valores e condições de DP-11a. Seller LLC americana, Stripe americano e documentos comerciais seguem [ATUALIZACOES §10](ATUALIZACOES.md#10-idiomas-e-operação-comercial-internacional--28102026). Ver [i18n](i18n/I18N-SPEC.md) e [billing](billing/PRICING-BILLING-SPEC.md). Performance continua primeiro; catálogo Growth não é autorização de lançamento.

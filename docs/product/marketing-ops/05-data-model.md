@@ -1,7 +1,9 @@
 # Oplyra — Data Model
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-034)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 **Status:** conceitual; não criar migrations antes da aprovação do discovery e DDD
@@ -26,7 +28,7 @@ Entidades conceituais:
 - roles;
 - permissions.
 
-Campos mínimos do tenant:
+Campos conceituais de referência do tenant; `currency` não define a moeda da assinatura Oplyra. A separação atualizada está no adendo CR-034 ao final deste documento:
 
 ```json
 {
@@ -215,3 +217,7 @@ Estado implementado: o Cost Ledger persistente existe **somente no Supabase loca
 - constraints de tenant isolation;
 - integridade de versões ativas;
 - índices temporais para métricas e ledger.
+
+## Idiomas e billing internacional — CR-034
+
+O JSON conceitual de Identity & Tenancy acima não é schema operacional. Na implementação local inspecionada, Tenant possui locale/timezone e status de identidade active/suspended; não há billingCurrency persistida. Não reinterpretar o exemplo `currency` como moeda da assinatura nem substituir status de identidade pelos estados Stripe. Propor entidades separadas de PriceVersion, Subscription/billingCurrency e mappings por tenant/conta/ambiente, com migrations futuras aditivas e contratos validados. Ver [modelo de billing](billing/PRICING-BILLING-SPEC.md) e [migração](billing/MIGRATION-ROLLOUT.md). Nenhuma coluna/schema é criada por este adendo.

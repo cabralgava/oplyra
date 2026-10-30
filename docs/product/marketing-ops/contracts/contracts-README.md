@@ -1750,3 +1750,7 @@ test
 ```
 
 antes de ser considerada pronta para implementação.
+
+## Idiomas e billing internacional — CR-034
+
+O [CR-034](changes/CR-034-i18n-pricing-billing-us-documentation.md) incorpora a decisão de i18n e billing da LLC e referências de trabalho. O Freeze v1 já existe; o estado pré-Freeze descrito nas seções originais é histórico. Não se reemite o Freeze. Nenhum registry/schema/fixture/manifest publicado é alterado nesta incorporação. Novos contratos de preço/checkout/assinatura e identidades de serviço precisam de ownership, versão, validação e testes; a [análise de impacto](../change-packages/2026-10-28-i18n-billing-us/06-CONTRACTS-AND-IMPACT.md) lista dependências. Antes de uma release contratual futura, executar cross-validation completa e emitir novo manifest sem sobrescrever o histórico. Hashes dos documentos de trabalho podem divergir de releases anteriores; não declarar checkout inteiro reproduzido apenas porque os registries permanecem iguais.

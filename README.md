@@ -178,3 +178,7 @@ A documentação fica em `docs/product/marketing-ops/`: requisitos, discovery, d
 | 6 — Escala | Conectores, parceiros, white-label, automação controlada e novos segmentos. |
 
 Permanecem abertas decisões sobre preços, excedentes, cobrança de pilotos, semântica e viabilidade dos limites, serviço humano, fornecedor de e-mail, modelos concretos e parâmetros após o EXP-05, adapters diretos adicionais, primeiro conector dedicado, stack complementar, política de dados para IA, suporte e SLAs. OpenRouter como gateway inicial não exclusivo, mercado SaaS B2B, Stripe, Supabase, greenfield, multi-tenancy e Performance primeiro não são escolhas em aberto. Consulte ATUALIZACOES para budgets e pendências econômicas.
+
+## Idiomas e billing internacional — CR-034
+
+Lançamento pt-BR/en-US e preços independentes BRL/USD, com Oplyra LLC americana como seller, Stripe americano para invoices/recibos e liquidação bancária EUA, estão registrados na [ADR-0010](docs/decisions/ADR-0010-i18n-pricing-billing-us.md). O fluxo planejado não inclui NFS-e brasileira e depende de validação jurídica/contábil. Valores e condições continuam pendentes. A [incorporação documental CR-034](docs/product/marketing-ops/I18N-BILLING-US-INCORPORACAO.md) atualiza as fontes de trabalho e preserva Freeze/registries, sem implementar billing ou ativar cobranças.

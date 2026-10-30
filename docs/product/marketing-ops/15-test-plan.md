@@ -244,3 +244,7 @@ Detalhada em [16](16-environments-release.md) §7. Usa **duas empresas internas*
 - Qualidade real das copies, custo real e desempenho: dependem do I-02/I-05.
 - Comportamento real das APIs Meta e Google com contas de clientes: depende de acessos (T-B) e autorização.
 - Aceitação por usuários: depende da trilha T-A.
+
+## Idiomas e billing internacional — CR-034
+
+Acrescentada a [matriz de 58 cenários CP-01 a CP-58](change-packages/2026-10-28-i18n-billing-us/09-ACCEPTANCE-AND-TESTS.md), relacionada a TST-03/04/06/07/10–13/23/26/28, sem renumerar TST existentes. Cobrir os quatro pares pt-BR/en-US × BRL/USD, dois tenants, idiomas/conteúdo independentes, preço manipulado, isolamento de Portal, pagamentos/eventos duplicados ou fora de ordem, efeito incerto, lifecycle, reconciliação e rollback. São casos especificados, não testes executados. A evidência da incorporação é estritamente documental no [registro](I18N-BILLING-US-INCORPORACAO.md); não comprova RLS, Stripe ou runtime.

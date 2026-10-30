@@ -1,0 +1,413 @@
+{
+  "change": "CR-034",
+  "date": "2026-10-28",
+  "status": "saved_and_verified_locally",
+  "baseHead": "6d0dfe486292e05fade19a93b650bb54c1bde732",
+  "fullCrossValidationExecuted": false,
+  "runtimeTestsExecuted": false,
+  "checks": [
+    {
+      "check": "scope_documentation_only",
+      "passed": true,
+      "detail": {
+        "existing": 26,
+        "new": 26
+      }
+    },
+    {
+      "check": "introduced_markdown_targets",
+      "passed": true,
+      "detail": {
+        "checked": 107,
+        "missing": []
+      }
+    },
+    {
+      "check": "introduced_markdown_anchors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "check": "protected_files_match_before_write",
+      "passed": true,
+      "detail": 282
+    },
+    {
+      "check": "third_party_files_match_before_write",
+      "passed": true,
+      "detail": 4
+    },
+    {
+      "check": "historical_package_byte_identical",
+      "passed": true,
+      "detail": 18
+    },
+    {
+      "check": "targeted_handoff_action_bindings",
+      "passed": true,
+      "detail": {
+        "bindings": 364,
+        "issues": []
+      }
+    },
+    {
+      "check": "targeted_side_effect_idempotency",
+      "passed": true
+    },
+    {
+      "check": "canonical_adr_path_assigned",
+      "passed": true
+    },
+    {
+      "check": "price_worksheet_remains_unsellable",
+      "passed": true
+    },
+    {
+      "check": "target_files_read_back_after_save",
+      "passed": true,
+      "detail": 52
+    },
+    {
+      "check": "protected_hashes_preserved_after_save",
+      "passed": true,
+      "detail": 282
+    },
+    {
+      "check": "third_party_hashes_preserved_after_save",
+      "passed": true,
+      "detail": 4
+    },
+    {
+      "check": "git_diff_whitespace_after_header_correction",
+      "passed": true,
+      "detail": {
+        "correctedHeaderFiles": 11,
+        "command": "git diff --check",
+        "exitCode": 0
+      }
+    }
+  ],
+  "checksRun": 14,
+  "checksPassed": 14,
+  "checksFailed": 0,
+  "existingUnresolvedLinksNotIntroduced": [],
+  "registriesUnchanged": true,
+  "protectedFileCount": 282,
+  "thirdPartyFileCount": 4,
+  "files": [
+    {
+      "path": "README.md",
+      "beforeSha256": "bddbebc6eb89be2fee5eaec135a5346f4249b46965ab9767553400a5545da81f",
+      "afterSha256": "97a739618df082a9a5ff860ea16886dff30ea469778d4aa53d9c870c6366cc8c"
+    },
+    {
+      "path": "docs/decisions/ADR-0007-entitlements-e-billing.md",
+      "beforeSha256": "e5a2ad1512252eb536e1665b859021c55c1ecd5f47db35768dbd55dcf1d1efc4",
+      "afterSha256": "755fbbb0ce5dee751693370c7829cbfa77bc923c65ac255765b38a3a8b800372"
+    },
+    {
+      "path": "docs/decisions/ADR-0010-i18n-pricing-billing-us.md",
+      "beforeSha256": null,
+      "afterSha256": "40e44455ce3d974e01faf0a348abd3d441bd0ad91b7e2129be2e419b700aa460"
+    },
+    {
+      "path": "docs/decisions/README.md",
+      "beforeSha256": "be62d88026f6819f04bfa876e8e636e70f351ad130239d59f1928992a657175c",
+      "afterSha256": "7455db784c077ba2a978316f8037158387901f6b539515328f5950a0a31aafa0"
+    },
+    {
+      "path": "docs/harness/ESTADO.md",
+      "beforeSha256": "8e8ef436860617aa2665d1f30a84610181c9e8c5fb0f55421af767c6e10def29",
+      "afterSha256": "756a72501271a0306c166840797bd8c78d1d4097d59550f9f40f120af1342937"
+    },
+    {
+      "path": "docs/product/marketing-ops/01-product-requirements.md",
+      "beforeSha256": "7042ef3602822f0051f0f0493ae7fb5e71a406220e5f100c09d841071e561e7d",
+      "afterSha256": "3ba6fa19d1f7e14741a0102f274da6a4705075aba7eabd7a28288686e2d45409"
+    },
+    {
+      "path": "docs/product/marketing-ops/03-domain-model.md",
+      "beforeSha256": "596b169cbd0d624b18d8dd5b0e01b8fcb0a5d2716944d36d12c4fbc7054d6ddc",
+      "afterSha256": "71bfb1234b62785a8c58b299a53de60aba000cfdc6b7682689e6466dd1fa2bea"
+    },
+    {
+      "path": "docs/product/marketing-ops/04-architecture.md",
+      "beforeSha256": "91396d17436b693957add3af2431660cb7b320eff40849b1b68f5224f0774422",
+      "afterSha256": "fbf20261486a47145c0fdaa1a0e2e6b49423bc87273402ebcdfe41287dbaa3e7"
+    },
+    {
+      "path": "docs/product/marketing-ops/05-data-model.md",
+      "beforeSha256": "220bc7dd1e6b41784e9f80791a8b670dd7df717334860f01aac69b7d868b9f1d",
+      "afterSha256": "5909f608df81148316a727ae2c0461a81747c4179c471a54a8f6216272856927"
+    },
+    {
+      "path": "docs/product/marketing-ops/06-integrations.md",
+      "beforeSha256": "c7230759ad2d00bc5d79a9964cb6d69ec9a4efd780396665b145ea6c8944617d",
+      "afterSha256": "e6669069e14d2e32b082d5614aeb60969fe89ed395bb8031a7f44e4482f3c517"
+    },
+    {
+      "path": "docs/product/marketing-ops/07-security-lgpd.md",
+      "beforeSha256": "ab264b255897db2a4a89d86cf5c8476c7dfa279dbbf0f1de47180069ee7496f3",
+      "afterSha256": "f9c160522d0037dbeba23873e6258dbba6a9198a3b30ea6558a574db93a8cc39"
+    },
+    {
+      "path": "docs/product/marketing-ops/08-billing-entitlements.md",
+      "beforeSha256": "70382afaec8be6067cf02a7406457f6e5fc5be54f707e0d6b52aed56a0295781",
+      "afterSha256": "b50e4672c4ab6fce9335e7cc8d0651d7ea616d9ab390ef2c9517b0f9244c200a"
+    },
+    {
+      "path": "docs/product/marketing-ops/09-agentic-architecture.md",
+      "beforeSha256": "092d8a6d6b415e85b4144874557345567fc04e3505b09437b64b2c754737b3d1",
+      "afterSha256": "f1c5bb7cb853086f34203436839c314133a3db2ec4160e3aa82af792dae05029"
+    },
+    {
+      "path": "docs/product/marketing-ops/10-agent-catalog.md",
+      "beforeSha256": "5d7a77dc158f5711c5ba91db28905530b0f66084e07111334cd08e0b02a65455",
+      "afterSha256": "3e66e17fc96f65e4e8f5f545778f6f6e85b1cae5da39d48b9bdc8fa74ee325b6"
+    },
+    {
+      "path": "docs/product/marketing-ops/11-agent-governance.md",
+      "beforeSha256": "f6bee501095990add2aaf86d99cab7c7a2ccb5ca98940b5fda3b95ac4db84e03",
+      "afterSha256": "2279f4abfe8c9cfe47ba2ae16d8fe27b2995589574413a9d5fcd617420636108"
+    },
+    {
+      "path": "docs/product/marketing-ops/12-roadmap.md",
+      "beforeSha256": "d5a6f6bbe28ef1a21cfdd6dfe17ddecf8306ba66abe2a6718df8782dd1741c50",
+      "afterSha256": "f599532b3cfc3c88c52963be5587affc642088f4a889bc51a90ea16f16fc2e56"
+    },
+    {
+      "path": "docs/product/marketing-ops/13-ai-model-routing-finops.md",
+      "beforeSha256": "8469f16db494ec9a9f97def2a6c923815aac7c00a925893dc2e0458c534529db",
+      "afterSha256": "54eebf9fd77f872bc281e0933b9fd6db5f83a1352316d5ecb83f6fc526c33ceb"
+    },
+    {
+      "path": "docs/product/marketing-ops/14-ux-flows.md",
+      "beforeSha256": "d6a63b1aa685c61520f60193aa3001ff71d619e0501f4fc8ef135d13530f31c0",
+      "afterSha256": "9a92abcf09172d09b3d7dcb03707528f7339274364e2b5f676ca080252060302"
+    },
+    {
+      "path": "docs/product/marketing-ops/15-test-plan.md",
+      "beforeSha256": "15d560ecd864d52e186c92ba23b849b7d3631bc6b245b2073c7f24b18aacce5f",
+      "afterSha256": "ed244ee0968888953cbbbebb855c4cd0e2ae86d3e1699b0f99dd55a15be1d959"
+    },
+    {
+      "path": "docs/product/marketing-ops/16-environments-release.md",
+      "beforeSha256": "1f836bf208325cdd3366ebb3a98de30777160113747838937942b2e8e6032f77",
+      "afterSha256": "4e9df925c3907ef76c87daffd70bb0c426b4387de585e425213c0ae80f0eed3d"
+    },
+    {
+      "path": "docs/product/marketing-ops/17-risks-costs.md",
+      "beforeSha256": "884768fade50ad4eec1922489620e6ab512ed1366968c123d163607fe1508f48",
+      "afterSha256": "9944007ceb4598dd4e725dad1b8086abf4799edd1a7ae4543f63669cae5f5d0b"
+    },
+    {
+      "path": "docs/product/marketing-ops/19-context-stack.md",
+      "beforeSha256": "2a093521cdbf6bf3bd1bea296400a16557f429fb5f0834cafc0a99aec8980af7",
+      "afterSha256": "d7851fa38e4caf4bc70d03b1bfdeebea391e20dc5e3e068de8ade1a2c6d36e0d"
+    },
+    {
+      "path": "docs/product/marketing-ops/20-agent-transaction-protocol.md",
+      "beforeSha256": "90cde5f41044178cbbccf78545dcb1f6c2cf04a75e5a2634bdfafb88490b7266",
+      "afterSha256": "a54dc67afee826d086e40315b71108cd9f970a739e72125754ace000281417ff"
+    },
+    {
+      "path": "docs/product/marketing-ops/ATUALIZACOES.md",
+      "beforeSha256": "ddaaa87c1d860346e4df7d965ca164cb40e2f13fd11376d1ba2a689f1f315613",
+      "afterSha256": "2f60675a69b6c1045a1e071b7f407c1243c53fe23df112bc8ec31706e745cf43"
+    },
+    {
+      "path": "docs/product/marketing-ops/I18N-BILLING-US-INCORPORACAO.md",
+      "beforeSha256": null,
+      "afterSha256": "b3d87d7b084463a30c500ea0825f11f6695eb63ad6ba4bc7e9094beb16bb211a"
+    },
+    {
+      "path": "docs/product/marketing-ops/README.md",
+      "beforeSha256": "00b247ac083bf489d081aa1127548c60173f91b7ee37f7624b48272df4528931",
+      "afterSha256": "dac6f9cdcddfea68c0eaf302957082f2b3561c627d86a2c6f32037d4c3571b43"
+    },
+    {
+      "path": "docs/product/marketing-ops/agents/README.md",
+      "beforeSha256": "22be72e4fe84e18ab75184081e2ef94bf5c355a194792e13225715e41bc39c2a",
+      "afterSha256": "e0fc9b2fc6e64facb549088115cc9859b8dc96c413359686a0f2ba21d6b81dce"
+    },
+    {
+      "path": "docs/product/marketing-ops/billing/MIGRATION-ROLLOUT.md",
+      "beforeSha256": null,
+      "afterSha256": "54c1d20a42c500bd4021cb29602d86084c7eaa50700a219840fab1b23b5080d1"
+    },
+    {
+      "path": "docs/product/marketing-ops/billing/PRICING-BILLING-SPEC.md",
+      "beforeSha256": null,
+      "afterSha256": "7ac934da1cf4350a347be583852d688e046363729a01fb42dcf1fcb13e7039c6"
+    },
+    {
+      "path": "docs/product/marketing-ops/billing/STRIPE-FLOWS.md",
+      "beforeSha256": null,
+      "afterSha256": "fa55391023cfaffbc67c5f73f163908cec65275a0264bc083b93605559e99214"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/00-BASELINE-E-PRECEDENCIA.md",
+      "beforeSha256": null,
+      "afterSha256": "fbe7a727789fbd378339c0f41a578fed1aa5fcd8f2bfd49f58794c96ac89e141"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/01-ADR-PROPOSED-i18n-billing-us.md",
+      "beforeSha256": null,
+      "afterSha256": "79d87988671c461d7f8e9d448d391dd1ae2dfcfecec0536d6bdfca26c2f09998"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/02-CR-PROPOSED-i18n-billing-us.md",
+      "beforeSha256": null,
+      "afterSha256": "e8c09326a9c2115957a4f7001b4fc751fc0918edb6e291f22e05a009853dee28"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/03-I18N-SPEC.md",
+      "beforeSha256": null,
+      "afterSha256": "d1acd91b8cb3d41622331458ffdce2b12ab5b5b89eab95847f9d0aa706bf9c3c"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/04-PRICING-BILLING-SPEC.md",
+      "beforeSha256": null,
+      "afterSha256": "86cccefe6339e9c34c0b0f6574721bd72c9455dcf90f50d6989dfb8f01f1448e"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/05-STRIPE-FLOWS.md",
+      "beforeSha256": null,
+      "afterSha256": "b604c47b3ee262b6fd5e40ac3bea6a263a6c8f072116b8dfaf26a1ef130ed6b9"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/06-CONTRACTS-AND-IMPACT.md",
+      "beforeSha256": null,
+      "afterSha256": "947315ec7348eb019104d650ce857f79b7154cf091c83bb863010e41572985a0"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/07-MIGRATION-ROLLOUT-ROLLBACK.md",
+      "beforeSha256": null,
+      "afterSha256": "eec07f4efdc1bdfff731c7aeaf4faf11b52a2f203f18ad434b096e1d72cdab33"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/08-RISKS-ASSUMPTIONS-OPEN-ITEMS.md",
+      "beforeSha256": null,
+      "afterSha256": "713cb7010b3be836b91734541710d5a9d02b1b65ae520c55075b9daada36298f"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/09-ACCEPTANCE-AND-TESTS.md",
+      "beforeSha256": null,
+      "afterSha256": "e7f83a35672b8d651511b850197e4d02fca64c6a0c7af29e01262ce5a26d1549"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/10-CANONICAL-UPDATE-PLAN.md",
+      "beforeSha256": null,
+      "afterSha256": "8f17e10d3f42d046866191d637a4f8f345dd4d275ecaa8bcaf5545ed54e84994"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/11-SOURCES.md",
+      "beforeSha256": null,
+      "afterSha256": "f40e1f5be849bfcdadbd0311cedbf65f21cd7a83c20dbf483bf3905c4d083209"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/README.md",
+      "beforeSha256": null,
+      "afterSha256": "03cd8da2f51c69ea989509be047c330292e42f4d0ef960b155ec36f76cfc9271"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/VALIDATION.md",
+      "beforeSha256": null,
+      "afterSha256": "e5a07983e02f0d04f19a7f0789844d2c724ef9f6689ef8039875a86200e63164"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/package-manifest.json",
+      "beforeSha256": null,
+      "afterSha256": "9016a69a5ba0b2f2e5637d887a70985e741ae659e8fd30fd8cc6f56234cc811b"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/package-validation.json",
+      "beforeSha256": null,
+      "afterSha256": "c7547512cdd15aa9ab3c749d98bf91866455e5811836996f1cf86c3edf3c2648"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/pricing-catalog.proposed.json",
+      "beforeSha256": null,
+      "afterSha256": "f5f8fdd15c40a07fb7a6501f3d45bd1d522c0358b07aac8c457ba71735fdd68a"
+    },
+    {
+      "path": "docs/product/marketing-ops/change-packages/2026-10-28-i18n-billing-us/source-audit.json",
+      "beforeSha256": null,
+      "afterSha256": "6041c55120994e148fc94112ccf138e756e3900340d5d90b086e4084313d6a55"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-034-i18n-pricing-billing-us-documentation.md",
+      "beforeSha256": null,
+      "afterSha256": "d369fe9422053cf4e055ae2d9ae0dd0c503da03dae2ec45d3676abe0218e2475"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contracts-README.md",
+      "beforeSha256": "29b9472072c183c297ed4d21971f8800a03f91f4526a7e8d21ce35bcadf69671",
+      "afterSha256": "8ef51aaf4f5487316770d09cafa417d8884ec17f7f367c29597cef2af8189050"
+    },
+    {
+      "path": "docs/product/marketing-ops/i18n/I18N-SPEC.md",
+      "beforeSha256": null,
+      "afterSha256": "7de1341639d6aa044d2b481f2cbe41667eca9cf4b1509237036e552d5d297287"
+    }
+  ],
+  "targetRepository": "/Users/cmii/Documents/Projetos/Oplyra",
+  "versioningValidation": {
+    "date": "2026-10-30",
+    "authorization": "explicit owner instruction in this chat to commit and record documentation",
+    "scope": "local_commit_of_52_documentation_files",
+    "status": "validated_for_local_commit",
+    "baseHead": "6d0dfe486292e05fade19a93b650bb54c1bde732",
+    "checks": [
+      {
+        "check": "markdown_targets",
+        "passed": true,
+        "detail": {
+          "checked": 107,
+          "missing": []
+        }
+      },
+      {
+        "check": "protected_file_hashes",
+        "passed": true,
+        "detail": 282
+      },
+      {
+        "check": "historical_package_manifest",
+        "passed": true,
+        "detail": 17
+      },
+      {
+        "check": "json_parse",
+        "passed": true
+      },
+      {
+        "check": "scope_documentation_only",
+        "passed": true
+      },
+      {
+        "check": "clean_initial_index",
+        "passed": true
+      },
+      {
+        "check": "no_merge_or_rebase",
+        "passed": true
+      },
+      {
+        "check": "scoped_git_diff_check",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "check": "candidate_headers_whitespace",
+        "passed": true
+      }
+    ],
+    "checksPassed": 9,
+    "checksFailed": 0,
+    "unrelatedChangesExcluded": 28,
+    "runtimeTestsExecuted": false,
+    "fullCrossValidationExecuted": false,
+    "commitEvidence": "Resolve the commit SHA from Git history of I18N-BILLING-US-INCORPORACAO.md; this JSON records pre-commit checks, not the resulting SHA."
+  }
+}
