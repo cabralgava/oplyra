@@ -15,11 +15,19 @@ import os from "node:os";
 import path from "node:path";
 
 import {
-  AUTHORIZED_BY, BASE_REF, CEILINGS, MAX_PATHS, OWNER_BUDGETS, OWNER_CEILINGS, REPOSITORY, SHA_PATTERN, RecordError, buildRecord, pathAllowedByRecord, sha256File, validatePaths, validateRecord,
+  AUTHORIZED_BY, BASE_REF, CEILINGS, MAX_PATHS, OWNER_BUDGETS, OWNER_CEILINGS, PROGRESS_DIR, REPOSITORY, SHA_PATTERN, RecordError, buildRecord, pathAllowedByRecord, progressFileOf, sha256File, validatePaths, validateRecord,
 } from "./claude-delivery-record.mjs";
-import { RISK, classifyChange } from "./claude-risk.mjs";
+import { RISK, classifyChange, classifyPath } from "./claude-risk.mjs";
+import { STRUCTURAL, STRUCTURAL_REASONS, StructuralError, structuralFiles, validateStructuralScope } from "./claude-structural.mjs";
+import { SCOPE_REF_PATTERN } from "./claude-delivery-record.mjs";
 
-export const STANDING_SCHEMA = "oplyra-standing-authorization/1";
+/**
+ * Versão 2 (29/10/2026): `scope.riskClasses` ["routine"] ou ["routine","structural"] e `structural.scopes[]` com os incrementos cujo escopo
+ * estrutural o proprietário aprovou UMA vez (`scopeRef` + documento aprovado com `sha256`). A versão 1 continua aceita (só rotina).
+ */
+export const STANDING_SCHEMA = "oplyra-standing-authorization/2";
+export const STANDING_SCHEMA_V1 = "oplyra-standing-authorization/1";
+export const STANDING_MAX_STRUCTURAL_SCOPES = 20;
 export const STANDING_PHRASE = "AUTORIZAR-DESENVOLVIMENTO-CONTINUO";
 export const REVOKE_PHRASE = "REVOGAR-DESENVOLVIMENTO-CONTINUO";
 export const STANDING_MAX_DAYS = 30;
@@ -57,18 +65,41 @@ export const standingFile = (dir) => path.join(dir, "authorization.json");
 export const revokedFile = (dir) => path.join(dir, "REVOKED");
 export const defaultKillFile = (home = os.homedir()) => path.join(home, ".oplyra", "KILL-DELIVERY");
 
-const KEYS = ["schema", "repository", "baseRef", "scope", "limits", "missionBudgets", "issuedAt", "expiresAt", "authorizedBy", "confirmation"];
+const KEYS_V1 = ["schema", "repository", "baseRef", "scope", "limits", "missionBudgets", "issuedAt", "expiresAt", "authorizedBy", "confirmation"];
+const KEYS_V2 = [...KEYS_V1, "structural"];
 
 const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
 const posInt = (n, max) => Number.isInteger(n) && n >= 1 && n <= max;
+const SHA256 = /^[0-9a-f]{64}$/;
+const relDoc = (p) => typeof p === "string" && !!p && !p.startsWith("/") && !p.includes("\\") && path.posix.normalize(p) === p && !p.split("/").includes("..");
 
-/** Valida e devolve o registro. Lança StandingError. */
+/** `structural` da versão 2: `{ scopes: [{ scopeRef, approvedDocument: { path, sha256 } }] }`, sem duplicatas; vazio sem a classe `structural`. */
+function validateStructuralAuthorization(st, withClass) {
+  if (!isObj(st) || Object.keys(st).length !== 1 || !Array.isArray(st.scopes)) fail("ST-INVALID", "structural");
+  if (st.scopes.length > STANDING_MAX_STRUCTURAL_SCOPES || (withClass ? !st.scopes.length : st.scopes.length)) fail("ST-INVALID", "structural.scopes");
+  const refs = new Set();
+  for (const e of st.scopes) {
+    if (!isObj(e) || Object.keys(e).sort().join(",") !== "approvedDocument,scopeRef" || typeof e.scopeRef !== "string" || !SCOPE_REF_PATTERN.test(e.scopeRef)) fail("ST-INVALID", "scopeRef");
+    const d = e.approvedDocument;
+    if (!isObj(d) || Object.keys(d).sort().join(",") !== "path,sha256" || !relDoc(d.path) || typeof d.sha256 !== "string" || !SHA256.test(d.sha256)) fail("ST-INVALID", "approvedDocument");
+    if (refs.has(e.scopeRef)) fail("ST-INVALID", "scopeRef-duplicado");
+    refs.add(e.scopeRef);
+  }
+}
+
+/** Valida e devolve o registro (versão 1 ou 2). Lança StandingError. */
 export function validateStanding(s, { now = new Date() } = {}) {
-  if (!isObj(s) || Object.keys(s).some((k) => !KEYS.includes(k)) || KEYS.some((k) => !(k in s))) fail("ST-INVALID");
-  if (s.schema !== STANDING_SCHEMA || s.repository !== REPOSITORY || s.baseRef !== BASE_REF || s.authorizedBy !== AUTHORIZED_BY) fail("ST-INVALID");
+  if (!isObj(s) || ![STANDING_SCHEMA, STANDING_SCHEMA_V1].includes(s.schema)) fail("ST-INVALID");
+  const v2 = s.schema === STANDING_SCHEMA;
+  const KEYS = v2 ? KEYS_V2 : KEYS_V1;
+  if (Object.keys(s).some((k) => !KEYS.includes(k)) || KEYS.some((k) => !(k in s))) fail("ST-INVALID");
+  if (s.repository !== REPOSITORY || s.baseRef !== BASE_REF || s.authorizedBy !== AUTHORIZED_BY) fail("ST-INVALID");
   if (typeof s.confirmation !== "string" || !s.confirmation) fail("ST-INVALID");
   if (!isObj(s.scope) || Object.keys(s.scope).length !== 2 || !Array.isArray(s.scope.paths) || !Array.isArray(s.scope.riskClasses)) fail("ST-INVALID");
-  if (s.scope.riskClasses.length !== 1 || s.scope.riskClasses[0] !== RISK.routine) fail("ST-INVALID");
+  const classes = s.scope.riskClasses.join(",");
+  const withStructural = classes === `${RISK.routine},${STRUCTURAL}`;
+  if (classes !== RISK.routine && !(v2 && withStructural)) fail("ST-INVALID", "riskClasses");
+  if (v2) validateStructuralAuthorization(s.structural, withStructural);
   let normalized;
   try {
     normalized = validatePaths(s.scope.paths, undefined);
@@ -100,11 +131,13 @@ export function buildStanding(input, { now = new Date() } = {}) {
   if (!Number.isInteger(days) || days < 1 || days > STANDING_MAX_DAYS) fail("ST-INVALID");
   const missionBudgets = { ...CEILINGS, ...(input.missionBudgets ?? {}) };
   for (const k of OWNER_BUDGETS) if (missionBudgets[k] === undefined) missionBudgets[k] = OWNER_ALL_DEFAULTS[k];
+  const scopes = input.structuralScopes ?? [];
   const standing = {
     schema: STANDING_SCHEMA,
     repository: REPOSITORY,
     baseRef: BASE_REF,
-    scope: { paths: validatePathsOrFail(input.paths), riskClasses: [RISK.routine] },
+    scope: { paths: validatePathsOrFail(input.paths), riskClasses: scopes.length ? [RISK.routine, STRUCTURAL] : [RISK.routine] },
+    structural: { scopes },
     limits: { ...STANDING_DEFAULTS, ...(input.limits ?? {}) },
     missionBudgets,
     issuedAt: now.toISOString(),
@@ -197,10 +230,20 @@ function slugOf(title) {
   return words.length ? words.join("-").slice(0, 40).replace(/-+$/, "") : "missao";
 }
 
-/** Valida uma missão do backlog (esquema fechado). */
+/**
+ * Valida uma missão do backlog (esquema fechado). `dependsOn` continua sendo dependência ENTRE missões (`ms-NNN`). Campos opcionais:
+ *  - `scopeRef`: escopo estrutural aprovado (só vale se constar da autorização contínua e existir em main);
+ *  - `requirementsRef`: `{ document, version, sha256 }`, vínculo versionado a um documento de requisitos em main (ver requirementsProblem).
+ */
 export function validateMission(m) {
   const keys = ["id", "type", "title", "goal", "paths", "dependsOn", "acceptance"];
-  if (!isObj(m) || Object.keys(m).some((k) => !keys.includes(k)) || keys.some((k) => !(k in m))) fail("ST-MISSION", "campos");
+  const optional = ["scopeRef", "requirementsRef"];
+  if (!isObj(m) || Object.keys(m).some((k) => !keys.includes(k) && !optional.includes(k)) || keys.some((k) => !(k in m))) fail("ST-MISSION", "campos");
+  if ("scopeRef" in m && (typeof m.scopeRef !== "string" || !SCOPE_REF_PATTERN.test(m.scopeRef))) fail("ST-MISSION", "scopeRef");
+  if ("requirementsRef" in m) {
+    const r = m.requirementsRef;
+    if (!isObj(r) || Object.keys(r).sort().join(",") !== "document,sha256,version" || !relDoc(r.document) || typeof r.version !== "string" || !/^[A-Za-z0-9._-]{1,40}$/.test(r.version) || typeof r.sha256 !== "string" || !SHA256.test(r.sha256)) fail("ST-MISSION", "requirementsRef");
+  }
   if (typeof m.id !== "string" || !/^ms-[0-9]{3,4}$/.test(m.id)) fail("ST-MISSION", "id");
   if (!MISSION_TYPES.includes(m.type)) fail("ST-MISSION", "type");
   if (typeof m.title !== "string" || m.title.trim().length < 5 || m.title.length > 120 || /[\u0000-\u001f]/.test(m.title)) fail("ST-MISSION", "title");
@@ -216,7 +259,25 @@ export function validateMission(m) {
  * escopo (ST-SCOPE) ou seja de risco elevado (ST-RISK). A validade é a menor entre 1 dia e a da autorização. `confirmation` liga o
  * registro ao hash da autorização, e o wrapper só reconhece a habilitação contínua se esse vínculo e a autorização forem válidos.
  */
-export function deriveMissionRecord({ standing, standingSha256, mission, baseSha, branchSuffix, now = new Date() }) {
+/**
+ * Escopo estrutural autorizado para a missão: a missão DECLARA `scopeRef`, a autorização contínua (v2, classe `structural`) o lista, e o
+ * escopo lido do commit base (`structuralScope`, nunca do head) é válido, tem o mesmo id e o mesmo documento aprovado (caminho e sha256).
+ * Devolve o escopo ou lança ST-SCOPE.
+ */
+function authorizedStructuralScope(standing, mission, structuralScope) {
+  const entry = standing.schema === STANDING_SCHEMA && standing.scope.riskClasses.includes(STRUCTURAL) ? standing.structural.scopes.find((e) => e.scopeRef === mission.scopeRef) : undefined;
+  if (!entry) fail("ST-SCOPE", "scopeRef-nao-autorizado");
+  try {
+    validateStructuralScope(structuralScope);
+  } catch (e) {
+    if (e instanceof StructuralError) fail("ST-SCOPE", "escopo-estrutural-invalido");
+    throw e;
+  }
+  if (structuralScope.id !== mission.scopeRef || structuralScope.approvedDocument.path !== entry.approvedDocument.path || structuralScope.approvedDocument.sha256 !== entry.approvedDocument.sha256) fail("ST-SCOPE", "escopo-estrutural-divergente");
+  return structuralScope;
+}
+
+export function deriveMissionRecord({ standing, standingSha256, mission, baseSha, branchSuffix, structuralScope, now = new Date() }) {
   validateMission(mission);
   if (typeof baseSha !== "string" || !SHA_PATTERN.test(baseSha)) fail("ST-MISSION", "baseSha");
   let paths;
@@ -227,15 +288,32 @@ export function deriveMissionRecord({ standing, standingSha256, mission, baseSha
     throw e;
   }
   const scope = { paths: standing.scope.paths };
+  const structural = mission.scopeRef === undefined ? null : authorizedStructuralScope(standing, mission, structuralScope);
+  const allowedStructural = new Set(structural ? structuralFiles(structural) : []);
+  // o progresso operacional da missão é SEMPRE o arquivo exato dela; o de outra missão (ou o diretório) nunca entra, nem com escopo amplo
+  const progress = progressFileOf(mission.id);
+  const routinePaths = [];
   for (const p of paths) {
+    if (p.toLowerCase().startsWith(PROGRESS_DIR) || p.toLowerCase() === PROGRESS_DIR.replace(/\/$/, "")) {
+      if (p !== progress) fail("ST-SCOPE", p);
+      continue;
+    }
+    // arquivo estrutural: só um ARQUIVO listado no escopo aprovado e de motivo banco/dependências; nunca diretório nem outro motivo
+    const byPath = classifyPath(p.replace(/\/$/, ""));
+    if (byPath.risk !== RISK.routine) {
+      if (!structural || p.endsWith("/") || !STRUCTURAL_REASONS.includes(byPath.reason) || !allowedStructural.has(p)) fail("ST-RISK", p);
+      continue;
+    }
     // um prefixo de diretório da missão tem de estar contido num item do escopo; um arquivo, coberto por ele
     const covered = scope.paths.some((allowed) => (allowed.endsWith("/") ? p.startsWith(allowed) : p === allowed));
     if (!covered) fail("ST-SCOPE", p);
+    routinePaths.push(p);
   }
-  if (classifyChange(paths.map((p) => p.replace(/\/$/, ""))).elevated.length) fail("ST-RISK");
+  if (routinePaths.length && classifyChange(routinePaths.map((p) => p.replace(/\/$/, ""))).elevated.length) fail("ST-RISK");
   const branch = `agent/${mission.type}/${mission.id}-${branchSuffix ?? slugOf(mission.title)}`;
   const budgets = { ...standing.missionBudgets };
-  const record = buildRecord({ ref: mission.id, branch, baseSha, paths, budgets, expiresInDays: 1, confirmation: standingConfirmation(standingSha256) }, { now });
+  const recordPaths = [...paths.filter((p) => p !== progress), progress];
+  const record = buildRecord({ ref: mission.id, branch, baseSha, paths: recordPaths, budgets, expiresInDays: 1, confirmation: standingConfirmation(standingSha256), ...(structural ? { scopeRef: structural.id } : {}) }, { now });
   const cap = Date.parse(standing.expiresAt);
   if (Date.parse(record.expiresAt) > cap) {
     record.expiresAt = new Date(cap).toISOString();
@@ -244,4 +322,15 @@ export function deriveMissionRecord({ standing, standingSha256, mission, baseSha
   return record;
 }
 
-export { pathAllowedByRecord };
+/**
+ * Elegibilidade por requisitos versionados: missão sem `requirementsRef` é elegível como antes; com ele, só se o documento existir em main
+ * (`mainContent`: bytes lidos de origin/main, ou null se ausente) com exatamente aquele sha256. Devolve null ou o motivo.
+ */
+export function requirementsProblem(mission, mainContent) {
+  const ref = mission?.requirementsRef;
+  if (ref === undefined) return null;
+  if (mainContent === null || mainContent === undefined) return "requirements-ausente-em-main";
+  return sha256File(Buffer.from(mainContent)) === ref.sha256 ? null : "requirements-sha256";
+}
+
+export { pathAllowedByRecord, progressFileOf };

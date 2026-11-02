@@ -5,7 +5,8 @@
 // sessão de agente. Faz uma única coisa: tornar o ruleset `main-protection` compatível com a entrega rotineira SEM operação humana e SEM
 // perder proteção, e permitir desfazer:
 //   - aprovações numéricas 1 → 0, mas SOMENTE junto com `require_code_owner_review: true` (CODEOWNERS cobre todo caminho de risco elevado);
-//   - novo check obrigatório `risk-gate` (prova, por PR, que o classificador e o CODEOWNERS concordam), ao lado de `validate`;
+//   - novos checks obrigatórios `risk-gate` (prova, por PR, que o classificador e o CODEOWNERS concordam) e `structural-gate` (controle,
+//     escopo e documento da base confiável; 29/10/2026), ao lado de `validate`;
 //   - squash como único método; demais regras (histórico linear, bloqueio de force push e exclusão, descarte de aprovação obsoleta, check estrito) preservadas;
 //   - nenhum bypass é adicionado; bypass existente é apenas informado.
 // Pré-condições verificadas ANTES de aplicar: o check `risk-gate` já passou em `main` (senão todo PR ficaria esperando um check inexistente) e o
@@ -42,7 +43,8 @@ export function planRuleset(current) {
   const list = checks.parameters.required_status_checks ?? [];
   const validate = list.find((c) => c.context === "validate");
   if (!validate) throw new Error("o check obrigatório `validate` não consta do ruleset");
-  if (!list.some((c) => c.context === "risk-gate")) list.push({ context: "risk-gate", ...(validate.integration_id ? { integration_id: validate.integration_id } : {}) });
+  // `structural-gate` (29/10/2026): o GitHub também exige o gate da base confiável; sem ele o runner não integra missão estrutural
+  for (const context of ["risk-gate", "structural-gate"]) if (!list.some((c) => c.context === context)) list.push({ context, ...(validate.integration_id ? { integration_id: validate.integration_id } : {}) });
   checks.parameters = { ...checks.parameters, required_status_checks: list, strict_required_status_checks_policy: true };
   const effective = assessRuleset(next.rules.map((r) => ({ type: r.type, parameters: r.parameters })));
   return { next, assessment: effective, before: assessRuleset(current.rules.map((r) => ({ type: r.type, parameters: r.parameters }))), bypass: next.bypass_actors ?? [] };
@@ -72,12 +74,13 @@ function findRuleset(gh) {
   return jsonOf(gh(["api", `repos/${REPOSITORY}/rulesets/${found[0].id}`]), "ler o ruleset");
 }
 
-/** O `risk-gate` precisa ter passado no HEAD atual de `main`: sem isso exigi-lo travaria todo PR. */
+/** `risk-gate` e `structural-gate` precisam ter passado no HEAD atual de `main`: sem isso exigi-los travaria todo PR. */
 export function riskGateOnMain(gh) {
   const main = jsonOf(gh(["api", `repos/${REPOSITORY}/commits/main`]), "ler main");
   const runs = jsonOf(gh(["api", `repos/${REPOSITORY}/commits/${main.sha}/check-runs?per_page=100`]), "ler checks de main");
-  const gate = (runs.check_runs ?? []).find((c) => c.name === "risk-gate");
-  return { sha: main.sha, ok: gate?.status === "completed" && gate?.conclusion === "success" };
+  const passed = (name) => (runs.check_runs ?? []).some((c) => c.name === name && c.status === "completed" && c.conclusion === "success");
+  const missing = ["risk-gate", "structural-gate"].filter((n) => !passed(n));
+  return { sha: main.sha, ok: !missing.length, missing };
 }
 
 export async function run({
@@ -114,7 +117,7 @@ export async function run({
     const current = findRuleset(gh);
     const plan = planRuleset(current);
     write(`Ruleset ${current.id} (${current.name}) — hoje: modo=${plan.before.mode}, aprovações=${plan.before.approvals}${plan.before.problems.length ? `, pendências=${plan.before.problems.join(",")}` : ""}\n`);
-    write(`Depois: modo=${plan.assessment.mode}, aprovações=${plan.assessment.approvals}, revisão do dono do código obrigatória, checks obrigatórios: validate + risk-gate (estritos), squash apenas.\n`);
+    write(`Depois: modo=${plan.assessment.mode}, aprovações=${plan.assessment.approvals}, revisão do dono do código obrigatória, checks obrigatórios: validate + risk-gate + structural-gate (estritos), squash apenas.\n`);
     if (plan.bypass.length) write(`ATENÇÃO: o ruleset tem ${plan.bypass.length} bypass; este script NÃO o altera.\n`);
     if (plan.assessment.mode !== "routine-capable") return refuse(`o resultado planejado não é seguro (${plan.assessment.problems.join(",")}): nada será aplicado`);
     if (cmd === "ruleset-plan") {
@@ -123,8 +126,8 @@ export async function run({
     }
     if (!isTTY) return refuse("exige terminal interativo");
     const gate = riskGateOnMain(gh);
-    if (!gate.ok) return refuse(`o check risk-gate ainda não passou em main (${gate.sha.slice(0, 12)}): integre o PR do bootstrap e aguarde a CI de main antes`);
-    write(`risk-gate passou em main (${gate.sha.slice(0, 12)}). Um backup do ruleset atual será gravado em ${backupDir} antes de aplicar.\n`);
+    if (!gate.ok) return refuse(`os checks ${gate.missing.join(", ")} ainda não passaram em main (${gate.sha.slice(0, 12)}): integre o PR do bootstrap e aguarde a CI de main antes`);
+    write(`risk-gate e structural-gate passaram em main (${gate.sha.slice(0, 12)}). Um backup do ruleset atual será gravado em ${backupDir} antes de aplicar.\n`);
     write("Verificação obrigatória logo após aplicar: abra um PR descartável que altere uma linha de comentário em .github/CODEOWNERS e confirme que o GitHub BLOQUEIA o merge (revisão do dono do código). Se NÃO bloquear, rode ruleset-rollback com o backup indicado.\n");
     if ((await confirm(`Digite ${APPLY_PHRASE} para aplicar: `)) !== APPLY_PHRASE) return refuse("confirmação não recebida");
     fsImpl.mkdirSync(backupDir, { recursive: true, mode: 0o700 });

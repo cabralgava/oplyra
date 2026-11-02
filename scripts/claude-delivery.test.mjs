@@ -2872,7 +2872,7 @@ test("authorize --enable-rehearsal: só ops-* com registro, em terminal do propr
 /** Copia os módulos para um diretório temporário com UMA alteração e os importa. A âncora precisa existir: senão a mutação seria vácua. */
 async function mutate(file, from, to) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "oplyra-delivery-mut-"));
-  for (const f of ["claude-git.mjs", "claude-delivery-record.mjs", "claude-local-first-guard.mjs", "claude-standing.mjs", "claude-risk.mjs"]) {
+  for (const f of ["claude-git.mjs", "claude-delivery-record.mjs", "claude-local-first-guard.mjs", "claude-standing.mjs", "claude-risk.mjs", "claude-structural.mjs"]) {
     let src = fs.readFileSync(path.join(here, f), "utf8");
     // Barreiras redundantes exigem mutação conjunta para remover a propriedade inteira.
     const patches = Array.isArray(from) ? from : [[file, from, to]];

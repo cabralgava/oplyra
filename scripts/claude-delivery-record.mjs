@@ -22,6 +22,13 @@ export const BASE_REF = "main";
 /** `ms-NNN[N]`: missão derivada da autorização contínua de 04/10/2026 (claude-standing.mjs); as demais formas são as históricas do CR-033. */
 export const REF_PATTERN = /^(i[0-9]{2}|cr-[0-9]{3}|dp-[0-9a-z]+|ops-[0-9]+|ms-[0-9]{3,4})$/;
 export const SHA_PATTERN = /^[0-9a-f]{40}$/;
+/** Referência a um escopo estrutural aprovado (claude-structural.mjs). Opcional no registro; quando presente, exige o `structural-gate`. */
+export const SCOPE_REF_PATTERN = /^sc-[a-z0-9]+(-[a-z0-9]+){0,6}$/;
+/** Progresso operacional: um arquivo por missão, `docs/progresso/<ref>.md`, sempre vinculado à referência do registro. */
+export const PROGRESS_DIR = "docs/progresso/";
+export const progressFileOf = (ref) => `${PROGRESS_DIR}${ref}.md`;
+/** Exceção nomeada: diretórios rotineiros de UM nível aceitos como escopo (lista fechada; `test/`, `docs/`, `apps/` continuam recusados). */
+export const ROUTINE_TOP_LEVEL_DIRS = Object.freeze(["e2e"]);
 export const AUTHORIZED_BY = "project_owner";
 export const MAX_EXPIRY_DAYS = 7;
 export const MAX_PATHS = 200;
@@ -142,8 +149,9 @@ export function validatePaths(paths, contractsCr) {
     const bare = dir ? norm.replace(/\/$/, "") : norm;
     if (!bare || bare === "." || bare.startsWith("../") || bare === ".." || bare.split("/").includes("..")) fail("DR-PATHS");
     const rel = bare.toLowerCase();
-    // sem raiz: um prefixo de diretório precisa ter pelo menos dois níveis (nunca `apps/`, `docs/`, `scripts/`…)
-    if (dir && !bare.includes("/")) fail("DR-PATHS");
+    // sem raiz: um prefixo de diretório precisa ter pelo menos dois níveis (nunca `apps/`, `docs/`, `scripts/`, `test/`…), salvo a lista
+    // fechada e nomeada de diretórios rotineiros de um nível (D-E3: só `e2e/`)
+    if (dir && !bare.includes("/") && !ROUTINE_TOP_LEVEL_DIRS.includes(bare)) fail("DR-PATHS");
     if (rel === ".git" || rel.startsWith(".git/") || rel === ".oplyra" || rel.startsWith(".oplyra/")) fail("DR-PATHS");
     if (isControlPlane(rel) || isControlPlane(`${rel}/`) || isSensitiveRel(rel) || isProtectedReference(rel)) fail("DR-PATHS");
     // `docs/harness` contém arquivos de control plane
@@ -160,9 +168,10 @@ export function validatePaths(paths, contractsCr) {
 /** Valida um objeto de registro. Lança RecordError. `now`: Date. */
 export function validateRecord(record, { now = new Date(), expectedRef } = {}) {
   if (!record || typeof record !== "object" || Array.isArray(record)) fail("DR-INVALID");
-  const allowed = new Set(["schema", "ref", "repository", "baseRef", "baseSha", "branch", "paths", "contractsCr", "contractsScope", "budgets", "issuedAt", "expiresAt", "authorizedBy", "confirmation"]);
+  const allowed = new Set(["schema", "ref", "repository", "baseRef", "baseSha", "branch", "paths", "contractsCr", "contractsScope", "scopeRef", "budgets", "issuedAt", "expiresAt", "authorizedBy", "confirmation"]);
   if (Object.keys(record).some((k) => !allowed.has(k))) fail("DR-INVALID");
   if (record.schema !== RECORD_SCHEMA) fail("DR-INVALID");
+  if ("scopeRef" in record && (typeof record.scopeRef !== "string" || !SCOPE_REF_PATTERN.test(record.scopeRef))) fail("DR-INVALID");
   if (typeof record.ref !== "string" || !REF_PATTERN.test(record.ref)) fail("DR-REF");
   if (expectedRef !== undefined && record.ref !== expectedRef) fail("DR-REF-MISMATCH");
   if (record.repository !== REPOSITORY) fail("DR-REPOSITORY");
@@ -210,6 +219,7 @@ export function buildRecord(input, { now = new Date() } = {}) {
     paths: validatePaths(input.paths, input.contractsCr),
     ...(input.contractsCr ? { contractsCr: String(input.contractsCr) } : {}),
     ...(input.contractsScope ? { contractsScope: input.contractsScope.map(String) } : {}),
+    ...(input.scopeRef !== undefined ? { scopeRef: input.scopeRef } : {}),
     budgets,
     issuedAt: now.toISOString(),
     expiresAt: new Date(now.getTime() + days * 86_400_000).toISOString(),
@@ -400,7 +410,13 @@ export function loadGrant({ record, recordSha256, recordDir, now = new Date(), u
   return { grant, sha256: sha256File(bytes), logHosts: grant.logHosts ?? [] };
 }
 
-/** `staged` está dentro da lista permitida do registro? `p`: caminho relativo normalizado, com `/`. */
+/**
+ * `staged` está dentro da lista permitida do registro? `p`: caminho relativo normalizado, com `/`. Um caminho não normalizado (travessia,
+ * `./`, absoluto) nunca é aceito, mesmo que o texto comece por um prefixo permitido. Sob `docs/progresso/` só o arquivo da própria
+ * referência do registro é aceito, ainda que o registro liste o diretório inteiro.
+ */
 export function pathAllowedByRecord(p, record) {
+  if (typeof p !== "string" || !p || p.includes("\0") || p.includes("\\") || p.startsWith("/") || path.posix.normalize(p) !== p || p.split("/").includes("..")) return false;
+  if (p.toLowerCase().startsWith(PROGRESS_DIR) && p !== progressFileOf(record.ref)) return false;
   return record.paths.some((allowed) => (allowed.endsWith("/") ? p.startsWith(allowed) : p === allowed));
 }

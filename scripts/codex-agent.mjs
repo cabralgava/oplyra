@@ -3,9 +3,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn as nodeSpawn, spawnSync } from "node:child_process";
-import { DELIVERY_ENV, selectRecord, pathAllowedByRecord } from "./claude-delivery-record.mjs";
+import { DELIVERY_ENV, selectRecord, pathAllowedByRecord, progressFileOf } from "./claude-delivery-record.mjs";
 import { execute, defaultGit, childEnv } from "./claude-git.mjs";
-import { classifyPath } from "./claude-risk.mjs";
+import { classifyChangeWithContent, classifyPath } from "./claude-risk.mjs";
 import { isSensitiveRel } from "./claude-local-first-guard.mjs";
 
 export const CODEX_BINARY = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex";
@@ -50,6 +50,24 @@ export function codexConfig(repoRoot, record) {
   // -c divide a chave por pontos; caminhos com pontos devem estar no VALOR TOML da tabela.
   const filesystem = `{${entries.map(([p, access]) => `${JSON.stringify(p)}=${JSON.stringify(access)}`).join(",")}}`;
   return ["default_permissions=\"mission\"", "approval_policy=\"never\"", "permissions.mission.network.enabled=false", `permissions.mission.filesystem=${filesystem}`];
+}
+
+/** O caminho resolvido permanece o próprio caminho autorizado: nenhum componente (nem o arquivo) é symlink e nada sai da raiz. */
+export function resolvedInside(root, rel, fsImpl = fs) {
+  const target = path.resolve(root, rel);
+  if (path.relative(root, target) !== rel.split("/").join(path.sep)) return false;
+  let cur = root;
+  for (const part of rel.split("/")) {
+    cur = path.join(cur, part);
+    let st;
+    try {
+      st = fsImpl.lstatSync(cur);
+    } catch {
+      return true; // removido: nada a resolver a partir daqui
+    }
+    if (st.isSymbolicLink()) return false;
+  }
+  return true;
 }
 
 /** Processo em grupo; saída bruta não é persistida nem exibida (inclusive segredos divididos entre chunks). */
@@ -126,7 +144,7 @@ export function nativeAgent({ repoRoot, home = os.homedir(), recordDir = path.jo
         evidence += await call("ci-status");
         for (const check of failing) evidence += `\n${await call("ci-log", ["--check", check])}`;
       }
-      const prompt = `${fsImpl.readFileSync(promptFile, "utf8")}\n\nExecutor Codex: leia AGENTS.md e as skills pertinentes. Implemente apenas os caminhos ${JSON.stringify(record.paths)}. A entrega Git e GitHub é responsabilidade do supervisor. Termine após os checks locais aplicáveis. Devolva o JSON solicitado, sem segredos. commitMessage deve seguir Conventional Commits e não conter coautoria; o supervisor acrescentará a proveniência Codex. Se houver falha de CI, diagnosis deve conter JSON oplyra-ci-diagnosis/1 vinculado à evidência abaixo; não invente evidência. Se bloqueado, use status blocked.\n${evidence}`;
+      const prompt = `${fsImpl.readFileSync(promptFile, "utf8")}\n\nExecutor Codex: leia AGENTS.md e as skills pertinentes. Implemente apenas os caminhos ${JSON.stringify(record.paths)}. Registre o resultado verificado somente em ${progressFileOf(record.ref)}; não escreva em docs/harness/ESTADO.md nem em documentos de política ou autorização. A entrega Git e GitHub é responsabilidade do supervisor. Termine após os checks locais aplicáveis. Devolva o JSON solicitado, sem segredos. commitMessage deve seguir Conventional Commits e não conter coautoria; o supervisor acrescentará a proveniência Codex. Se houver falha de CI, diagnosis deve conter JSON oplyra-ci-diagnosis/1 vinculado à evidência abaixo; não invente evidência. Se bloqueado, use status blocked.\n${evidence}`;
       const res = await worker({ prompt, record, schemaFile, outputFile, timeoutSeconds, shouldStop });
       if (res.exitCode !== 0 || res.stopped || res.timedOut || shouldStop()) return { ...res, stopped: res.stopped || shouldStop() };
       const stat = fsImpl.lstatSync(outputFile);
@@ -136,7 +154,15 @@ export function nativeAgent({ repoRoot, home = os.homedir(), recordDir = path.jo
       if (result.status === "blocked") return { exitCode: 2, stopped: false, timedOut: false };
       const changed = [...out(["diff", "--name-only", "-z", "HEAD"]).split("\0"), ...out(["ls-files", "--others", "--exclude-standard", "-z"]).split("\0")].filter(Boolean);
       const files = [...new Set(changed)];
-      if (files.some((f) => !pathAllowedByRecord(f, record) || classifyPath(f).risk !== "routine")) throw new Error("codex-scope");
+      const root = fsImpl.realpathSync(repoRoot);
+      if (files.some((f) => !pathAllowedByRecord(f, record) || !resolvedInside(root, f, fsImpl) || classifyPath(f).risk !== "routine")) throw new Error("codex-scope");
+      // conteúdo (Stripe, locale definindo moeda/preço/plano): rotineiro pelo caminho não basta
+      const withContent = files.map((f) => {
+        const abs = path.join(root, f);
+        const exists = fsImpl.existsSync(abs) && fsImpl.lstatSync(abs).isFile();
+        return { path: f, status: exists ? "modified" : "removed", content: exists && fsImpl.lstatSync(abs).size <= 1_048_576 ? fsImpl.readFileSync(abs, "utf8") : undefined };
+      });
+      if (files.length && classifyChangeWithContent(withContent).risk !== "routine") throw new Error("codex-content");
       if (files.length) {
         if (kind === "fix") {
           const diagnosis = path.join(scratch, "diagnosis.json");

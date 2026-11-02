@@ -31,3 +31,31 @@ AGENTS.md                                   @cabralgava
 **/playwright.config.*                      @cabralgava
 **/next.config.*                            @cabralgava
 **/tsconfig*.json                           @cabralgava
+# Billing, webhooks do Stripe, entitlements e preços em código: elevados até haver política específica aprovada (INTEGRACAO-PR11 §8, §9).
+/apps/**/*billing*                          @cabralgava
+/apps/**/*stripe*                           @cabralgava
+/apps/**/*entitlement*                      @cabralgava
+/apps/**/*pricing*                          @cabralgava
+/apps/**/*subscription*                     @cabralgava
+/apps/**/*webhook*                          @cabralgava
+/packages/**/*billing*                      @cabralgava
+/packages/**/*stripe*                       @cabralgava
+/packages/**/*entitlement*                  @cabralgava
+/packages/**/*pricing*                      @cabralgava
+/packages/**/*subscription*                 @cabralgava
+/packages/**/*webhook*                      @cabralgava
+# Catálogos de tradução: formato ainda não definido pela frente de idiomas; elevados até o padrão ser aprovado.
+/apps/**/locale/                            @cabralgava
+/apps/**/locales/                           @cabralgava
+/apps/**/messages/                          @cabralgava
+/apps/**/i18n/                              @cabralgava
+/apps/**/translation/                       @cabralgava
+/apps/**/translations/                      @cabralgava
+/apps/**/lang/                              @cabralgava
+/packages/**/locale/                        @cabralgava
+/packages/**/locales/                       @cabralgava
+/packages/**/messages/                      @cabralgava
+/packages/**/i18n/                          @cabralgava
+/packages/**/translation/                   @cabralgava
+/packages/**/translations/                  @cabralgava
+/packages/**/lang/                          @cabralgava

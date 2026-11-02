@@ -198,7 +198,8 @@ describe("autorização contínua (standing)", () => {
     expect(record.branch).toMatch(/^agent\/docs\/ms-001(-[a-z0-9]+){1,3}$/);
     expect(record.confirmation).toBe(standingConfirmation(sha));
     expect(STANDING_CONFIRMATION.test(record.confirmation)).toBe(true);
-    expect(record.paths).toEqual(["docs/feature/"]);
+    // o runner inclui o arquivo de progresso EXATO da missão (docs/harness/INTEGRACAO-PR11-E-PERFIS.md §1), nada além dele
+    expect(record.paths).toEqual(["docs/feature/", "docs/progresso/ms-001.md"]);
     expect(Date.parse(record.expiresAt)).toBeLessThanOrEqual(Date.parse(s.expiresAt));
     expect(codeOf(() => deriveMissionRecord({ standing: s, standingSha256: sha, mission: { ...MISSION, paths: ["docs/outro/"] }, baseSha: SHA_A }))).toBe("ST-SCOPE");
     expect(codeOf(() => deriveMissionRecord({ standing: s, standingSha256: sha, mission: { ...MISSION, paths: ["docs/feature/", "apps/web/"] }, baseSha: SHA_A }))).toBe("ST-SCOPE");
@@ -472,7 +473,8 @@ describe("ajuste administrativo do ruleset", () => {
     const pr = plan.next.rules.find((r) => r.type === "pull_request").parameters;
     expect(pr).toMatchObject({ required_approving_review_count: 0, require_code_owner_review: true, dismiss_stale_reviews_on_push: true, allowed_merge_methods: ["squash"], required_review_thread_resolution: true, require_last_push_approval: false });
     const checks = plan.next.rules.find((r) => r.type === "required_status_checks").parameters;
-    expect(checks.required_status_checks).toEqual([{ context: "validate", integration_id: 15368 }, { context: "risk-gate", integration_id: 15368 }]);
+    // structural-gate (29/10/2026): exigido também pelo GitHub, ao lado de validate e risk-gate
+    expect(checks.required_status_checks).toEqual([{ context: "validate", integration_id: 15368 }, { context: "risk-gate", integration_id: 15368 }, { context: "structural-gate", integration_id: 15368 }]);
     expect(checks.strict_required_status_checks_policy).toBe(true);
     expect(checks.do_not_enforce_on_create).toBe(false);
     expect(plan.next.bypass_actors).toEqual([]);
@@ -497,7 +499,7 @@ describe("ajuste administrativo do ruleset", () => {
       if (url.endsWith("/rulesets")) return ok([{ id: current.id, name: current.name, target: "branch" }]);
       if (url.endsWith(`/rulesets/${current.id}`)) return ok(current);
       if (url.endsWith("/commits/main")) return ok({ sha: SHA_A });
-      if (url.includes("/check-runs")) return ok({ check_runs: riskGateOk ? [{ name: "risk-gate", status: "completed", conclusion: "success" }] : [] });
+      if (url.includes("/check-runs")) return ok({ check_runs: riskGateOk ? [{ name: "risk-gate", status: "completed", conclusion: "success" }, { name: "structural-gate", status: "completed", conclusion: "success" }] : [] });
       return { status: 1, stdout: "", stderr: "" };
     };
     gh.calls = calls;
@@ -522,7 +524,7 @@ describe("ajuste administrativo do ruleset", () => {
     const noGate = ghFake({ riskGateOk: false });
     expect(await admin({ ...o, gh: noGate, argv: ["ruleset-apply"], confirm: async () => APPLY_PHRASE })).toBe(2);
     expect(noGate.calls.some((c) => c.args.includes("PUT"))).toBe(false);
-    expect(o.out.join("")).toContain("risk-gate ainda não passou");
+    expect(o.out.join("")).toContain("risk-gate, structural-gate ainda não passaram");
     const gh = ghFake();
     expect(await admin({ ...o, gh, argv: ["ruleset-apply"], confirm: async () => APPLY_PHRASE })).toBe(0);
     const put = gh.calls.find((c) => c.args.includes("PUT"));

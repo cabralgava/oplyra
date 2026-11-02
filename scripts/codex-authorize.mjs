@@ -16,6 +16,24 @@ export const INITIAL_OWNER_CHAT_PROFILE = Object.freeze({
   missionBudgets: Object.freeze({ wallClockSeconds: 3600, iterations: 3, logReads: 5 }),
 });
 
+/**
+ * Perfil de PRODUTO (docs/harness/INTEGRACAO-PR11-E-PERFIS.md §2): caminhos concretos, aceitos pelos validadores reais. Apenas
+ * DISPONÍVEL: a CLI acima continua emitindo só o perfil inicial; usar este perfil exige decisão do proprietário (D-E4) e emissão única.
+ * Somente classe rotineira: escopos estruturais entram por `structuralScopes`, também por decisão do proprietário.
+ */
+export const PRODUCT_PROFILE = Object.freeze({
+  paths: Object.freeze([
+    "apps/web/src/app/", "apps/web/src/components/", "apps/web/src/lib/",
+    "packages/core/src/domain/", "packages/core/src/application/",
+    "packages/infra/src/", "packages/testing/src/",
+    "packages/core/test/", "packages/infra/test/", "packages/testing/test/",
+    "docs/progresso/",
+  ]),
+  expiresInDays: 30,
+  limits: Object.freeze({ maxMissions: 20, mergesPerRun: 10, maxAgentSessionsPerMission: 5, wallClockSeconds: 172_800 }),
+  missionBudgets: Object.freeze({ wallClockSeconds: 7200, iterations: 5, logReads: 10 }),
+});
+
 export function issueOwnerChatAuthorization({ reference, home = os.homedir(), now = new Date() }) {
   if (typeof reference !== "string" || !OWNER_CHAT_REFERENCE.test(reference)) throw new Error("consent-reference");
   const dir = defaultStandingDir(home);

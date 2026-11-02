@@ -24,8 +24,23 @@ const TEST_FILE = /(^|\/)(test|tests|__tests__|e2e)\/|\.(test|spec)\.[cm]?[jt]sx
 const CONFIG_FILE = /(^|\/)(vitest|playwright|next)\.config\.[cm]?[jt]s$|(^|\/)tsconfig[^/]*\.json$/;
 const DEPENDENCY_FILE = /(^|\/)(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|package-lock\.json|yarn\.lock|\.npmrc)$/;
 
+/**
+ * Billing, webhooks do Stripe, entitlements e preços em CÓDIGO (`apps/`, `packages/`): elevados, com precedência sobre os diretórios do
+ * perfil de produto, até existir política específica aprovada (INTEGRACAO-PR11-E-PERFIS §8, §9). Documentos em `docs/` não são afetados.
+ */
+const BILLING_CODE = /^(apps|packages)\/.*(billing|stripe|entitlement|pricing|subscription|webhook)/;
+/**
+ * Candidatos a catálogo de tradução em código. O formato e o caminho dos catálogos NÃO estão definidos pela frente de idiomas
+ * (docs/product/marketing-ops/i18n/I18N-SPEC.md: "Não escolher nova biblioteca neste pacote; confirmar stack e versão"): até lá, todo
+ * candidato é elevado (lacuna registrada). `I18N_CATALOG_PATTERN` é o padrão aprovado; null = indefinido.
+ */
+export const I18N_CANDIDATE = /^(apps|packages)\/(.*\/)?(locales?|messages|i18n|translations?|lang)\//;
+export const I18N_CATALOG_PATTERN = null;
+
 /** Regras na ordem; a primeira que casa define o motivo. Entrada: caminho relativo, minúsculo, com `/`. */
 const ELEVATED_RULES = Object.freeze([
+  ["billing", (r) => BILLING_CODE.test(r)],
+  ["i18n-catalogo", (r) => I18N_CANDIDATE.test(r)],
   ["control-plane", (r) => isControlPlane(r) || isControlPlane(`${r}/`)],
   ["segredo", (r) => isSensitiveRel(r)],
   ["referencia-protegida", (r) => isProtectedReference(r)],
@@ -48,6 +63,103 @@ export function classifyPath(change) {
   for (const [reason, test] of ELEVATED_RULES) if (test(rel)) return { path: entry.path, risk: RISK.elevated, reason };
   if (entry.status === "removed" && TEST_FILE.test(rel)) return { path: entry.path, risk: RISK.elevated, reason: "remocao-de-teste" };
   return { path: entry.path, risk: RISK.routine, reason: null };
+}
+
+/* ------------------------------------------------------------------ conteúdo */
+
+const COMMERCIAL_WORDS = /\b(pre[cç]os?|prices?|pricing|valor(es)?|planos?|plans?|assinaturas?|subscriptions?|mensalidades?|monthly|mensal|anual|annual|yearly|renova\w*|renew\w*|cancel\w*|reembols\w*|refunds?|trial|desconto\w*|discounts?|cobran[cç]a\w*|billing|faturas?|invoices?|gr[aá]tis|free|limites?|limits?|prazos?|dias|days|meses|months?)\b/i;
+const CURRENCY = /(R\$|US\$|[$€£¥]|\b(BRL|USD|EUR|GBP|JPY)\b)/;
+const PLACEHOLDER = /\{([^{}]*)\}/g;
+const PLACEHOLDER_NAME = /^[a-z][a-zA-Z0-9_]*$/;
+const COMMERCIAL_PLACEHOLDER = /(price|preco|amount|valor|currency|moeda|plan|plano|limit|limite|trial|renew|renova|cancel)/i;
+
+/**
+ * Catálogo de tradução: rotina SOMENTE se for JSON de chaves de texto cujos valores tenham apenas texto e placeholders de apresentação
+ * (`{nome}`, `{count}`). Número, moeda, preço, plano/limite, prazo ou renovação/cancelamento → `{ ok: false, reason }`.
+ */
+export function analyzeTranslationCatalog(text) {
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    return { ok: false, reason: "catalogo-ilegivel" };
+  }
+  if (!data || typeof data !== "object" || Array.isArray(data)) return { ok: false, reason: "catalogo-ilegivel" };
+  const stack = [data];
+  while (stack.length) {
+    const node = stack.pop();
+    for (const [key, value] of Object.entries(node)) {
+      if (!/^[A-Za-z0-9_.-]+$/.test(key)) return { ok: false, reason: "chave-invalida" };
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        stack.push(value);
+        continue;
+      }
+      if (typeof value !== "string") return { ok: false, reason: "valor-nao-textual" };
+      for (const [, name] of value.matchAll(PLACEHOLDER)) {
+        if (!PLACEHOLDER_NAME.test(name)) return { ok: false, reason: "placeholder-nao-permitido" };
+        if (COMMERCIAL_PLACEHOLDER.test(name)) return { ok: false, reason: "placeholder-comercial" };
+      }
+      const prose = value.replace(PLACEHOLDER, " ");
+      if (/[{}]/.test(prose)) return { ok: false, reason: "placeholder-nao-permitido" };
+      if (/\d/.test(prose)) return { ok: false, reason: "numero-em-traducao" };
+      if (CURRENCY.test(prose)) return { ok: false, reason: "moeda-em-traducao" };
+      if (COMMERCIAL_WORDS.test(prose.normalize("NFC"))) return { ok: false, reason: "termo-comercial-em-traducao" };
+    }
+  }
+  return { ok: true };
+}
+
+const LOCALE_WORD = "(?:locale|uiLocale|preferredLocale|tenantLocale|outputLocale|lang|language|navigator\\.language)";
+const COMMERCIAL_WORD = "(?:currency|billingCurrency|price|priceId|prices|amount|plan|planId|plans)";
+const LOCALE_TAG = "['\"`](?:pt-BR|pt-br|en-US|en-us|pt|en)['\"`]";
+const MONEY_CODE = "['\"`](?:BRL|USD|EUR)['\"`]";
+/** Derivação de termo comercial a partir do idioma (formatar um valor JÁ definido com `Intl` e o locale não é derivação). */
+const LOCALE_DERIVES = [
+  new RegExp(`\\b${COMMERCIAL_WORD}(?:Code|Codes)?\\s*[:=]\\s*[^;,\\n]*\\b${LOCALE_WORD}\\b`, "i"),
+  new RegExp(`\\b${LOCALE_WORD}\\b\\s*[!=]==?\\s*${LOCALE_TAG}\\s*\\?\\s*(?:${MONEY_CODE}|[^:;\\n]*\\b${COMMERCIAL_WORD})`, "i"),
+  new RegExp(`${LOCALE_TAG}\\s*:\\s*${MONEY_CODE}`),
+  new RegExp(`\\bcase\\s+${LOCALE_TAG}\\s*:\\s*return\\s+${MONEY_CODE}`),
+];
+const STRIPE_ACCESS = /\b(sk|pk|rk)_(test|live)_[A-Za-z0-9]|\bwhsec_[A-Za-z0-9]|api\.stripe\.com|js\.stripe\.com|from\s+['"]stripe['"]|require\(\s*['"]stripe['"]\s*\)|import\(\s*['"]stripe['"]\s*\)|from\s+['"]@stripe\//;
+const CODE_FILE = /\.([cm]?[jt]sx?|json)$/;
+
+/**
+ * Regras de conteúdo do código (§8 critérios 1 e 4). Heurística conservadora: na dúvida, eleva.
+ *  - `locale-define-termo-comercial`: locale/idioma e moeda/preço/plano na mesma instrução ou mapa locale→moeda;
+ *  - `stripe-acesso-externo`: SDK, endpoint ou chave do Stripe (inclusive modo de teste): nenhuma classe autoriza acesso externo.
+ */
+export function contentFindings(rel, text) {
+  if (typeof text !== "string" || !CODE_FILE.test(rel)) return [];
+  const out = [];
+  if (STRIPE_ACCESS.test(text)) out.push("stripe-acesso-externo");
+  if (LOCALE_DERIVES.some((re) => re.test(text))) out.push("locale-define-termo-comercial");
+  return out;
+}
+
+/**
+ * Classificação com conteúdo: `changes` `{ path, status, content? }` (conteúdo do HEAD). Um caminho rotineiro com achado de conteúdo vira
+ * elevado; um catálogo de tradução só pode ser rotina se o padrão de catálogo estiver APROVADO (`i18nCatalog`, hoje indefinido) e o
+ * conteúdo passar em `analyzeTranslationCatalog`. Conteúdo ausente em arquivo que exige leitura → elevado (nunca aprovado por omissão).
+ */
+export function classifyChangeWithContent(changes, { i18nCatalog = I18N_CATALOG_PATTERN } = {}) {
+  if (!Array.isArray(changes) || !changes.length) return classifyChange(changes);
+  const results = changes.map((c) => {
+    const base = classifyPath(c);
+    const rel = String(c.path ?? "").toLowerCase();
+    if (base.reason === "i18n-catalogo") {
+      if (!(i18nCatalog instanceof RegExp) || !i18nCatalog.test(rel)) return { ...base, reason: "i18n-catalogo-indefinido" };
+      if (c.status === "removed") return base;
+      if (typeof c.content !== "string") return { ...base, reason: "i18n-conteudo-ausente" };
+      const v = analyzeTranslationCatalog(c.content);
+      return v.ok ? { path: c.path, risk: RISK.routine, reason: null } : { ...base, reason: `i18n:${v.reason}` };
+    }
+    if (base.risk !== RISK.routine || c.status === "removed") return base;
+    if (CODE_FILE.test(rel) && typeof c.content !== "string") return { path: c.path, risk: RISK.elevated, reason: "conteudo-ausente" };
+    const found = contentFindings(rel, c.content);
+    return found.length ? { path: c.path, risk: RISK.elevated, reason: found[0] } : base;
+  });
+  const elevated = results.filter((r) => r.risk === RISK.elevated).map(({ path: p, reason }) => ({ path: p, reason }));
+  return { risk: elevated.length ? RISK.elevated : RISK.routine, elevated, routine: results.filter((r) => r.risk === RISK.routine).map((r) => r.path) };
 }
 
 /** Risco do conjunto: elevado se QUALQUER caminho for elevado; conjunto vazio é elevado (nada a integrar com segurança). */
@@ -114,11 +226,21 @@ function gitNames(base, head, cwd) {
   return out;
 }
 
-export function runGate({ base, head = "HEAD", codeowners = ".github/CODEOWNERS", cwd = process.cwd(), write = (s) => process.stdout.write(s), changes } = {}) {
+/**
+ * Um caminho elevado SEM dono só é aceito quando o resultado do `structural-gate` é deste head (`headSha`), `success`, elegível, o lista
+ * em `structural` e o motivo é banco/dependências. Qualquer outro caso continua exigindo dono no CODEOWNERS (falha do risk-gate).
+ */
+export function structurallyCovered(structural, headSha, entry) {
+  return Boolean(structural) && typeof headSha === "string" && /^[0-9a-f]{40}$/.test(headSha) && structural.sha === headSha
+    && structural.conclusion === "success" && structural.eligible === true && Array.isArray(structural.structural)
+    && structural.structural.includes(entry.path) && ["banco", "dependencias"].includes(entry.reason);
+}
+
+export function runGate({ base, head = "HEAD", codeowners = ".github/CODEOWNERS", cwd = process.cwd(), write = (s) => process.stdout.write(s), changes, structural = null, headSha } = {}) {
   const rules = parseCodeowners(fs.readFileSync(path.join(cwd, codeowners), "utf8"));
   const list = changes ?? gitNames(base, head, cwd);
   const verdict = classifyChange(list);
-  const missing = uncoveredElevated(list, rules);
+  const missing = uncoveredElevated(list, rules).filter((m) => !structurallyCovered(structural, headSha, m));
   write(`risk-gate: risco=${verdict.risk}; arquivos=${list.length}; elevados=${verdict.elevated.length}; sem dono no CODEOWNERS=${missing.length}\n`);
   for (const e of verdict.elevated.slice(0, 50)) write(`  elevado: ${e.path} (${e.reason})\n`);
   for (const m of missing) write(`  SEM DONO: ${m.path} (${m.reason})\n`);
@@ -134,7 +256,17 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
       const opt = (name, fallback) => (rest.includes(name) ? rest[rest.indexOf(name) + 1] : fallback);
       const base = opt("--base");
       if (!base) throw new Error("--base obrigatório");
-      process.exitCode = runGate({ base, head: opt("--head", "HEAD"), codeowners: opt("--codeowners", ".github/CODEOWNERS"), cwd: here });
+      // `--structural <arquivo>`: saída JSON do structural-gate (pode estar vazia); `--head-sha`: head do PR ao qual ela precisa pertencer
+      const file = opt("--structural");
+      let structural = null;
+      if (file) {
+        try {
+          structural = JSON.parse(fs.readFileSync(file, "utf8") || "null");
+        } catch {
+          structural = null;
+        }
+      }
+      process.exitCode = runGate({ base, head: opt("--head", "HEAD"), codeowners: opt("--codeowners", ".github/CODEOWNERS"), cwd: here, structural, headSha: opt("--head-sha") });
     } else if (cmd === "classify") {
       const verdict = classifyChange(rest);
       process.stdout.write(`${JSON.stringify(verdict)}\n`);

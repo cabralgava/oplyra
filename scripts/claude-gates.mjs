@@ -6,9 +6,17 @@
 
 import { pathAllowedByRecord, REPOSITORY } from "./claude-delivery-record.mjs";
 import { RISK, classifyChange } from "./claude-risk.mjs";
+import { STRUCTURAL, STRUCTURAL_CHECK, STRUCTURAL_REASONS } from "./claude-structural.mjs";
 
 /** Checks que precisam estar `success` NO head SHA atual. `validate` é a verificação integral; `risk-gate` prova a cobertura do CODEOWNERS. */
 export const REQUIRED_CHECKS = Object.freeze(["validate", "risk-gate"]);
+/** Missão com `scopeRef` (estrutural) exige também o `structural-gate`, no mesmo SHA. */
+export const requiredChecksFor = (ctx) => (ctx?.record?.scopeRef ? Object.freeze([...REQUIRED_CHECKS, STRUCTURAL_CHECK]) : REQUIRED_CHECKS);
+/** Todo check obrigatório presente, concluído e `success`. Ausente nunca conta como aprovado. */
+export function requiredSatisfied(checks, required) {
+  const byName = new Map((checks ?? []).filter((c) => c && typeof c.name === "string").map((c) => [c.name, c]));
+  return required.every((n) => byName.get(n)?.status === "completed" && OK_CONCLUSIONS.has(byName.get(n)?.conclusion));
+}
 export const HOLD_LABEL = "hold";
 export const MAX_FILES = 300;
 export const MAX_BRANCH_UPDATES = 2;
@@ -42,13 +50,15 @@ export function assessRuleset(rules) {
   if (!listing.some((r) => contexts(r).includes("validate"))) problems.push("falta-validate");
   if (listing.some((r) => contexts(r).includes("validate") && r.parameters.strict_required_status_checks_policy !== true)) problems.push("strict_required_status_checks_policy");
   const approvals = counts.length && counts.every(Number.isSafeInteger) ? Math.max(...counts) : null;
-  if (problems.length) return { mode: "unsafe", problems, approvals };
-  if (approvals >= 1) return { mode: "review-required", problems: [], approvals };
+  // o GitHub também exige o structural-gate? Sem isso, missão estrutural não é integrada (decide: ruleset-structural)
+  const structuralGate = listing.some((r) => contexts(r).includes(STRUCTURAL_CHECK));
+  if (problems.length) return { mode: "unsafe", problems, approvals, structuralGate };
+  if (approvals >= 1) return { mode: "review-required", problems: [], approvals, structuralGate };
   // 0 aprovações só é seguro com revisão do dono do código obrigatória e com o risk-gate exigido em TODA regra que lista validate
   const ownerReview = prRules.every((r) => r?.parameters?.require_code_owner_review === true);
   if (!ownerReview) problems.push("require_code_owner_review");
   if (!listing.filter((r) => contexts(r).includes("validate")).every((r) => contexts(r).includes("risk-gate"))) problems.push("falta-risk-gate");
-  return { mode: problems.length ? "unsafe" : "routine-capable", problems, approvals };
+  return { mode: problems.length ? "unsafe" : "routine-capable", problems, approvals, structuralGate };
 }
 
 /* ----------------------------------------------------------------------- evidência */
@@ -60,7 +70,7 @@ export function assessRuleset(rules) {
  *  - todos os obrigatórios `success`, nenhum pendente nem falho → nova evidência para este SHA.
  * Devolve `{ evidence, invalidated, failures }`, sem mutar a entrada.
  */
-export function updateEvidence({ evidence, failures = {}, headSha, checks }) {
+export function updateEvidence({ evidence, failures = {}, headSha, checks, required = REQUIRED_CHECKS }) {
   const next = { evidence: evidence ?? null, invalidated: null, failures: { ...failures } };
   if (next.evidence && next.evidence.sha !== headSha) {
     next.invalidated = { reason: "sha-changed", was: next.evidence.sha };
@@ -78,10 +88,8 @@ export function updateEvidence({ evidence, failures = {}, headSha, checks }) {
     next.evidence = null;
     return next;
   }
-  const byName = new Map(own.map((c) => [c.name, c]));
-  const allGreen = REQUIRED_CHECKS.every((n) => byName.get(n)?.status === "completed" && OK_CONCLUSIONS.has(byName.get(n)?.conclusion))
-    && own.every((c) => c.status === "completed");
-  if (allGreen && !next.evidence) next.evidence = { sha: headSha, checks: Object.fromEntries(REQUIRED_CHECKS.map((n) => [n, "success"])) };
+  const allGreen = requiredSatisfied(own, required) && own.every((c) => c.status === "completed");
+  if (allGreen && !next.evidence) next.evidence = { sha: headSha, checks: Object.fromEntries(required.map((n) => [n, "success"])) };
   return next;
 }
 
@@ -101,6 +109,24 @@ function latestReviewStates(reviews) {
 }
 
 /**
+ * Mudança elevada pelo caminho só segue o fluxo se for `structural` sob o escopo da missão: registro com `scopeRef`, todos os motivos
+ * em `banco`/`dependencias`, e resultado do `structural-gate` (controle da base confiável) para ESTE head, deste `scopeRef`, elegível e
+ * cobrindo cada caminho elevado. Sem resultado ou com resultado de outro SHA: espera (nunca reaproveita). Caso contrário: o proprietário.
+ * Devolve `null` quando a mudança pode seguir para os demais gates (CI, evidência, mergeabilidade).
+ */
+function structuralHold(verdict, ctx, headSha) {
+  const detail = verdict.elevated.slice(0, 5).map((e) => `${e.path}:${e.reason}`).join(",");
+  const scopeRef = ctx?.record?.scopeRef;
+  if (!scopeRef || verdict.elevated.some((e) => !STRUCTURAL_REASONS.includes(e.reason))) return owner("elevated", detail);
+  const s = ctx.structural;
+  if (!s || typeof s !== "object") return wait("structural-gate-pending");
+  if (s.sha !== headSha) return wait("structural-gate-stale");
+  if (s.scopeRef !== scopeRef || s.risk !== STRUCTURAL || s.eligible !== true || s.conclusion !== "success") return owner("elevated", `structural-gate:${detail}`);
+  if (!Array.isArray(s.structural) || verdict.elevated.some((e) => !s.structural.includes(e.path))) return owner("elevated", `structural-gate-cobertura:${detail}`);
+  return null;
+}
+
+/**
  * Decisão única para a missão. `obs`: `{ pr, checks, files, reviews, ruleset }`. `ctx`: `{ record, branch, evidence, failures, branchUpdates }`.
  * Ordem: estado terminal → identidade → ruleset → arquivos/risco/escopo → freios humanos → CI → mergeabilidade → ready → merge.
  */
@@ -112,25 +138,32 @@ export function decide(obs, ctx) {
   if (pr.base?.ref !== "main" || pr.head?.ref !== ctx.branch || String(pr.head?.repo?.full_name).toLowerCase() !== REPOSITORY) return blocked("pr-identity");
   if (typeof pr.head?.sha !== "string" || !/^[0-9a-f]{40}$/.test(pr.head.sha)) return blocked("pr-head");
   if (!["routine-capable", "review-required"].includes(obs.ruleset?.mode)) return blocked(`ruleset-${obs.ruleset?.mode ?? "unknown"}`, (obs.ruleset?.problems ?? []).join(","));
+  // missão estrutural só com o structural-gate também exigido pelo GitHub (barreira independente do runner)
+  if (ctx.record?.scopeRef && obs.ruleset.structuralGate !== true) return blocked("ruleset-structural", "o ruleset de main não exige o check structural-gate");
   const files = obs.files;
   if (!Array.isArray(files) || !files.length) return blocked("files-empty");
   if (files.length > MAX_FILES) return owner("elevated", "mudança grande demais para integração automática");
   const verdict = classifyChange(files.map((f) => ({ path: f.path, status: f.status })));
-  if (verdict.risk === RISK.elevated) return owner("elevated", verdict.elevated.slice(0, 5).map((e) => `${e.path}:${e.reason}`).join(","));
+  if (verdict.risk === RISK.elevated) {
+    const held = structuralHold(verdict, ctx, pr.head.sha);
+    if (held) return held;
+  }
   const outside = files.filter((f) => !pathAllowedByRecord(f.path, ctx.record));
   if (outside.length) return blocked("scope", outside.slice(0, 5).map((f) => f.path).join(","));
   if ((pr.labels ?? []).includes(HOLD_LABEL)) return owner("hold", "rótulo hold");
   const states = latestReviewStates(obs.reviews);
   if ([...states.values()].includes("CHANGES_REQUESTED")) return owner("changes-requested");
-  const checks = obs.checks ?? [];
-  const ev = updateEvidence({ evidence: ctx.evidence, failures: ctx.failures, headSha: pr.head.sha, checks });
+  // checks de outro commit (head_sha informado e diferente) não contam para o head atual
+  const checks = (obs.checks ?? []).filter((c) => c?.head_sha === undefined || c.head_sha === pr.head.sha);
+  const required = requiredChecksFor(ctx);
+  const ev = updateEvidence({ evidence: ctx.evidence, failures: ctx.failures, headSha: pr.head.sha, checks, required });
   const failing = checks.filter((c) => c.status === "completed" && !OK_CONCLUSIONS.has(c.conclusion) && !NEUTRAL.has(c.conclusion)).map((c) => c.name);
   if (failing.length) {
     const exhausted = failing.filter((n) => (ev.failures[n] ?? []).length > (ctx.record?.budgets?.fixAttempts ?? 3));
     if (exhausted.length) return { ...blocked("fix-budget", exhausted.join(",")), evidenceUpdate: ev };
     return { action: "fix", checks: failing, evidenceUpdate: ev };
   }
-  if (REQUIRED_CHECKS.some((n) => !checks.some((c) => c.name === n)) || checks.some((c) => c.status !== "completed")) return { ...wait("ci-pending"), evidenceUpdate: ev };
+  if (!requiredSatisfied(checks, required) || checks.some((c) => c.status !== "completed")) return { ...wait("ci-pending"), evidenceUpdate: ev };
   if (pr.draft === true && ev.evidence) return { action: "ready", evidenceUpdate: ev };
   if (obs.ruleset.mode === "review-required") {
     if (!Number.isSafeInteger(obs.ruleset.approvals) || obs.ruleset.approvals < 1) return blocked("ruleset-unsafe", "contagem de revisão inválida");
