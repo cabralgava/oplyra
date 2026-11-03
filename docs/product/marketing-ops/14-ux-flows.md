@@ -300,3 +300,7 @@ Selecionar versão de origem, instrução e formato; mostrar “1 edição”, s
 Exibir uso/limite por ação: copy aprovada, geração, edição, análise e check-in. Capacidade em unidades de negócio; não exibir USD interno ou tokens. Pesos de créditos ainda não aprovados não aparecem como números reais. Explicar período, saldo reservado, próximo reinício e limite atingido conforme DP-29. Não vender excedente automaticamente.
 
 Protótipo ampliado: Produção simula geração, edição, conclusão, falha, aprovação de versão e limite; Consumo apresenta contadores por ação. Estados/dados são fictícios, não persistidos e sem chamadas pagas. Troca de tenant não reutiliza a tela da empresa anterior.
+
+## Idiomas e billing internacional — CR-040
+
+Disponibilizar idioma da interface e moeda da assinatura como escolhas distintas; mostrar seller, moeda ISO, preço/intervalo, tributos e condições aceitas antes do checkout. Login/convite/avisos/billing devem cobrir pt-BR/en-US no escopo entregue. Redirect de pagamento mostra verificação e não libera capacidade por si. Documentos distinguem invoice aberta, recibo pago e ausência de NFS-e no fluxo planejado. Ver [i18n](i18n/I18N-SPEC.md) e [fluxos Stripe](billing/STRIPE-FLOWS.md). Layout, estados, acessibilidade e marca permanecem sujeitos ao guia Figma; este adendo não implementa telas.

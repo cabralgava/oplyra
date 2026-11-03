@@ -1,0 +1,93 @@
+{
+  "documentType": "proposed_pricing_worksheet",
+  "documentVersion": "1.0",
+  "packageId": "CP-I18N-BILLING-US-2026-10-28",
+  "status": "proposed_incomplete_not_for_runtime",
+  "isCanonicalRegistry": false,
+  "publishable": false,
+  "seller": {
+    "businessDecision": "US Oplyra LLC as seller",
+    "verifiedLegalName": null,
+    "verificationEvidenceRef": null
+  },
+  "provider": {
+    "name": "stripe",
+    "accountCountryTarget": "US",
+    "settlementCurrencyTarget": "USD",
+    "bankCountryTarget": "US",
+    "accountVerified": false,
+    "adaptivePricingAllowedByProposal": false
+  },
+  "pricingPolicy": {
+    "currencies": ["BRL", "USD"],
+    "dynamicFxPriceConversion": false,
+    "independentCurrencyAmounts": true,
+    "amountUnit": "minor_units",
+    "commercialApprovalRef": null,
+    "taxPolicyRef": null,
+    "lifecyclePolicyRef": null
+  },
+  "offers": [
+    {
+      "planKey": "performance",
+      "currency": "BRL",
+      "priceVersionId": null,
+      "amountMinor": null,
+      "interval": null,
+      "intervalCount": null,
+      "taxBehavior": null,
+      "effectiveFrom": null,
+      "approvalRef": null,
+      "sellable": false,
+      "stripeMapping": {"testPriceId": null, "livePriceId": null}
+    },
+    {
+      "planKey": "performance",
+      "currency": "USD",
+      "priceVersionId": null,
+      "amountMinor": null,
+      "interval": null,
+      "intervalCount": null,
+      "taxBehavior": null,
+      "effectiveFrom": null,
+      "approvalRef": null,
+      "sellable": false,
+      "stripeMapping": {"testPriceId": null, "livePriceId": null}
+    },
+    {
+      "planKey": "growth",
+      "currency": "BRL",
+      "priceVersionId": null,
+      "amountMinor": null,
+      "interval": null,
+      "intervalCount": null,
+      "taxBehavior": null,
+      "effectiveFrom": null,
+      "approvalRef": null,
+      "sellable": false,
+      "stripeMapping": {"testPriceId": null, "livePriceId": null}
+    },
+    {
+      "planKey": "growth",
+      "currency": "USD",
+      "priceVersionId": null,
+      "amountMinor": null,
+      "interval": null,
+      "intervalCount": null,
+      "taxBehavior": null,
+      "effectiveFrom": null,
+      "approvalRef": null,
+      "sellable": false,
+      "stripeMapping": {"testPriceId": null, "livePriceId": null}
+    }
+  ],
+  "publicationDependencies": [
+    "Approved numeric prices and billing intervals under DP-11a",
+    "Approved tax behavior, lifecycle and commercial terms",
+    "Canonical schema, owner, version and deterministic validation",
+    "Cross-validation and release governance after Freeze v1",
+    "Verified LLC, Stripe account and bank eligibility",
+    "Approved test and live mappings for the applicable environment",
+    "Product availability and entitlement policy; Growth not activated by this worksheet"
+  ]
+}
