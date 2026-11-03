@@ -14,5 +14,7 @@ export const podeConceder = (ator: RoleKey, alvo: RoleKey): boolean => precedenc
 export const PERMISSOES = [
   "tenant.read", "member.read", "member.invite", "member.role.change",
   "member.remove", "entitlement.read", "asset.read", "asset.write",
+  // I-03: ler a marca, editar o rascunho e publicar uma versão.
+  "brand.read", "brand.write", "brand.publish",
 ] as const;
 export type PermissionKey = (typeof PERMISSOES)[number];

@@ -6,6 +6,9 @@ export type TenantId = Marcado<"TenantId">;
 export type UserId = Marcado<"UserId">;
 export type MembershipId = Marcado<"MembershipId">;
 export type InvitationId = Marcado<"InvitationId">;
+export type BrandVersionId = Marcado<"BrandVersionId">;
+export type ProductKey = Marcado<"ProductKey">;
+export type ClaimId = Marcado<"ClaimId">;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const criar = <T extends string>(rotulo: string) => (valor: string): Marcado<T> => {
@@ -17,3 +20,6 @@ export const tenantId = criar<"TenantId">("TenantId");
 export const userId = criar<"UserId">("UserId");
 export const membershipId = criar<"MembershipId">("MembershipId");
 export const invitationId = criar<"InvitationId">("InvitationId");
+export const brandVersionId = criar<"BrandVersionId">("BrandVersionId");
+export const productKey = criar<"ProductKey">("ProductKey");
+export const claimId = criar<"ClaimId">("ClaimId");
