@@ -24,13 +24,21 @@ import { pathToFileURL } from "node:url";
 import {
   CEILINGS, GRANT_PHRASE, GRANT_REF_PATTERN, OWNER_BUDGETS, OWNER_CEILINGS, OWNER_DEFAULTS, REF_PATTERN, RECORD_MESSAGES, RecordError, buildGrant, buildRecord, defaultRecordDir, grantFile, loadGrant, selectRecord, writeGrant, writeRecord,
 } from "./claude-delivery-record.mjs";
+import {
+  REVOKE_PHRASE, STANDING_CEILINGS, STANDING_DEFAULTS, STANDING_MAX_DAYS, STANDING_MESSAGES, STANDING_PHRASE, StandingError, buildStanding, defaultStandingDir, revokeStanding, writeStanding,
+} from "./claude-standing.mjs";
 
 export const AUTHORIZE_PHRASE = "AUTORIZAR-ENTREGA-DELEGADA";
 export const CLEAR_PHRASE = "LIBERAR-DIAGNOSTICO";
-export { GRANT_PHRASE };
+export { GRANT_PHRASE, REVOKE_PHRASE, STANDING_PHRASE };
 const FLAGS = new Set([
   "ref", "branch", "base-sha", "paths", "contracts-cr", "contracts-scope", "expires-days", "max-commits", "max-pushes", "max-fix-attempts", "max-ci-wait",
   "max-wall-clock-seconds", "max-iterations", "max-log-reads", "clear-undiagnosed", "enable-rehearsal", "log-hosts",
+  "standing", "max-missions", "max-merges-per-run", "max-agent-sessions", "run-wall-clock-seconds",
+]);
+const STANDING_FLAGS = new Set([
+  "standing", "paths", "expires-days", "max-missions", "max-merges-per-run", "max-agent-sessions", "run-wall-clock-seconds", "max-commits", "max-pushes", "max-fix-attempts",
+  "max-ci-wait", "max-wall-clock-seconds", "max-iterations", "max-log-reads",
 ]);
 
 export const AUTH_MESSAGES = Object.freeze({
@@ -154,10 +162,57 @@ async function enableRehearsal({ args, homeDir, now, confirm, write, recordDir, 
   return 0;
 }
 
+/**
+ * Autorização contínua do desenvolvimento (04/10/2026): UM registro fora do repositório com escopo, classes de risco, limites e validade;
+ * dele o runner deriva um registro por missão, sem nova aprovação a cada uma. `--standing=revoke` a revoga (marcador REVOKED).
+ * Cobre só desenvolvimento e entrega Git de mudança ROTINEIRA no escopo; não cobre produção, dados reais, gastos, deploy, control plane,
+ * banco/RLS, dependências, contratos nem autonomia dos agentes do produto (esses continuam exigindo o proprietário).
+ */
+async function standingCommand({ args, homeDir, now, confirm, write, standingDir, refuseWith }) {
+  const dir = standingDir ?? defaultStandingDir(homeDir);
+  if (args.standing === "revoke") {
+    if (Object.keys(args).length !== 1) return refuseWith("DA-ARGS", AUTH_MESSAGES["DA-ARGS"]);
+    write(`Revogar a autorização contínua em ${dir}.\nEfeito: o runner para no próximo passo e os verbos do agente passam a recusar (DD-DISABLED). Reversível apenas criando uma nova autorização.\n`);
+    if ((await confirm(`Digite ${REVOKE_PHRASE} para revogar: `)) !== REVOKE_PHRASE) return refuseWith("DA-CONFIRM", AUTH_MESSAGES["DA-CONFIRM"]);
+    revokeStanding({ dir, now });
+    write("Revogada (marcador REVOKED criado).\n");
+    return 0;
+  }
+  if (args.standing !== "create" || !Object.keys(args).every((k) => STANDING_FLAGS.has(k))) return refuseWith("DA-ARGS", AUTH_MESSAGES["DA-ARGS"]);
+  const input = inputFromArgs({ ...args, ref: undefined, branch: undefined });
+  const limits = {};
+  for (const [flag, key] of Object.entries({ "max-missions": "maxMissions", "max-merges-per-run": "mergesPerRun", "max-agent-sessions": "maxAgentSessionsPerMission", "run-wall-clock-seconds": "wallClockSeconds" })) {
+    if (args[flag] !== undefined) limits[key] = toInt(args[flag]);
+  }
+  let standing;
+  try {
+    standing = buildStanding({ paths: input.paths, expiresInDays: input.expiresInDays, limits, missionBudgets: input.budgets, confirmation: STANDING_PHRASE }, { now });
+  } catch (e) {
+    if (e instanceof StandingError) return refuseWith(e.code, `${STANDING_MESSAGES[e.code]}${e.detail ? ` [${e.detail}]` : ""}`);
+    if (e instanceof RecordError) return refuseWith(e.code, RECORD_MESSAGES[e.code]);
+    throw e;
+  }
+  write(`Repositório: ${standing.repository} (base ${standing.baseRef})\nEscopo permanente (somente mudança ROTINEIRA):\n${standing.scope.paths.map((p) => `  - ${p}`).join("\n")}\n`);
+  write(`Limites da autorização (tetos ${JSON.stringify(STANDING_CEILINGS)}; padrões ${JSON.stringify(STANDING_DEFAULTS)}): ${JSON.stringify(standing.limits)}\n`);
+  write(`Orçamentos por missão: ${JSON.stringify(standing.missionBudgets)}\nVálida até: ${standing.expiresAt} (máximo ${STANDING_MAX_DAYS} dias)\n`);
+  write("Autoriza: o runner derivar um registro por missão, o agente criar branch/commit/push/PR draft pelos wrappers tipados e o RUNNER marcar ready e integrar por squash SOMENTE mudança rotineira com todos os gates.\n");
+  write("NÃO autoriza: control plane, CI, banco/RLS, dependências, contratos, harness, produção, dados reais, gastos, deploy, force push, nem ampliar a autonomia dos agentes do produto.\n");
+  write(`Revogação: \`node scripts/claude-authorize.mjs --standing=revoke\`, arquivo ${dir}/REVOKED, kill switch ~/.oplyra/KILL-DELIVERY ou expiração.\n`);
+  if ((await confirm(`Digite ${STANDING_PHRASE} para gravar a autorização: `)) !== STANDING_PHRASE) return refuseWith("DA-CONFIRM", AUTH_MESSAGES["DA-CONFIRM"]);
+  try {
+    const { file, sha256 } = writeStanding(standing, { dir });
+    write(`Autorização gravada em ${file}\nSHA-256: ${sha256}\nInicie o executor com: pnpm runner:start\n`);
+    return 0;
+  } catch (e) {
+    if (e instanceof StandingError) return refuseWith(e.code, `${STANDING_MESSAGES[e.code]}${e.detail ? ` [${e.detail}]` : ""}`);
+    throw e;
+  }
+}
+
 /** Ponto de entrada testável: todas as dependências externas são injetáveis. */
 export async function run({
   argv = process.argv.slice(2), env = process.env, isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY),
-  homeDir = os.homedir(), now = new Date(), confirm = confirmTyped, write = (s) => process.stdout.write(s), recordDir, stateDir,
+  homeDir = os.homedir(), now = new Date(), confirm = confirmTyped, write = (s) => process.stdout.write(s), recordDir, stateDir, standingDir,
 } = {}) {
   const refuseWith = (code, text) => {
     write(`Oplyra authorize: ${code} (${text})\n`);
@@ -167,6 +222,8 @@ export async function run({
   if (!isTTY) return refuseWith("DA-TTY", AUTH_MESSAGES["DA-TTY"]);
   const args = parseArgs(argv);
   if (!args) return refuseWith("DA-ARGS", AUTH_MESSAGES["DA-ARGS"]);
+  if (args.standing !== undefined) return standingCommand({ args, homeDir, now, confirm, write, standingDir, refuseWith });
+  if (["max-missions", "max-merges-per-run", "max-agent-sessions", "run-wall-clock-seconds"].some((k) => args[k] !== undefined)) return refuseWith("DA-ARGS", AUTH_MESSAGES["DA-ARGS"]);
   if (args["clear-undiagnosed"] !== undefined) {
     return clearUndiagnosed({ args, homeDir, now, confirm, write, stateDir, refuseWith });
   }

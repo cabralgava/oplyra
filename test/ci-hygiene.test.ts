@@ -89,13 +89,13 @@ describe("C-9 e C-1 — cancelamento e higiene de diff", () => {
 describe("S4 — visibilidade de propriedade e proveniência", () => {
   it("CODEOWNERS cobre o control plane e o modelo de PR exige proveniência e avisa que revisão por IA é consultiva", () => {
     const co = ler(".github/CODEOWNERS");
-    for (const p of ["/.github/", "/scripts/claude-*", "/.claude/", "/CLAUDE.md", "/tools/developer-harness/", "/docs/harness/", "/docs/product/marketing-ops/contracts/"]) {
+    for (const p of ["/.github/", "/scripts/", "/.claude/", "CLAUDE.md", "AGENTS.md", "/.agents/", "/.codex/", "/test/developer-harness.*", "/tools/", "/docs/harness/", "/docs/product/marketing-ops/contracts/"]) {
       expect(co, p).toMatch(new RegExp(`^${p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s+@cabralgava$`, "m"));
     }
     const tpl = ler(".github/pull_request_template.md");
     expect(tpl).toMatch(/registro de autoriza/i);
     expect(tpl).toMatch(/consultiva/i);
-    expect(tpl).toMatch(/Merge autom[aá]tico \*\*não está autorizado\*\*/);
+    expect(tpl).toMatch(/gates passam no SHA atual/);
   });
 });
 
