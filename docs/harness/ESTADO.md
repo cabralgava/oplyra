@@ -1,5 +1,11 @@
 # Estado do trabalho — Oplyra
 
+## Retomada — 03/11/2026
+
+PR #11 integrada em `8a2962c`; Brand OS integrado pela #10 em `433e183`. PR #8 encerrada como duplicada (árvore idêntica à main). PR #9 atualizada sobre main em `d798ff7`; 584 testes focados, typecheck dos três pacotes e os três checks do GitHub passaram. Os requisitos de release continuam explicitados na PR em rascunho. O código e as migrações da estratégia foram preservados a partir do delta original sobre o Brand OS.
+
+O proprietário retirou o mínimo de 1 aprovação no GitHub; a [política CR-041](POLITICA-REVISAO-RESPONSAVEL-UNICO.md) reconcilia o verificador e o plano administrativo. Entrega corrente: 398 testes focados e 153 testes de segurança passaram; CI da base conciliada e integração pendentes; nenhuma ativação de runner ou emissão de autorização externa. CR-040 foi integrado pela PR #13 em `4a92118`, conciliando a documentação i18n/billing anteriormente identificada como CR-034 na branch documental; CR-034 do Brand OS permanece canônico. CR-036 a CR-039 encontrados em branches de trabalho foram preservados.
+
 ## Retomada de i18n/billing — 03/11/2026
 
 Documentação do commit `2394d15` reaplicada sobre main `433e183` (Brand OS já integrado pela PR #10; PR #11 integrada em `8a2962c`). O identificador corrente passa a [CR-040](../product/marketing-ops/contracts/changes/CR-040-i18n-pricing-billing-us-documentation.md), para separar o alias histórico CR-034 de billing do CR-034 canônico do Brand OS. As entradas abaixo de 28/10 e 30/10 relatam o identificador antigo. Pacote histórico, relatórios antigos, Freeze, manifests, registries, schemas, fixtures e migrations são preservados. Nenhum código de billing ou chamada ao Stripe é implementado nesta entrega; a única mudança executável é a guarda de conteúdo documental em teste.

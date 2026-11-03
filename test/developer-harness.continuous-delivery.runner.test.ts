@@ -528,15 +528,22 @@ describe("mudança de risco elevado, freios humanos e proteção do ruleset", ()
     expect(w.gh.merges).toHaveLength(1);
   });
 
-  it("ruleset atual permite implementar e aguarda revisão; inseguro impede iniciar", async () => {
+  it("ruleset com revisão humana aguarda revisão; sem bloqueio de force push impede iniciar", async () => {
     const w = world({ rules: TODAY_RULES });
     expect(await w.run()).toMatchObject({ status: "stopped", reason: "awaiting-owner:review-required" });
     expect(w.agentCalls).toHaveLength(1);
     expect(w.gh.merges).toHaveLength(0);
     expect(fs.existsSync(path.join(w.recordDir, "ms-001.json"))).toBe(true);
-    const unsafe = world({ rules: GOOD_RULES.map((r) => (r.type === "pull_request" ? { ...r, parameters: { ...r.parameters, require_code_owner_review: false } } : r)) });
+    const unsafe = world({ rules: GOOD_RULES.filter((r) => r.type !== "non_fast_forward") });
     expect(await unsafe.run()).toMatchObject({ status: "stopped", reason: "ruleset-unsafe" });
     expect(unsafe.agentCalls).toEqual([]);
+  });
+
+  it("CR-041: configuração de um único proprietário integra rotina com CI, sem aprovação humana", async () => {
+    const rules = TODAY_RULES.map((r) => r.type === "pull_request" ? { ...r, parameters: { ...r.parameters, required_approving_review_count: 0, require_code_owner_review: false } } : r);
+    const w = world({ rules, missions: [mission(1)] });
+    expect(await w.run()).toMatchObject({ status: "done" });
+    expect(w.gh.merges).toHaveLength(1);
   });
 
   it("merge recusado pelo GitHub (405): bloqueia sem repetir; só `unblock` do proprietário reabre", async () => {

@@ -1,5 +1,9 @@
 # Autonomous Build — desenvolvimento e entrega contínuos
 
+## Decisão posterior — responsável único, 03/11/2026
+
+O proprietário retirou a exigência de review de outro usuário e autorizou a adequação da automação. A [política corrente](POLITICA-REVISAO-RESPONSAVEL-UNICO.md), governada pelo [CR-041](../product/marketing-ops/contracts/changes/CR-041-single-owner-review-policy.md), aceita 0 aprovações sem impor revisão de CODEOWNER. Os demais gates de autorização, risco, CI e integração permanecem. Os diagnósticos de proteção abaixo são históricos; não descrevem a configuração atual. Esta mudança não ativa o runner nem emite registros externos.
+
 ## 1. Autorização vigente e capacidade real
 
 **Mandato aprovado pelo proprietário em 04/10/2026:** produzir o sistema já especificado no automático, sem exigir operação manual de branch, commit, PR e merge a cada missão. A autorização cobre o desenvolvimento incremental do escopo aprovado e a correção do seu mecanismo de entrega; não é autorização irrestrita para serviços externos, custos, produção ou ações destrutivas.

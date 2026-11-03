@@ -4,7 +4,7 @@
 // EXECUTADO PELO PROPRIETÁRIO, com a autenticação do `gh` dele (nenhum token passa por aqui, nem pela conversa). Nunca roda dentro de uma
 // sessão de agente. Faz uma única coisa: tornar o ruleset `main-protection` compatível com a entrega rotineira SEM operação humana e SEM
 // perder proteção, e permitir desfazer:
-//   - aprovações numéricas 1 → 0, mas SOMENTE junto com `require_code_owner_review: true` (CODEOWNERS cobre todo caminho de risco elevado);
+//   - CR-041 (03/11/2026): aprovações numéricas 1 → 0 e sem revisão de CODEOWNER; responsáveis e gates de risco permanecem;
 //   - novos checks obrigatórios `risk-gate` (prova, por PR, que o classificador e o CODEOWNERS concordam) e `structural-gate` (controle,
 //     escopo e documento da base confiável; 29/10/2026), ao lado de `validate`;
 //   - squash como único método; demais regras (histórico linear, bloqueio de force push e exclusão, descarte de aprovação obsoleta, check estrito) preservadas;
@@ -39,7 +39,7 @@ export function planRuleset(current) {
   const pr = next.rules.find((r) => r?.type === "pull_request");
   const checks = next.rules.find((r) => r?.type === "required_status_checks");
   if (!pr || !checks) throw new Error("ruleset sem pull_request ou required_status_checks");
-  pr.parameters = { ...pr.parameters, required_approving_review_count: 0, require_code_owner_review: true, dismiss_stale_reviews_on_push: true, allowed_merge_methods: ["squash"] };
+  pr.parameters = { ...pr.parameters, required_approving_review_count: 0, require_code_owner_review: false, dismiss_stale_reviews_on_push: true, allowed_merge_methods: ["squash"] };
   const list = checks.parameters.required_status_checks ?? [];
   const validate = list.find((c) => c.context === "validate");
   if (!validate) throw new Error("o check obrigatório `validate` não consta do ruleset");
@@ -117,7 +117,7 @@ export async function run({
     const current = findRuleset(gh);
     const plan = planRuleset(current);
     write(`Ruleset ${current.id} (${current.name}) — hoje: modo=${plan.before.mode}, aprovações=${plan.before.approvals}${plan.before.problems.length ? `, pendências=${plan.before.problems.join(",")}` : ""}\n`);
-    write(`Depois: modo=${plan.assessment.mode}, aprovações=${plan.assessment.approvals}, revisão do dono do código obrigatória, checks obrigatórios: validate + risk-gate + structural-gate (estritos), squash apenas.\n`);
+    write(`Depois: modo=${plan.assessment.mode}, aprovações=${plan.assessment.approvals}, revisão do dono do código obrigatória=${plan.next.rules.find((r) => r.type === "pull_request").parameters.require_code_owner_review}, checks obrigatórios: validate + risk-gate + structural-gate (estritos), squash apenas.\n`);
     if (plan.bypass.length) write(`ATENÇÃO: o ruleset tem ${plan.bypass.length} bypass; este script NÃO o altera.\n`);
     if (plan.assessment.mode !== "routine-capable") return refuse(`o resultado planejado não é seguro (${plan.assessment.problems.join(",")}): nada será aplicado`);
     if (cmd === "ruleset-plan") {
@@ -128,7 +128,7 @@ export async function run({
     const gate = riskGateOnMain(gh);
     if (!gate.ok) return refuse(`os checks ${gate.missing.join(", ")} ainda não passaram em main (${gate.sha.slice(0, 12)}): integre o PR do bootstrap e aguarde a CI de main antes`);
     write(`risk-gate e structural-gate passaram em main (${gate.sha.slice(0, 12)}). Um backup do ruleset atual será gravado em ${backupDir} antes de aplicar.\n`);
-    write("Verificação obrigatória logo após aplicar: abra um PR descartável que altere uma linha de comentário em .github/CODEOWNERS e confirme que o GitHub BLOQUEIA o merge (revisão do dono do código). Se NÃO bloquear, rode ruleset-rollback com o backup indicado.\n");
+    write("Verificação após aplicar: releia o ruleset e confira PR obrigatório, squash, histórico linear, bloqueios de exclusão/force push e checks estritos. A política CR-041 dispensa revisão de outro usuário; caminhos elevados continuam sujeitos aos gates de risco e escopo do runner.\n");
     if ((await confirm(`Digite ${APPLY_PHRASE} para aplicar: `)) !== APPLY_PHRASE) return refuse("confirmação não recebida");
     fsImpl.mkdirSync(backupDir, { recursive: true, mode: 0o700 });
     fsImpl.chmodSync(backupDir, 0o700);
