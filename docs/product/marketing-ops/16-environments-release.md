@@ -235,3 +235,7 @@ Nenhum fornecedor foi avaliado ou verificado nesta etapa.
 | Resposta | Detectar → declarar severidade e responsável → conter (kill switch, pausa de filas, rollback) → comunicar pilotos (SEV1 em até 1 h, proposta) → corrigir → post-mortem sem culpados em até 5 dias úteis |
 | Cobertura | Pilotos: horário comercial com responsável de plantão definido; SEV1 com acionamento imediato |
 | Dados pessoais | Incidentes com dados pessoais seguem [07](07-security-lgpd.md) §11.5–11.6 |
+
+## Idiomas e billing internacional — CR-040
+
+Separar credenciais e mappings Stripe por conta/ambiente, com IDs test/live incompatíveis, API/SDK fixados e provider locale homologado por superfície. Local/CI seguem fake por padrão; sem fallback produtivo. Validar configuração de preço manual/Adaptive Pricing, banco EUA e settlement antes de live. [Migração/rollback](billing/MIGRATION-ROLLOUT.md) distingue publicação de docs, release contratual e ativação. Manifests históricos são preservados; docs atuais podem divergir de seus hashes. Esta incorporação não emite nova release, não altera secrets nem configura serviços.

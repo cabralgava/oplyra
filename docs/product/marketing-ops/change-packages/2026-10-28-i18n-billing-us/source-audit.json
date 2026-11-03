@@ -1,0 +1,595 @@
+{
+  "packageId": "CP-I18N-BILLING-US-2026-10-28",
+  "date": "2026-10-28",
+  "sourceRepository": "/Users/cmii/Documents/Projetos/Oplyra",
+  "head": "6d0dfe486292e05fade19a93b650bb54c1bde732",
+  "branch": "agent/docs/20261004-continuous-development",
+  "workingTreeBefore": [
+    " M docs/decisions/ADR-0006-runtime-de-agentes.md",
+    "?? docs/harness/INTEGRACAO-PR11-E-PERFIS.md",
+    "?? docs/progresso/",
+    "?? test/perfil-de-produto.paths.test.ts"
+  ],
+  "readingScope": "fontes normativas consultadas por trechos pertinentes; 00 lido integralmente; hashes não equivalem a leitura integral ou teste",
+  "records": [
+    {
+      "path": "AGENTS.md",
+      "exists": true,
+      "sha256": "222b471e039d979886b3fc4085d825920e05555845a6793e65963dd8382187bd",
+      "sizeBytes": 11308
+    },
+    {
+      "path": "CLAUDE.md",
+      "exists": true,
+      "sha256": "2f5f06f89731217f710e0912c132c6c86475b9f3a6bca36eb1aa57588ef7f65b",
+      "sizeBytes": 19838
+    },
+    {
+      "path": "docs/decisions/ADR-0007-entitlements-e-billing.md",
+      "exists": true,
+      "sha256": "e5a2ad1512252eb536e1665b859021c55c1ecd5f47db35768dbd55dcf1d1efc4",
+      "sizeBytes": 2629
+    },
+    {
+      "path": "docs/decisions/README.md",
+      "exists": true,
+      "sha256": "be62d88026f6819f04bfa876e8e636e70f351ad130239d59f1928992a657175c",
+      "sizeBytes": 20861
+    },
+    {
+      "path": "docs/harness/AUTONOMOUS-BUILD.md",
+      "exists": true,
+      "sha256": "ed28e47bd9179d8a760288ca84b4ee68f00677b3ad96d1d5673aab9baf8d59ab",
+      "sizeBytes": 13239
+    },
+    {
+      "path": "docs/harness/DESENVOLVIMENTO.md",
+      "exists": true,
+      "sha256": "ce65027f194bb51ddb402beed5803806c8c648115ac9c4a273c2712046643e19",
+      "sizeBytes": 12309
+    },
+    {
+      "path": "docs/harness/ESTADO.md",
+      "exists": true,
+      "sha256": "8e8ef436860617aa2665d1f30a84610181c9e8c5fb0f55421af767c6e10def29",
+      "sizeBytes": 87682
+    },
+    {
+      "path": "docs/harness/VERIFICACOES.md",
+      "exists": true,
+      "sha256": "4ede90d92e72da26b7ce70a66a1548ac1e590830de7eb81075f7482344295ef8",
+      "sizeBytes": 17166
+    },
+    {
+      "path": "docs/product/marketing-ops/00-documento-transicao.md",
+      "exists": true,
+      "sha256": "59a2b9495d770f4fc621dc626369a86aed55d03e77d616c3f4ad5f69e9c78bfc",
+      "sizeBytes": 86190
+    },
+    {
+      "path": "docs/product/marketing-ops/01-product-requirements.md",
+      "exists": true,
+      "sha256": "7042ef3602822f0051f0f0493ae7fb5e71a406220e5f100c09d841071e561e7d",
+      "sizeBytes": 6520
+    },
+    {
+      "path": "docs/product/marketing-ops/03-domain-model.md",
+      "exists": true,
+      "sha256": "596b169cbd0d624b18d8dd5b0e01b8fcb0a5d2716944d36d12c4fbc7054d6ddc",
+      "sizeBytes": 7393
+    },
+    {
+      "path": "docs/product/marketing-ops/04-architecture.md",
+      "exists": true,
+      "sha256": "91396d17436b693957add3af2431660cb7b320eff40849b1b68f5224f0774422",
+      "sizeBytes": 4898
+    },
+    {
+      "path": "docs/product/marketing-ops/05-data-model.md",
+      "exists": true,
+      "sha256": "220bc7dd1e6b41784e9f80791a8b670dd7df717334860f01aac69b7d868b9f1d",
+      "sizeBytes": 5559
+    },
+    {
+      "path": "docs/product/marketing-ops/06-integrations.md",
+      "exists": true,
+      "sha256": "c7230759ad2d00bc5d79a9964cb6d69ec9a4efd780396665b145ea6c8944617d",
+      "sizeBytes": 5913
+    },
+    {
+      "path": "docs/product/marketing-ops/07-security-lgpd.md",
+      "exists": true,
+      "sha256": "ab264b255897db2a4a89d86cf5c8476c7dfa279dbbf0f1de47180069ee7496f3",
+      "sizeBytes": 5379
+    },
+    {
+      "path": "docs/product/marketing-ops/08-billing-entitlements.md",
+      "exists": true,
+      "sha256": "70382afaec8be6067cf02a7406457f6e5fc5be54f707e0d6b52aed56a0295781",
+      "sizeBytes": 9083
+    },
+    {
+      "path": "docs/product/marketing-ops/12-roadmap.md",
+      "exists": true,
+      "sha256": "d5a6f6bbe28ef1a21cfdd6dfe17ddecf8306ba66abe2a6718df8782dd1741c50",
+      "sizeBytes": 5724
+    },
+    {
+      "path": "docs/product/marketing-ops/14-ux-flows.md",
+      "exists": true,
+      "sha256": "d6a63b1aa685c61520f60193aa3001ff71d619e0501f4fc8ef135d13530f31c0",
+      "sizeBytes": 21131
+    },
+    {
+      "path": "docs/product/marketing-ops/15-test-plan.md",
+      "exists": true,
+      "sha256": "15d560ecd864d52e186c92ba23b849b7d3631bc6b245b2073c7f24b18aacce5f",
+      "sizeBytes": 20195
+    },
+    {
+      "path": "docs/product/marketing-ops/16-environments-release.md",
+      "exists": true,
+      "sha256": "1f836bf208325cdd3366ebb3a98de30777160113747838937942b2e8e6032f77",
+      "sizeBytes": 19782
+    },
+    {
+      "path": "docs/product/marketing-ops/17-risks-costs.md",
+      "exists": true,
+      "sha256": "884768fade50ad4eec1922489620e6ab512ed1366968c123d163607fe1508f48",
+      "sizeBytes": 14275
+    },
+    {
+      "path": "docs/product/marketing-ops/19-context-stack.md",
+      "exists": true,
+      "sha256": "2a093521cdbf6bf3bd1bea296400a16557f429fb5f0834cafc0a99aec8980af7",
+      "sizeBytes": 42494
+    },
+    {
+      "path": "docs/product/marketing-ops/20-agent-transaction-protocol.md",
+      "exists": true,
+      "sha256": "90cde5f41044178cbbccf78545dcb1f6c2cf04a75e5a2634bdfafb88490b7266",
+      "sizeBytes": 36414
+    },
+    {
+      "path": "docs/product/marketing-ops/ATUALIZACOES.md",
+      "exists": true,
+      "sha256": "ddaaa87c1d860346e4df7d965ca164cb40e2f13fd11376d1ba2a689f1f315613",
+      "sizeBytes": 13444
+    },
+    {
+      "path": "docs/product/marketing-ops/agents/README.md",
+      "exists": true,
+      "sha256": "22be72e4fe84e18ab75184081e2ef94bf5c355a194792e13225715e41bc39c2a",
+      "sizeBytes": 27636
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/CONTRACT-REGISTRY-FREEZE-v1.md",
+      "exists": true,
+      "sha256": "e0c5acc806b154ad875a1c6acd36abb9d9f69d81f3376f1f8ffef77d0ac3c8b1",
+      "sizeBytes": 4485
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/CROSS-REGISTRY-VALIDATION.md",
+      "exists": true,
+      "sha256": "f27a5964f3b527863b4569e6826d32c38b64caa2136b040699120aa126ebb983",
+      "sizeBytes": 4266
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest-v2.22.json",
+      "exists": true,
+      "sha256": "2d68a995ad57f657225b2f70860b5783a78a288d1a27a316e41108d975e8cdd6",
+      "sizeBytes": 159545
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contract-registry-manifest.json",
+      "exists": true,
+      "sha256": "a1b3f1eebb8d8398fb3f6af2d48212c974211fabcbf366c3a0d2d9f05a7c0ced",
+      "sizeBytes": 21287
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contracts-README.md",
+      "exists": true,
+      "sha256": "29b9472072c183c297ed4d21971f8800a03f91f4526a7e8d21ce35bcadf69671",
+      "sizeBytes": 23984
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/cross-registry-validation.json",
+      "exists": true,
+      "sha256": "0d9e17e4edd5f373c7d21ca1e9f8a0371f59983b89dc309faa0f668158781fb3",
+      "sizeBytes": 22785
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/actions.json",
+      "exists": true,
+      "sha256": "5c5ee83217cb1b023de222e20b7997df3568de3be22948c527f414032116a4a7",
+      "sizeBytes": 134975
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/agents.json",
+      "exists": true,
+      "sha256": "52d9cdc5b1c2f54ad022a345778be2e08e53acd2a3fa67664008fbfa9cce26fe",
+      "sizeBytes": 6103
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/errors.json",
+      "exists": true,
+      "sha256": "3ad9e50b950814a452d7dee68e2a7a328b44664947bf65d718480a8df3e02a60",
+      "sizeBytes": 16804
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/events.json",
+      "exists": true,
+      "sha256": "51176c9756dcfb60f6635df1edd3a7f3b3266e45fbb897aa6a215834060a6eb8",
+      "sizeBytes": 105829
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/handoffs.json",
+      "exists": true,
+      "sha256": "9b5f777d7147c5506ed9691769de7241adec1707af4488b73b145d4b8e4f3061",
+      "sizeBytes": 47025
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/model-profiles.json",
+      "exists": true,
+      "sha256": "c4a46eebbf169bf569ba3df437caf690674ea0ba76e142fac29451a3f9e09a2f",
+      "sizeBytes": 4094
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/permissions.json",
+      "exists": true,
+      "sha256": "38ff5cf89e23fb4e66c0798fe1ea6537d94f9813ecc4074c90a50ef4bac5329e",
+      "sizeBytes": 2397
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/quality-gates.json",
+      "exists": true,
+      "sha256": "9d12baad514abe25b323f568c7b0e63d294863fa5ba8db697e001bb18fe7430d",
+      "sizeBytes": 15843
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/registries/tools.json",
+      "exists": true,
+      "sha256": "36cf3acc8b69ea0f33a801eae6ca8c2b8a170c9aa7f8002082d364d61a2ed226",
+      "sizeBytes": 35609
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/agent-definition.schema.json",
+      "exists": true,
+      "sha256": "d14b18fe859c87d97f3906cbcf3db6d62b06b2ec406a54d99977e75f1623597c",
+      "sizeBytes": 4284
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/budget-period.schema.json",
+      "exists": true,
+      "sha256": "d1e680ece804d6a0617a64ce03b94e46c3c14b3689f7f6c16c24d364739b2372",
+      "sizeBytes": 2641
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/cost-ledger-entry.schema.json",
+      "exists": true,
+      "sha256": "4a45174505fb2b7903b922ebdbc20e870bb4e959e5d5f2d5f1783aba40ad6709",
+      "sizeBytes": 2752
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-attempt.schema.json",
+      "exists": true,
+      "sha256": "36cd2c03786b0c87c0ad1113a07bef66756618e1e80cc3f2da3ce71575b6c675",
+      "sizeBytes": 4298
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-call-record.schema.json",
+      "exists": true,
+      "sha256": "a50c0f1c84ff09fed139f9880a9ea6bf40fdfe8d678746285cf64c18abd0f94b",
+      "sizeBytes": 8666
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-invocation-request.schema.json",
+      "exists": true,
+      "sha256": "3ccdd68aa3bd9e60f02523070733a5f95790421e861a412ebc2bae49d9075fb9",
+      "sizeBytes": 3589
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-profile-1.1.schema.json",
+      "exists": true,
+      "sha256": "fa4c41d44b58a3b586d311cb331dc727ba5508635b46440706854f23658c4f19",
+      "sizeBytes": 6592
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-profile.schema.json",
+      "exists": true,
+      "sha256": "2720854e982362ca289cbe0cef6a2e7edf25303d990deb4f44e1dcc38fb06e4b",
+      "sizeBytes": 6314
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/model-registry-entry.schema.json",
+      "exists": true,
+      "sha256": "690a3b48016ea910c2974fca8d8fa7429d361ec9497cc2e8921452d4630e36b6",
+      "sizeBytes": 5921
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/ai-model-harness/provider-response.schema.json",
+      "exists": true,
+      "sha256": "586b6649a584861dfc6d260450ed56d21198da46e1a702359381b8d6ad6145cc",
+      "sizeBytes": 4017
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/approval.schema.json",
+      "exists": true,
+      "sha256": "5f4268f1142fc6a8aa3bf9ce1d2facb8fdf48916ec9f9425113c9c22c1f9fc73",
+      "sizeBytes": 10957
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/common-definitions-1.1.schema.json",
+      "exists": true,
+      "sha256": "c7ee32d3a27c5fc52251c72c2d4e854df3eafa26e75be7f5c2f9edb3c0675b36",
+      "sizeBytes": 7551
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/common-definitions.schema.json",
+      "exists": true,
+      "sha256": "25456132041bf1affbd09210921b12d7b2555d15269adbe45f6f203eac5c2a2d",
+      "sizeBytes": 1416
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/context-package.schema.json",
+      "exists": true,
+      "sha256": "f7207dafd61447e6da24aa76c6cfcae311543232db9284de4dd05e9f2c1e7d30",
+      "sizeBytes": 15837
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/context-update-candidate.schema.json",
+      "exists": true,
+      "sha256": "5c0f22127a18d9591346f49784eaa8652612a5c1568dc1c6232a2e9093578260",
+      "sizeBytes": 13033
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.input.schema.json",
+      "exists": true,
+      "sha256": "529dae1ded9c6255ab6fa39a45d198e743450dfbdb99ea5181f87839c176c66b",
+      "sizeBytes": 2385
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/copywriting/create-copy-variants.output.schema.json",
+      "exists": true,
+      "sha256": "634ad7e48ec9b947d5c8ca7bb6909a90e42e921ad72d1f8e336b07e4d3c0c412",
+      "sizeBytes": 2910
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/error.schema.json",
+      "exists": true,
+      "sha256": "b354c4aa8214878ee7d08be7027b02a4e9eceafa34f814d15db87f538e3b32e8",
+      "sizeBytes": 10182
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/events/copywriting/copy-draft-created.payload.schema.json",
+      "exists": true,
+      "sha256": "e6d66e1d023836e8428dc16f90daf1e3435a759bb1a663997377e517f8817e79",
+      "sizeBytes": 1313
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/events/runtime/runtime-dead-lettered.payload.schema.json",
+      "exists": true,
+      "sha256": "e1021ec68553f385985f05ec346cd3bfe40a30d6fd79c0aabf2a2a35677b4603",
+      "sizeBytes": 2748
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/handoff.schema.json",
+      "exists": true,
+      "sha256": "b89c84f22c1040b6dde20457594a54c0c0d170a5fd7b04c20d92771fcbb164e4",
+      "sizeBytes": 11504
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/learning-record.schema.json",
+      "exists": true,
+      "sha256": "0381d9b397a41c95370d8cb15e15b7014b41746128e9b27011fc74e10e1146d1",
+      "sizeBytes": 16808
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/quality-review.schema.json",
+      "exists": true,
+      "sha256": "c6bbbb836ed41af9c951d28abaa6c863ea0ad5927ae0e7d89e9b8b078771e96b",
+      "sizeBytes": 12723
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/content-reference-resolver.input.schema.json",
+      "exists": true,
+      "sha256": "75acccd7a8545efbf59bd5a64e9db1b328d0fb9da55a77e0bb50f431d61a8cfe",
+      "sizeBytes": 1845
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/content-reference-resolver.output.schema.json",
+      "exists": true,
+      "sha256": "25e1471303d65688760e5aa88459e1139b32bb4c195d70892b1134166ba461e6",
+      "sizeBytes": 2343
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-claim.input.schema.json",
+      "exists": true,
+      "sha256": "1aa81f7c740e1c406797416fbf4899cc2bbf113c086707d5a11a8294f2a60f94",
+      "sizeBytes": 1017
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-claim.output.schema.json",
+      "exists": true,
+      "sha256": "f515113aea963bd050ab99bb2ef27910606e8f5543122e946ff3bfee44c8c8c6",
+      "sizeBytes": 3313
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-runtime-plan.schema.json",
+      "exists": true,
+      "sha256": "6306bd07af57e5ff4b001bf90b64ea6800b47c941b7abd11ecb4893ad3208f40",
+      "sizeBytes": 6022
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-settlement.input.schema.json",
+      "exists": true,
+      "sha256": "99b370013b1cf3fcb505da47daf990b8f320be333beccc80a204609cd34183a9",
+      "sizeBytes": 2219
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-dispatcher-settlement.output.schema.json",
+      "exists": true,
+      "sha256": "6bccf143ee733a4a19c91d42d4bfc516202579e1a6a018c1ceae4de800450f47",
+      "sizeBytes": 1313
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/outbox-retry-policy.schema.json",
+      "exists": true,
+      "sha256": "e70961e67a48b02f0ffa9826e3981de3a10e0d92af01338357da36d490a5a5ea",
+      "sizeBytes": 2673
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/runtime/production-environment-plan.schema.json",
+      "exists": true,
+      "sha256": "25fcc6a2a32291d5c7eebf5aaca901bcf1b20d546d6b66849fced86b65232eb0",
+      "sizeBytes": 6169
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/task.schema.json",
+      "exists": true,
+      "sha256": "7a4fcea73356995ecd75e67ed14ed1d98fe93e093b7cc7c216e86e25395c3ee7",
+      "sizeBytes": 12128
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/schemas/transaction-envelope.schema.json",
+      "exists": true,
+      "sha256": "f412c547f76b9cc26b1870fc683d32a1deb38bdbe8afb4b2b9764beed65c61e8",
+      "sizeBytes": 15337
+    },
+    {
+      "path": "package.json",
+      "exists": true,
+      "sha256": "1f38450a448051ed780bec352b5a801d44dc7c9a3bbd2b07667877aa6a9bcbbd",
+      "sizeBytes": 2623
+    },
+    {
+      "path": "packages/core/src/application/use-cases/provision-tenant.ts",
+      "exists": true,
+      "sha256": "658ed545ca30934a6030617b6549305e76fe942026035947cbbf85d7e46039e2",
+      "sizeBytes": 1853
+    },
+    {
+      "path": "packages/core/src/domain/entities.ts",
+      "exists": true,
+      "sha256": "071d8b30c067f3dd2dea8ca73d193b89aef497edc933d66ef96a343acb50d321",
+      "sizeBytes": 1697
+    },
+    {
+      "path": "packages/infra/src/repositories.ts",
+      "exists": true,
+      "sha256": "834bd2aeda074129a94c783ce503b1af7cd0d6e0b392c95c9effa7695f532448",
+      "sizeBytes": 6937
+    },
+    {
+      "path": "supabase/migrations/20260915000002_identity_and_tenancy.sql",
+      "exists": true,
+      "sha256": "85882b6255944f617a3c6045e7cbadb812838f098d2c2e0ab9ff430cef9c1ed0",
+      "sizeBytes": 8341
+    },
+    {
+      "path": "supabase/migrations/20260915000003_rls_policies.sql",
+      "exists": true,
+      "sha256": "4fc7d844c7733358a63abfe0bdb394f15d42de5613ac7afc9d8c90c0e75918ea",
+      "sizeBytes": 8218
+    },
+    {
+      "path": "supabase/migrations/20260929000013_finops_ledger_schema.sql",
+      "exists": true,
+      "sha256": "f2668c1fd43434c2581fc68bfc70b7d71167f49b28e2b958e86a0cd8e2d654af",
+      "sizeBytes": 23753
+    }
+  ],
+  "registryAudit": [
+    {
+      "registry": "agents",
+      "version": "1.0",
+      "count": 12,
+      "sha256": "52d9cdc5b1c2f54ad022a345778be2e08e53acd2a3fa67664008fbfa9cce26fe",
+      "matchesRelease222Manifest": true
+    },
+    {
+      "registry": "permissions",
+      "version": "1.0",
+      "count": 6,
+      "sha256": "38ff5cf89e23fb4e66c0798fe1ea6537d94f9813ecc4074c90a50ef4bac5329e",
+      "matchesRelease222Manifest": true
+    },
+    {
+      "registry": "tools",
+      "version": "1.0",
+      "count": 58,
+      "sha256": "36cf3acc8b69ea0f33a801eae6ca8c2b8a170c9aa7f8002082d364d61a2ed226",
+      "matchesRelease222Manifest": true
+    },
+    {
+      "registry": "actions",
+      "version": "2.0",
+      "count": 171,
+      "sha256": "5c5ee83217cb1b023de222e20b7997df3568de3be22948c527f414032116a4a7",
+      "matchesRelease222Manifest": true
+    },
+    {
+      "registry": "events",
+      "version": "1.2",
+      "count": 137,
+      "sha256": "51176c9756dcfb60f6635df1edd3a7f3b3266e45fbb897aa6a215834060a6eb8",
+      "matchesRelease222Manifest": true
+    },
+    {
+      "registry": "errors",
+      "version": "1.5",
+      "count": 60,
+      "sha256": "3ad9e50b950814a452d7dee68e2a7a328b44664947bf65d718480a8df3e02a60",
+      "matchesRelease222Manifest": true
+    },
+    {
+      "registry": "handoffs",
+      "version": "1.0",
+      "count": 43,
+      "sha256": "9b5f777d7147c5506ed9691769de7241adec1707af4488b73b145d4b8e4f3061",
+      "matchesRelease222Manifest": true
+    },
+    {
+      "registry": "quality-gates",
+      "version": "1.0",
+      "count": 11,
+      "sha256": "9d12baad514abe25b323f568c7b0e63d294863fa5ba8db697e001bb18fe7430d",
+      "matchesRelease222Manifest": true
+    },
+    {
+      "registry": "model-profiles",
+      "version": "1.1",
+      "count": 3,
+      "sha256": "c4a46eebbf169bf569ba3df437caf690674ea0ba76e142fac29451a3f9e09a2f",
+      "matchesRelease222Manifest": true
+    }
+  ],
+  "targetedChecks": [
+    {
+      "check": "registry_hashes_match_release_2_22",
+      "passed": true
+    },
+    {
+      "check": "handoff_action_existence_and_target_owner",
+      "passed": true,
+      "bindings": 364,
+      "issues": []
+    },
+    {
+      "check": "side_effect_idempotency",
+      "passed": true
+    }
+  ],
+  "missingRequestedReferences": [
+    "OPLYRA-MIGRATION-PACK/00-START-HERE.md",
+    "OPLYRA-MIGRATION-PACK/06-OPEN-ITEMS.md",
+    "docs/product/marketing-ops/contracts/README.md"
+  ],
+  "actualContractReadme": "docs/product/marketing-ops/contracts/contracts-README.md",
+  "limitations": [
+    "Não é cross-validation completa",
+    "Não é confirmação de ambiente remoto ou release implantada",
+    "Nenhum teste de produto ou operação Stripe foi executado",
+    "sources/ do espelho estava vazio; repositório principal consultado somente em leitura"
+  ]
+}

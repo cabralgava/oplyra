@@ -1,7 +1,9 @@
 # Oplyra — Integrations
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-040)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## 1. Princípio
@@ -161,3 +163,7 @@ SMTP de Auth, convites e avisos da Fundação são transacionais, com provedor a
 ### 11.4 Entrada de sinais comerciais
 
 Proposta: autenticar fonte e resolver tenant no servidor; ignorar/rejeitar tenantId enviado no corpo. Evento tem sourceId/externalEventId, tipo, instante, versão e chave de rastreamento; idempotência por fonte/evento e conflito de payload explícito. Correções referenciam supersedes sem apagar histórico. Limitar lote/tamanho/rate e responder por item. Política de PII permanece em 07/DP-27; hashes não são prova automática de anonimização.
+
+## Idiomas e billing internacional — CR-040
+
+A diretriz comercial usa Stripe americano da Oplyra LLC, preços manuais independentes BRL/USD e documentos comerciais, com banco de liquidação nos EUA. BRL não garante Pix/boleto/recorrência local. Adaptive Pricing e canais precisam cumprir o catálogo fixo; proposta e limitações em [fluxos Stripe](billing/STRIPE-FLOWS.md). Assinatura do webhook, mapping confiável por conta/ambiente/tenant, inbox durável, idempotência e reconciliação são obrigatórios na implementação aplicável. Stripe continua adapter; não emitir `revenue.recorded` no tenant pela mensalidade Oplyra. NFS-e brasileira está fora do fluxo planejado, sem conclusão fiscal de isenção.
