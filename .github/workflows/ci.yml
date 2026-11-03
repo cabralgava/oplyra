@@ -14,6 +14,85 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  # Classe structural (docs/harness/INTEGRACAO-PR11-E-PERFIS.md §3, §12). O controle, o escopo (docs/harness/scopes/<ref>.json) e o
+  # documento aprovado vêm SOMENTE do commit base confiável (merge-base com a base do PR), executados de um worktree desse commit:
+  # o código do PR é apenas dado, nunca executado aqui. Sem segredos; checkout sem credenciais persistidas. Só Node.
+  # `Structural-Scope: sc-...` no corpo do PR apenas SELECIONA o escopo; o conteúdo do escopo nunca vem do PR.
+  structural-gate:
+    name: structural-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      result: ${{ steps.gate.outputs.result }}
+    steps:
+      - name: Checkout (history only; the PR code is data)
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run the gate from the trusted base
+        id: gate
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          TRUSTED="$(git merge-base "$BASE_SHA" "$HEAD_SHA")"
+          SCOPE_REF="$(printf '%s\n' "$PR_BODY" | sed -n 's/^Structural-Scope: \(sc-[a-z0-9-]*\)[[:space:]]*$/\1/p' | head -n 1)"
+          if ! git cat-file -e "$TRUSTED:scripts/claude-structural.mjs" 2>/dev/null; then
+            if [ -n "$SCOPE_REF" ]; then echo "structural-gate: controle ausente na base confiável"; exit 1; fi
+            echo "structural-gate: a base confiável ainda não tem o controle estrutural; nada a avaliar"
+            echo 'result={}' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git worktree add --detach "$RUNNER_TEMP/trusted" "$TRUSTED"
+          ARGS=(gate --repo "$GITHUB_WORKSPACE" --base "$TRUSTED" --head "$HEAD_SHA")
+          if [ -n "$SCOPE_REF" ]; then ARGS+=(--scope-ref "$SCOPE_REF"); fi
+          set +e
+          node "$RUNNER_TEMP/trusted/scripts/claude-structural.mjs" "${ARGS[@]}" > "$RUNNER_TEMP/structural.json"
+          STATUS=$?
+          set -e
+          cat "$RUNNER_TEMP/structural.json"
+          { echo 'result<<OPLYRA_STRUCTURAL_EOF'; cat "$RUNNER_TEMP/structural.json"; echo 'OPLYRA_STRUCTURAL_EOF'; } >> "$GITHUB_OUTPUT"
+          exit "$STATUS"
+
+      - name: Nothing to evaluate outside pull requests
+        if: github.event_name != 'pull_request'
+        run: echo "structural-gate evaluates pull requests"
+
+  # Todo caminho elevado precisa de um dono no CODEOWNERS. O runner lê as exigências reais de revisão do GitHub.
+  # Cobertura não substitui aprovação; este job não muda rulesets. Só Node, sem dependências instaladas.
+  # Caminho estrutural sem dono só é aceito com o resultado do structural-gate do MESMO head, aprovado e elegível. Roda sempre
+  # (`always()`), inclusive quando o structural-gate falha: um check obrigatório nunca é pulado.
+  risk-gate:
+    name: risk-gate
+    needs: structural-gate
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Classify the change and verify CODEOWNERS coverage
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          STRUCTURAL_RESULT: ${{ needs.structural-gate.outputs.result }}
+        run: |
+          printf '%s' "$STRUCTURAL_RESULT" > "$RUNNER_TEMP/structural.json"
+          node scripts/claude-risk.mjs gate --base "origin/${BASE_REF}" --structural "$RUNNER_TEMP/structural.json" --head-sha "$HEAD_SHA"
+
+      - name: Nothing to classify outside pull requests
+        if: github.event_name != 'pull_request'
+        run: echo "risk-gate classifies pull requests; push to main is covered by validate"
+
   validate:
     name: validate
     runs-on: ubuntu-latest
