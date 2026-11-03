@@ -1,14 +1,16 @@
 # Oplyra — Billing, Entitlements & Limits
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-040)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## 1. Decisão de billing
 
 O provedor inicial será **Stripe**, usando Stripe Billing e Stripe Payments por meio de adapter próprio.
 
-O preço final de venda ainda não está definido.
+Os valores finais de venda ainda não estão definidos. A estrutura aprovada em 28/10/2026 fixa valores independentes em BRL e USD por plano, sem conversão cambial dinâmica de preço; ver [ADR-0010](../../decisions/ADR-0010-i18n-pricing-billing-us.md). A Oplyra LLC americana é a vendedora, com Stripe americano e liquidação bancária nos EUA. O fluxo planejado usa invoices/recibos comerciais Stripe e não inclui NFS-e brasileira, sujeito à validação jurídica/contábil da operação.
 
 ## 2. Princípio de empacotamento
 
@@ -171,6 +173,10 @@ A agenda deve mostrar antecipadamente o tipo de cada entrega. A política não �
 
 A decisão de billing registrada em [ATUALIZACOES](ATUALIZACOES.md) fixa Stripe. I-02 inclui adapter de assinaturas e conciliação de webhooks em modo teste, preservando IDs internos, entitlements e auditoria. Assinatura, evento e tenant são reconciliados por mapeamento interno; assinatura válida não concede acesso a outro tenant.
 
-DP-11a define quando cobrar pilotos, preço, trial e inadimplência. Integração técnica não autoriza débito real nem exclui provisionamento manual auditado. NFS-e e meios de pagamento locais exigem escopo e capacidade confirmados; não são garantidos apenas pela escolha de Stripe.
+DP-11a está parcialmente decidida quanto à estrutura BRL/USD e à entidade/fluxo comercial; valores, periodicidades, trial, cobrança de pilotos, inadimplência, cancelamento, prorrata e reembolso continuam pendentes. Integração técnica não autoriza débito real nem exclui provisionamento manual auditado. NFS-e brasileira está fora do fluxo planejado; meios locais e obrigações fiscais exigem capacidade/enquadramento confirmados, sem presunção pela escolha de Stripe.
 
 Propostas mantidas: uma marca por tenant com limite configurável (DP-24); referenceScope como origem histórica, fora do catálogo persistido (DP-25).
+
+## Idiomas e billing internacional — CR-040
+
+As referências de trabalho são [pricing/billing](billing/PRICING-BILLING-SPEC.md), [fluxos Stripe](billing/STRIPE-FLOWS.md) e [migração/rollback](billing/MIGRATION-ROLLOUT.md). O catálogo editável do [pacote histórico](change-packages/2026-10-28-i18n-billing-us/pricing-catalog.proposed.json) contém valores pendentes e não é registry publicável. Locale, billingCurrency e moeda operacional são separados. DP-29/30/31, limites e budgets mantêm seus status; trocar plano/moeda/fuso não reinicia franquia. Entitlements continuam internos e verificados no backend; pagamento não concede permission ou approval. Incorporação documental em [CR-040](contracts/changes/CR-040-i18n-pricing-billing-us-documentation.md), sem ativar cobrança.

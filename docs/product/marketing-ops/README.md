@@ -37,10 +37,14 @@ Leia ATUALIZACOES antes dos documentos derivados: ela indica onde uma decisão p
 | --- | --- | --- |
 | Guia de interface Figma | [GUIA-INTERFACE-FIGMA.md](GUIA-INTERFACE-FIGMA.md) | Referência visual vigente; frames ainda não inspecionados |
 | Manual de marca | [../../brand/oplyra_brand_system.md](../../brand/oplyra_brand_system.md) | Identidade, paleta e tipografia |
-| Decisões e ADRs | [../../decisions/README.md](../../decisions/README.md) | ADR-0001 a ADR-0009 e pendências DP |
+| Decisões e ADRs | [../../decisions/README.md](../../decisions/README.md) | ADR-0001 a ADR-0010 e pendências DP |
 | Skills e compatibilidade | [../../harness/SKILLS-COMPATIBILIDADE.md](../../harness/SKILLS-COMPATIBILIDADE.md) | Quatro skills presentes; trechos de outros produtos desconsiderados |
 | Protótipo vigente | [prototypes/performance-mvp.html](prototypes/performance-mvp.html) | Realinhado ao guia de interface |
 | Protótipo histórico | [prototypes/performance-mvp-legacy-claro.html](prototypes/performance-mvp-legacy-claro.html) | Tema claro; preservado apenas como histórico |
 | Estado do trabalho | [../../harness/ESTADO.md](../../harness/ESTADO.md) | Checkpoint, evidências e próximo passo |
 
 Os arquivos acima existem neste repositório. Existência não implica aprovação: propostas técnicas continuam propostas até decisão registrada, e verificação executada é distinta de cenário especificado.
+
+## Idiomas e billing internacional — CR-040
+
+Diretrizes aprovadas e referências de trabalho: [ADR-0010](../../decisions/ADR-0010-i18n-pricing-billing-us.md), [CR-040](contracts/changes/CR-040-i18n-pricing-billing-us-documentation.md), [i18n](i18n/I18N-SPEC.md), [pricing/billing](billing/PRICING-BILLING-SPEC.md), [Stripe](billing/STRIPE-FLOWS.md) e [migração/rollback](billing/MIGRATION-ROLLOUT.md). O [pacote original](change-packages/2026-10-28-i18n-billing-us/README.md) é snapshot histórico da preparação; seu relatório não descreve o estado pós-incorporação. O estado atual da mudança, evidência e pendências estão no [registro de incorporação](I18N-BILLING-US-INCORPORACAO.md). Não há nova release contratual ou cobrança ativada.

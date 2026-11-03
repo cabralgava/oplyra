@@ -43,7 +43,7 @@ export const REPO_NAME = REPOSITORY.split("/")[1];
 export const EXPECTED_PERMISSIONS = Object.freeze({ metadata: "read", contents: "write", pull_requests: "write", actions: "read", checks: "read", statuses: "read" });
 export const REQUIRED_RULE_TYPES = Object.freeze(["pull_request", "required_status_checks", "non_fast_forward", "deletion", "required_linear_history"]);
 export const REQUIRED_CHECK = "validate";
-/** Check de cobertura do CODEOWNERS (claude-risk.mjs): exigido junto com `validate` quando o ruleset não pede aprovação numérica. */
+/** Nome do check de cobertura do CODEOWNERS; preservado para compatibilidade. A política CR-041 não o confunde com aprovação humana. */
 export const RISK_CHECK = "risk-gate";
 export const BREAKER_LIMIT = 3;
 const MAX_COMMENTS = 30;
@@ -453,7 +453,7 @@ function audit(run, verb, outcome, refusal) {
 
 /**
  * Habilitação (CR-033; D-25). Duas formas, nunca misturadas:
- *  - definitiva: `delegatedDelivery: true` no repositório (control plane, PR do proprietário com segunda aprovação);
+ *  - definitiva: `delegatedDelivery: true` no repositório (control plane, autorização do proprietário e revisão conforme a política CR-041);
  *  - temporária de ensaio: repositório em `false` (arquivo legível e válido) E concessão `<ref>.enable.json` fora do repositório, vinculada
  *    ao SHA-256 do registro carregado, só `ops-*`, ≤ 24 h. Reverificada a cada chamada e registrada na auditoria (`enabledBy`).
  * O kill switch prevalece sobre as duas. Sem nenhuma das duas: DD-DISABLED, sem tocar em Git, rede, chaves nem estado persistido.
@@ -890,7 +890,7 @@ async function mintToken(run) {
 
 /**
  * Proteções efetivas de `main` (só rulesets; falha fechada se ausentes, ilegíveis ou incompletas). D-26: além dos TIPOS de regra,
- *  - toda regra `pull_request` exige `required_approving_review_count` inteiro seguro ≥ 1 (valor malformado numa regra recusa, mesmo havendo outra válida);
+ *  - toda regra `pull_request` exige `required_approving_review_count` inteiro seguro ≥ 0 (CR-041, decisão do proprietário em 03/11/2026; valor malformado numa regra recusa, mesmo havendo outra válida);
  *  - toda regra `pull_request` tem `dismiss_stale_reviews_on_push === true` (booleano estrito; ausente, false ou outro tipo recusa);
  *  - toda regra `required_status_checks` que lista `validate` tem `strict_required_status_checks_policy === true` (booleano estrito, na MESMA regra).
  * Devolve os valores efetivos lidos (contagem mínima e estrito) para o `gh:doctor` os imprimir.
@@ -903,12 +903,10 @@ async function checkProtection(run) {
   for (const t of REQUIRED_RULE_TYPES) if (!types.has(t)) refuse("DD-PROTECTION", t);
   const prRules = rules.filter((r) => r?.type === "pull_request");
   const approvals = prRules.map((r) => r?.parameters?.required_approving_review_count);
-  // Política de 04/10/2026: 0 aprovações só é aceito quando a revisão do DONO DO CÓDIGO é obrigatória em toda regra `pull_request` e o
-  // check `risk-gate` (cobertura do CODEOWNERS por todo caminho de risco elevado) é exigido junto com `validate`. Sem as duas, ≥ 1 continua exigido.
+  // CR-041, decisão do proprietário em 03/11/2026: o repositório pode operar com 0 aprovações humanas.
+  // A contagem continua sendo lida do GitHub: este verificador não altera regras nem concede autorização de entrega.
   const ownerGated = prRules.length > 0 && prRules.every((r) => r?.parameters?.require_code_owner_review === true);
-  const withValidate = rules.filter((r) => r?.type === "required_status_checks" && Array.isArray(r?.parameters?.required_status_checks) && r.parameters.required_status_checks.some((c) => c?.context === REQUIRED_CHECK));
-  const riskGated = withValidate.length > 0 && withValidate.every((r) => r.parameters.required_status_checks.some((c) => c?.context === RISK_CHECK));
-  if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 0 || (n === 0 && !(ownerGated && riskGated)))) refuse("DD-PROTECTION", "required_approving_review_count");
+  if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 0)) refuse("DD-PROTECTION", "required_approving_review_count");
   // a aprovação precisa ser descartada quando há push novo: sem isso uma aprovação antiga cobriria código que o revisor nunca viu
   if (rules.filter((r) => r?.type === "pull_request").some((r) => r?.parameters?.dismiss_stale_reviews_on_push !== true)) refuse("DD-PROTECTION", "dismiss_stale_reviews_on_push");
   const listing = rules

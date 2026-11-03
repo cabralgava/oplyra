@@ -1,7 +1,9 @@
 # Oplyra — Security & LGPD
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-040)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## 1. Objetivo
@@ -141,3 +143,7 @@ DP-22 lista política, termos, DPA, termo de piloto, suboperadores e avaliação
 ### 11.6 Retenção
 
 Prazos de retenção do discovery são propostas por classe de dado, incluindo logs, eventos, ativos e backups. A decisão precisa reconciliar finalidade, exclusão, recuperação e obrigações aplicáveis. Não transformar os 30 dias do experimento de Storage em política universal de dados pessoais.
+
+## Idiomas e billing internacional — CR-040
+
+Billing profile, documentos e Portal exigem acesso específico por tenant/membership; mapear Customer/Subscription por conta/ambiente e IDs internos, sem confiar em e-mail/metadata como autorização. Não enviar PII financeira, cartões, links de sessão/documentos ou segredos a prompts/logs gerais. Retenção/exclusão de evidências financeiras e transferência internacional entram na validação jurídica de DP-22; nenhuma duração é presumida. Refund/cancelamento exigem política, versão, aprovação aplicável, idempotência e auditoria. Ver [riscos e assunções](change-packages/2026-10-28-i18n-billing-us/08-RISKS-ASSUMPTIONS-OPEN-ITEMS.md).

@@ -119,3 +119,7 @@ Assessoria jurídica e LGPD (termos, DPA, RIPD), constituição e verificação 
 3. **I-06/I-08:** custo do check-in com dados de contas internas (autorização explícita).
 4. Pilotos: custo por empresa ativa × uso real; revisar créditos e limites antes da Fase 5.
 5. Atualizar este documento com valores medidos, separando estimativa e medição.
+
+## Idiomas e billing internacional — CR-040
+
+Preço BRL fixo com custos USD gera exposição de margem; revisão humana por moeda considera fees, impostos, FX financeiro, refunds/disputas e suporte sem dupla contagem. Não há conversão cambial dinâmica de preço. Budgets US$40/85 continuam econômicos e separados da receita. A decisão de seller LLC/Stripe US e ausência de NFS-e no fluxo planejado não elimina por si obrigações fiscais; avaliar operação/entidade/documentos antes da venda real. Ver [riscos/pendências](change-packages/2026-10-28-i18n-billing-us/08-RISKS-ASSUMPTIONS-OPEN-ITEMS.md). DP-31 permanece pendente.

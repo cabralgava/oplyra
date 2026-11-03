@@ -1,0 +1,149 @@
+{
+  "packageId": "CP-I18N-BILLING-US-2026-10-28",
+  "date": "2026-10-28",
+  "scope": "documentation_and_targeted_reference_checks_only",
+  "runtimeTestsExecuted": false,
+  "fullCrossValidationExecuted": false,
+  "checks": [
+    {
+      "check": "source_hashes_preserved",
+      "passed": true,
+      "detail": {
+        "files": 81,
+        "changed": []
+      }
+    },
+    {
+      "check": "source_git_status_preserved",
+      "passed": true
+    },
+    {
+      "check": "json_parse",
+      "passed": true,
+      "detail": [
+        "source-audit.json",
+        "pricing-catalog.proposed.json"
+      ]
+    },
+    {
+      "check": "registry_hashes_match_release_2_22",
+      "passed": true,
+      "detail": 9
+    },
+    {
+      "check": "handoff_action_existence_and_target_owner",
+      "passed": true,
+      "detail": 364
+    },
+    {
+      "check": "side_effect_idempotency",
+      "passed": true
+    },
+    {
+      "check": "four_plan_currency_combinations",
+      "passed": true
+    },
+    {
+      "check": "no_invented_prices_or_sellable_offer",
+      "passed": true
+    },
+    {
+      "check": "no_dynamic_fx_pricing",
+      "passed": true
+    },
+    {
+      "check": "58_test_cases_unique_and_complete",
+      "passed": true
+    },
+    {
+      "check": "requirement_coverage",
+      "passed": true,
+      "detail": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "check": "common_secret_patterns",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "check": "utf8_and_final_newline:08-RISKS-ASSUMPTIONS-OPEN-ITEMS.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:01-ADR-PROPOSED-i18n-billing-us.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:05-STRIPE-FLOWS.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:06-CONTRACTS-AND-IMPACT.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:04-PRICING-BILLING-SPEC.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:VALIDATION.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:11-SOURCES.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:10-CANONICAL-UPDATE-PLAN.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:README.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:00-BASELINE-E-PRECEDENCIA.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:09-ACCEPTANCE-AND-TESTS.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:03-I18N-SPEC.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:02-CR-PROPOSED-i18n-billing-us.md",
+      "passed": true
+    },
+    {
+      "check": "utf8_and_final_newline:07-MIGRATION-ROLLOUT-ROLLBACK.md",
+      "passed": true
+    },
+    {
+      "check": "internal_markdown_links",
+      "passed": true,
+      "detail": {
+        "links": 33,
+        "missing": []
+      }
+    }
+  ],
+  "checksRun": 27,
+  "checksPassed": 27,
+  "checksFailed": 0
+}
