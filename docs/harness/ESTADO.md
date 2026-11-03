@@ -2,6 +2,10 @@
 
 Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivos reais e contra a autorização vigente ao retomar. Não substituir este registro por checkpoint de outro workspace.
 
+## Base da PR #9 conciliada — 03/11/2026
+
+Brand OS foi integrado pela PR #10 em `433e183`; a #8 foi encerrada como duplicada. A PR #9 agora aponta para main e preserva o delta original da estratégia sobre o Brand OS, junto das mudanças de harness da #11. A resolução passou em 584 testes focados, typecheck de core/infra/testing e diff sem erros. O CI completo deste novo head precisa terminar antes da integração. Esta nota não afirma emissão das Releases 2.23/2.24, que continuam pendentes, nem deploy ou ativação de runtime.
+
 ## Consentimento inicial Codex pelo chat — 05/10/2026
 
 O proprietário pediu remover o gate de confirmação inicial em terminal. Implementado `scripts/codex-authorize.mjs`, com perfil inicial fechado: `packages/core/test/`, sete dias de validade, cinco missões, cinco merges por execução, três sessões por missão, uma hora por missão e um dia de execução. Conserva registro externo privado, referência da conversa e hash da mensagem, recusa sobrescrita e respeita revogação e kill switch. A referência não é autenticação; a autorização deve vir do proprietário na conversa e a emissão é administrativa, fora do worker. O script legado continua disponível para outros fluxos; não é pré-requisito do Codex.
