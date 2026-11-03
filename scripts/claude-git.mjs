@@ -24,6 +24,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { DELIVERY_ENV, REPOSITORY, RecordError, RECORD_MESSAGES, contractsPathProblem, hasContractsSegment, isExactLogHost, loadGrant, loadRecord, pathAllowedByRecord } from "./claude-delivery-record.mjs";
 import { isControlPlane, isProtectedReference, isSensitiveRel } from "./claude-local-first-guard.mjs";
+import { STANDING_CONFIRMATION, StandingError, loadStanding, standingConfirmation } from "./claude-standing.mjs";
 
 export const VERBS = Object.freeze(["branch", "stage", "commit", "push", "pr-create", "pr-update", "ci-status", "ci-log", "ci-diagnose", "doctor"]);
 /**
@@ -42,6 +43,8 @@ export const REPO_NAME = REPOSITORY.split("/")[1];
 export const EXPECTED_PERMISSIONS = Object.freeze({ metadata: "read", contents: "write", pull_requests: "write", actions: "read", checks: "read", statuses: "read" });
 export const REQUIRED_RULE_TYPES = Object.freeze(["pull_request", "required_status_checks", "non_fast_forward", "deletion", "required_linear_history"]);
 export const REQUIRED_CHECK = "validate";
+/** Check de cobertura do CODEOWNERS (claude-risk.mjs): exigido junto com `validate` quando o ruleset não pede aprovação numérica. */
+export const RISK_CHECK = "risk-gate";
 export const BREAKER_LIMIT = 3;
 const MAX_COMMENTS = 30;
 const MAX_MESSAGE_BYTES = 8 * 1024;
@@ -390,6 +393,7 @@ export async function execute(verb, rawArgs, ports = {}) {
     evidenceTtlSeconds: ports.evidenceTtlSeconds === undefined ? EVIDENCE_TTL_SECONDS : ports.evidenceTtlSeconds,
     keys: ports.keys ?? defaultKeys(home),
     recordDir: ports.recordDir ?? path.join(home, ".oplyra", "delivery"),
+    standingDir: ports.standingDir ?? path.join(home, ".oplyra", "standing"),
     stateDir: ports.stateDir ?? path.join(home, ".oplyra", "delivery-state"),
     killFile: ports.killFile ?? path.join(home, ".oplyra", "KILL-DELIVERY"),
   };
@@ -474,7 +478,17 @@ function assertEnabled(run) {
       clear();
       throw e;
     }
-    try {
+    // Autorização contínua (04/10/2026): registro derivado dela pelo runner e ainda vinculado, por hash, à autorização VIGENTE (válida, não
+    // revogada, não alterada). É a habilitação da entrega rotineira sem concessão por missão; qualquer falha é "desligado", sem tocar em Git nem rede.
+    if (STANDING_CONFIRMATION.test(run.record.confirmation)) {
+      try {
+        assertStandingLinked(run);
+        run.enabledBy = "standing-authorization";
+      } catch (e) {
+        clear();
+        refuse("DD-DISABLED", e instanceof StandingError ? `autorização contínua: ${e.code}` : undefined);
+      }
+    } else try {
       const g = loadGrant({ record: run.record, recordSha256: run.sha256, recordDir: p.recordDir, now: p.now(), fsImpl: p.fs });
       run.enabledBy = "rehearsal-grant";
       run.grantSha256 = g.sha256;
@@ -511,9 +525,28 @@ function loadRunRecord(run) {
   run.sha256 = loaded.sha256;
 }
 
+/**
+ * O registro de uma missão da autorização contínua só vale enquanto a autorização que o originou estiver válida: a revogação (REVOKED,
+ * kill switch), a expiração ou uma autorização diferente interrompem o agente no PRÓXIMO verbo, mesmo com `delegatedDelivery: true`.
+ */
+function assertStandingLinked(run) {
+  const { p } = run;
+  const s = loadStanding({ dir: p.standingDir, killFile: p.killFile, now: p.now(), fsImpl: p.fs });
+  if (standingConfirmation(s.sha256) !== run.record.confirmation) throw new StandingError("ST-HASH");
+  run.standingSha256 = s.sha256;
+}
+
 function loadSession(run) {
   if (!run.record) loadRunRecord(run);
   const { p } = run;
+  if (STANDING_CONFIRMATION.test(run.record.confirmation)) {
+    try {
+      assertStandingLinked(run);
+    } catch (e) {
+      if (e instanceof StandingError) refuse("DD-DISABLED", `autorização contínua: ${e.code}`);
+      throw e;
+    }
+  }
   run.state = loadState(run);
   // o relógio da entrega começa na PRIMEIRA chamada com o registro carregado e fica no estado persistido: retomar não o zera
   if (!run.state.startedAt) run.state.startedAt = p.now().toISOString();
@@ -639,6 +672,7 @@ function saveState(run) {
 
 function git(run, args, { net = false, input, author = false, allowFail = false, raw = false } = {}) {
   const { p } = run;
+  if (net || args.some((a) => ["add", "commit", "push", "switch", "fetch"].includes(a))) assertEffectAuthorization(run);
   const extra = {};
   // `raw`: só a leitura da config efetiva, que precisa enxergar a config local sem os `-c` do próprio endurecimento
   let full = raw ? args : [...GIT_HARDENING, ...args];
@@ -649,7 +683,7 @@ function git(run, args, { net = false, input, author = false, allowFail = false,
     extra.GIT_CONFIG_KEY_0 = "http.https://github.com/.extraheader";
     extra.GIT_CONFIG_VALUE_0 = `AUTHORIZATION: basic ${Buffer.from(`x-access-token:${token}`).toString("base64")}`;
     run.secrets.add(Buffer.from(`x-access-token:${token}`).toString("base64"));
-    full = [...GIT_HARDENING, "-c", "credential.helper=", "-c", "url.https://github.com/.insteadOf=git@github.com:", "-c", "url.https://github.com/.insteadOf=ssh://git@github.com/", ...args];
+    full = [...GIT_HARDENING, "-c", "http.followRedirects=false", "-c", "credential.helper=", "-c", "url.https://github.com/.insteadOf=git@github.com:", "-c", "url.https://github.com/.insteadOf=ssh://git@github.com/", ...args];
   }
   if (author) {
     const k = run.keys;
@@ -674,6 +708,11 @@ function commonPreflight(run) {
   const fetchUrl = normalizeRemote(gitOut(run, ["remote", "get-url", "origin"]));
   const pushUrl = normalizeRemote(gitOut(run, ["remote", "get-url", "--push", "origin"]));
   if (fetchUrl !== REPOSITORY || pushUrl !== REPOSITORY) refuse("DD-REMOTE");
+}
+
+/** Mesma verificação de origem/configuração para o supervisor, ANTES de obter credencial de transporte. */
+export function assertGitTransport({ repoRoot, env = process.env, git: gitPort = defaultGit(repoRoot) }) {
+  commonPreflight({ p: { repoRoot, env, git: gitPort }, secrets: new Set() });
 }
 
 function noOperationInProgress(run) {
@@ -781,7 +820,7 @@ function readRepoText(run, raw, maxBytes) {
 
 const SUBJECT = /^(feat|fix|docs|chore|test|refactor|ci|build|perf|revert)(\([a-z0-9-]+\))?!?: \S.*$/;
 const TRAILER_LINE = /^(signed-off-by|reviewed-by|approved-by|acked-by|tested-by|co-authored-by|author|committer):/i;
-const ATTRIBUTION = /^Co-Authored-By: Claude [A-Za-z0-9 .-]{1,40} <noreply@anthropic\.com>$/;
+const ATTRIBUTION = /^Co-Authored-By: (?:Claude [A-Za-z0-9 .-]{1,40} <noreply@anthropic\.com>|Codex <noreply@openai\.com>)$/;
 export function validateCommitMessage(text) {
   if (text.includes("\0") || !text.trim()) refuse("DD-MESSAGE");
   const lines = text.replace(/\r\n/g, "\n").split("\n");
@@ -797,6 +836,7 @@ export function validateCommitMessage(text) {
 async function api(run, method, urlPath, { body, auth = "token" } = {}) {
   const { p } = run;
   if (!endpointAllowed(method, urlPath)) refuse("DD-ENDPOINT");
+  if (method !== "GET") assertEffectAuthorization(run);
   const bearer = auth === "jwt" ? signJwt(run.keys, Math.floor(p.now().getTime() / 1000)) : run.token;
   if (!bearer) refuse("DD-PERMS");
   run.secrets.add(bearer);
@@ -812,6 +852,15 @@ async function api(run, method, urlPath, { body, auth = "token" } = {}) {
     refuse("DD-HTTP", "rede");
   }
   return res;
+}
+
+// Revalidar depois de leituras assíncronas de token/proteção e imediatamente antes do efeito.
+function assertEffectAuthorization(run) {
+  if (run.p.fs.existsSync(run.p.killFile)) refuse("DD-KILL");
+  if (Date.parse(run.record.expiresAt) <= run.p.now().getTime()) refuse("DD-RECORD", "DR-EXPIRED");
+  if (STANDING_CONFIRMATION.test(run.record.confirmation)) {
+    try { assertStandingLinked(run); } catch { refuse("DD-DISABLED", "autorização contínua indisponível"); }
+  }
 }
 
 function samePermissions(actual) {
@@ -852,8 +901,14 @@ async function checkProtection(run) {
   const rules = res.json;
   const types = new Set(rules.map((r) => r?.type));
   for (const t of REQUIRED_RULE_TYPES) if (!types.has(t)) refuse("DD-PROTECTION", t);
-  const approvals = rules.filter((r) => r?.type === "pull_request").map((r) => r?.parameters?.required_approving_review_count);
-  if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 1)) refuse("DD-PROTECTION", "required_approving_review_count");
+  const prRules = rules.filter((r) => r?.type === "pull_request");
+  const approvals = prRules.map((r) => r?.parameters?.required_approving_review_count);
+  // Política de 04/10/2026: 0 aprovações só é aceito quando a revisão do DONO DO CÓDIGO é obrigatória em toda regra `pull_request` e o
+  // check `risk-gate` (cobertura do CODEOWNERS por todo caminho de risco elevado) é exigido junto com `validate`. Sem as duas, ≥ 1 continua exigido.
+  const ownerGated = prRules.length > 0 && prRules.every((r) => r?.parameters?.require_code_owner_review === true);
+  const withValidate = rules.filter((r) => r?.type === "required_status_checks" && Array.isArray(r?.parameters?.required_status_checks) && r.parameters.required_status_checks.some((c) => c?.context === REQUIRED_CHECK));
+  const riskGated = withValidate.length > 0 && withValidate.every((r) => r.parameters.required_status_checks.some((c) => c?.context === RISK_CHECK));
+  if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 0 || (n === 0 && !(ownerGated && riskGated)))) refuse("DD-PROTECTION", "required_approving_review_count");
   // a aprovação precisa ser descartada quando há push novo: sem isso uma aprovação antiga cobriria código que o revisor nunca viu
   if (rules.filter((r) => r?.type === "pull_request").some((r) => r?.parameters?.dismiss_stale_reviews_on_push !== true)) refuse("DD-PROTECTION", "dismiss_stale_reviews_on_push");
   const listing = rules
@@ -861,7 +916,7 @@ async function checkProtection(run) {
     .filter((r) => Array.isArray(r?.parameters?.required_status_checks) && r.parameters.required_status_checks.some((c) => c?.context === REQUIRED_CHECK));
   if (!listing.length) refuse("DD-PROTECTION", REQUIRED_CHECK);
   if (listing.some((r) => r.parameters.strict_required_status_checks_policy !== true)) refuse("DD-PROTECTION", "strict_required_status_checks_policy");
-  return { approvals: Math.min(...approvals), strict: true, dismissStale: true };
+  return { approvals: Math.max(...approvals), strict: true, dismissStale: true, ownerGated };
 }
 
 async function doctorChecks(run) {
@@ -881,7 +936,7 @@ async function verbDoctor(_args, run) {
   await doctorChecks(run);
   run.state.consecutiveRefusals = 0;
   run.say("doctor: ok (permissões do token, repositório único e proteções efetivas de main verificados)");
-  run.say(`proteções efetivas de main: aprovações exigidas = ${run.protection.approvals}; validate estrito = ${run.protection.strict}; aprovação obsoleta descartada no push = ${run.protection.dismissStale}`);
+  run.say(`proteções efetivas de main: aprovações exigidas = ${run.protection.approvals}; revisão do dono do código obrigatória = ${run.protection.ownerGated}; validate estrito = ${run.protection.strict}; aprovação obsoleta descartada no push = ${run.protection.dismissStale}`);
   run.say(`habilitação: ${run.enabledBy}`);
 }
 
