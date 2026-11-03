@@ -40,3 +40,9 @@ New files introduced by I-03 (additions, none governed before): `packages/core/s
 ## Out of scope
 
 Any change to Error Registry, schemas, Model Profile registries, the Cost Ledger or the access model (`brand.read`, `brand.write`, `brand.publish` are seeded by the new migration, not by a contract).
+
+## Emenda ao D-1 — composição proposta no PR-G (03/11/2026)
+
+O PR-G propõe absorver o CR-034 na Release 2.23 junto de CR-033, executor Codex, CR-040 e CR-041, sem CR-035. A aceitação desta emenda pelo proprietário substitui exclusivamente a separação de releases prevista em D-1. O texto original permanece como histórico. A mudança concilia o snapshot linear de main, que já integra os documentos e mecanismos desses CRs; não altera o conteúdo das entradas `./brand`.
+
+Esta preparação não emite nem reserva release, não modifica Freeze, registries, schemas ou manifests e não dispensa o ensaio anterior à emissão. A PR #9 espera o congelamento (PR-F). Entre o snapshot dos gates G e o congelamento, os artefatos governados permanecem estáveis. A equivalência dos outputs reconstruídos a partir de G e P é obrigatória; P contém os outputs publicados e G é a base das evidências.

@@ -1,0 +1,577 @@
+{
+  "schema": "oplyra-release-transition/1",
+  "release": "2.23",
+  "baseRelease": "2.22",
+  "modified": [
+    {
+      "path": ".claude/settings.json",
+      "sha256": "6c17400d82b0f179da262f57e133f1217ccd7ebcb9d1b0f74f212a6cef92574e"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "c276d8caf4c6c53085adfa415af731f006e79991c897fb3c6dac79db2ac5a15d"
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "2f5f06f89731217f710e0912c132c6c86475b9f3a6bca36eb1aa57588ef7f65b"
+    },
+    {
+      "path": "docs/decisions/ADR-0007-entitlements-e-billing.md",
+      "sha256": "755fbbb0ce5dee751693370c7829cbfa77bc923c65ac255765b38a3a8b800372"
+    },
+    {
+      "path": "docs/decisions/README.md",
+      "sha256": "501100a7ec596926d263b8d27cf1ac91ae27c208a51cdae43b345f4bc535ec03"
+    },
+    {
+      "path": "docs/harness/AUTONOMOUS-BUILD.md",
+      "sha256": "9cfa130e1089906b45d060c9488c4f6e020407ede7f3e96c84dae9328969f914"
+    },
+    {
+      "path": "docs/harness/DESENVOLVIMENTO.md",
+      "sha256": "ce65027f194bb51ddb402beed5803806c8c648115ac9c4a273c2712046643e19"
+    },
+    {
+      "path": "docs/harness/DEVELOPMENT-TOOLS.md",
+      "sha256": "509de7ab9f3379fd6749f378fd39284d8f03f2565995225603633b92a84fc8fd"
+    },
+    {
+      "path": "docs/product/marketing-ops/01-product-requirements.md",
+      "sha256": "ad63edb34fe407b6b33d0710766cc776b06a29fd2250dcd5d3c44fdd1e3db689"
+    },
+    {
+      "path": "docs/product/marketing-ops/03-domain-model.md",
+      "sha256": "c31bfd8204985180fef2cbb17f32832fda9f8a620cf6b5ee315a2627fef64400"
+    },
+    {
+      "path": "docs/product/marketing-ops/04-architecture.md",
+      "sha256": "05f305e204ea38b937c01d31de79b8a56bcd5367186cec574c14d4f081e1e451"
+    },
+    {
+      "path": "docs/product/marketing-ops/05-data-model.md",
+      "sha256": "d08bf888993bfb191d0e8db1c24c258757725fb01757a150c08c96f0e3b03113"
+    },
+    {
+      "path": "docs/product/marketing-ops/06-integrations.md",
+      "sha256": "19b43dc7ac55eb9482c395d4dad30ffe1f24859cf105efff6d96cfc86863fac4"
+    },
+    {
+      "path": "docs/product/marketing-ops/07-security-lgpd.md",
+      "sha256": "e90b7604cf97c819497527cd5e0ab8f59af28d902bb691026a8ada277768938e"
+    },
+    {
+      "path": "docs/product/marketing-ops/08-billing-entitlements.md",
+      "sha256": "bb93e234afe384f8d95bd03a4f7c3b8c3cd7c97a214efd75ddbc692fa76cb790"
+    },
+    {
+      "path": "docs/product/marketing-ops/09-agentic-architecture.md",
+      "sha256": "91b8e8966d43dde82d4a69a39dfec87865911035f5b204dde5a48898548cb761"
+    },
+    {
+      "path": "docs/product/marketing-ops/10-agent-catalog.md",
+      "sha256": "336e1db4232d14b4369169b286fac9f05a6fb1d5d7421a3f0a29d8a2b4ecbbed"
+    },
+    {
+      "path": "docs/product/marketing-ops/11-agent-governance.md",
+      "sha256": "67621124a36a4cac0591e1df9d7609e9cce3fd7645aad5c01506ad5c6e2edf22"
+    },
+    {
+      "path": "docs/product/marketing-ops/12-roadmap.md",
+      "sha256": "e333940a0eb04f67824174041f930d9d4e7b0103c01c5918f2f6f1712acdc3a0"
+    },
+    {
+      "path": "docs/product/marketing-ops/13-ai-model-routing-finops.md",
+      "sha256": "7006af4116992995eec374139bba3fec64241bad3b61d55b49c74ed5f5213ca3"
+    },
+    {
+      "path": "docs/product/marketing-ops/15-test-plan.md",
+      "sha256": "c31b6a31427b273aa06e5f74dea92243efb83267e3d43966a83d7ed88777724f"
+    },
+    {
+      "path": "docs/product/marketing-ops/16-environments-release.md",
+      "sha256": "c6e4beac1acc9d48284afe25c3c293980bc263c73eb8f78c910dcef7f39baeaa"
+    },
+    {
+      "path": "docs/product/marketing-ops/17-risks-costs.md",
+      "sha256": "8e838f74e46b53557163bd1d36d76312c65932feb8b7bfb6d9b6a7f45776d288"
+    },
+    {
+      "path": "docs/product/marketing-ops/ATUALIZACOES.md",
+      "sha256": "09136f4da31d307c0c5d9e0f3bcaa5e846c2f3ec5601b0c5cdf85b2b48757785"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contracts-README.md",
+      "sha256": "ce6d89af6ab39b748d5e1a113dbd1a2777e6d0c6ae7e0a7cf055de8847bf4708"
+    },
+    {
+      "path": "docs/product/marketing-ops/README.md",
+      "sha256": "5b259f4dc554dce92f5bf01375a84e2ebefa77e086e24e166dc8d1ae744e2705"
+    },
+    {
+      "path": "package.json",
+      "sha256": "1f38450a448051ed780bec352b5a801d44dc7c9a3bbd2b07667877aa6a9bcbbd"
+    },
+    {
+      "path": "packages/core/package.json",
+      "sha256": "50e8cde9addea1e8e9d2126ab1c17d573c85c85322ff64723d1878f8985f50be"
+    },
+    {
+      "path": "packages/infra/package.json",
+      "sha256": "2ba8187a247f642a5e6578ee33355625d7cda7c636cb4dd33ba2da4c5658398f"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5a1a823b9e696b3ebf45a74bc903c05f8788caa05fc820c8c1ccfec6812f0702"
+    },
+    {
+      "path": "scripts/claude-launch.mjs",
+      "sha256": "e9d9749913b19f32505e8ac792c960ac2806079db0f7920bdb92fedd8d216f11"
+    },
+    {
+      "path": "scripts/claude-launch.test.mjs",
+      "sha256": "dde13c40255986d5d90477c2e9fd1f526d324318f30d4beddb43ce95c84bb8ac"
+    },
+    {
+      "path": "scripts/claude-local-first-guard.mjs",
+      "sha256": "7a21407cc1a6b218e4f4dbba0c217ccb617a478d9ca6dc30efaa2f304303379c"
+    },
+    {
+      "path": "test/contracts/contract-registry-release-2.16.contract.test.ts",
+      "sha256": "bddac6103c4b7fe3c01e07508265d3701ffb9ba65e428b5251ea7ad7ff3b5450"
+    },
+    {
+      "path": "test/contracts/contract-registry-release-2.17.contract.test.ts",
+      "sha256": "3e76cb2192bd3fe2bbeef6d812f619b60562aa5e3b948999e2e9f9152d4548db"
+    },
+    {
+      "path": "test/contracts/contract-registry-release-2.18.contract.test.ts",
+      "sha256": "f8f0c6024c63b61f7180754d9746f37d708bf39b21849db48ceaae4da074eaf7"
+    },
+    {
+      "path": "test/contracts/contract-registry-release-2.19.contract.test.ts",
+      "sha256": "5d2115d67a9036a41bac622b2b63cc4f6651204623be7ce3c86ca680610c3937"
+    },
+    {
+      "path": "test/contracts/contract-registry-release-2.20.contract.test.ts",
+      "sha256": "7bc18d6c296b98bf2e36d497c4f6ab7d0d9e1be3873a20cb513728644771d578"
+    },
+    {
+      "path": "test/contracts/contract-registry-release-2.21.contract.test.ts",
+      "sha256": "d8daa4f86ac8d2880767bd40557bd14d9bc6224f4812384cb1f41ff9d03c7721"
+    },
+    {
+      "path": "test/contracts/contract-registry-release-2.22.contract.test.ts",
+      "sha256": "912b887e317f486b955f75a6738217cba9cb6855d5851d9cca8b0848e6b21afd"
+    },
+    {
+      "path": "test/contracts/cross-registry-validation.ts",
+      "sha256": "7c4ffc1a2c2e456a2760d139f7b3ecc8ad3734f319c151c102e9fecf7eb37d3f"
+    },
+    {
+      "path": "test/developer-harness.supply-chain.test.ts",
+      "sha256": "4c2a9df81a448de811550504d9a866f94c186cc1b3aa008e08a0e33248decbfb"
+    }
+  ],
+  "added": [
+    {
+      "path": ".claude/delegated-delivery.json",
+      "category": "development_tool",
+      "sha256": "4c6612b08ff620205bd7c5397ff53064955884b8a168f119877ac010a8297f48"
+    },
+    {
+      "path": ".github/CODEOWNERS",
+      "category": "development_tool",
+      "sha256": "223545a4ffc17cb6ba9d21730513b19fd45e28507f81ca04496409c3fe6c25e0"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "category": "development_tool",
+      "sha256": "3810f7bc542772b7c9314c282ca3d1a8685a73df9439a1c5bbaa9c012de6ba68"
+    },
+    {
+      "path": "AGENTS.md",
+      "category": "contract_documentation",
+      "sha256": "222b471e039d979886b3fc4085d825920e05555845a6793e65963dd8382187bd"
+    },
+    {
+      "path": "apps/web/src/lib/deps-marca.ts",
+      "category": "runtime_component",
+      "sha256": "f8894ab7303905f6d4e291b6ae0fae02824e3fab0572d61e688598dd8fb8fc7e"
+    },
+    {
+      "path": "apps/web/src/lib/marca-form.ts",
+      "category": "runtime_component",
+      "sha256": "8ed9d4c7d83d63d867b857f02bd1151807030b71189f05e22b37a6599f7a149b"
+    },
+    {
+      "path": "docs/decisions/ADR-0010-i18n-pricing-billing-us.md",
+      "category": "contract_decision",
+      "sha256": "375ac58445ec85d97ad74c17db835807e84014a2d02db95641b639e7ee82929f"
+    },
+    {
+      "path": "docs/harness/CODEX-CONTINUOUS.md",
+      "category": "development_tool",
+      "sha256": "545879286a5336dda2d0f9b2b228334ff3d965f3669d79d86130b67dfc585d73"
+    },
+    {
+      "path": "docs/harness/ENSAIO-CR-033.md",
+      "category": "development_tool",
+      "sha256": "afd2f82dcb7dc0e001fb937ffc7a39ae9248c7aba27229f8b87060386c2c87c5"
+    },
+    {
+      "path": "docs/harness/POLITICA-REVISAO-RESPONSAVEL-UNICO.md",
+      "category": "development_tool",
+      "sha256": "9c2536351f8e449f5c7cbf575ba756dbd3141053aa666cd20ac7773457678f35"
+    },
+    {
+      "path": "docs/harness/scopes/README.md",
+      "category": "development_tool",
+      "sha256": "ca9ec44702862b7400f3e52a25a20d5bf89c1206f6a905037a09fbc23367a1da"
+    },
+    {
+      "path": "docs/product/marketing-ops/I18N-BILLING-US-INCORPORACAO.md",
+      "category": "contract_documentation",
+      "sha256": "931d6264df613de72e5e0ede7f4282ddcb481dcd71860cb61e9d06946da545d5"
+    },
+    {
+      "path": "docs/product/marketing-ops/I18N-BILLING-US-INCORPORACAO.validation.json",
+      "category": "contract_documentation",
+      "sha256": "b85b1c4d80b7054e700f7c4918dd04c8a6612e0884d332a2b2fb1233800a648a"
+    },
+    {
+      "path": "docs/product/marketing-ops/I18N-BILLING-US-RECONCILIACAO-2026-11-03.validation.json",
+      "category": "contract_documentation",
+      "sha256": "b54dbbf3c87465453928c0dfcc6ad87a7bc8876ff31fd03a8d00d807f68b1395"
+    },
+    {
+      "path": "docs/product/marketing-ops/billing/MIGRATION-ROLLOUT.md",
+      "category": "contract_documentation",
+      "sha256": "aa3dcb4ff71e6d0186b1bc8ed59410a2318e929099713b7c47043620f82b82d4"
+    },
+    {
+      "path": "docs/product/marketing-ops/billing/PRICING-BILLING-SPEC.md",
+      "category": "contract_documentation",
+      "sha256": "b41f1478e4139b9bba2e6c4bf79321ffa9b547c2e7b38258ec0b08fb5de59ef7"
+    },
+    {
+      "path": "docs/product/marketing-ops/billing/STRIPE-FLOWS.md",
+      "category": "contract_documentation",
+      "sha256": "43641b1151636ef41e57dfd75ff5476a309794907b5798c9b52e19e02383a133"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-033-delegated-delivery-git-github.md",
+      "category": "change_proposal",
+      "sha256": "6cc880d43afdc2c304f3cc7c92baea155f40597a44d5bfb80e47dff7012ba4fd"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-034-brand-os-package-entries.md",
+      "category": "change_proposal",
+      "sha256": "a90726142cc3e7295fa82c873c8779127aee19f7658cedd912c45e448e8af746"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-040-i18n-pricing-billing-us-documentation.md",
+      "category": "change_proposal",
+      "sha256": "56a32294586617225f2f893ea174a302491bb06f9c5a120d9871ab726fd32651"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-041-single-owner-review-policy.md",
+      "category": "change_proposal",
+      "sha256": "b9b5304b58313fdea24daeb4e45635d3a1875e2760c966932293ee62d69cb41f"
+    },
+    {
+      "path": "docs/product/marketing-ops/i18n/I18N-SPEC.md",
+      "category": "contract_documentation",
+      "sha256": "43a0f0d6a277814dc107a3104cada92d8135e46a5d217075cb4dc731d46ae0ce"
+    },
+    {
+      "path": "packages/core/src/application/brand-ports.ts",
+      "category": "runtime_component",
+      "sha256": "8fa406ff1bebe08d46a1ef72750a3bf8f53847b8b5a54be65ef3ca1f40222bf6"
+    },
+    {
+      "path": "packages/core/src/application/use-cases/activation.ts",
+      "category": "runtime_component",
+      "sha256": "e6ecedf8a75b8eee23bb8248d4c7a2af7f19342a5842324c0fe9c5859ee48bc9"
+    },
+    {
+      "path": "packages/core/src/application/use-cases/brand.ts",
+      "category": "runtime_component",
+      "sha256": "3a8ee3aafe79cdd61163055f8726fe10d65f938a41ef3c2c5a800ed098a9e97d"
+    },
+    {
+      "path": "packages/core/src/brand.ts",
+      "category": "runtime_component",
+      "sha256": "5f72dc039a81e2651283d4584b143c20aeea2314273e8965615314ed87bfe6ec"
+    },
+    {
+      "path": "packages/core/src/domain/activation.ts",
+      "category": "runtime_component",
+      "sha256": "88c418db1e74f6960b4acc1f052d2c1e80c38460dfdf261fbdab5e8c8cd79196"
+    },
+    {
+      "path": "packages/core/src/domain/brand-errors.ts",
+      "category": "runtime_component",
+      "sha256": "b9e7efe64116f34098179c31d5882cf605f688e00b39cb4a60757850bc1ce0a4"
+    },
+    {
+      "path": "packages/core/src/domain/brand.ts",
+      "category": "runtime_component",
+      "sha256": "71a086d7ed238c5ad9d555c44964186ec83bcd48be5ba3b6b9c0b7af1efd20fe"
+    },
+    {
+      "path": "packages/infra/src/brand-repository.ts",
+      "category": "runtime_component",
+      "sha256": "00a5458bc2961c518d9299c12811c2e623ea048e3287d5f23342ad648535ed31"
+    },
+    {
+      "path": "packages/infra/test/brand-publicacao-incompleta.integration.test.ts",
+      "category": "integration_test",
+      "sha256": "8148502e313a564e288463562576d64185ee62f12eff21870044d571c0b8dabd"
+    },
+    {
+      "path": "packages/infra/test/brand.integration.test.ts",
+      "category": "integration_test",
+      "sha256": "552be939a2ad0aa3f6130aafebb342a7bac712c1baaafdea5b036cff0d6e4003"
+    },
+    {
+      "path": "packages/testing/src/brand.ts",
+      "category": "runtime_component",
+      "sha256": "9977084e0c00e53b0513260809f18848f5e2186e642eecf16d9d26f091c1f419"
+    },
+    {
+      "path": "packages/testing/test/activation.test.ts",
+      "category": "runtime_test",
+      "sha256": "7508cfe527221689a67c2b67e37083447e48857b27f4581f50f8894350597996"
+    },
+    {
+      "path": "packages/testing/test/brand-casos-de-uso.test.ts",
+      "category": "runtime_test",
+      "sha256": "60e75b46abb068216f8b33fe0477bdbca1545fac27fa97c63c9904749e567cf4"
+    },
+    {
+      "path": "scripts/claude-admin.mjs",
+      "category": "development_tool",
+      "sha256": "abce1f9ee40ee392aacc7de32595b173150cbfafec633e885d81429b8a0b5e70"
+    },
+    {
+      "path": "scripts/claude-authorize.mjs",
+      "category": "development_tool",
+      "sha256": "1381bd554bd4b4ce4906c12e57b0d85eb6d91f91c3131e81fe65eece93a61dc6"
+    },
+    {
+      "path": "scripts/claude-delivery-record.mjs",
+      "category": "development_tool",
+      "sha256": "fe544cf1b8e2247b53dd12c8a3fa37d8eb4f40a236b25e88e39a665aee1659fe"
+    },
+    {
+      "path": "scripts/claude-delivery.test.mjs",
+      "category": "runtime_test",
+      "sha256": "c6eeed1f58ed51f3380fd41b8fc88510e2002bed275c34a71c810027b05f048c"
+    },
+    {
+      "path": "scripts/claude-gates.mjs",
+      "category": "development_tool",
+      "sha256": "8f6f43929d1bbe0723d9ed264a8dfb7e7e5537945cd63fd6741088015e8f60d0"
+    },
+    {
+      "path": "scripts/claude-git.mjs",
+      "category": "development_tool",
+      "sha256": "819d357f35f877d69a20753a1f1d2c80f3d3abb6dd4017402562d19e76a30de8"
+    },
+    {
+      "path": "scripts/claude-integrate.mjs",
+      "category": "development_tool",
+      "sha256": "36047e7c2d9c0a6f53fdb626dc47183d8f7c98f570abebc399df787e0fdc5b0b"
+    },
+    {
+      "path": "scripts/claude-risk.mjs",
+      "category": "development_tool",
+      "sha256": "2cf17645d0f3cd4a62ab0121c19702670cb7120c81826f7d6b6cb8d9a39aa13c"
+    },
+    {
+      "path": "scripts/claude-runner.mjs",
+      "category": "development_tool",
+      "sha256": "83000e0cb1e8a42c58d115278d0540ceb10019ce0e2fc1892d7c324b2e9b0bd7"
+    },
+    {
+      "path": "scripts/claude-standing.mjs",
+      "category": "development_tool",
+      "sha256": "4a691f6e50c8ae005d2b9fb4d245115b46c61a4ef5966f17fb8f6c2df47a9f08"
+    },
+    {
+      "path": "scripts/claude-structural.mjs",
+      "category": "development_tool",
+      "sha256": "a804bcca083fc1720256aba6d04e2bfc1b706427252d811a20cd8d5145d22730"
+    },
+    {
+      "path": "scripts/codex-agent.mjs",
+      "category": "development_tool",
+      "sha256": "03be2d8c94e9aab266b670dcbca5f9e8849350cfdc8aea0931860d16f26b802c"
+    },
+    {
+      "path": "scripts/codex-authorize.mjs",
+      "category": "development_tool",
+      "sha256": "d545345bbc4552faaa7e575cba56c4c52cede02ff17f85d9876d124d7bb0ef76"
+    },
+    {
+      "path": "scripts/codex-service.mjs",
+      "category": "development_tool",
+      "sha256": "28cb81c2d0de1072e3c716e8d3727cb6dfbe56b329683f2f295a0221cf33d181"
+    },
+    {
+      "path": "scripts/codex-supervise.mjs",
+      "category": "development_tool",
+      "sha256": "b57499fef60cd34d5b4c27828fecb6273bf4979a3dc74349e5983526276dc049"
+    },
+    {
+      "path": "supabase/migrations/20261004000016_brand_os.sql",
+      "category": "database_migration",
+      "sha256": "92506025516ff54342874f4de50ca0ea1df6dfd7c0dd6d2088f5acfc0bbde175"
+    },
+    {
+      "path": "supabase/tests/brand_os.test.sql",
+      "category": "database_test",
+      "sha256": "5d2cb58d84e4372d29edc16b48a2b695be202ce15c0d6216ac5885bef0e907ed"
+    },
+    {
+      "path": "test/ci-hygiene.test.ts",
+      "category": "runtime_test",
+      "sha256": "d16ff82d28312da88cd3b0f4edd5309eed60ad2f80e841f2f5def99076de8512"
+    },
+    {
+      "path": "test/contracts/contract-registry-release-2.23.contract.test.ts",
+      "category": "contract_test",
+      "sha256": "60c5643030d0b7043bcade080d7139c341ba57fcb534445d34abdcfc5549d2a3"
+    },
+    {
+      "path": "test/contracts/cr-033-current-content.test.ts",
+      "category": "contract_test",
+      "sha256": "76e10c3caae80a4ea7abc34af0efff2fb413a56823775005fd10bac93cda09b2"
+    },
+    {
+      "path": "test/contracts/cross-registry-validation-2.22.ts",
+      "category": "contract_test",
+      "sha256": "11a44e8e11e8fa5d1a15abc77d40ab5fd37aa1abf179599aa879b2728e6a494d"
+    },
+    {
+      "path": "test/contracts/frozen-snapshot.ts",
+      "category": "contract_test",
+      "sha256": "69f3576cd74c8c23896c4c8d3c4bd9a0146c867e8f151ed60e0cc26244f21e7e"
+    },
+    {
+      "path": "test/developer-harness.billing-i18n.test.ts",
+      "category": "runtime_test",
+      "sha256": "058eaea0f852466f537e1138e28b82ba6d13aacd4e538dd85a864c3ebf32945b"
+    },
+    {
+      "path": "test/developer-harness.codex.test.ts",
+      "category": "runtime_test",
+      "sha256": "44acfe3dc7ecf2b5edd7736371647cc76ec31aa501ce31b8732d1a760f59b6e4"
+    },
+    {
+      "path": "test/developer-harness.continuous-delivery.runner.test.ts",
+      "category": "runtime_test",
+      "sha256": "2ba89ea33e4270149e0837acbe1e609c5f82553f9036d8cfa3f53de76d48e504"
+    },
+    {
+      "path": "test/developer-harness.continuous-delivery.units.test.ts",
+      "category": "runtime_test",
+      "sha256": "f040e0d18c8b9efa5b4b243915efecbe3138a6a986492a2dfbe6e7f97939d73e"
+    },
+    {
+      "path": "test/developer-harness.mutacao.ts",
+      "category": "runtime_test",
+      "sha256": "0e576ccb4a80e758ea06d3a10aa5da4bb0ae4184ece64da8b8ee577a513a7701"
+    },
+    {
+      "path": "test/developer-harness.owner-consent.test.ts",
+      "category": "runtime_test",
+      "sha256": "36fe9b9bc9f66c3e431dae0c220a11178b544a1a7b5d899824467ec91c325e5e"
+    },
+    {
+      "path": "test/developer-harness.perfil-de-produto.test.ts",
+      "category": "runtime_test",
+      "sha256": "00d4f6bfa3bbe7b399aa77b3c0dee56c943d1e5d8853daa5644a7f5e2a07f2bc"
+    },
+    {
+      "path": "test/developer-harness.progress-checkpoint.test.ts",
+      "category": "runtime_test",
+      "sha256": "0183aec94087b298c527da102974d3cd942aa85c69750be7531fdb6db3978bfb"
+    },
+    {
+      "path": "test/developer-harness.standing-v2.test.ts",
+      "category": "runtime_test",
+      "sha256": "18b4faf2b5e2367c426f3e80120670f20e8a065768103e340417017cd6bd691e"
+    },
+    {
+      "path": "test/developer-harness.structural-cli.test.ts",
+      "category": "runtime_test",
+      "sha256": "88966328af83145a242ab8135427a7f2508701c09cd50da4b5aa47f205451d90"
+    },
+    {
+      "path": "test/developer-harness.structural-exports.test.ts",
+      "category": "runtime_test",
+      "sha256": "a0983c4c5d029f0d7956b13b8560486f4d4d6d1d97845d2e34a42f0177f58bdf"
+    },
+    {
+      "path": "test/developer-harness.structural-migration.test.ts",
+      "category": "runtime_test",
+      "sha256": "e75c6e1b59ee536e26aecbe10cd65a284755a33a967349d7366295f45bac79f7"
+    },
+    {
+      "path": "test/developer-harness.trusted-gate.test.ts",
+      "category": "runtime_test",
+      "sha256": "82efbb37e0024c3bd179c854e0908513574ce94be8a0b7d3e5e5c6706d1f2657"
+    },
+    {
+      "path": "test/tooling/contract-release-e2e.test.ts",
+      "category": "runtime_test",
+      "sha256": "4dacf3c18f29cc72ff88e7bdd76ab19496bbcf598932eff85b764613f84ceaac"
+    },
+    {
+      "path": "test/tooling/contract-release.test.ts",
+      "category": "runtime_test",
+      "sha256": "1825e5d71f04aa649387085032dfe0137e985ab2fca1d8198fab9fed910b9055"
+    },
+    {
+      "path": "test/web-marca-form.test.ts",
+      "category": "runtime_test",
+      "sha256": "8c38a204f08afaf1d4e410e16f5f985a400960c7ee1ec0b89337d572959dee32"
+    },
+    {
+      "path": "tools/contract-release/current-state.mjs",
+      "category": "development_tool",
+      "sha256": "24abb22d3bbf31642b19ab45967f220273b110b9a8c9f8cbc7c5dcb0921749e7"
+    },
+    {
+      "path": "tools/contract-release/evidence/gen-2.22-evidence.json",
+      "category": "contract_documentation",
+      "sha256": "0f46329f620856a903842800145527d9311a23df5eef1c4867574d0f476b7815"
+    },
+    {
+      "path": "tools/contract-release/gates.mjs",
+      "category": "development_tool",
+      "sha256": "8e781088cd2f2b8318bce2b72e8eccb92cda6cba5be06a120cc977884baa23de"
+    },
+    {
+      "path": "tools/contract-release/lib.mjs",
+      "category": "development_tool",
+      "sha256": "218f945e8cfdd18f19cdcda234f16e8e747c9fb5b652d0a6561c4299549df368"
+    },
+    {
+      "path": "tools/contract-release/recipes/2.22.json",
+      "category": "contract_documentation",
+      "sha256": "a8d33cedada992f9f6c57df0e9dc3e9a4409c7c1e9fa8a193a588bbfb4df16cd"
+    },
+    {
+      "path": "tools/contract-release/release.mjs",
+      "category": "development_tool",
+      "sha256": "816df3c0aa502c286e3221d193cd5e461ca51cd3bfbcb96a7313a99fd0ed7db8"
+    },
+    {
+      "path": "tools/contract-release/validator-runner.mjs",
+      "category": "development_tool",
+      "sha256": "b7def9fa4b7202225dd2b070884425765cae3cdd70e9cd8f8481decd0218fcbc"
+    }
+  ]
+}

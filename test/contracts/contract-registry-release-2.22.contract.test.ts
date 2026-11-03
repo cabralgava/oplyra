@@ -70,7 +70,7 @@ export function classificar(release: Manifest, anterior: Manifest, fonte = FONTE
 }
 
 describe("cross-validation da Release 2.22", () => {
-  const atual = runCrossRegistryValidation(ROOT);
+  const atual = runCrossRegistryValidation(ROOT, "2.22");
 
   it("todos os checks passam", () => {
     expect(atual.checks.filter((c) => c.status !== "passed")).toEqual([]);
