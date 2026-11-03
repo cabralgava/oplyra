@@ -1401,3 +1401,7 @@ Learning
 ```
 
 Essa é a base comum para todos os agentes definidos neste diretório.
+
+## Idiomas e billing internacional — CR-040
+
+As saídas humanas seguem o idioma resolvido pela tarefa/canal/verdade de marca em [i18n](../i18n/I18N-SPEC.md); uiLocale não determina idioma da campanha. Manter os 12 agentes, identidades, permissões e autonomias. Identificadores, enums e contratos JSON não são traduzidos. Tradução de peça é derivado versionado com revisão/approval aplicável; L1/L2 não são alterados por preferência de sessão. A receita da assinatura Oplyra não é receita do tenant; nenhum especialista passa a cobrar, reembolsar ou administrar a conta Stripe. A incorporação é documental e não altera Agent Registry ou schemas.

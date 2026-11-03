@@ -1,7 +1,9 @@
 # Oplyra — Roadmap
 
-**Versão documental:** 0.2  
-**Data:** 11 de setembro de 2026  
+**Versão documental:** 0.3
+
+**Data:** 28 de outubro de 2026 (revisão documental CR-040)
+
 **Autoridade:** detalhamento do 00 v2.3, com decisões posteriores e regra de ancoragem em [ATUALIZACOES](ATUALIZACOES.md). Citar `DEC-0xx` apenas quando o identificador existir na v2.3. Propostas técnicas permanecem propostas.
 
 ## Fase 0 — Discovery
@@ -156,3 +158,7 @@ Supabase local com dados sintéticos; EXP-01; Auth, tenants/memberships, RLS/Sto
 ### 4.3 Fora deste incremento
 
 Cobrança real, deploy, dados de pilotos e APIs pagas. Integração Stripe em teste e runtime entram em I-02, ainda na Fase 1. Uso produtivo depende dos gates correspondentes.
+
+## Idiomas e billing internacional — CR-040
+
+i18n pt-BR/en-US passa a requisito transversal das superfícies lançadas, com [spec própria](i18n/I18N-SPEC.md). A integração Stripe permanece na Fundação, progredindo de fake/local para teste e live pelos gates do [plano de migração](billing/MIGRATION-ROLLOUT.md). A incorporação documental não comprova essa implementação. Valores/condições e elegibilidade da LLC/conta/banco bloqueiam cobrança real; self-service e Growth mantêm suas fases. Freeze e validação dos futuros deltas contratuais antecedem a implementação estrutural correspondente.

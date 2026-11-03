@@ -29,6 +29,7 @@ A referência protegida é a **v2.3, de 16/09/2026**, que numera **DEC-001 a DEC
 | [ADR-0007](ADR-0007-entitlements-e-billing.md) | Entitlements e Stripe na Fundação | Diretriz de fornecedor/fase; detalhes propostos | DP-11 |
 | [ADR-0008](ADR-0008-autorizacao-rbac-por-vinculo.md) | RBAC por vínculo; CLI delimitada; suporte somente leitura | Proposta | DP-20, DP-23 |
 | [ADR-0009](ADR-0009-destinos-netlify-supabase-railway-github.md) | Destinos selecionados: Netlify, Supabase, Railway e GitHub | Parcialmente aprovada; parâmetros condicionados ao EXP-03/04 | DP-05, DP-06, DP-07, DP-14 |
+| [ADR-0010](ADR-0010-i18n-pricing-billing-us.md) | Idiomas pt-BR/en-US, preços independentes BRL/USD e LLC/Stripe US | Diretrizes aprovadas; documentação incorporada em 28/10/2026; detalhes técnicos propostos | DP-11a, DP-22, DP-29/30/31 preservadas |
 
 Experimentos especificados: [18-technical-experiments](../product/marketing-ops/18-technical-experiments.md) (EXP-01 a EXP-05). EXP-01 e EXP-02 foram executados e aprovados com as ressalvas registradas; EXP-03 a EXP-05 permanecem não executados.
 
@@ -83,7 +84,7 @@ Experimentos especificados: [18-technical-experiments](../product/marketing-ops/
 | DP-09c | U | Política de dados de IA: retenção, ZDR, residência de inferência, dados permitidos | Aberta | D | Antes de dados reais | ADR-0006, [07](../product/marketing-ops/07-security-lgpd.md) §11.3 |
 | DP-09d | U | Orçamento das avaliações (por rodada e por mês) | Aberta | Execução do EXP-05 | Antes do EXP-05 | [15](../product/marketing-ops/15-test-plan.md) §5.4 |
 | DP-10 | C | Check-in semanal no app faz parte do MVP; envio por e-mail em etapa posterior | Orientação do usuário registrada (11/09/2026) | — | — | [12](../product/marketing-ops/12-roadmap.md) I-08 |
-| DP-11a | U | Momento de cobrança dos pilotos, preço, trial e inadimplência | Aberta; adiamento da integração superado pela decisão de billing em ATUALIZACOES | Cobrança real | Antes de cobrar pilotos | [ADR-0007](ADR-0007-entitlements-e-billing.md) |
+| DP-11a | U | Valores, periodicidades, pilotos, trial, inadimplência, cancelamento, prorrata e reembolso | Parcialmente decidida em 28/10/2026: estrutura BRL/USD independente, LLC/Stripe US e documentos comerciais aprovados; demais condições pendentes | Cobrança real e fluxos dependentes | Antes de cobrar | [ADR-0007](ADR-0007-entitlements-e-billing.md), [ADR-0010](ADR-0010-i18n-pricing-billing-us.md) |
 | DP-11b | C | Assinaturas, entitlements, limites e auditoria preservados na fundação | Registrado conforme orientação | — | — | ADR-0007 |
 | DP-12a | U | Pessoa pode aprovar o próprio rascunho só por ação explícita e auditada, conforme política da empresa | Recomendação — não aprovada | L (I-05) | Antes do I-05 | [11 §12](../product/marketing-ops/11-agent-governance.md#12-autonomia-canônica-e-aprovação-por-versão) |
 | DP-12b | U | Ações que exigem duas pessoas | Aberta; proposta em 11 §12 | L (I-05 e ações futuras) | Antes do I-05 | [11 §12](../product/marketing-ops/11-agent-governance.md#12-autonomia-canônica-e-aprovação-por-versão) |
@@ -151,3 +152,7 @@ Experimentos especificados: [18-technical-experiments](../product/marketing-ops/
 A preparação do I-01 também **propõe** reclassificar DP-01a (recorte Must/Should/Won't do Performance) de "agora" para "antes do I-03", por não condicionar a fundação de identidade e isolamento. A reclassificação só vale se o usuário a aceitar; até lá o registro acima permanece como está.
 
 Aprovação documental não equivale a aprovação comercial das propostas acima. DP-11a não bloqueia integração Stripe em teste no escopo técnico aprovado, mas bloqueia cobrança real sem definição.
+
+## Idiomas e billing internacional — CR-040
+
+A [ADR-0010](ADR-0010-i18n-pricing-billing-us.md) e o [CR-040](../product/marketing-ops/contracts/changes/CR-040-i18n-pricing-billing-us-documentation.md) registram a decisão e sua incorporação documental autorizada. DP-11a é resolvida somente nos itens indicados, sem aprovação em bloco de condições, DP-22 ou DP-29/30/31. Relatório local e próximos gates em [incorporação](../product/marketing-ops/I18N-BILLING-US-INCORPORACAO.md).

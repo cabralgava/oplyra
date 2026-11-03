@@ -406,3 +406,7 @@ Valores iniciais propostos para sandbox/evals, não custos unitários nem autori
 Tokens de imagem/renders usam unidades próprias na tarifa; o teto em USD inclui ambos. Cada chamada ao modelo, inclusive retry ou juiz, conta no total. Espera humana fica persistida fora do tempo ativo e requer revalidar autorização/saldo ao retomar. Rotas Growth exigem configuração específica antes de ativação, sem herdar defaults ilimitados. Workflow determinístico executa sem LLM.
 
 Os máximos protegem cada execução; multiplicá-los pelas franquias não demonstra viabilidade mensal. Sem medição de distribuição e taxa de retrabalho, não prometer uso integral das franquias dentro do COGS.
+
+## Idiomas e billing internacional — CR-040
+
+Currency de assinatura BRL/USD não modifica moeda/unidade do Cost Ledger, tarifas de modelos ou budgets em USD/microUSD. Não inserir preço comercial como custo de inferência ou converter saldo econômico por locale. Receita própria da plataforma e receita de negócio do tenant continuam separadas. Idioma de entrega entra nos requisitos/contexto da tarefa e precisa de avaliação de qualidade; não é motivo para mudar identidades ou ampliar acesso. Ver [pricing/billing](billing/PRICING-BILLING-SPEC.md).

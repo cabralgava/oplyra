@@ -1,12 +1,32 @@
 # Estado do trabalho — Oplyra
 
-Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivos reais e contra a autorização vigente ao retomar. Não substituir este registro por checkpoint de outro workspace.
-
 ## Retomada — 03/11/2026
 
-PR #11 integrada em `8a2962c`; Brand OS integrado pela #10 em `433e183`. PR #8 encerrada como duplicada (árvore idêntica à main). PR #9 atualizada sobre main em `3174e23`; 584 testes focados e typecheck dos três pacotes passaram; CI integral e requisitos de release ainda precisam ser confirmados. O código e as migrações da estratégia foram preservados a partir do delta original sobre o Brand OS.
+PR #11 integrada em `8a2962c`; Brand OS integrado pela #10 em `433e183`. PR #8 encerrada como duplicada (árvore idêntica à main). PR #9 atualizada sobre main em `d798ff7`; 584 testes focados, typecheck dos três pacotes e os três checks do GitHub passaram. Os requisitos de release continuam explicitados na PR em rascunho. O código e as migrações da estratégia foram preservados a partir do delta original sobre o Brand OS.
 
-O proprietário retirou o mínimo de 1 aprovação no GitHub; a [política CR-041](POLITICA-REVISAO-RESPONSAVEL-UNICO.md) reconcilia o verificador e o plano administrativo. Entrega corrente: testes e integração pendentes; nenhuma ativação de runner ou emissão de autorização externa. CR-040 fica reservado à documentação i18n/billing, anteriormente identificada como CR-034 na branch documental; CR-034 do Brand OS permanece canônico. CR-036 a CR-039 encontrados em branches de trabalho foram preservados.
+O proprietário retirou o mínimo de 1 aprovação no GitHub; a [política CR-041](POLITICA-REVISAO-RESPONSAVEL-UNICO.md) reconcilia o verificador e o plano administrativo. Entrega corrente: 398 testes focados e 153 testes de segurança passaram; CI da base conciliada e integração pendentes; nenhuma ativação de runner ou emissão de autorização externa. CR-040 foi integrado pela PR #13 em `4a92118`, conciliando a documentação i18n/billing anteriormente identificada como CR-034 na branch documental; CR-034 do Brand OS permanece canônico. CR-036 a CR-039 encontrados em branches de trabalho foram preservados.
+
+## Retomada de i18n/billing — 03/11/2026
+
+Documentação do commit `2394d15` reaplicada sobre main `433e183` (Brand OS já integrado pela PR #10; PR #11 integrada em `8a2962c`). O identificador corrente passa a [CR-040](../product/marketing-ops/contracts/changes/CR-040-i18n-pricing-billing-us-documentation.md), para separar o alias histórico CR-034 de billing do CR-034 canônico do Brand OS. As entradas abaixo de 28/10 e 30/10 relatam o identificador antigo. Pacote histórico, relatórios antigos, Freeze, manifests, registries, schemas, fixtures e migrations são preservados. Nenhum código de billing ou chamada ao Stripe é implementado nesta entrega; a única mudança executável é a guarda de conteúdo documental em teste.
+
+## Versionamento da documentação de idiomas e billing — 30/10/2026
+
+**Autorização:** pedido explícito do proprietário neste chat para commitar e registrar a entrega. Este checkpoint integra o commit local documental da ADR-0010 e do CR-034, com os 52 arquivos identificados no [registro de incorporação](../product/marketing-ops/I18N-BILLING-US-INCORPORACAO.md). Para identificar seu SHA, consultar o histórico deste arquivo e a mensagem `docs: register bilingual launch and US billing decision (CR-034)`; não inserir SHA autorreferente no conteúdo do próprio commit.
+
+**Validação:** conferência documental, JSON, links, escopo do diff e integridade das fontes protegidas. Testes de produto/Stripe e cross-validation completa não foram executados. Os 58 cenários permanecem especificação futura. Registries, schemas, fixtures, Freeze e manifests históricos permanecem preservados; alterações de scripts, CI e demais trabalhos ficam fora deste commit.
+
+**Limites:** commit local não é push, PR, merge, deploy, nova release contratual ou ativação de cobranças. Valores/condições comerciais e contratos específicos continuam pendentes conforme ADR-0010/CR-034. O checkpoint de 28/10 abaixo registra a gravação anterior ao versionamento.
+
+## Incorporação documental de idiomas e billing — 28/10/2026
+
+**Escopo autorizado:** atualizar e gravar a documentação do pacote preparado, por pedido explícito do proprietário no chat. **Resultado local:** ADR-0010, CR-034, specs de i18n/pricing/Stripe/migração e adendos nos documentos afetados; pacote original preservado como histórico. A [evidência e lista de arquivos](../product/marketing-ops/I18N-BILLING-US-INCORPORACAO.md) distinguem gravação local de integração/publicação.
+
+Diretrizes aprovadas: pt-BR/en-US, preços independentes BRL/USD, seller LLC/Stripe US, liquidação EUA e documentos comerciais sem NFS-e no fluxo planejado. Valores/condições, enquadramento jurídico/fiscal, conta/banco e detalhes técnicos pendentes mantêm seus status. Registries, schemas, fixtures, migrations, fonte protegida, Freeze e manifests históricos preservados. Não houve teste de produto/Stripe, cross-validation completa, nova release, commit/push/PR/merge ou deploy nesta incorporação. Alterações de terceiros não foram incorporadas ou desfeitas.
+
+**Próxima etapa:** resolver pendências comerciais e contratos específicos; antes de publicar release/implementar estruturas afetadas, cumprir compatibilidade, cross-validation e versionamento pós-Freeze. Os checkpoints anteriores abaixo permanecem históricos, sem reativação de runtime ou de mecanismos de entrega.
+
+Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivos reais e contra a autorização vigente ao retomar. Não substituir este registro por checkpoint de outro workspace.
 
 ## Consentimento inicial Codex pelo chat — 05/10/2026
 

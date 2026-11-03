@@ -18,7 +18,7 @@ DEC-006 exige capacidades configuráveis; a decisão de billing registrada em AT
 
 Definir se e quando cobrar pilotos, preços, trial, inadimplência, cancelamento e excedentes. Até essa decisão e autorização de operação, somente testes/fakes no escopo de implementação aprovado. Nenhuma cobrança real é autorizada pela correção documental.
 
-A Fase 5 amplia self-service e operação comercial. NFS-e, meios de pagamento locais e obrigações fiscais não são capacidades presumidas de Stripe nem escopo já aprovado.
+A Fase 5 amplia self-service e operação comercial. A [ADR-0010](ADR-0010-i18n-pricing-billing-us.md), de 28/10/2026, registra pt-BR/en-US, preços independentes BRL/USD e seller LLC americana. O fluxo planejado não inclui emissão de NFS-e brasileira e utiliza invoices/recibos comerciais Stripe. A decisão não resolve valores/condições de DP-11a, meios locais ou enquadramento fiscal; não autoriza cobranças reais.
 
 ## Alternativas
 

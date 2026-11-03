@@ -1,0 +1,174 @@
+{
+  "date": "2026-11-03",
+  "canonical_change": "CR-040",
+  "historical_change": "CR-034/billing at 2394d15",
+  "source_commit": "2394d15",
+  "integrated_base": "433e183791062ca8d8e614331547463f54504733",
+  "source_documentation_count": 52,
+  "historical_package_preserved": 18,
+  "historical_incorporation_report_preserved": true,
+  "pinned_documents": [
+    {
+      "path": "README.md",
+      "old": "97a739618df082a9a5ff860ea16886dff30ea469778d4aa53d9c870c6366cc8c",
+      "current": "5a1a823b9e696b3ebf45a74bc903c05f8788caa05fc820c8c1ccfec6812f0702",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/decisions/ADR-0007-entitlements-e-billing.md",
+      "old": "755fbbb0ce5dee751693370c7829cbfa77bc923c65ac255765b38a3a8b800372",
+      "current": "755fbbb0ce5dee751693370c7829cbfa77bc923c65ac255765b38a3a8b800372",
+      "reason": "unchanged content"
+    },
+    {
+      "path": "docs/decisions/README.md",
+      "old": "7455db784c077ba2a978316f8037158387901f6b539515328f5950a0a31aafa0",
+      "current": "501100a7ec596926d263b8d27cf1ac91ae27c208a51cdae43b345f4bc535ec03",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/01-product-requirements.md",
+      "old": "3ba6fa19d1f7e14741a0102f274da6a4705075aba7eabd7a28288686e2d45409",
+      "current": "ad63edb34fe407b6b33d0710766cc776b06a29fd2250dcd5d3c44fdd1e3db689",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/03-domain-model.md",
+      "old": "71bfb1234b62785a8c58b299a53de60aba000cfdc6b7682689e6466dd1fa2bea",
+      "current": "c31bfd8204985180fef2cbb17f32832fda9f8a620cf6b5ee315a2627fef64400",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/04-architecture.md",
+      "old": "fbf20261486a47145c0fdaa1a0e2e6b49423bc87273402ebcdfe41287dbaa3e7",
+      "current": "05f305e204ea38b937c01d31de79b8a56bcd5367186cec574c14d4f081e1e451",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/05-data-model.md",
+      "old": "5909f608df81148316a727ae2c0461a81747c4179c471a54a8f6216272856927",
+      "current": "d08bf888993bfb191d0e8db1c24c258757725fb01757a150c08c96f0e3b03113",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/06-integrations.md",
+      "old": "e6669069e14d2e32b082d5614aeb60969fe89ed395bb8031a7f44e4482f3c517",
+      "current": "19b43dc7ac55eb9482c395d4dad30ffe1f24859cf105efff6d96cfc86863fac4",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/07-security-lgpd.md",
+      "old": "f9c160522d0037dbeba23873e6258dbba6a9198a3b30ea6558a574db93a8cc39",
+      "current": "e90b7604cf97c819497527cd5e0ab8f59af28d902bb691026a8ada277768938e",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/08-billing-entitlements.md",
+      "old": "b50e4672c4ab6fce9335e7cc8d0651d7ea616d9ab390ef2c9517b0f9244c200a",
+      "current": "bb93e234afe384f8d95bd03a4f7c3b8c3cd7c97a214efd75ddbc692fa76cb790",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/09-agentic-architecture.md",
+      "old": "f1c5bb7cb853086f34203436839c314133a3db2ec4160e3aa82af792dae05029",
+      "current": "91b8e8966d43dde82d4a69a39dfec87865911035f5b204dde5a48898548cb761",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/10-agent-catalog.md",
+      "old": "3e66e17fc96f65e4e8f5f545778f6f6e85b1cae5da39d48b9bdc8fa74ee325b6",
+      "current": "336e1db4232d14b4369169b286fac9f05a6fb1d5d7421a3f0a29d8a2b4ecbbed",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/11-agent-governance.md",
+      "old": "2279f4abfe8c9cfe47ba2ae16d8fe27b2995589574413a9d5fcd617420636108",
+      "current": "67621124a36a4cac0591e1df9d7609e9cce3fd7645aad5c01506ad5c6e2edf22",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/12-roadmap.md",
+      "old": "f599532b3cfc3c88c52963be5587affc642088f4a889bc51a90ea16f16fc2e56",
+      "current": "e333940a0eb04f67824174041f930d9d4e7b0103c01c5918f2f6f1712acdc3a0",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/13-ai-model-routing-finops.md",
+      "old": "54eebf9fd77f872bc281e0933b9fd6db5f83a1352316d5ecb83f6fc526c33ceb",
+      "current": "7006af4116992995eec374139bba3fec64241bad3b61d55b49c74ed5f5213ca3",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/15-test-plan.md",
+      "old": "ed244ee0968888953cbbbebb855c4cd0e2ae86d3e1699b0f99dd55a15be1d959",
+      "current": "c31b6a31427b273aa06e5f74dea92243efb83267e3d43966a83d7ed88777724f",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/16-environments-release.md",
+      "old": "4e9df925c3907ef76c87daffd70bb0c426b4387de585e425213c0ae80f0eed3d",
+      "current": "c6e4beac1acc9d48284afe25c3c293980bc263c73eb8f78c910dcef7f39baeaa",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/17-risks-costs.md",
+      "old": "9944007ceb4598dd4e725dad1b8086abf4799edd1a7ae4543f63669cae5f5d0b",
+      "current": "8e838f74e46b53557163bd1d36d76312c65932feb8b7bfb6d9b6a7f45776d288",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/ATUALIZACOES.md",
+      "old": "2f60675a69b6c1045a1e071b7f407c1243c53fe23df112bc8ec31706e745cf43",
+      "current": "09136f4da31d307c0c5d9e0f3bcaa5e846c2f3ec5601b0c5cdf85b2b48757785",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/contracts-README.md",
+      "old": "8ef51aaf4f5487316770d09cafa417d8884ec17f7f367c29597cef2af8189050",
+      "current": "ce6d89af6ab39b748d5e1a113dbd1a2777e6d0c6ae7e0a7cf055de8847bf4708",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    },
+    {
+      "path": "docs/product/marketing-ops/README.md",
+      "old": "dac6f9cdcddfea68c0eaf302957082f2b3561c627d86a2c6f32037d4c3571b43",
+      "current": "5b259f4dc554dce92f5bf01375a84e2ebefa77e086e24e166dc8d1ae744e2705",
+      "reason": "identifier reconciliation CR-034 -> CR-040"
+    }
+  ],
+  "registry_artifacts_unchanged": 18,
+  "handoff_action_bindings_verified": 364,
+  "side_effect_idempotency_verified": true,
+  "protected_paths_unchanged": 248,
+  "local_markdown_targets_checked": 341,
+  "new_missing_targets": [],
+  "preexisting_missing_targets": [],
+  "full_cross_validation_executed": false,
+  "runtime_billing_or_stripe_tests_executed": false,
+  "scope": "Documentation reconciliation and content-pinned contract guard; no registry/schema/runtime/migration/release mutation",
+  "current_contract_tests": {
+    "passed": 307,
+    "failed": 0
+  },
+  "negative_contract_scenarios": [
+    {
+      "case": "approved-document-modified",
+      "rejected": true,
+      "failing_tests": 1
+    },
+    {
+      "case": "approved-document-deleted",
+      "rejected": true,
+      "failing_tests": 1
+    },
+    {
+      "case": "unapproved-adr-modified",
+      "rejected": true,
+      "failing_tests": 1
+    },
+    {
+      "case": "protected-schema-modified",
+      "rejected": true,
+      "failing_tests": 2
+    }
+  ]
+}
