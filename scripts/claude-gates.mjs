@@ -28,11 +28,10 @@ const PENDING_MERGEABLE = new Set(["unknown", "unstable"]);
 
 /**
  * Avalia o ruleset efetivo de `main` (resposta de `GET /rules/branches/main`). Modos:
- *  - `routine-capable`: aprovação obrigatória = 0 SOMENTE porque a revisão do dono do código é obrigatória (CODEOWNERS) e `risk-gate` é check
- *    obrigatório; assim mudança rotineira integra sem clique e mudança elevada continua exigindo o proprietário;
- *  - `review-required`: ainda exige ≥ 1 aprovação humana (estado atual): o runner não consegue integrar rotina e para com bloqueio específico;
- *  - `unsafe`: faltam proteções (histórico linear, bloqueio de force push/exclusão, checks estritos, squash) ou a combinação 0 aprovações
- *    sem revisão de dono do código — NUNCA integrar.
+ *  - `routine-capable`: aprovação obrigatória = 0, conforme CR-041 (03/11/2026); o runner continua exigindo
+ *    CI do head atual e mantém os bloqueios de risco elevado, escopo, hold e pedidos de alterações;
+ *  - `review-required`: o GitHub ainda exige ≥ 1 aprovação humana, que o runner continua respeitando;
+ *  - `unsafe`: faltam proteções (PR, histórico linear, bloqueio de force push/exclusão, validate estrito, squash).
  */
 export function assessRuleset(rules) {
   const problems = [];
@@ -54,11 +53,8 @@ export function assessRuleset(rules) {
   const structuralGate = listing.some((r) => contexts(r).includes(STRUCTURAL_CHECK));
   if (problems.length) return { mode: "unsafe", problems, approvals, structuralGate };
   if (approvals >= 1) return { mode: "review-required", problems: [], approvals, structuralGate };
-  // 0 aprovações só é seguro com revisão do dono do código obrigatória e com o risk-gate exigido em TODA regra que lista validate
-  const ownerReview = prRules.every((r) => r?.parameters?.require_code_owner_review === true);
-  if (!ownerReview) problems.push("require_code_owner_review");
-  if (!listing.filter((r) => contexts(r).includes("validate")).every((r) => contexts(r).includes("risk-gate"))) problems.push("falta-risk-gate");
-  return { mode: problems.length ? "unsafe" : "routine-capable", problems, approvals, structuralGate };
+  // CR-041: ausência de revisão humana não dispensa os gates de decide() nem autoriza caminhos elevados.
+  return { mode: "routine-capable", problems: [], approvals, structuralGate };
 }
 
 /* ----------------------------------------------------------------------- evidência */

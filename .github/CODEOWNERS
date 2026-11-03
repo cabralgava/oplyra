@@ -1,6 +1,6 @@
 # Política de 04/10/2026 (AUTONOMOUS-BUILD): estes donos são a FRONTEIRA entre mudança rotineira e de risco elevado.
 # O job risk-gate exige dono para todo caminho elevado. O runner lê a política GitHub efetiva; CODEOWNERS não habilita merge sozinho.
-# A política vigente exige 1 aprovação humana também para entregas rotineiras. Nenhum ruleset é alterado por este arquivo.
+# CR-041 (03/11/2026): responsáveis preservados; a política corrente dispensa revisão de outro usuário. Nenhum ruleset é alterado por este arquivo.
 # Sintaxe limitada ao subconjunto que scripts/claude-risk.mjs interpreta (falha fechada em qualquer outra).
 /.github/                                   @cabralgava
 /scripts/                                   @cabralgava

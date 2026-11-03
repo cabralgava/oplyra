@@ -2,6 +2,12 @@
 
 Checkpoint operacional deste repositório. Validar o conteúdo contra os arquivos reais e contra a autorização vigente ao retomar. Não substituir este registro por checkpoint de outro workspace.
 
+## Retomada — 03/11/2026
+
+PR #11 integrada em `8a2962c`; Brand OS integrado pela #10 em `433e183`. PR #8 encerrada como duplicada (árvore idêntica à main). PR #9 atualizada sobre main em `3174e23`; 584 testes focados e typecheck dos três pacotes passaram; CI integral e requisitos de release ainda precisam ser confirmados. O código e as migrações da estratégia foram preservados a partir do delta original sobre o Brand OS.
+
+O proprietário retirou o mínimo de 1 aprovação no GitHub; a [política CR-041](POLITICA-REVISAO-RESPONSAVEL-UNICO.md) reconcilia o verificador e o plano administrativo. Entrega corrente: testes e integração pendentes; nenhuma ativação de runner ou emissão de autorização externa. CR-040 fica reservado à documentação i18n/billing, anteriormente identificada como CR-034 na branch documental; CR-034 do Brand OS permanece canônico. CR-036 a CR-039 encontrados em branches de trabalho foram preservados.
+
 ## Consentimento inicial Codex pelo chat — 05/10/2026
 
 O proprietário pediu remover o gate de confirmação inicial em terminal. Implementado `scripts/codex-authorize.mjs`, com perfil inicial fechado: `packages/core/test/`, sete dias de validade, cinco missões, cinco merges por execução, três sessões por missão, uma hora por missão e um dia de execução. Conserva registro externo privado, referência da conversa e hash da mensagem, recusa sobrescrita e respeita revogação e kill switch. A referência não é autenticação; a autorização deve vir do proprietário na conversa e a emissão é administrativa, fora do worker. O script legado continua disponível para outros fluxos; não é pré-requisito do Codex.

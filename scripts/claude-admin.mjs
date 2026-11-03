@@ -39,7 +39,7 @@ export function planRuleset(current) {
   const pr = next.rules.find((r) => r?.type === "pull_request");
   const checks = next.rules.find((r) => r?.type === "required_status_checks");
   if (!pr || !checks) throw new Error("ruleset sem pull_request ou required_status_checks");
-  pr.parameters = { ...pr.parameters, required_approving_review_count: 0, require_code_owner_review: true, dismiss_stale_reviews_on_push: true, allowed_merge_methods: ["squash"] };
+  pr.parameters = { ...pr.parameters, required_approving_review_count: 0, require_code_owner_review: false, dismiss_stale_reviews_on_push: true, allowed_merge_methods: ["squash"] };
   const list = checks.parameters.required_status_checks ?? [];
   const validate = list.find((c) => c.context === "validate");
   if (!validate) throw new Error("o check obrigatório `validate` não consta do ruleset");

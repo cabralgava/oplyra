@@ -12,7 +12,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { AUTHORIZE_PHRASE, CLEAR_PHRASE, GRANT_PHRASE, run as authorize } from "./claude-authorize.mjs";
 import {
-  BREAKER_LIMIT, EVIDENCE_TTL_SECONDS, EXPECTED_PERMISSIONS, FIXED_PATH, HANDOFF_MAX_BYTES, GIT_CANDIDATES, GIT_HARDENING, LOG_HOSTS, LOG_MAX_BYTES, REQUIRED_CHECK, childEnv, defaultHttp, isForbiddenEnv, resolveGit, validateLogHosts, endpointAllowed, execute, normalizeRemote, parseVerbArgs, scanDiff, scanText,
+  BREAKER_LIMIT, EVIDENCE_TTL_SECONDS, EXPECTED_PERMISSIONS, FIXED_PATH, HANDOFF_MAX_BYTES, GIT_CANDIDATES, GIT_HARDENING, LOG_HOSTS, LOG_MAX_BYTES, REQUIRED_CHECK, REQUIRED_RULE_TYPES, childEnv, defaultHttp, isForbiddenEnv, resolveGit, validateLogHosts, endpointAllowed, execute, normalizeRemote, parseVerbArgs, scanDiff, scanText,
   untrusted, validateCommitMessage,
 } from "./claude-git.mjs";
 import {
@@ -2378,7 +2378,7 @@ test("stage e commit também verificam token, repositório e proteções efetiva
 
 /* ============================================================ mutações (§11) */
 
-/* ---- D-26: proteções efetivas de main exigem aprovação e `validate` estrito ---- */
+/* ---- D-26 + CR-041: contagem de revisão válida, sem mínimo humano, e `validate` estrito ---- */
 
 const STRICT = "strict_required_status_checks_policy";
 const VALIDATE_ONLY = [{ context: REQUIRED_CHECK }];
@@ -2389,7 +2389,7 @@ const prParams = (over = {}) => ({ required_approving_review_count: 1, dismiss_s
 const DISMISS = "dismiss_stale_reviews_on_push";
 const withStatusChecks = (params) => ruleSet("required_status_checks", (r) => ({ type: r.type, parameters: params }));
 const D26_BAD = [
-  ["parameters ausente", withApprovals(undefined)], ["contagem ausente", withApprovals(prParams({ required_approving_review_count: undefined }))], ["contagem 0", withApprovals(prParams({ required_approving_review_count: 0 }))],
+  ["parameters ausente", withApprovals(undefined)], ["contagem ausente", withApprovals(prParams({ required_approving_review_count: undefined }))],
   ["contagem negativa", withApprovals(prParams({ required_approving_review_count: -1 }))], ["contagem decimal", withApprovals(prParams({ required_approving_review_count: 1.5 }))],
   ["contagem em string", withApprovals(prParams({ required_approving_review_count: "1" }))], ["contagem null", withApprovals(prParams({ required_approving_review_count: null }))],
   ["contagem NaN", withApprovals(prParams({ required_approving_review_count: Number.NaN }))], ["contagem infinita", withApprovals(prParams({ required_approving_review_count: Infinity }))],
@@ -2413,7 +2413,7 @@ const D26_BAD = [
   ["lista de checks que não é lista", withStatusChecks({ required_status_checks: { context: REQUIRED_CHECK }, [STRICT]: true })],
 ];
 
-test("D-26 proteção de main: aprovação ≥ 1 (inteiro seguro), dismiss_stale_reviews_on_push true e validate estrito na mesma regra; qualquer valor malformado recusa e nada é criado", async () => {
+test("D-26 + CR-041 proteção de main: aprovação ≥ 0 (inteiro seguro), dismiss_stale_reviews_on_push true e validate estrito na mesma regra; qualquer valor malformado recusa e nada é criado", async () => {
   for (const [label, rules] of D26_BAD) {
     const s = scenario({ http: fakeHttp({ rules }) });
     refused(await s.call("doctor"), "DD-PROTECTION");
@@ -2421,9 +2421,9 @@ test("D-26 proteção de main: aprovação ≥ 1 (inteiro seguro), dismiss_stale
     refused(b, "DD-PROTECTION");
     assert.equal(sh(s.work, "branch", "--list", BRANCH), "", `${label}: nenhuma branch sem proteção verificada`);
   }
-  // positivos: contagem 1 e estrito true; contagem maior; duas regras pull_request (vale o máximo); o doctor imprime os valores efetivos lidos
+  // positivos: contagens 0, 1 e maior; duas regras pull_request (vale o máximo); o doctor imprime os valores efetivos lidos
   const ok = [
-    [GOOD_RULES, 1], [withApprovals(prParams({ required_approving_review_count: 2 })), 2],
+    [withApprovals(prParams({ required_approving_review_count: 0 })), 0], [GOOD_RULES, 1], [withApprovals(prParams({ required_approving_review_count: 2 })), 2],
     [[...GOOD_RULES, { type: "pull_request", parameters: prParams({ required_approving_review_count: 3 }) }], 3],
   ];
   for (const [rules, min] of ok) {
@@ -2431,6 +2431,26 @@ test("D-26 proteção de main: aprovação ≥ 1 (inteiro seguro), dismiss_stale
     assert.equal(r.code, 0, r.out);
     assert.match(r.out, new RegExp(`aprovações exigidas = ${min}; revisão do dono do código obrigatória = false; validate estrito = true; aprovação obsoleta descartada no push = true`));
   }
+});
+
+test("CR-041: zero aprovações não dispensa validate estrito, descarte de revisão, proteções ou autorização de entrega", async () => {
+  const zero = (rules) => rules.map((r) => r.type === "pull_request" ? { ...r, parameters: { ...r.parameters, required_approving_review_count: 0 } } : r);
+  const invalid = [
+    ...REQUIRED_RULE_TYPES.map((type) => zero(rulesWithout(type))),
+    zero(withStatusChecks({ required_status_checks: VALIDATE_ONLY, [STRICT]: false })),
+    zero(withApprovals(prParams({ [DISMISS]: false }))),
+  ];
+  for (const rules of invalid) {
+    const s = scenario({ http: fakeHttp({ rules }) });
+    refused(await s.call("branch"), "DD-PROTECTION");
+    assert.equal(sh(s.work, "branch", "--list", BRANCH), "");
+  }
+  const allowed = scenario({ http: fakeHttp({ rules: zero(GOOD_RULES) }) });
+  const branch = await allowed.call("branch");
+  assert.equal(branch.code, 0, branch.out);
+  const disabled = scenario({ enabled: false, http: fakeHttp({ rules: zero(GOOD_RULES) }) });
+  refused(await disabled.call("branch"), "DD-DISABLED");
+  assert.equal(sh(disabled.work, "branch", "--list", BRANCH), "");
 });
 
 /* ---- D-25: concessão temporária de ensaio, fora do repositório e vinculada ao registro ---- */
@@ -3580,15 +3600,15 @@ const MUTATIONS = [
   ...(() => {
     const refusesDoctor = (rules) => async (m) => isRefusal(await scenario({ http: fakeHttp({ rules }) }).exec(m.git, "doctor"), "DD-PROTECTION");
     const named = (label) => D26_BAD.find(([l]) => l === label)[1];
-    const COUNT_CHECK = 'if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 0 || (n === 0 && !(ownerGated && riskGated)))) refuse("DD-PROTECTION", "required_approving_review_count");';
+    const COUNT_CHECK = 'if (!approvals.length || approvals.some((n) => !Number.isSafeInteger(n) || n < 0)) refuse("DD-PROTECTION", "required_approving_review_count");';
     const DISMISS_CHECK = 'if (rules.filter((r) => r?.type === "pull_request").some((r) => r?.parameters?.dismiss_stale_reviews_on_push !== true)) refuse("DD-PROTECTION", "dismiss_stale_reviews_on_push");';
     const STRICT_CHECK ='if (listing.some((r) => r.parameters.strict_required_status_checks_policy !== true)) refuse("DD-PROTECTION", "strict_required_status_checks_policy");';
     return [
-      ["P01-aprovacoes-minimo-1", GIT, "|| (n === 0 && !(ownerGated && riskGated))", "", refusesDoctor(named("contagem 0"))],
+      ["P01-contagem-nao-negativa", GIT, "|| n < 0", "", refusesDoctor(named("contagem negativa"))],
       ["P02-contagem-de-aprovacoes-exigida", GIT, COUNT_CHECK, "", refusesDoctor(named("contagem ausente"))],
       ["P03-contagem-em-string", GIT, "!Number.isSafeInteger(n) ||", "", refusesDoctor(named("contagem em string"))],
       ["P04-contagem-decimal-ou-infinita", GIT, "!Number.isSafeInteger(n) ||", "typeof n !== \"number\" ||", async (m) => (await refusesDoctor(named("contagem decimal"))(m)) && (await refusesDoctor(named("contagem infinita"))(m))],
-      ["P05-regra-pull-request-duplicada-malformada", GIT, "approvals.some((n) => !Number.isSafeInteger(n) || n < 0 || (n === 0 && !(ownerGated && riskGated)))", "approvals.every((n) => !Number.isSafeInteger(n) || n < 0 || (n === 0 && !(ownerGated && riskGated)))", refusesDoctor(named("regra pull_request duplicada com contagem malformada"))],
+      ["P05-regra-pull-request-duplicada-malformada", GIT, "approvals.some((n) => !Number.isSafeInteger(n) || n < 0)", "approvals.every((n) => !Number.isSafeInteger(n) || n < 0)", refusesDoctor(named("regra pull_request duplicada com contagem malformada"))],
       ["P06-contagem-vale-o-maximo", GIT, "approvals: Math.max(...approvals)", "approvals: Math.min(...approvals)", async (m) => {
         const r = await scenario({ http: fakeHttp({ rules: [...GOOD_RULES, { type: "pull_request", parameters: prParams({ required_approving_review_count: 3 }) }] }) }).exec(m.git, "doctor");
         return r.code === 0 && /aprovações exigidas = 3;/.test(r.out);

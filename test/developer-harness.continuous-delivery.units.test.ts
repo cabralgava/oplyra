@@ -227,19 +227,19 @@ const withRule = (rules, type, patch) => rules.map((r) => (r.type === type ? { .
 const without = (rules, type) => rules.filter((r) => r.type !== type);
 
 describe("ruleset efetivo", () => {
-  it("estado atual (1 aprovação) = review-required; a política nova = routine-capable", () => {
+  it("estado histórico (1 aprovação) = review-required; CR-041 aceita 0 sem revisão de outra pessoa", () => {
     expect(assessRuleset(TODAY_RULES)).toMatchObject({ mode: "review-required", approvals: 1 });
     expect(assessRuleset(GOOD_RULES)).toMatchObject({ mode: "routine-capable", approvals: 0 });
+    const singleOwner = withRule(TODAY_RULES, "pull_request", { required_approving_review_count: 0, require_code_owner_review: false });
+    expect(assessRuleset(singleOwner)).toMatchObject({ mode: "routine-capable", approvals: 0, problems: [] });
   });
 
-  it("0 aprovações sem revisão do dono do código, sem risk-gate, sem squash exclusivo ou sem check estrito é UNSAFE", () => {
+  it("CR-041: 0 aprovações sem squash exclusivo, sem validate ou sem check estrito é UNSAFE", () => {
     const casos = [
-      withRule(GOOD_RULES, "pull_request", { require_code_owner_review: false }),
-      withRule(GOOD_RULES, "pull_request", { require_code_owner_review: undefined }),
       withRule(GOOD_RULES, "pull_request", { dismiss_stale_reviews_on_push: false }),
       withRule(GOOD_RULES, "pull_request", { allowed_merge_methods: ["squash", "merge"] }),
       withRule(GOOD_RULES, "pull_request", { allowed_merge_methods: undefined }),
-      withRule(GOOD_RULES, "required_status_checks", { required_status_checks: [{ context: "validate" }] }),
+      withRule(GOOD_RULES, "required_status_checks", { required_status_checks: [{ context: "risk-gate" }] }),
       withRule(GOOD_RULES, "required_status_checks", { strict_required_status_checks_policy: false }),
       withRule(GOOD_RULES, "pull_request", { required_approving_review_count: -1 }),
       withRule(GOOD_RULES, "pull_request", { required_approving_review_count: "0" }),
@@ -471,7 +471,7 @@ describe("ajuste administrativo do ruleset", () => {
     expect(plan.before.mode).toBe("review-required");
     expect(plan.assessment.mode).toBe("routine-capable");
     const pr = plan.next.rules.find((r) => r.type === "pull_request").parameters;
-    expect(pr).toMatchObject({ required_approving_review_count: 0, require_code_owner_review: true, dismiss_stale_reviews_on_push: true, allowed_merge_methods: ["squash"], required_review_thread_resolution: true, require_last_push_approval: false });
+    expect(pr).toMatchObject({ required_approving_review_count: 0, require_code_owner_review: false, dismiss_stale_reviews_on_push: true, allowed_merge_methods: ["squash"], required_review_thread_resolution: true, require_last_push_approval: false });
     const checks = plan.next.rules.find((r) => r.type === "required_status_checks").parameters;
     // structural-gate (29/10/2026): exigido também pelo GitHub, ao lado de validate e risk-gate
     expect(checks.required_status_checks).toEqual([{ context: "validate", integration_id: 15368 }, { context: "risk-gate", integration_id: 15368 }, { context: "structural-gate", integration_id: 15368 }]);
