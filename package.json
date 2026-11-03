@@ -39,7 +39,11 @@
     "harness:mcp": "node scripts/claude-launch.mjs --mcp-list",
     "claude:local": "node scripts/claude-launch.mjs",
     "harness:install": "corepack pnpm --dir tools/developer-harness install --frozen-lockfile",
-    "claude:maintenance": "node scripts/claude-launch.mjs --maintenance"
+    "claude:maintenance": "node scripts/claude-launch.mjs --maintenance",
+    "runner:start": "node scripts/codex-supervise.mjs",
+    "runner:status": "node scripts/claude-runner.mjs status",
+    "runner:stop": "node scripts/claude-runner.mjs stop",
+    "runner:once": "node scripts/claude-runner.mjs start"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
