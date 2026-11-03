@@ -516,6 +516,7 @@ describe("ajuste administrativo do ruleset", () => {
     expect(await admin({ ...o, gh, argv: ["ruleset-plan"] })).toBe(0);
     expect(gh.calls.some((c) => c.args.includes("PUT"))).toBe(false);
     expect(o.out.join("")).toContain("modo=routine-capable");
+    expect(o.out.join("")).toContain("revisão do dono do código obrigatória=false");
   });
   it("apply: exige terminal, frase digitada e risk-gate já verde em main; grava backup ANTES do PUT e permite desfazer", async () => {
     const o = io();

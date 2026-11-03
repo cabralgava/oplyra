@@ -453,7 +453,7 @@ function audit(run, verb, outcome, refusal) {
 
 /**
  * Habilitação (CR-033; D-25). Duas formas, nunca misturadas:
- *  - definitiva: `delegatedDelivery: true` no repositório (control plane, PR do proprietário com segunda aprovação);
+ *  - definitiva: `delegatedDelivery: true` no repositório (control plane, autorização do proprietário e revisão conforme a política CR-041);
  *  - temporária de ensaio: repositório em `false` (arquivo legível e válido) E concessão `<ref>.enable.json` fora do repositório, vinculada
  *    ao SHA-256 do registro carregado, só `ops-*`, ≤ 24 h. Reverificada a cada chamada e registrada na auditoria (`enabledBy`).
  * O kill switch prevalece sobre as duas. Sem nenhuma das duas: DD-DISABLED, sem tocar em Git, rede, chaves nem estado persistido.
