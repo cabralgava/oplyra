@@ -6,14 +6,15 @@
 import { describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import { frozenSnapshotRoot, snapshotCommitOf } from "./frozen-snapshot.ts";
 import { CONTRACTS_DIR } from "./cross-registry-validation.ts";
 
 type Artefato = { path: string; category: string; sizeBytes: number; sha256: string; source: string };
 type Manifest = Record<string, any> & { artifacts: Artefato[] };
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
+// Histórico publicado íntegro; a árvore corrente tem guarda própria.
+const ROOT = frozenSnapshotRoot(snapshotCommitOf("2.22"));
 const ler = (p: string): Record<string, any> => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
 const sha = (p: string) => createHash("sha256").update(readFileSync(join(ROOT, p))).digest("hex");
 /** Precedente das Releases 1.x–2.16: linhas `path:sha256` em ordem localeCompare, unidas por \n. */

@@ -382,3 +382,34 @@ describe("CLI, Playwright e estado", () => {
     }
   });
 });
+
+// @ts-ignore módulo .mjs sem declarações
+import { assertRelease23Policy } from "../../tools/contract-release/current-state.mjs";
+describe("política mínima da futura 2.23", () => {
+  const candidate = () => {
+    const r = structuredClone(recipe222());
+    r.release = "2.23";
+    r.gates["documentary-mutations"].eq.push(["run", "passed"]);
+    r.gates["documentary-mutations"].counts.passed = "pos";
+    r.gates["release-tests"].cmd = "pnpm test test/contracts/contract-registry-release-2.22.contract.test.ts test/contracts/contract-registry-release-2.23.contract.test.ts";
+    r.gates["cross-validation"].cmd = "pnpm test test/contracts/contract-registry-release-2.23.contract.test.ts";
+    r.gates["release-2.22-preserved"] = structuredClone(r.gates["release-2.21-preserved"]);
+    r.crossValidation.requiredIds = ["FROZEN-migrations-000001-000014", "DOCS-cr030-product-ai-alignment", "DOCS-cr031-harness-documents", "DOCS-cr032-s1-git-lifecycle", "HARNESS-cr032-s1-no-executable-mechanism"].map((id) => `${id}-v2`);
+    return r;
+  };
+  it("não trata gates vazios ou perfil histórico como emissão válida", () => {
+    expect(() => assertRelease23Policy(candidate())).not.toThrow();
+    const empty = candidate(); empty.gates = {};
+    expect(() => assertRelease23Policy(empty)).toThrow("CR-RELEASE-POLICY");
+    const old = candidate(); old.crossValidation.requiredIds = [];
+    expect(() => assertRelease23Policy(old)).toThrow("CR-RELEASE-POLICY");
+  });
+  it("não permite que a fase intermediária declare todos os gates aprovados", () => {
+    const r = candidate(); r.manifest.pendingValidation.gatesDeclaredPassed = true;
+    expect(() => assertRelease23Policy(r)).toThrow("CR-RELEASE-POLICY");
+  });
+  it("não elimina a igualdade entre executados e aprovados", () => {
+    const r = candidate(); r.gates.harness.eq = [];
+    expect(() => assertRelease23Policy(r)).toThrow("CR-RELEASE-POLICY");
+  });
+});

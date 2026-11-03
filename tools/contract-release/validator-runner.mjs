@@ -5,4 +5,4 @@ import { pathToFileURL } from "node:url";
 
 const root = resolve(process.argv[2] ?? "");
 const mod = await import(pathToFileURL(join(root, "test", "contracts", "cross-registry-validation.ts")).href);
-process.stdout.write(JSON.stringify(mod.runCrossRegistryValidation(root)));
+process.stdout.write(JSON.stringify(mod.runCrossRegistryValidation(root, mod.CURRENT_VALIDATION_PROFILE ?? "2.22")));

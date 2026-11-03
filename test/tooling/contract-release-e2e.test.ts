@@ -9,7 +9,9 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 // @ts-ignore módulo .mjs sem tipos
-import { aggregate, pretty, sha256 } from "../../tools/contract-release/lib.mjs";
+import { aggregate, pretty, sha256, defaultCrossValidate } from "../../tools/contract-release/lib.mjs";
+// @ts-ignore módulo .mjs sem tipos
+import { inspectReleaseState, compareGateAndPublication } from "../../tools/contract-release/current-state.mjs";
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const TOOLS = join(REPO, "tools/contract-release");
@@ -40,8 +42,8 @@ const write = (dir: string, p: string, text: string) => {
   writeFileSync(join(dir, p), text);
 };
 
-const OUT_REPORT = "contracts/cross-registry-validation-v1.1.json";
-const OUT_MANIFEST = "contracts/contract-registry-manifest-v1.1.json";
+const OUT_REPORT = "docs/product/marketing-ops/contracts/cross-registry-validation-v1.1.json";
+const OUT_MANIFEST = "docs/product/marketing-ops/contracts/contract-registry-manifest-v1.1.json";
 const BASE_MANIFEST = "contracts/contract-registry-manifest-v1.0.json";
 const BASE_REPORT = "contracts/cross-registry-validation-v1.0.json";
 const EXPORT = ["src", "docs", "test", "contracts", "package.json"];
@@ -160,7 +162,7 @@ describe("ciclo de release ponta a ponta (CLI real, mini repositório, gates sin
     const i1 = intermediate(r);
     const manifest1 = JSON.parse(read(dir, OUT_MANIFEST));
     expect(manifest1.validation).toEqual({ status: "pending" });
-    expect(manifest1.artifacts.map((a: any) => a.path)).toEqual([OUT_REPORT, "docs/new.md", "src/a.txt", "src/b.txt"]);
+    expect(manifest1.artifacts.map((a: any) => a.path)).toEqual([OUT_REPORT, "docs/new.md", "src/a.txt", "src/b.txt"].sort((a,b) => a.localeCompare(b)));
     expect(manifest1.artifacts.find((a: any) => a.path === "src/a.txt").sha256).toBe(sha256(Buffer.from("a2\n")));
     expect(manifest1.artifactClassification).toEqual({ inheritedUnchanged: 1, modifiedByCr900: 1, addedByCr900: 2, unclassified: 0 });
     expect(manifest1.explicitValidationLimits).toEqual(["limit-new", "limit-replaced", "limit-keep"]);
@@ -230,7 +232,7 @@ describe("ciclo de release ponta a ponta (CLI real, mini repositório, gates sin
     refusal(cli(dir, "reproduce", "1.1"), "CR-SNAPSHOT-MISSING");
     // um arquivo publicado que difere do snapshot recusa a reprodução
     write(dir, "tools/contract-release/recipes/1.1.json", pretty(frozen));
-    write(dir, "contracts/cross-registry-validation-v1.1.json", `${read(dir, OUT_REPORT)} `);
+    write(dir, "docs/product/marketing-ops/contracts/cross-registry-validation-v1.1.json", `${read(dir, OUT_REPORT)} `);
     git(dir, "add", "-A");
     git(dir, "commit", "-q", "-m", "C3 adultera o relatório publicado");
     write(dir, "tools/contract-release/recipes/1.1.json", pretty({ ...frozen, snapshot: { ...frozen.snapshot, commit: git(dir, "rev-parse", "HEAD") } }));
@@ -390,6 +392,7 @@ describe("ciclo de release ponta a ponta (CLI real, mini repositório, gates sin
 
   it("estado e evidência ficam só em .oplyra/release/ (git-ignorado), nunca em test-results/, e nada vaza para o repositório de trabalho", { timeout: T }, () => {
     const r = makeRepo();
+    const originalOutputs = [OUT_REPORT, OUT_MANIFEST].map((p) => existsSync(join(REPO, p)) ? read(REPO, p) : null);
     expect(r.dir.startsWith(tmpdir()) || r.dir.startsWith(realpathSync(tmpdir()))).toBe(true);
     intermediate(r);
     expect(cli(r.dir, "gates", "1.1").status).toBe(0);
@@ -399,7 +402,114 @@ describe("ciclo de release ponta a ponta (CLI real, mini repositório, gates sin
     for (const f of ["state.json", "gates.json", "evidence.json"]) expect(git(r.dir, "check-ignore", `.oplyra/release/1.1/${f}`)).toContain(f);
     expect(git(r.dir, "status", "--porcelain=v1", "--untracked-files=all")).not.toMatch(/\.oplyra/);
     // as saídas ficaram no mini repositório; o repositório de trabalho nunca é o cwd da CLI deste teste
-    expect(existsSync(join(REPO, "contracts/contract-registry-manifest-v1.1.json"))).toBe(false);
+    expect([OUT_REPORT, OUT_MANIFEST].map((p) => existsSync(join(REPO, p)) ? read(REPO, p) : null)).toEqual(originalOutputs);
     expect(existsSync(join(REPO, ".oplyra/release/1.1"))).toBe(false);
   });
+});
+
+
+// Estados G/P/F com o gerador real em repositório SINTÉTICO. Não emite a release Oplyra 2.23.
+const transitionOf = (r: Repo) => ({
+  schema: "oplyra-release-transition/1", release: "1.1", baseRelease: "1.0",
+  modified: [{path: "src/a.txt", sha256: sha256(Buffer.from(read(r.dir, "src/a.txt")))}],
+  added: [{path: "docs/new.md", category: "documentation", sha256: sha256(Buffer.from(read(r.dir, "docs/new.md")))}],
+});
+const inspect = (r: Repo) => inspectReleaseState({repoRoot: r.dir, transition: transitionOf(r)});
+
+describe("transição íntegra e equivalência G/P (repositório sintético)", () => {
+  it("sem receita, preparada, intermediária, final e congelada; G/P com os mesmos bytes", {timeout: T}, () => {
+    const r = makeRepo();
+    try {
+      const t = transitionOf(r);
+      rmSync(join(r.dir, "tools/contract-release/recipes/1.1.json"));
+      expect(inspectReleaseState({repoRoot: r.dir, transition: t}).phase).toBe("unissued");
+      setRecipe(r, {});
+      expect(inspect(r).phase).toBe("prepared");
+      intermediate(r);
+      expect(inspect(r).phase).toBe("intermediate");
+      expect(cli(r.dir, "gates", "1.1").status).toBe(0);
+      expect(cli(r.dir, "build", "1.1", "final").status).toBe(0);
+      expect(inspect(r).phase).toBe("final");
+      const evText = read(r.dir, evidencePath), ev = JSON.parse(evText);
+      const st = JSON.parse(read(r.dir, ".oplyra/release/1.1/state.json"));
+      write(r.dir, "tools/contract-release/evidence/published.json", evText);
+      // P também contém a receita NÃO congelada, que aponta G (sem referência circular).
+      git(r.dir, "add", OUT_REPORT, OUT_MANIFEST, "tools/contract-release");
+      git(r.dir, "commit", "-q", "-m", "P publica outputs e receita ainda nao congelada");
+      const p = git(r.dir, "rev-parse", "HEAD");
+      const m = JSON.parse(read(r.dir, OUT_MANIFEST));
+      const counts = Object.fromEntries(ev.gates.map((g: any) => [g.id, g.counts]));
+      const built = compareGateAndPublication({repoRoot: r.dir, recipe: r.recipe, gateCommit: r.c1, publishedCommit: p, generatedAt: st.generatedAt, evidenceCounts: counts});
+      expect(built.reportText).toBe(read(r.dir, OUT_REPORT));
+      expect(built.finalText).toBe(read(r.dir, OUT_MANIFEST));
+      setRecipe(r, {frozen: true, generatedAt: st.generatedAt,
+        snapshot: {...r.recipe.snapshot, commit: p},
+        evidence: {...r.recipe.evidence, path: "tools/contract-release/evidence/published.json", sha256: sha256(Buffer.from(evText)), baseCommit: r.c1},
+        expected: {reportSha256: st.reportSha, manifestSha256: st.finalManifestSha, intermediateManifestSha256: st.intermediateManifestSha, aggregateDigest: st.aggregateDigest, artifactCount: m.artifacts.length, classification: m.artifactClassification},
+      });
+      expect(inspect(r).phase).toBe("frozen");
+      write(r.dir, "src/a.txt", "regressao depois do congelamento\n");
+      expect(() => inspectReleaseState({repoRoot: r.dir, transition: t})).toThrow("CR-CURRENT-DIVERGENCE");
+    } finally { rmSync(r.dir, {recursive: true, force: true}); }
+  });
+
+  const cases: [string, (r: Repo) => void, string][] = [
+    ["receita malformada", (r) => write(r.dir, "tools/contract-release/recipes/1.1.json", pretty({...r.recipe, fabricated: true})), "CR-SCHEMA"],
+    ["frozen false com outputs fabricados", (r) => {write(r.dir, OUT_REPORT, pretty({generatedAt: "2026-01-01T00:00:00Z"})); write(r.dir, OUT_MANIFEST, "{}\n");}, "CR-BYTE-MISMATCH"],
+    ["um output sozinho", (r) => write(r.dir, OUT_REPORT, "{}\n"), "CR-PARTIAL-OUTPUT"],
+    ["objeto de snapshot inexistente", (r) => setRecipe(r, {snapshot: {...r.recipe.snapshot, commit: "9".repeat(40)}}), "CR-SNAPSHOT-MISSING"],
+    ["snapshot com conteúdo fora do escopo", (r) => {write(r.dir, "src/a.txt", "snapshot incorreto\n"); git(r.dir, "add", "src/a.txt"); git(r.dir, "commit", "-q", "-m", "G incorreto"); setRecipe(r, {snapshot: {...r.recipe.snapshot, commit: git(r.dir, "rev-parse", "HEAD")}});}, "CR-CURRENT-DIVERGENCE"],
+    ["base nao congelada", (r) => setRecipe(r, {base: {...r.recipe.base, release: "0.8"}}), "CR-BASE-NOT-FROZEN"],
+    ["saída congelada tocada", (r) => setRecipe(r, {changeSet: {...r.recipe.changeSet, modified: [BASE_REPORT]}}), "CR-FROZEN-OUTPUT"],
+    ["delta fora do escopo revisto", (r) => setRecipe(r, {changeSet: {...r.recipe.changeSet, modified: [...r.recipe.changeSet.modified, "src/b.txt"]}}), "CR-TRANSITION-SCOPE"],
+    ["herdado divergente fora do change set", (r) => write(r.dir, "src/b.txt", "alterado\n"), "CR-CURRENT-DIVERGENCE"],
+    ["Playwright avulso", (r) => setRecipe(r, {gates: {...GATES, e2e: {...GATES.harness, cmd: "pnpm test:e2e"}}}), "CR-GATE-PLAYWRIGHT"],
+    ["ordem dos gates", (r) => setRecipe(r, {gates: {verificar: GATES.verificar, "db-reset": GATES["db-reset"], "db-roles": GATES["db-roles"]}}), "CR-GATE-ORDER"],
+    ["relatorio editado", (r) => {intermediate(r); write(r.dir, OUT_REPORT, read(r.dir, OUT_REPORT)+" ");}, "CR-BYTE-MISMATCH"],
+    ["manifest editado sem evidência", (r) => {intermediate(r); write(r.dir, OUT_MANIFEST, read(r.dir, OUT_MANIFEST)+" ");}, "CR-EVIDENCE-MISSING"],
+    ["intermediário commitado como publicação", (r) => {intermediate(r); git(r.dir, "add", OUT_REPORT, OUT_MANIFEST); git(r.dir, "commit", "-q", "-m", "publicacao intermediaria indevida");}, "CR-PUBLICATION-PENDING"],
+    ["output sem receita", (r) => {rmSync(join(r.dir, "tools/contract-release/recipes/1.1.json")); write(r.dir, OUT_REPORT, "{}\n");}, "CR-UNISSUED-OUTPUT"],
+  ];
+  for (const [name, mutate, code] of cases) it(`recusa ${name}`, {timeout: T}, () => {
+    const r = makeRepo();
+    try {
+      // O inventário é fixado ANTES da mutação; não recalcular hashes para esconder a divergência.
+      const t = transitionOf(r);
+      mutate(r);
+      expect(() => inspectReleaseState({repoRoot: r.dir, transition: t})).toThrow(code);
+    } finally { rmSync(r.dir, {recursive: true, force: true}); }
+  });
+  it("evidência de outro G não valida o manifest final", {timeout: T}, () => {
+    const r = makeRepo();
+    try {
+      intermediate(r);
+      expect(cli(r.dir, "gates", "1.1").status).toBe(0);
+      expect(cli(r.dir, "build", "1.1", "final").status).toBe(0);
+      const ev = JSON.parse(read(r.dir, evidencePath)); ev.baseCommit = r.c0;
+      write(r.dir, evidencePath, pretty(ev));
+      expect(() => inspect(r)).toThrow("CR-EVIDENCE-HEAD");
+    } finally { rmSync(r.dir, {recursive: true, force: true}); }
+  });
+  it("o comparador recusa P com conteúdo governado modificado", {timeout: T}, () => {
+    const r = makeRepo();
+    try {
+      write(r.dir, "src/a.txt", "delta entre G e P\n");
+      git(r.dir, "add", "src/a.txt"); git(r.dir, "commit", "-q", "-m", "P incorreto");
+      expect(() => compareGateAndPublication({repoRoot: r.dir, recipe: r.recipe, gateCommit: r.c1, publishedCommit: git(r.dir, "rev-parse", "HEAD"), generatedAt: "2026-01-01T00:00:00Z", evidenceCounts: null})).toThrow("CR-PUBLICATION-DIVERGENCE");
+    } finally { rmSync(r.dir, {recursive: true, force: true}); }
+  });
+  it("outputs que contaminam inputs do validator impedem equivalência G/P", {timeout: T}, () => {
+    const r = makeRepo();
+    try {
+      intermediate(r);
+      git(r.dir, "add", OUT_REPORT, OUT_MANIFEST); git(r.dir, "commit", "-q", "-m", "P com outputs");
+      const contamination = (root: string) => {
+        const result = defaultCrossValidate(root);
+        result.inputs.publishedOutputExists = existsSync(join(root, OUT_REPORT));
+        return result;
+      };
+      expect(() => compareGateAndPublication({repoRoot: r.dir, recipe: r.recipe, gateCommit: r.c1, publishedCommit: git(r.dir, "rev-parse", "HEAD"), generatedAt: "2026-01-01T00:00:00Z", evidenceCounts: null, crossValidate: contamination})).toThrow("CR-PUBLICATION-DIVERGENCE");
+    } finally { rmSync(r.dir, {recursive: true, force: true}); }
+  });
+
 });
