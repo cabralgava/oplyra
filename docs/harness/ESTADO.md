@@ -1,5 +1,38 @@
 # Estado do trabalho — Oplyra
 
+## Ensaio da entrega delegada CR-033 — 04/11/2026
+
+**Resultado.** O ensaio percorreu o ciclo completo por wrappers tipados com a habilitação temporária de ensaio (concessão `ops-*`, fora do repositório): branch, stage, commit, push sem force, PR draft, leitura do status de CI, falha real de CI, diagnóstico estruturado, correção, CI verde e merge manual pelo proprietário. Isso é evidência do mecanismo no ambiente do proprietário. Não ativa o runner, não habilita `executionEnabled` nem `delegatedDelivery` (continuam false), e não substitui revisão humana independente (HB-13 não atendido). Revisão por IA não é revisão humana.
+
+**Registros.** ops-4 encerrado pelo disjuntor (DD-GIT, 422, 422) antes de produzir PR; causa: o GitHub App não tinha a permissão `checks: read`, o proprietário a adicionou e aceitou a instalação. ops-5: ensaio (PR #15, integrado em `47fbcc7`); registro SHA-256 `864a1ef0…`. ops-6: reversão do arquivo de ensaio (PR #16, integrado em `5da4372`); registro SHA-256 `4d14d87d3d374dadd120e5d7fa49a3015df7b41194bb4616dc3df8ae6089153d`. ops-7: este registro de ESTADO; registro SHA-256 `91e53385a473717cfd9647ddd5f2cbb69f10ec242d990e8352349ad3f72da8cc`, base `5da437200468b36d231a2f770794fb6fc7b6215a`.
+
+**Recusas exercidas (D-25/D-26), com o código real:**
+
+- DD-KILL com o kill switch presente; doctor volta a ok quando removido.
+- DD-PATH ao tentar stage de README.md e de package.json (provado no ops-5 antes de o relógio vencer).
+- git:force-push e git:delete não existem como verbos: o guard devolve LF-CMD-NOT-ALLOWED para qualquer comando fora da allowlist (a ausência do verbo se prova por package.json, não pela mensagem).
+- DD-HTTP no ops-4 (token 422, falta de checks:read).
+- DD-LOG-HOST na primeira leitura de log; o proprietário aprovou o host exato `productionresultssa10.blob.core.windows.net` preservando a janela da concessão.
+- DD-DIRTY por `.claude/settings.local.json` visto como não rastreado: o wrapper roda com ambiente em allowlist, sem HOME, e por isso o ignore global do usuário não é aplicado; contornado com `.git/info/exclude` pelo proprietário. Correção permanente (entrada no `.gitignore` versionado) fica como PR separado.
+- DD-PR quando o proprietário marcou o PR #15 como Ready antes do fim: `ci-diagnose` exige PR draft; o PR foi revertido a draft.
+- DD-DIAG-EVIDENCE [expirada]: evidência de log vale 3600 s; nova leitura (`gh:ci-log`) resolveu.
+- DD-DEADLINE: 3 h de relógio desde a primeira chamada. As recusas de stage do final do ops-5 foram todas DD-DEADLINE; três seguidas abriram o disjuntor. DD-DEADLINE é verificado antes da validação de caminho, portanto esse trecho NÃO exercitou DD-PATH; DD-PATH foi provado antes, nas tentativas com README.md e package.json.
+
+**CI do ops-5.** O `validate` falhou: o passo `git diff --check` (C-1) apontou espaço em branco no fim de linha do arquivo de ensaio (exit 2); o passo `pnpm db:stop` tem `if: always()` e devolveu 127 por consequência. Uma só causa. O diagnóstico estruturado (`oplyra-ci-diagnosis/1`) foi aceito com evidência, hipótese, arquivo e teste; a correção removeu o espaço, e o `validate` ficou verde.
+
+**Observações para o harness (não corrigidas aqui):**
+
+1. Status combinado do GitHub aparece `pending` por status legado enquanto os três checks reais estão verdes.
+2. `pnpm gh:ci-status --wait` exige inteiro de 1 a 1200; sem valor é recusado pelo guard (LF-CMD-NOT-ALLOWED).
+3. DEVELOPMENT-TOOLS não documenta onde mensagem de commit e corpo de PR podem viver; foi usado `.oplyra/ensaio-ops-N/`.
+4. A mensagem de DD-PATH não separa o motivo (fora do escopo vs control plane).
+5. `execute()` converte exceções não tratadas em DD-GIT "falha inesperada", sem detalhe; o 422 do token só foi achado por diagnóstico externo. Melhoria: registrar a exceção redigida.
+6. O proprietário precisou de `.git/info/exclude` por causa do ambiente do wrapper sem HOME.
+7. O PR precisa permanecer draft até o último push; marcar Ready antes causa DD-PR.
+8. Concessões de ensaio são de uso único por ref; cada ref consome um registro novo.
+
+**Limites.** Nada aqui ativa o runner nem concede autorização contínua. O proprietário ainda decide: tentativa real de push em main (§4A.5), arquivo marcador permanente de ensaio, LOG_HOSTS definitivo por PR do control plane e o gap R-8. Fontes protegidas, Freeze, manifests e registries não foram tocados. A próxima etapa da Release 2.23 é recalcular o inventário sobre o novo HEAD da main e preparar o PR-P.
+
 ## Retomada — 03/11/2026
 
 PR #11 integrada em `8a2962c`; Brand OS integrado pela #10 em `433e183`. PR #8 encerrada como duplicada (árvore idêntica à main). PR #9 atualizada sobre main em `d798ff7`; 584 testes focados, typecheck dos três pacotes e os três checks do GitHub passaram. Os requisitos de release continuam explicitados na PR em rascunho. O código e as migrações da estratégia foram preservados a partir do delta original sobre o Brand OS.
