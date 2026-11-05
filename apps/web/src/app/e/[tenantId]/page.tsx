@@ -46,7 +46,7 @@ export default async function Inicio({ params }: { params: Promise<{ tenantId: s
         {checklist.next ? (
           <div className="entre">
             <p>{checklist.next.label}</p>
-            <Link className="btn" href={`${base}/${checklist.next.href}`}>Ir para {checklist.next.href === "marca" ? "a marca" : "a equipe"}</Link>
+            <Link className="btn" href={`${base}/${checklist.next.href}`}>Fazer agora</Link>
           </div>
         ) : (
           <p>

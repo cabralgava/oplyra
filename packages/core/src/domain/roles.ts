@@ -16,5 +16,7 @@ export const PERMISSOES = [
   "member.remove", "entitlement.read", "asset.read", "asset.write",
   // I-03: ler a marca, editar o rascunho e publicar uma versão.
   "brand.read", "brand.write", "brand.publish",
+  // I-04: ler a estratégia, editar objetivos/personas/campanhas/testes e ativar campanhas.
+  "strategy.read", "strategy.write", "campaign.activate",
 ] as const;
 export type PermissionKey = (typeof PERMISSOES)[number];

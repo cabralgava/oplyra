@@ -164,8 +164,10 @@ export const activationFactsReader: ActivationFactsReader = {
     const { rows } = await comoCliente(tx).query(
       `select exists (select 1 from brand.versions where tenant_id = $1 and status = 'published') as "brandPublished",
               (exists (select 1 from core.invitations where tenant_id = $1)
-               or (select count(*) from core.memberships where tenant_id = $1 and status = 'active') > 1) as "teamInvited"`,
+               or (select count(*) from core.memberships where tenant_id = $1 and status = 'active') > 1) as "teamInvited",
+              exists (select 1 from strategy.objectives where tenant_id = $1) as "objectiveDefined",
+              exists (select 1 from strategy.campaigns where tenant_id = $1) as "campaignCreated"`,
       [tenantId]);
-    return rows[0] as { brandPublished: boolean; teamInvited: boolean };
+    return rows[0] as { brandPublished: boolean; teamInvited: boolean; objectiveDefined: boolean; campaignCreated: boolean };
   },
 };

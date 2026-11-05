@@ -9,6 +9,10 @@ export type InvitationId = Marcado<"InvitationId">;
 export type BrandVersionId = Marcado<"BrandVersionId">;
 export type ProductKey = Marcado<"ProductKey">;
 export type ClaimId = Marcado<"ClaimId">;
+export type ObjectiveId = Marcado<"ObjectiveId">;
+export type PersonaId = Marcado<"PersonaId">;
+export type CampaignId = Marcado<"CampaignId">;
+export type ExperimentId = Marcado<"ExperimentId">;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const criar = <T extends string>(rotulo: string) => (valor: string): Marcado<T> => {
@@ -23,3 +27,7 @@ export const invitationId = criar<"InvitationId">("InvitationId");
 export const brandVersionId = criar<"BrandVersionId">("BrandVersionId");
 export const productKey = criar<"ProductKey">("ProductKey");
 export const claimId = criar<"ClaimId">("ClaimId");
+export const objectiveId = criar<"ObjectiveId">("ObjectiveId");
+export const personaId = criar<"PersonaId">("PersonaId");
+export const campaignId = criar<"CampaignId">("CampaignId");
+export const experimentId = criar<"ExperimentId">("ExperimentId");

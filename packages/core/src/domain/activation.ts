@@ -1,7 +1,8 @@
-// Checklist de ativação (I-03, S4). Reflete FATOS reais do tenant, nunca marcação manual:
-// cada passo é derivado do estado persistido (marca publicada, equipe convidada).
+// Checklist de ativação (I-03 S4, ampliado no I-04). Reflete FATOS reais do tenant, nunca marcação manual:
+// cada passo é derivado do estado persistido (marca publicada, objetivo, equipe, campanha).
 // Passos de incrementos futuros aparecem como `unavailable`, sem fingir progresso (14 §F-01).
-export type ActivationStepKey = "brand_published" | "team_invited" | "objective_defined" | "media_connected";
+export type ActivationStepKey =
+  | "brand_published" | "objective_defined" | "team_invited" | "campaign_created" | "media_connected" | "copy_requested";
 export type ActivationStepState = "done" | "pending" | "unavailable";
 
 export type ActivationStep = {
@@ -19,6 +20,10 @@ export type ActivationFacts = {
   readonly brandPublished: boolean;
   /** Já houve convite, ou a empresa tem mais de uma pessoa ativa. */
   readonly teamInvited: boolean;
+  /** Existe ao menos um objetivo (ativo ou arquivado). */
+  readonly objectiveDefined: boolean;
+  /** Existe ao menos uma campanha, em qualquer estado. */
+  readonly campaignCreated: boolean;
 };
 
 export type ActivationChecklist = {
@@ -31,19 +36,17 @@ export type ActivationChecklist = {
   readonly next: ActivationStep | null;
 };
 
+const estado = (feito: boolean): ActivationStepState => (feito ? "done" : "pending");
+
 export function montarChecklist(facts: ActivationFacts): ActivationChecklist {
   const steps: ActivationStep[] = [
-    {
-      key: "brand_published", label: "Cadastrar a marca mínima e publicar a versão 1", optional: false,
-      state: facts.brandPublished ? "done" : "pending", href: "marca",
-    },
-    {
-      key: "team_invited", label: "Convidar a equipe", optional: false,
-      state: facts.teamInvited ? "done" : "pending", href: "equipe",
-    },
-    // Dependem de incrementos posteriores (I-04 objetivos, I-06 mídia): honestamente indisponíveis.
-    { key: "objective_defined", label: "Definir o objetivo", optional: false, state: "unavailable", href: null },
+    { key: "brand_published", label: "Cadastrar a marca mínima e publicar a versão 1", optional: false, state: estado(facts.brandPublished), href: "marca" },
+    { key: "objective_defined", label: "Definir o objetivo", optional: false, state: estado(facts.objectiveDefined), href: "estrategia" },
+    { key: "team_invited", label: "Convidar a equipe", optional: false, state: estado(facts.teamInvited), href: "equipe" },
+    { key: "campaign_created", label: "Criar a primeira campanha", optional: false, state: estado(facts.campaignCreated), href: "campanhas" },
+    // Dependem de incrementos posteriores (I-06 mídia, I-05 copy): honestamente indisponíveis.
     { key: "media_connected", label: "Conectar mídia", optional: true, state: "unavailable", href: null },
+    { key: "copy_requested", label: "Pedir a primeira copy", optional: false, state: "unavailable", href: null },
   ];
   const exigidos = steps.filter((s) => !s.optional && s.state !== "unavailable");
   const feitos = exigidos.filter((s) => s.state === "done").length;

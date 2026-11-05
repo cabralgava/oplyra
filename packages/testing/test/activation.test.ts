@@ -1,34 +1,41 @@
 import { describe, it, expect } from "vitest";
-import { contextoDeMarca as contexto } from "@oplyra/testing/brand";
+import { contextoDeEstrategia as contexto } from "@oplyra/testing/strategy";
 import { montarChecklist, getActivationChecklist } from "@oplyra/core/brand";
 import type { ActivationDeps, ActivationFacts } from "@oplyra/core/brand";
 import type { TenantId } from "@oplyra/core";
 
 const TA = "11111111-1111-4111-8111-111111111111" as TenantId;
+const nada: ActivationFacts = { brandPublished: false, teamInvited: false, objectiveDefined: false, campaignCreated: false };
 
 describe("checklist de ativação: derivado de fatos reais", () => {
   it("sem fatos, tudo o que está disponível fica pendente e o próximo passo é publicar a marca", () => {
-    const c = montarChecklist({ brandPublished: false, teamInvited: false });
+    const c = montarChecklist(nada);
     expect(c.steps.map((s) => [s.key, s.state])).toEqual([
-      ["brand_published", "pending"], ["team_invited", "pending"], ["objective_defined", "unavailable"], ["media_connected", "unavailable"],
+      ["brand_published", "pending"], ["objective_defined", "pending"], ["team_invited", "pending"], ["campaign_created", "pending"],
+      ["media_connected", "unavailable"], ["copy_requested", "unavailable"],
     ]);
-    expect(c).toMatchObject({ done: 0, total: 2, complete: false, next: { key: "brand_published", href: "marca" } });
+    expect(c).toMatchObject({ done: 0, total: 4, complete: false, next: { key: "brand_published", href: "marca" } });
   });
 
-  it("cada fato marca somente o seu passo, e o próximo passo avança", () => {
-    const soMarca = montarChecklist({ brandPublished: true, teamInvited: false });
-    expect(soMarca).toMatchObject({ done: 1, complete: false, next: { key: "team_invited", href: "equipe" } });
-    expect(soMarca.steps.find((s) => s.key === "brand_published")!.state).toBe("done");
-    const soEquipe = montarChecklist({ brandPublished: false, teamInvited: true });
-    expect(soEquipe).toMatchObject({ done: 1, next: { key: "brand_published" } });
+  it("cada fato marca somente o seu passo, e o próximo passo avança na ordem do fluxo F-01", () => {
+    const estadoDe = (f: Partial<ActivationFacts>, k: string) => montarChecklist({ ...nada, ...f }).steps.find((s) => s.key === k)!.state;
+    expect(estadoDe({ brandPublished: true }, "brand_published")).toBe("done");
+    expect(estadoDe({ objectiveDefined: true }, "objective_defined")).toBe("done");
+    expect(estadoDe({ teamInvited: true }, "team_invited")).toBe("done");
+    expect(estadoDe({ campaignCreated: true }, "campaign_created")).toBe("done");
+    expect(estadoDe({ objectiveDefined: true }, "brand_published")).toBe("pending");
+
+    expect(montarChecklist({ ...nada, brandPublished: true }).next).toMatchObject({ key: "objective_defined", href: "estrategia" });
+    expect(montarChecklist({ ...nada, brandPublished: true, objectiveDefined: true }).next).toMatchObject({ key: "team_invited", href: "equipe" });
+    expect(montarChecklist({ ...nada, brandPublished: true, objectiveDefined: true, teamInvited: true }).next)
+      .toMatchObject({ key: "campaign_created", href: "campanhas" });
   });
 
-  it("completo quando os passos disponíveis e obrigatórios estão feitos; passos de incrementos futuros não contam nem fingem progresso", () => {
-    const c = montarChecklist({ brandPublished: true, teamInvited: true });
-    expect(c).toMatchObject({ done: 2, total: 2, complete: true, next: null });
-    for (const k of ["objective_defined", "media_connected"] as const) {
-      const s = c.steps.find((x) => x.key === k)!;
-      expect(s).toMatchObject({ state: "unavailable", href: null });
+  it("completo quando os passos disponíveis e obrigatórios estão feitos; o futuro não conta nem finge progresso", () => {
+    const c = montarChecklist({ brandPublished: true, teamInvited: true, objectiveDefined: true, campaignCreated: true });
+    expect(c).toMatchObject({ done: 4, total: 4, complete: true, next: null });
+    for (const k of ["media_connected", "copy_requested"] as const) {
+      expect(c.steps.find((x) => x.key === k)).toMatchObject({ state: "unavailable", href: null });
     }
     expect(c.steps.find((s) => s.key === "media_connected")!.optional).toBe(true);
   });
@@ -48,18 +55,19 @@ describe("caso de uso", () => {
   };
 
   it("lê os fatos da empresa do contexto e monta o checklist", async () => {
-    const d = deps({ brandPublished: true, teamInvited: false });
+    const d = deps({ ...nada, brandPublished: true, objectiveDefined: true });
     const c = await getActivationChecklist(d, contexto({ tenantId: TA, roleKey: "viewer" }));
     expect(d.leituras).toEqual([TA]);
     expect(c.next?.key).toBe("team_invited");
   });
 
-  it("exige poder ler a marca e a equipe", async () => {
-    const d = deps({ brandPublished: false, teamInvited: false });
-    const semMarca = { ...contexto({ tenantId: TA, roleKey: "viewer" }), permissions: new Set(["member.read"] as const) };
-    const semEquipe = { ...contexto({ tenantId: TA, roleKey: "viewer" }), permissions: new Set(["brand.read"] as const) };
-    await expect(getActivationChecklist(d, semMarca as never)).rejects.toMatchObject({ code: "PERMISSION_DENIED" });
-    await expect(getActivationChecklist(d, semEquipe as never)).rejects.toMatchObject({ code: "PERMISSION_DENIED" });
+  it("exige poder ler a marca, a equipe e a estratégia", async () => {
+    const d = deps(nada);
+    const base = contexto({ tenantId: TA, roleKey: "viewer" });
+    for (const faltando of ["brand.read", "member.read", "strategy.read"]) {
+      const ctx = { ...base, permissions: new Set([...base.permissions].filter((p) => p !== faltando)) };
+      await expect(getActivationChecklist(d, ctx), faltando).rejects.toMatchObject({ code: "PERMISSION_DENIED" });
+    }
     expect(d.leituras).toEqual([]);
   });
 });
