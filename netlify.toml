@@ -1,0 +1,18 @@
+# Build do front (Netlify). Somente a fase de build.
+#
+# `next build` importa `apps/web/src/lib/deps.ts` ao coletar dados das páginas, e
+# esse módulo valida a configuração no import. Estes valores são marcadores
+# INERTES, só para o build passar: apontam para endpoints locais, que nunca são
+# alcançados (o build não consulta banco nem Auth) e não contêm segredos.
+#
+# Eles NÃO configuram o runtime. A configuração real de produção (OPLYRA_ENV,
+# DATABASE_URL_APP, SUPABASE_URL etc.) depende de autorização específica e de
+# provedor aprovado (CR-028); não deve ser colocada aqui.
+[build]
+  command = "pnpm --filter @oplyra/web... run build"
+  publish = "apps/web/.next"
+
+[build.environment]
+  OPLYRA_ENV = "local"
+  SUPABASE_URL = "http://127.0.0.1:54421"
+  DATABASE_URL_APP = "postgresql://oplyra_web_login:build-only@127.0.0.1:54422/postgres"
