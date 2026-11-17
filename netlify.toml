@@ -5,14 +5,15 @@
 # INERTES, só para o build passar: apontam para endpoints locais, que nunca são
 # alcançados (o build não consulta banco nem Auth) e não contêm segredos.
 #
+# DATABASE_URL_APP é sobrescrita só no processo filho do build: não em build.environment,
+# para não substituir o valor usado pelo Secrets Controller da Netlify.
 # Eles NÃO configuram o runtime. A configuração real de produção (OPLYRA_ENV,
 # DATABASE_URL_APP, SUPABASE_URL etc.) depende de autorização específica e de
 # provedor aprovado (CR-028); não deve ser colocada aqui.
 [build]
-  command = "pnpm --filter @oplyra/web... run build"
+  command = "DATABASE_URL_APP=postgresql://oplyra_web_login:build-only@127.0.0.1:54422/postgres pnpm --filter @oplyra/web... run build"
   publish = "apps/web/.next"
 
 [build.environment]
   OPLYRA_ENV = "local"
   SUPABASE_URL = "http://127.0.0.1:54421"
-  DATABASE_URL_APP = "postgresql://oplyra_web_login:build-only@127.0.0.1:54422/postgres"
