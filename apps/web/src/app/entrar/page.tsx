@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { autenticar, enviarLinkMagico, guardarSessao, claimsAtuais } from "../../lib/session";
 import { BotaoEnviar } from "../../components/botao-enviar";
+import { ambienteDevelop } from "../../lib/deps";
 
 export default async function Entrar({ searchParams }: { searchParams: Promise<{ erro?: string; enviado?: string }> }) {
   if (await claimsAtuais()) redirect("/empresas");
@@ -29,10 +30,14 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
   }
 
   return (
-    <div className="pilha">
-      <h1>Entrar</h1>
+    <div className="pilha auth">
+      <div>
+        <h1>Entrar</h1>
+        <p className="muted">Sua operação de marketing, da estratégia à receita.</p>
+      </div>
       {erro === "credenciais" && <p className="erro">E-mail ou senha inválidos.</p>}
       {erro === "link" && <p className="erro">Não foi possível enviar o link agora.</p>}
+      {erro === "link-indisponivel" && <p className="erro">O acesso por link não está disponível neste ambiente. Entre com e-mail e senha.</p>}
       {erro === "link-invalido" && <p className="erro">Este link expirou ou já foi usado. Peça um novo.</p>}
       {enviado && <p className="aviso">Link enviado. No ambiente local ele aparece no Mailpit, em <code>http://127.0.0.1:54424</code>.</p>}
 
@@ -48,14 +53,18 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
         <BotaoEnviar rotuloEmEspera="Entrando…">Entrar</BotaoEnviar>
       </form>
 
-      <form action={pedirLink} className="card pilha">
-        <h2>Ou receba um link por e-mail</h2>
-        <div>
-          <label htmlFor="email-link">E-mail</label>
-          <input id="email-link" name="email" type="email" required />
-        </div>
-        <BotaoEnviar variante="secundario" rotuloEmEspera="Enviando…">Enviar link de acesso</BotaoEnviar>
-      </form>
+      {ambienteDevelop ? (
+        <p className="muted" role="note">Acesso por link de e-mail indisponível neste ambiente. Use e-mail e senha.</p>
+      ) : (
+        <form action={pedirLink} className="card pilha">
+          <h2>Ou receba um link por e-mail</h2>
+          <div>
+            <label htmlFor="email-link">E-mail</label>
+            <input id="email-link" name="email" type="email" required />
+          </div>
+          <BotaoEnviar variante="secundario" rotuloEmEspera="Enviando…">Enviar link de acesso</BotaoEnviar>
+        </form>
+      )}
     </div>
   );
 }

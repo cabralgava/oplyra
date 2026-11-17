@@ -5,10 +5,17 @@ import {
   criarAuthGateway, criarAccessContextResolver,
 } from "@oplyra/infra";
 import type { Deps } from "@oplyra/core";
+// Loader do ambiente remoto de desenvolvimento (CR-057): import relativo, sem ampliar exports do pacote.
+import { carregarConfigDevelop } from "../../../../packages/infra/src/develop-config.ts";
+
+/** Verdadeiro só quando OPLYRA_ENV=develop (site oplyra-develop). Falha do loader de develop não tem fallback. */
+export const ambienteDevelop = process.env.OPLYRA_ENV === "develop";
 
 // Evidência de deployment: nenhum provedor aprovado ainda (CR-028); em
 // produção a inicialização falha fechada até existir adapter aprovado.
-const config = carregarConfig(process.env, { evidencia: politicaSemProvedorAprovado });
+const config = ambienteDevelop
+  ? carregarConfigDevelop(process.env)
+  : carregarConfig(process.env, { evidencia: politicaSemProvedorAprovado });
 const uow = criarUnitOfWork({ connectionString: config.databaseUrl, max: 10 });
 
 export const deps: Deps = {

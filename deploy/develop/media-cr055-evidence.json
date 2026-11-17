@@ -1,0 +1,122 @@
+{
+  "schema": "oplyra-cr055-develop-evidence/1",
+  "environment": "develop",
+  "projectRef": "eqpvjydnqbbawpkeizys",
+  "contractVersion": "1.0",
+  "globalContractRelease": "2.23_unissued",
+  "productionChanged": false,
+  "applicationAndWorkerDeployed": false,
+  "providerRealApiValidated": false,
+  "frontendAlignmentConfirmed": false,
+  "migrations": [
+    {
+      "source": "supabase/migrations/20261116210007_media_connection_read.sql",
+      "sha256": "7f10ffeb250d4b44badb058825414b921279e43db7b481ca1a2bffcc7bc87b85",
+      "remoteVersion": "20261116214247",
+      "remoteName": "media_connection_read_cr055_v1"
+    },
+    {
+      "source": "supabase/migrations/20261116214433_media_fk_indexes.sql",
+      "sha256": "6ae6fa4ae3041ff1805bd01e7ea1b1e7a3b81966860b4b0ff0ad8ee9d33c8df5",
+      "remoteVersion": "20261116214625",
+      "remoteName": "media_fk_indexes_cr055_v1"
+    }
+  ],
+  "verification": {
+    "tables": 10,
+    "forcedRlsTables": 10,
+    "directCredentialGrants": {
+      "authenticated": false,
+      "worker": false
+    },
+    "anonCommand": false,
+    "userWorkerFunction": false,
+    "manageRoles": [
+      "admin",
+      "owner"
+    ],
+    "readRoles": [
+      "admin",
+      "marketing_manager",
+      "owner",
+      "viewer"
+    ],
+    "functionBodyHashesMatchLocal": true,
+    "functionBodyHashes": [
+      {
+        "proname": "media_authorize",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=pg_catalog, pg_temp"
+        ],
+        "body_sha256": "f4c410e3ce9d8ee5b31b6148ab6e8338b7a209335eccb1b3749f689b22523c83"
+      },
+      {
+        "proname": "media_command",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=pg_catalog, pg_temp"
+        ],
+        "body_sha256": "10d2d515eee6580e620b2aac6832f908ed7f9c23ac301e996e6cf97fb6560df0"
+      },
+      {
+        "proname": "media_connection_json",
+        "prosecdef": false,
+        "proconfig": [
+          "search_path=pg_catalog, pg_temp"
+        ],
+        "body_sha256": "cf63f2f61401ef3708e84b9ade362bf9daf38aedc7938e5c37fa7520d1559e42"
+      },
+      {
+        "proname": "media_worker",
+        "prosecdef": true,
+        "proconfig": [
+          "search_path=pg_catalog, pg_temp"
+        ],
+        "body_sha256": "206fea07e33e76f7974a8327c35c82154349f929d5e4686d069ee92aebff10af"
+      }
+    ],
+    "negativeAuthorizationWithoutMembership": "passed_rollback",
+    "remoteTenantCount": 0,
+    "remoteConnectionCount": 0,
+    "remoteCredentialCount": 0,
+    "remoteSyncJobCount": 0,
+    "mediaSecurityAdvisorFindings": [],
+    "mediaUnindexedForeignKeysAfterPatch": 0,
+    "unusedIndexes": "INFO_expected_empty_develop_database"
+  },
+  "validation": {
+    "fullVitest": {
+      "passed": 2614,
+      "files": 132
+    },
+    "pgTap": {
+      "passed": 561,
+      "files": 20
+    },
+    "contractsAfterIndexPatch": {
+      "passed": 41,
+      "files": 2
+    },
+    "typecheck": "passed",
+    "isolatedWebBuild": {
+      "result": "passed",
+      "mode": "webpack",
+      "originalNextDirectoryUntouched": true
+    },
+    "providerFixtures": {
+      "google": "oauth_database_accounts_mcc_refresh_sync_metrics",
+      "meta": "provisioned_fixture_authorization_read_worker_metrics"
+    },
+    "stateMutation": {
+      "detected": true,
+      "restored": true
+    },
+    "e2eBrowser": "not_run_frontend_owned"
+  },
+  "remediationLinks": {
+    "unindexedForeignKeys": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+    "baselineRlsNoPolicy": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+    "unusedIndexes": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index"
+  }
+}

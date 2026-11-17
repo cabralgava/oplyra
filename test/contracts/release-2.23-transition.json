@@ -170,6 +170,10 @@
     {
       "path": "test/developer-harness.supply-chain.test.ts",
       "sha256": "4c2a9df81a448de811550504d9a866f94c186cc1b3aa008e08a0e33248decbfb"
+    },
+    {
+      "path": "apps/web/src/lib/deps.ts",
+      "sha256": "9920bcc031ddd6d37b171c1170c108b9880f35a42fbbb4d99b08c89185c14edd"
     }
   ],
   "added": [
@@ -572,6 +576,136 @@
       "path": "tools/contract-release/validator-runner.mjs",
       "category": "development_tool",
       "sha256": "b7def9fa4b7202225dd2b070884425765cae3cdd70e9cd8f8481decd0218fcbc"
+    },
+    {
+      "path": "apps/web/src/app/auth/confirmar/route.ts",
+      "category": "runtime_component",
+      "sha256": "b3d5504a8644d49f511a31f6b2929f11657522dad6cc2ee4660728d9b825ca15"
+    },
+    {
+      "path": "apps/web/src/app/entrar/page.tsx",
+      "category": "runtime_component",
+      "sha256": "32b4197cd4a72737eed4fbb1feaf5ea0b0304474bb33376be8ab72602cd6147a"
+    },
+    {
+      "path": "apps/web/src/lib/sessao-cookie.ts",
+      "category": "runtime_component",
+      "sha256": "f0ff2211d0300f866ddf255cc48afe6a04c6543b926aac709c7c3ee2335b7167"
+    },
+    {
+      "path": "apps/web/src/lib/session.ts",
+      "category": "runtime_component",
+      "sha256": "6cb3a2f703f6d46af95871a4d1892685049e04508a8be8699cf07e5ded6ef38b"
+    },
+    {
+      "path": "deploy/develop/CLAUDE-FRONT-INTEGRATION.md",
+      "category": "environment_plan",
+      "sha256": "456fe4c626681247421b0043ac0c226f35ebe06b1168a9ae434cf6901b1fa0ce"
+    },
+    {
+      "path": "deploy/develop/LOGIN-MINIMO.md",
+      "category": "environment_plan",
+      "sha256": "db10a8e8e1c1f06b3dde22e1ee858db786c5681af3643c363a77119fd141004d"
+    },
+    {
+      "path": "deploy/develop/NETLIFY-CONNECTION.md",
+      "category": "environment_plan",
+      "sha256": "5ec7861311eb0632a51828de660d2c04d9fbd8729efb7c8b694dbac86f273c77"
+    },
+    {
+      "path": "deploy/develop/application-evidence.json",
+      "category": "environment_plan",
+      "sha256": "c54dfcd011c9528ac77ae7d9fd7058cc9a7c86eb86a94e1ce8c7bedc2ab2f22a"
+    },
+    {
+      "path": "deploy/develop/hosted-safe-reporter.mjs",
+      "category": "development_tool",
+      "sha256": "6745892e9200e83896f06d6ccccff691b102e1cde5756fe77057e643aca0e137"
+    },
+    {
+      "path": "deploy/develop/hosted-safe-reporter.test.mjs",
+      "category": "runtime_test",
+      "sha256": "49123c04e710a070bb45e41e2ad822aa72875c7a4c42629d64e3b75b21dc0e98"
+    },
+    {
+      "path": "deploy/develop/media-cr055-evidence.json",
+      "category": "environment_plan",
+      "sha256": "72410e93b617f64c24363b341a84776a0dc4bf44a159564cbe4f758ec2644e9a"
+    },
+    {
+      "path": "deploy/develop/playwright.hosted.config.ts",
+      "category": "development_tool",
+      "sha256": "41cb216506d9a61367353cc74b467213b2161fcc80cd97de897c9915c1d869b5"
+    },
+    {
+      "path": "deploy/develop/provision-web-login.mjs",
+      "category": "development_tool",
+      "sha256": "400342287a9763f7b03bca74e90b577f4de19cf7b5e59a28a8e89186b82fac3f"
+    },
+    {
+      "path": "deploy/develop/provision-web-login.test.mjs",
+      "category": "runtime_test",
+      "sha256": "59243f6a98fbc59878914c5223e12c8a3f96184af4314b39ce6e36657c8a5b1b"
+    },
+    {
+      "path": "deploy/develop/runtime.env.example",
+      "category": "environment_plan",
+      "sha256": "ffb2948a135e502f21c7bff3e65e2fd6d445a5c8c434dadcd26b64782ee836f3"
+    },
+    {
+      "path": "deploy/develop/supabase/migrations/20261116202506_harden_application_function_search_paths.sql",
+      "category": "environment_plan",
+      "sha256": "1eb1ff59a19625fac34f73371e1dee1224f9b6cfe4087f37b8050b1312d26908"
+    },
+    {
+      "path": "deploy/develop/supabase/migrations/20261116211348_harden_domain_validator_search_paths.sql",
+      "category": "environment_plan",
+      "sha256": "a65156b4e48fb3176997290e05630a0da2e41602408f4ad09debaeb53878881a"
+    },
+    {
+      "path": "deploy/develop/target.json",
+      "category": "environment_plan",
+      "sha256": "46e1c2c619764217fdb9d1e5c61c099bd599caf38cf4e5168143b7ad53bbd99e"
+    },
+    {
+      "path": "deploy/develop/validate-hosted-login.mjs",
+      "category": "development_tool",
+      "sha256": "068e2d2cfef5df0e18540f5e1ec76b28a41b01141e14252d5fb31c8403c86600"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-061-develop-login-runtime-integration.md",
+      "category": "change_proposal",
+      "sha256": "ea68f90c0199ecb8931be37668beac627186f3ac97adadb1ce4c98a08fbe52cd"
+    },
+    {
+      "path": "e2e/develop-hospedado.spec.ts",
+      "category": "runtime_test",
+      "sha256": "06c65f9cc6d63f6f4c5b947c37de2956c998a9eb73c8839349a49cda1c2d227f"
+    },
+    {
+      "path": "e2e/login-aceitacao.spec.ts",
+      "category": "runtime_test",
+      "sha256": "c68e2c7bc34827ff290d418ba6845c9a991b796eebb9b4fb38519491ff00c823"
+    },
+    {
+      "path": "packages/infra/src/develop-config.ts",
+      "category": "runtime_component",
+      "sha256": "bd628ace46b90736e35ce313a185f0caaac27c73521199066caf9c7c9e7bae7a"
+    },
+    {
+      "path": "packages/infra/test/develop-boot-reproducao.test.ts",
+      "category": "runtime_test",
+      "sha256": "19d524d3c82a00507aeae5a3faf4fc3a9dbdddc6d6d8a4613be072de711626f3"
+    },
+    {
+      "path": "packages/infra/test/develop-config.test.ts",
+      "category": "runtime_test",
+      "sha256": "0b6ae96766bda949fa8a8b23bc7bcbbbaeac7fdb36a2790d5c6aafe8a7c137be"
+    },
+    {
+      "path": "test/web-sessao.test.ts",
+      "category": "runtime_test",
+      "sha256": "fcc74677449ac0c549479a4a5e68e5c0ee401819736a8308b6606e7ebbac27bf"
     }
   ]
 }
