@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-import { TARGET, ROLE_QUERY, adminOptions, assertRole, scramVerifier, webUrl, provision, netlifyApi } from './provision-web-login.mjs';
+import { TARGET, ROLE_QUERY, inspectAdminUrl, adminOptions, assertRole, scramVerifier, webUrl, provision, netlifyApi } from './provision-web-login.mjs';
 
 const minimal = () => ({ rolname: TARGET.role, rolcanlogin: true, rolsuper: false, rolinherit: false,
   rolbypassrls: false, rolcreaterole: false, rolcreatedb: false, rolreplication: false,
@@ -157,4 +157,25 @@ test('variável criada durante a espera do lock não é sobrescrita', async () =
   await assert.rejects(provision({admin,api,verifyLogin:async()=>assert.fail('login inesperado')}),/VARIAVEL_JA_EXISTENTE/);
   assert.ok(writes.includes('ROLLBACK'));
   assert.ok(!writes.some(sql=>sql.startsWith('ALTER ROLE')||sql==='COMMIT'));
+});
+
+test('diagnóstico identifica SSL ausente sem conectar nem retornar valor privado',()=>{
+  const secret='synthetic-only-private-value';
+  const base=`postgresql://postgres.${TARGET.ref}:${secret}@${TARGET.pooler}:5432/postgres`;
+  const result=inspectAdminUrl(base);
+  assert.equal(result.valid,false);
+  assert.deepEqual(Object.keys(result.checks).filter(k=>!result.checks[k]),['SSL_EXPLICITO']);
+  assert.ok(!JSON.stringify(result).includes(secret));
+  assert.equal(inspectAdminUrl(`${base}?sslmode=verify-full`).valid,true);
+});
+test('diagnóstico identifica fragmento e espaços sem ecoar entrada',()=>{
+  const base=`postgresql://postgres.${TARGET.ref}:synthetic-only@${TARGET.pooler}:5432/postgres?sslmode=verify-full`;
+  assert.equal(inspectAdminUrl(`${base}#synthetic-private-fragment`).checks.SEM_FRAGMENTO,false);
+  assert.equal(inspectAdminUrl(` ${base}`).checks.SEM_ESPACOS,false);
+  assert.deepEqual(inspectAdminUrl('synthetic invalid private input'),{valid:false,checks:{URL_PARSEAVEL:false}});
+});
+test('placeholder nunca é tratado como senha pronta para conectar',()=>{
+  const base=`postgresql://postgres.${TARGET.ref}:[YOUR-PASSWORD]@${TARGET.pooler}:5432/postgres?sslmode=verify-full`;
+  assert.equal(inspectAdminUrl(base).checks.SEM_PLACEHOLDER,false);
+  assert.throws(()=>adminOptions(base),/ADMIN_URL_INVALIDA/);
 });

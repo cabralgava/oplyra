@@ -14,16 +14,32 @@ export class ProvisionError extends Error {
 }
 const deny = (code) => { throw new ProvisionError(code); };
 
+// Diagnóstico puramente local. Só retorna nomes de campos e booleanos, nunca valores.
+export function inspectAdminUrl(raw) {
+  let url;
+  try { url = new URL(raw); } catch { return {valid:false, checks:{URL_PARSEAVEL:false}}; }
+  const direct = url.hostname === `db.${TARGET.ref}.supabase.co`;
+  const pooler = url.hostname === TARGET.pooler;
+  const entries = [...url.searchParams];
+  const checks = {
+    PROTOCOLO_POSTGRES: ['postgres:', 'postgresql:'].includes(url.protocol),
+    HOST_DE_DEVELOP: direct || pooler,
+    LOGIN_DE_DEVELOP: (direct && url.username === 'postgres') || (pooler && url.username === `postgres.${TARGET.ref}`),
+    SENHA_PRESENTE: Boolean(url.password),
+    SEM_PLACEHOLDER: !/YOUR.PASSWORD|SENHA_CODIFICADA|\[|\]/i.test(url.password),
+    BANCO_POSTGRES: url.pathname === '/postgres',
+    PORTA_PERMITIDA: ['', '5432', '6543'].includes(url.port),
+    SEM_ESPACOS: typeof raw === 'string' && !/\s/.test(raw),
+    SEM_FRAGMENTO: !url.hash,
+    SSL_EXPLICITO: entries.length === 1 && entries[0][0] === 'sslmode' && ['require', 'verify-full'].includes(entries[0][1]),
+  };
+  return {valid:Object.values(checks).every(Boolean),checks};
+}
+
 export function adminOptions(raw) {
   let url;
   try { url = new URL(raw); } catch { return deny('ADMIN_URL_INVALIDA'); }
-  const direct = url.hostname === `db.${TARGET.ref}.supabase.co` && url.username === 'postgres';
-  const pooler = url.hostname === TARGET.pooler && url.username === `postgres.${TARGET.ref}`;
-  const entries = [...url.searchParams];
-  if (!['postgres:', 'postgresql:'].includes(url.protocol) || (!direct && !pooler)
-      || !url.password || url.pathname !== '/postgres' || url.hash || /\s/.test(raw)
-      || !['', '5432', '6543'].includes(url.port) || entries.length !== 1
-      || entries[0][0] !== 'sslmode' || !['require', 'verify-full'].includes(entries[0][1])) deny('ADMIN_URL_INVALIDA');
+  if (!inspectAdminUrl(raw).valid) deny('ADMIN_URL_INVALIDA');
   // Parâmetros SSL da URL não podem substituir rejectUnauthorized.
   url.search = '';
   return { connectionString: url.href, ssl: { rejectUnauthorized: true },
@@ -150,9 +166,15 @@ export async function hidden(question) {
 }
 
 async function main() {
-  if (process.argv.length !== 3 || process.argv[2] !== '--apply-develop') deny('USE_APPLY_DEVELOP');
+  if (process.argv.length !== 3 || !['--apply-develop','--check-admin-url'].includes(process.argv[2])) deny('USE_APPLY_DEVELOP_OU_CHECK_ADMIN_URL');
   if (!process.stdin.isTTY || !process.stdout.isTTY) deny('TERMINAL_INTERATIVO_NECESSARIO');
   if (process.env.NODE_OPTIONS || process.execArgv.length) deny('OPCOES_DE_DEPURACAO_NAO_PERMITIDAS');
+  if (process.argv[2] === '--check-admin-url') {
+    const diagnostic = inspectAdminUrl(await hidden('URL de DEVELOP para conferir localmente (oculta; nenhuma conexão): '));
+    console.log(diagnostic.valid ? 'ADMIN_URL_FORMATO_OK' : 'ADMIN_URL_CAMPOS_RECUSADOS: ' + Object.entries(diagnostic.checks).filter(([,ok])=>!ok).map(([name])=>name).join(','));
+    if (!diagnostic.valid) process.exitCode = 1;
+    return;
+  }
   console.log('Destino exclusivo: develop eqpvjydnqbbawpkeizys / Netlify oplyra-develop. Não executa deploy.');
   const options = adminOptions(await hidden('URL administrativa de DEVELOP (oculta, com sslmode=verify-full): '));
   const token = await hidden('Token temporário da Netlify (oculto): ');

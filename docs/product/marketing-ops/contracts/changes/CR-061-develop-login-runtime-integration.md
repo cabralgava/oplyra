@@ -21,3 +21,7 @@ Não integrar na main enquanto destinos produtivos não forem inteiramente conhe
 Em 17/11, leitura confirmou variável ausente, role mínima sem senha e zero Auth users/memberships/tenants. Não inferir defeitos de SITE_NAME/SITE_ID/URL, cache ou falta de usuário como causa do HTTP500. Credencial administrativa/Netlify só no Terminal privado do proprietário. Contas e empresas de aceitação precisam ser preparadas pelos mecanismos Auth/aplicação aprovados, sem insert manual em auth.users ou concessão fictícia.
 
 Contrato de produto, permissions, autonomy e RLS permanecem intactos. Nenhuma produção alterada. Build/validação local não declaram sucesso hospedado. Evidências e passagem em ADS-INTEGRACAO e checkpoints.
+
+## Diagnóstico privado complementar
+
+Após ADMIN_URL_INVALIDA relatado pelo proprietário, adicionado --check-admin-url: entrada oculta, validação puramente local, sem conexão, sem leitura de ambiente secreto e sem eco da URL/senha. Retorna somente booleanos/nomes de campos recusados. A mesma validação alimenta o provisionamento; placeholder recusado. Esse código não permite concluir qual foi a causa da entrada do proprietário antes de ele fornecer o diagnóstico sanitizado. Teste de cookie também passa a isolar OPLYRA_ENV; undefined aciona o valor default do processo e não simulava ausência em CI. Runtime do cookie preservado.
