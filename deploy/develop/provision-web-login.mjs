@@ -9,6 +9,7 @@ export const TARGET = Object.freeze({
   pooler: 'aws-1-sa-east-1.pooler.supabase.com',
   site: '45056cd1-6732-40b3-b341-8b9fecca8345', name: 'oplyra-develop',
   origin: 'https://oplyra-develop.netlify.app', account: 'cabralgava',
+  accountId: '68a72ba861396f824b2b0a90', // Team ID conferido no painel da equipe.
 });
 export class ProvisionError extends Error {
   constructor(code) { super(code); this.name = 'ProvisionError'; }
@@ -48,9 +49,15 @@ export function adminOptions(raw) {
 }
 
 export function assertSite(site) {
-  if (!site || site.id !== TARGET.site || site.name !== TARGET.name
-      || (site.ssl_url ?? site.url) !== TARGET.origin || ![TARGET.origin, TARGET.origin.replace('https:', 'http:')].includes(site.url)
-      || site.account_slug !== TARGET.account || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(site.account_id)) deny('SITE_DIVERGENTE');
+  const checks = {
+    ID: site?.id === TARGET.site,
+    NOME: site?.name === TARGET.name,
+    ORIGEM: (site?.ssl_url ?? site?.url) === TARGET.origin,
+    URL: [TARGET.origin, TARGET.origin.replace('https:', 'http:')].includes(site?.url),
+    EQUIPE: site?.account_slug === TARGET.account,
+    EQUIPE_ID: site?.account_id === TARGET.accountId,
+  };
+  for(const [field,ok] of Object.entries(checks)) if(!ok) deny(`SITE_DIVERGENTE_${field}`);
 }
 
 export function assertRole(role) {

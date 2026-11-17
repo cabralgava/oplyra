@@ -9,7 +9,7 @@ const minimal = () => ({ rolname: TARGET.role, rolcanlogin: true, rolsuper: fals
   rolbypassrls: false, rolcreaterole: false, rolcreatedb: false, rolreplication: false,
   password_present: false, memberships: [{ name: 'authenticated', admin: false, inherit: false, set: true }] });
 const site = () => ({ id: TARGET.site, name: TARGET.name, url: TARGET.origin, ssl_url: TARGET.origin, account_slug: TARGET.account,
-  account_id: '12345678-1234-1234-1234-123456789abc' });
+  account_id: TARGET.accountId });
 function fixture({ role = minimal(), target = site(), existing = null, fail, metadata } = {}) {
   const calls = [], phases = [];
   let stored;
@@ -212,4 +212,18 @@ test('provisionador confia na CA pública oficial, mantendo validação de ident
   const options=adminOptions(`postgresql://postgres.${TARGET.ref}:synthetic-only@${TARGET.pooler}:5432/postgres?sslmode=verify-full`);
   assert.equal(options.ssl.ca,SUPABASE_DEVELOP_CA);assert.equal(options.ssl.rejectUnauthorized,true);
   assert.equal(new URL(options.connectionString).search,'');
+});
+
+test('equipe conferida usa ID opaco real, sem inventar formato UUID',async()=>{
+  assert.equal(TARGET.accountId,'68a72ba861396f824b2b0a90');
+  const f=fixture();await f.run();
+  const paths=f.calls.filter(c=>c[0]==='api').map(c=>c[2]);
+  assert.ok(paths.some(path=>path===`/accounts/${TARGET.accountId}/env?site_id=${TARGET.site}`));
+});
+test('outro ID de equipe, mesmo com formato plausível, não permite escrita',async()=>{
+  for(const account_id of ['12345678-1234-1234-1234-123456789abc','68a72ba861396f824b2b0a91',null,'']){
+    const f=fixture({target:{...site(),account_id}});
+    await assert.rejects(f.run(),/SITE_DIVERGENTE/);
+    assert.ok(!f.calls.some(c=>c[0]==='sql'||c[1]==='POST'));
+  }
 });
