@@ -730,6 +730,26 @@
       "path": "docs/product/marketing-ops/contracts/changes/CR-062-develop-build-secret-scanner.md",
       "category": "change_proposal",
       "sha256": "2f7073190a62e87e7050bbd52eb4868a09ea79810633c02a48bb1afa28e3f2c7"
+    },
+    {
+      "path": "apps/web/src/lib/rotulo-ambiente.ts",
+      "category": "runtime_component",
+      "sha256": "80020ffd27f31e65af8dde79733a1730f9ec105957930317f6d746221681d8a2"
+    },
+    {
+      "path": "test/web-rotulo-ambiente.test.ts",
+      "category": "runtime_test",
+      "sha256": "ee9bdfeba5c3acb04c62b3e27dc5b1552c4450e0c7d0475eb02f46bd86a23443"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-064-develop-environment-label.md",
+      "category": "change_proposal",
+      "sha256": "15e007e0bc8076ac4e5a377f96123e0582fee1a80ba00bbb8b39d78ea4307005"
+    },
+    {
+      "path": "apps/web/src/app/layout.tsx",
+      "sha256": "267f7af31949e1ab84876091d02b753747a1d3899d7f68868b03161de8eb1db3",
+      "category": "runtime_component"
     }
   ]
 }
