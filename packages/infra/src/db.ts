@@ -3,10 +3,21 @@
 import pg from "pg";
 import type { AccessContext, TenantId, UserId, UnitOfWork, Tx } from "@oplyra/core";
 
-export type PoolConfig = { connectionString: string; max?: number };
+export type PoolConfig = { connectionString: string; max?: number; ssl?: { ca: string; rejectUnauthorized: true } };
 
 export function criarUnitOfWork(cfg: PoolConfig): UnitOfWork & { pool: pg.Pool; encerrar(): Promise<void> } {
-  const pool = new pg.Pool({ connectionString: cfg.connectionString, max: cfg.max ?? 10 });
+  let connectionString = cfg.connectionString;
+  if (cfg.ssl) {
+    // URL não pode substituir a CA/validação explícita do adapter.
+    const url = new URL(connectionString);
+    const entries = [...url.searchParams];
+    if (cfg.ssl.rejectUnauthorized !== true || !cfg.ssl.ca.trim()
+        || entries.length !== 1 || entries[0]![0] !== "sslmode"
+        || !["require", "verify-full"].includes(entries[0]![1])) throw new Error("configuração TLS inválida");
+    url.search = "";
+    connectionString = url.href;
+  }
+  const pool = new pg.Pool({ connectionString, max: cfg.max ?? 10, ...(cfg.ssl ? { ssl: cfg.ssl } : {}) });
 
   async function emTransacao<T>(preparar: (tx: pg.PoolClient) => Promise<void>, fn: (tx: Tx) => Promise<T>): Promise<T> {
     const cliente = await pool.connect();

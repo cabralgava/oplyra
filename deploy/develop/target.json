@@ -1,0 +1,29 @@
+{
+  "schema": "oplyra-environment-target/1",
+  "environment": "develop",
+  "supabase": {
+    "branch": "develop",
+    "branchId": "026a4c1d-fd7b-4a7b-a84d-13a4baf2cde5",
+    "projectRef": "eqpvjydnqbbawpkeizys",
+    "parentProjectRef": "hysigyhfpyyydycxxpsm",
+    "persistent": false,
+    "serverVersionObserved": "17.12",
+    "url": "https://eqpvjydnqbbawpkeizys.supabase.co",
+    "baselineMigration": {
+      "version": "20261116193604",
+      "name": "remote_schema"
+    },
+    "applicationMigrationsApplied": 18,
+    "securityOverlaysApplied": 2,
+    "historyRowsIncludingBaseline": 21
+  },
+  "netlify": {
+    "siteName": "oplyra-develop",
+    "siteId": "45056cd1-6732-40b3-b341-8b9fecca8345",
+    "url": "https://oplyra-develop.netlify.app",
+    "deploymentObserved": "failed_build_missing_configuration",
+    "connectionStatus": "prepared_not_activated_by_backend"
+  },
+  "productionUnchanged": true,
+  "secretsIncluded": false
+}

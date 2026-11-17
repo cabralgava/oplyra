@@ -1,0 +1,229 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { X509Certificate, createHash } from 'node:crypto';
+import { SUPABASE_DEVELOP_CA } from '../../packages/infra/src/supabase-develop-ca.ts';
+import { TARGET, ROLE_QUERY, inspectAdminUrl, adminConnectionCode, connectAdmin, checkAdminConnection, adminOptions, assertRole, scramVerifier, webUrl, provision, netlifyApi } from './provision-web-login.mjs';
+
+const minimal = () => ({ rolname: TARGET.role, rolcanlogin: true, rolsuper: false, rolinherit: false,
+  rolbypassrls: false, rolcreaterole: false, rolcreatedb: false, rolreplication: false,
+  password_present: false, memberships: [{ name: 'authenticated', admin: false, inherit: false, set: true }] });
+const site = () => ({ id: TARGET.site, name: TARGET.name, url: TARGET.origin, ssl_url: TARGET.origin, account_slug: TARGET.account,
+  account_id: TARGET.accountId });
+function fixture({ role = minimal(), target = site(), existing = null, fail, metadata } = {}) {
+  const calls = [], phases = [];
+  let stored;
+  const admin = { query: async sql => {
+    calls.push(['sql', sql]);
+    if (fail === 'commit' && sql === 'COMMIT') throw new Error('private admin password');
+    return { rows: sql.includes('from pg_roles r join pg_authid') ? [role] : [] };
+  } };
+  const api = async (method, path, body) => {
+    calls.push(['api', method, path]);
+    if (path.startsWith('/sites/')) return target;
+    if (method === 'POST') {
+      if (fail === 'post') throw new Error('private token');
+      stored = body[0];
+      return body;
+    }
+    return stored ? (metadata ? metadata(stored) : stored) : existing;
+  };
+  const verifyLogin = async uri => { calls.push(['login', uri]); if (fail === 'login') throw new Error(uri); };
+  return { calls, phases, run: () => provision({ admin, api, verifyLogin, phase: p => phases.push(p) }), stored: () => stored };
+}
+
+test('URL administrativa aceita exclusivamente develop e força TLS validado', () => {
+  for (const authority of [`postgres@db.${TARGET.ref}.supabase.co:5432`, `postgres.${TARGET.ref}@${TARGET.pooler}:6543`]) {
+    const [user, host] = authority.split('@');
+    const cfg = adminOptions(`postgresql://${user}:synthetic-only@${host}/postgres?sslmode=require`);
+    assert.equal(cfg.ssl.rejectUnauthorized, true);
+    assert.equal(new URL(cfg.connectionString).search, '');
+  }
+});
+test('recusa produção, outro projeto, TLS ausente/desligado e opções arbitrárias', () => {
+  const base = `postgresql://postgres.${TARGET.ref}:synthetic-only@${TARGET.pooler}:6543/postgres?sslmode=verify-full`;
+  for (const value of [null, '', base.replace(TARGET.ref,'hysigyhfpyyydycxxpsm'), base.replace(TARGET.ref,'anotherproject'),
+    base.replace(TARGET.pooler,'example.com'),base.replace('postgres.',`${TARGET.role}.`),
+    base.replace('verify-full','disable'),base.replace('?sslmode=verify-full',''), `${base}&options=-c`,
+    `${base}&sslmode=require`,`${base}#x`,base.replace('/postgres?','/other?'),base.replace(':6543',':1234')]) {
+    assert.throws(() => adminOptions(value), /ADMIN_URL_INVALIDA/);
+  }
+});
+test('recusa privilégios, papel extra e membership com administração/herança', () => {
+  for (const key of ['rolsuper','rolinherit','rolbypassrls','rolcreaterole','rolcreatedb','rolreplication']) {
+    assert.throws(() => assertRole({ ...minimal(), [key]: true }), /PAPEL_NAO_MINIMO/);
+  }
+  for (const memberships of [[],[{name:'postgres',admin:false,inherit:false,set:true}],
+    [{name:'authenticated',admin:true,inherit:false,set:true}],
+    [{name:'authenticated',admin:false,inherit:true,set:true}],
+    [...minimal().memberships,{name:'service_role',admin:false,inherit:false,set:true}]]) {
+    assert.throws(() => assertRole({...minimal(),memberships}), /PAPEL_NAO_MINIMO/);
+  }
+  assert.throws(() => assertRole({...minimal(),password_present:true}), /SENHA_JA_EXISTENTE/);
+});
+test('verificador SCRAM confere com as primitivas do driver pg instalado', async () => {
+  const require = createRequire(new URL('../../packages/infra/package.json', import.meta.url));
+  const crypto = require('pg/lib/crypto/utils.js');
+  const password = 'a'.repeat(43), salt = Buffer.alloc(16, 7);
+  const salted = await crypto.deriveKey(password,salt,4096);
+  const client = await crypto.hmacSha256(salted,'Client Key');
+  const stored = Buffer.from(await crypto.sha256(client)).toString('base64');
+  const server = Buffer.from(await crypto.hmacSha256(salted,'Server Key')).toString('base64');
+  assert.equal(scramVerifier(password,salt),`SCRAM-SHA-256$4096:${salt.toString('base64')}$${stored}:${server}`);
+  assert.throws(() => scramVerifier("quote'"), /SEGREDO_INVALIDO/);
+});
+test('sucesso envia somente verificador ao SQL e segredo ao site/contexto exatos, antes do commit', async () => {
+  const f = fixture();
+  assert.deepEqual(await f.run(),{loginVerified:true,secretInstalled:true,deployed:false});
+  const stored = f.stored();
+  assert.equal(stored.is_secret,true);
+  assert.deepEqual(stored.scopes,['builds','functions']);
+  assert.equal(stored.values.length,1); assert.equal(stored.values[0].context,'production');
+  const url = new URL(stored.values[0].value);
+  assert.equal(url.username,`${TARGET.role}.${TARGET.ref}`);
+  assert.equal(url.hostname,TARGET.pooler); assert.equal(url.search,'?sslmode=verify-full');
+  const sql = f.calls.filter(c=>c[0]==='sql').map(c=>c[1]).join('\n');
+  assert.ok(!sql.includes(url.password)); assert.match(sql,/ALTER ROLE oplyra_web_login PASSWORD 'SCRAM-SHA-256\$/);
+  const post = f.calls.findIndex(c=>c[0]==='api'&&c[1]==='POST');
+  const commit = f.calls.findIndex(c=>c[1]==='COMMIT');
+  const login = f.calls.findIndex(c=>c[0]==='login');
+  assert.ok(post < commit && commit < login);
+  assert.deepEqual(f.phases,['SEGREDO_INSTALADO_LOGIN_A_VALIDAR','LOGIN_MINIMO_DEVELOP_OK']);
+  assert.ok(!f.calls.some(c=>c.join(' ').includes('/deploy')));
+});
+for (const key of ['id','name','url','ssl_url','account_slug','account_id']) test(`site divergente (${key}) não inicia alteração`, async () => {
+  const f = fixture({target:{...site(),[key]:'wrong'}});
+  await assert.rejects(f.run(),/SITE_DIVERGENTE/);
+  assert.ok(!f.calls.some(c=>c[0]==='sql'||c[1]==='POST'));
+});
+test('variável existente não é lida em log nem sobrescrita', async () => {
+  const f = fixture({existing:{key:'DATABASE_URL_APP',value:'private'}});
+  await assert.rejects(f.run(),/VARIAVEL_JA_EXISTENTE/);
+  assert.ok(!f.calls.some(c=>c[0]==='sql'||c[1]==='POST'));
+});
+test('senha existente não é rotacionada', async () => {
+  const f = fixture({role:{...minimal(),password_present:true}});
+  await assert.rejects(f.run(),/SENHA_JA_EXISTENTE/);
+  assert.ok(f.calls.some(c=>c[1]==='ROLLBACK'));
+  assert.ok(!f.calls.some(c=>c[1]==='POST'||c[1].startsWith?.('ALTER ROLE')));
+});
+test('falha de API reverte senha e não repete nem mostra detalhes privados', async () => {
+  const f = fixture({fail:'post'});
+  await assert.rejects(f.run(),/^ProvisionError: PROVISIONAMENTO_FALHOU_SEM_DETALHES_SENSIVEIS$/);
+  assert.equal(f.calls.filter(c=>c[1]==='POST').length,1);
+  assert.ok(f.calls.some(c=>c[1]==='ROLLBACK')); assert.ok(!f.calls.some(c=>c[1]==='COMMIT'));
+  assert.deepEqual(f.phases,['INSTALACAO_PARCIAL_POSSIVEL_NAO_REPETIR_NEM_PUBLICAR']);
+});
+for (const metadata of [env=>({...env,is_secret:false}),env=>({...env,scopes:['builds','functions','post-processing']}),
+  env=>({...env,values:[{context:'all'}]}),env=>({...env,values:[{context:'production'},{context:'deploy-preview'}]})]) {
+  test('escopo ampliado/segredo desmarcado reverte sem commit', async () => {
+    const f = fixture({metadata}); await assert.rejects(f.run(),/ESCOPO_DO_SEGREDO_DIVERGENTE/);
+    assert.ok(f.calls.some(c=>c[1]==='ROLLBACK')); assert.ok(!f.calls.some(c=>c[1]==='COMMIT'));
+  });
+}
+test('falha de commit fica ambígua, sem repetir/validar/afirmar sucesso', async () => {
+  const f = fixture({fail:'commit'}); await assert.rejects(f.run(),/SEM_DETALHES_SENSIVEIS/);
+  assert.ok(!f.calls.some(c=>c[0]==='login')); assert.ok(!f.phases.includes('LOGIN_MINIMO_DEVELOP_OK'));
+  assert.deepEqual(f.phases,['INSTALACAO_PARCIAL_POSSIVEL_NAO_REPETIR_NEM_PUBLICAR']);
+});
+test('falha do login após commit não imprime URI nem rotaciona novamente', async () => {
+  const f = fixture({fail:'login'}); await assert.rejects(f.run(),/SEM_DETALHES_SENSIVEIS/);
+  assert.equal(f.calls.filter(c=>c[1]==='COMMIT').length,1);
+  assert.deepEqual(f.phases,['SEGREDO_INSTALADO_LOGIN_A_VALIDAR','LOGIN_NAO_VALIDADO_NAO_REPETIR_NEM_PUBLICAR']);
+});
+test('cliente Netlify recusa redirect e não expõe erro/resposta/token', async () => {
+  let options;
+  const api = await netlifyApi('synthetic-token',async (_,o)=>{ options=o;return {status:403,ok:false,json:()=>{throw new Error('must not read');}}; });
+  await assert.rejects(api('GET','/sites/synthetic'),/^ProvisionError: NETLIFY_HTTP_403$/);
+  assert.equal(options.redirect,'error'); assert.equal(options.headers.Authorization,'Bearer synthetic-token');
+});
+test('URL da aplicação usa exclusivamente login e branch mínimos', () => {
+  const url = new URL(webUrl('a'.repeat(43)));
+  assert.equal(url.username,`${TARGET.role}.${TARGET.ref}`); assert.equal(url.port,'6543');
+});
+
+test('Netlify pode informar URL HTTP e ssl_url HTTPS canônica sem mudar o destino', async () => {
+  const f = fixture({target:{...site(),url:TARGET.origin.replace('https:','http:')}});
+  assert.equal((await f.run()).loginVerified,true);
+});
+
+// Não há CAS entre PostgreSQL e Netlify: o lock serializa apenas este provisionador.
+test('variável criada durante a espera do lock não é sobrescrita', async () => {
+  let reads = 0; const writes = [];
+  const admin = { query: async sql => { writes.push(sql); return {rows:sql === ROLE_QUERY ? [minimal()] : []}; } };
+  const api = async (method,path) => {
+    if(path.startsWith('/sites/')) return site();
+    assert.equal(method,'GET');
+    return ++reads === 1 ? null : {key:'DATABASE_URL_APP'};
+  };
+  await assert.rejects(provision({admin,api,verifyLogin:async()=>assert.fail('login inesperado')}),/VARIAVEL_JA_EXISTENTE/);
+  assert.ok(writes.includes('ROLLBACK'));
+  assert.ok(!writes.some(sql=>sql.startsWith('ALTER ROLE')||sql==='COMMIT'));
+});
+
+test('diagnóstico identifica SSL ausente sem conectar nem retornar valor privado',()=>{
+  const secret='synthetic-only-private-value';
+  const base=`postgresql://postgres.${TARGET.ref}:${secret}@${TARGET.pooler}:5432/postgres`;
+  const result=inspectAdminUrl(base);
+  assert.equal(result.valid,false);
+  assert.deepEqual(Object.keys(result.checks).filter(k=>!result.checks[k]),['SSL_EXPLICITO']);
+  assert.ok(!JSON.stringify(result).includes(secret));
+  assert.equal(inspectAdminUrl(`${base}?sslmode=verify-full`).valid,true);
+});
+test('diagnóstico identifica fragmento e espaços sem ecoar entrada',()=>{
+  const base=`postgresql://postgres.${TARGET.ref}:synthetic-only@${TARGET.pooler}:5432/postgres?sslmode=verify-full`;
+  assert.equal(inspectAdminUrl(`${base}#synthetic-private-fragment`).checks.SEM_FRAGMENTO,false);
+  assert.equal(inspectAdminUrl(` ${base}`).checks.SEM_ESPACOS,false);
+  assert.deepEqual(inspectAdminUrl('synthetic invalid private input'),{valid:false,checks:{URL_PARSEAVEL:false}});
+});
+test('placeholder nunca é tratado como senha pronta para conectar',()=>{
+  const base=`postgresql://postgres.${TARGET.ref}:[YOUR-PASSWORD]@${TARGET.pooler}:5432/postgres?sslmode=verify-full`;
+  assert.equal(inspectAdminUrl(base).checks.SEM_PLACEHOLDER,false);
+  assert.throws(()=>adminOptions(base),/ADMIN_URL_INVALIDA/);
+});
+
+test('falha inicial mantém só código enumerado, nunca mensagem, stack ou cause',async()=>{
+  const privateValue='synthetic-private-password-and-token';
+  for(const code of ['28P01','ENOTFOUND','ECONNREFUSED','SELF_SIGNED_CERT_IN_CHAIN','UNABLE_TO_VERIFY_LEAF_SIGNATURE']) {
+    const error=Object.assign(new Error(privateValue),{code,cause:new Error(privateValue)});
+    assert.equal(adminConnectionCode(error),`ADMIN_CONEXAO_FALHOU_${code}`);
+    await assert.rejects(connectAdmin({connect:async()=>{throw error;}}),new RegExp(`^ProvisionError: ADMIN_CONEXAO_FALHOU_${code}$`));
+  }
+  for(const error of [new Error(privateValue),{code:privateValue,message:privateValue},null])
+    assert.equal(adminConnectionCode(error),'ADMIN_CONEXAO_FALHOU_NAO_CLASSIFICADA');
+  assert.equal(adminConnectionCode(new Error('timeout expired')),'ADMIN_CONEXAO_FALHOU_TIMEOUT');
+});
+test('diagnóstico de conexão não solicita API/token nem faz SQL de escrita',async()=>{
+  const calls=[];
+  await checkAdminConnection({connect:async()=>calls.push('connect'),query:async sql=>{calls.push(sql);return {rows:[{expected_identity:true}]};}});
+  assert.deepEqual(calls,['connect',"SELECT current_user = 'postgres' AS expected_identity"]);
+});
+test('falha da conexão não executa SQL, e leitura inválida não aprova identidade',async()=>{
+  await assert.rejects(checkAdminConnection({connect:async()=>{throw {code:'28P01'};},query:async()=>assert.fail('SQL após falha')}),/ADMIN_CONEXAO_FALHOU_28P01/);
+  for(const rows of [[],[{expected_identity:false}]])
+    await assert.rejects(checkAdminConnection({connect:async()=>{},query:async()=>({rows})}),/ADMIN_IDENTIDADE_DIVERGENTE/);
+  await assert.rejects(checkAdminConnection({connect:async()=>{},query:async()=>{throw new Error('synthetic-private');}}),/^ProvisionError: ADMIN_VERIFICACAO_LEITURA_FALHOU$/);
+});
+
+test('provisionador confia na CA pública oficial, mantendo validação de identidade TLS',()=>{
+  const ca=new X509Certificate(SUPABASE_DEVELOP_CA);
+  assert.equal(ca.ca,true);assert.equal(ca.verify(ca.publicKey),true);
+  assert.equal(createHash('sha256').update(SUPABASE_DEVELOP_CA).digest('hex'),'700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7');
+  const options=adminOptions(`postgresql://postgres.${TARGET.ref}:synthetic-only@${TARGET.pooler}:5432/postgres?sslmode=verify-full`);
+  assert.equal(options.ssl.ca,SUPABASE_DEVELOP_CA);assert.equal(options.ssl.rejectUnauthorized,true);
+  assert.equal(new URL(options.connectionString).search,'');
+});
+
+test('equipe conferida usa ID opaco real, sem inventar formato UUID',async()=>{
+  assert.equal(TARGET.accountId,'68a72ba861396f824b2b0a90');
+  const f=fixture();await f.run();
+  const paths=f.calls.filter(c=>c[0]==='api').map(c=>c[2]);
+  assert.ok(paths.some(path=>path===`/accounts/${TARGET.accountId}/env?site_id=${TARGET.site}`));
+});
+test('outro ID de equipe, mesmo com formato plausível, não permite escrita',async()=>{
+  for(const account_id of ['12345678-1234-1234-1234-123456789abc','68a72ba861396f824b2b0a91',null,'']){
+    const f=fixture({target:{...site(),account_id}});
+    await assert.rejects(f.run(),/SITE_DIVERGENTE/);
+    assert.ok(!f.calls.some(c=>c[0]==='sql'||c[1]==='POST'));
+  }
+});

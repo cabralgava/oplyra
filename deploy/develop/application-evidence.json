@@ -1,0 +1,363 @@
+{
+  "status": "eighteen_and_two_hardenings_applied_netlify_prepared",
+  "target": "eqpvjydnqbbawpkeizys",
+  "environment": "develop",
+  "baseline": [
+    {
+      "version": "20261116193604",
+      "name": "remote_schema"
+    }
+  ],
+  "applied": [
+    {
+      "sourceVersion": "20260915000001",
+      "sourceFile": "supabase/migrations/20260915000001_access_roles_and_context.sql",
+      "sha256": "3ae74c2085aa278929bacc013ac0d13d654734c69b488f7b7a5a2a547ac6bfa1",
+      "remoteVersion": "20261116195453",
+      "remoteName": "access_roles_and_context"
+    },
+    {
+      "sourceVersion": "20260915000002",
+      "sourceFile": "supabase/migrations/20260915000002_identity_and_tenancy.sql",
+      "sha256": "85882b6255944f617a3c6045e7cbadb812838f098d2c2e0ab9ff430cef9c1ed0",
+      "remoteVersion": "20261116195541",
+      "remoteName": "identity_and_tenancy"
+    },
+    {
+      "sourceVersion": "20260915000003",
+      "sourceFile": "supabase/migrations/20260915000003_rls_policies.sql",
+      "sha256": "4fc7d844c7733358a63abfe0bdb394f15d42de5613ac7afc9d8c90c0e75918ea",
+      "remoteVersion": "20261116195548",
+      "remoteName": "rls_policies"
+    },
+    {
+      "sourceVersion": "20260915000004",
+      "sourceFile": "supabase/migrations/20260915000004_storage_isolation.sql",
+      "sha256": "166766ec62b9c7d3520584c1de9e7183f7ad6eeec7d21b532f473c38ea98b966",
+      "remoteVersion": "20261116195556",
+      "remoteName": "storage_isolation"
+    },
+    {
+      "sourceVersion": "20260915000005",
+      "sourceFile": "supabase/migrations/20260915000005_last_owner_guard.sql",
+      "sha256": "6a2d5db2e4971c2488b2de4ed1443246cacd78a768d14da8627b6cdfb584fe01",
+      "remoteVersion": "20261116195617",
+      "remoteName": "last_owner_guard"
+    },
+    {
+      "sourceVersion": "20260915000006",
+      "sourceFile": "supabase/migrations/20260915000006_identity_scoped_reads.sql",
+      "sha256": "53973b4a8c74f8268b747224dbe9a769cea1ad8f487210a12b51f4dcd6deb4b6",
+      "remoteVersion": "20261116210150",
+      "remoteName": "identity_scoped_reads"
+    },
+    {
+      "sourceVersion": "20260915000007",
+      "sourceFile": "supabase/migrations/20260915000007_resolve_access_context.sql",
+      "sha256": "dd2458ba1d4316e9378164440cb535d29de42517c5250ebc18a57d4f0a38549f",
+      "remoteVersion": "20261116210224",
+      "remoteName": "resolve_access_context"
+    },
+    {
+      "sourceVersion": "20260915000008",
+      "sourceFile": "supabase/migrations/20260915000008_operator_read_scope.sql",
+      "sha256": "f7a023c958c3eea55a41bba0c072ac5807300d72bd540301f379d1e571254297",
+      "remoteVersion": "20261116210233",
+      "remoteName": "operator_read_scope"
+    },
+    {
+      "sourceVersion": "20260921000009",
+      "sourceFile": "supabase/migrations/20260921000009_content_repository.sql",
+      "sha256": "0dd867a5d73194e685b11ae33434baace98038de9cca1431f141de8df5a94c88",
+      "remoteVersion": "20261116210249",
+      "remoteName": "content_repository"
+    },
+    {
+      "sourceVersion": "20260921000010",
+      "sourceFile": "supabase/migrations/20260921000010_create_copy_variants_write.sql",
+      "sha256": "2ecd7570da525f772364cb4077e37f9ff88b5deb08fef11cac315d59a67e9ff5",
+      "remoteVersion": "20261116210323",
+      "remoteName": "create_copy_variants_write"
+    },
+    {
+      "sourceVersion": "20260921000011",
+      "sourceFile": "supabase/migrations/20260921000011_outbox_delivery_persistence.sql",
+      "sha256": "a1351c9bd4816d24b0ef89bc0cf6353057ee1f6cbac2d0f0eb0f2449c8b3c129",
+      "remoteVersion": "20261116210449",
+      "remoteName": "outbox_delivery_persistence"
+    },
+    {
+      "sourceVersion": "20260921000012",
+      "sourceFile": "supabase/migrations/20260921000012_outbox_dispatcher_functions.sql",
+      "sha256": "b3e5755c25637ba0bc91cf816b5843f344fafbfcfbd2beb19009dda1588afd6b",
+      "remoteVersion": "20261116210459",
+      "remoteName": "outbox_dispatcher_functions"
+    },
+    {
+      "sourceVersion": "20260929000013",
+      "sourceFile": "supabase/migrations/20260929000013_finops_ledger_schema.sql",
+      "sha256": "f2668c1fd43434c2581fc68bfc70b7d71167f49b28e2b958e86a0cd8e2d654af",
+      "remoteVersion": "20261116210522",
+      "remoteName": "finops_ledger_schema"
+    },
+    {
+      "sourceVersion": "20260929000014",
+      "sourceFile": "supabase/migrations/20260929000014_finops_ledger_functions.sql",
+      "sha256": "dc7cbb3f444d76c689cda63fc3fe3de347851efa0d52d2048fd26d6fa9ffb047",
+      "remoteVersion": "20261116210535",
+      "remoteName": "finops_ledger_functions"
+    },
+    {
+      "sourceVersion": "20260929000015",
+      "sourceFile": "supabase/migrations/20260929000015_tenant_deletion_owner_guard.sql",
+      "sha256": "0884972aa649dc6629cb3538b5f1203c0d5ab3aa67cf87ec805a0eed3e8cc342",
+      "remoteVersion": "20261116211205",
+      "remoteName": "tenant_deletion_owner_guard"
+    },
+    {
+      "sourceVersion": "20261004000016",
+      "sourceFile": "supabase/migrations/20261004000016_brand_os.sql",
+      "sha256": "92506025516ff54342874f4de50ca0ea1df6dfd7c0dd6d2088f5acfc0bbde175",
+      "remoteVersion": "20261116211232",
+      "remoteName": "brand_os"
+    },
+    {
+      "sourceVersion": "20261111000017",
+      "sourceFile": "supabase/migrations/20261111000017_strategy.sql",
+      "sha256": "f925e1ed287cf05f674e07d0f82cc3f8a946aa693465fb38bc236c1ebdd5421c",
+      "remoteVersion": "20261116211241",
+      "remoteName": "strategy"
+    },
+    {
+      "sourceVersion": "20261111000018",
+      "sourceFile": "supabase/migrations/20261111000018_runtime.sql",
+      "sha256": "583533d6e3a036cf4cda991a13509bb1ac943e657cbe1b2ec1beb90fbb65f2a8",
+      "remoteVersion": "20261116211251",
+      "remoteName": "runtime"
+    }
+  ],
+  "pending": [],
+  "toolVersionPolicy": "The migration tool generated remote timestamps; source-to-remote mapping recorded without editing or erasing migration history. Do not use an unreviewed CLI db push against the canonical local folder; reconcile this mapping first.",
+  "confirmation": "Resumed successfully after owner reported permissions updated.",
+  "seedApplied": false,
+  "productionApplied": false,
+  "netlifyModified": false,
+  "securityAdvisors": {
+    "warnings": 0,
+    "errors": 0,
+    "informationalFindings": 5,
+    "informationalType": "rls_enabled_no_policy",
+    "reviewed": "All five internal tables deny direct SELECT/INSERT/UPDATE/DELETE for seven application roles; 35 combinations checked. No permissive policies added."
+  },
+  "resumeAttempts": [
+    {
+      "at": "2026-11-16 17:32",
+      "operation": "apply identity_scoped_reads (000006)",
+      "result": "client_confirmation_cancelled_before_execution",
+      "remoteHistoryRechecked": "baseline +5, no new migration",
+      "fallbackUsed": false,
+      "userSawConfirmation": false
+    },
+    {
+      "operation": "remaining thirteen source migrations plus two hardening migrations",
+      "result": "applied and verified in develop; no production mutations"
+    }
+  ],
+  "hardening": {
+    "status": "applied_to_develop",
+    "base": {
+      "path": "deploy/develop/supabase/migrations/20261116202506_harden_application_function_search_paths.sql",
+      "sha256": "1eb1ff59a19625fac34f73371e1dee1224f9b6cfe4087f37b8050b1312d26908",
+      "remoteVersion": "20261116211333",
+      "remoteName": "harden_application_function_search_paths"
+    },
+    "domainValidators": {
+      "path": "deploy/develop/supabase/migrations/20261116211348_harden_domain_validator_search_paths.sql",
+      "sha256": "a65156b4e48fb3176997290e05630a0da2e41602408f4ad09debaeb53878881a",
+      "remoteVersion": "20261116211501",
+      "remoteName": "harden_domain_validator_search_paths"
+    },
+    "mutableSearchPathRemaining": 0,
+    "tests": 21
+  },
+  "connectionPreparation": {
+    "publicEnvFile": ".oplyra/develop/netlify-public.env",
+    "publicKeyFormat": "sb_publishable",
+    "containsDatabasePassword": false,
+    "gitIgnored": true,
+    "netlifyModified": false,
+    "webCompositionModified": false,
+    "readiness": {
+      "identityBoundary": true,
+      "brand": true,
+      "strategy": true,
+      "runtime": true
+    },
+    "poolerHost": "aws-1-sa-east-1.pooler.supabase.com",
+    "poolerPort": 6543,
+    "poolerUser": "oplyra_web_login.eqpvjydnqbbawpkeizys",
+    "databasePasswordProvisionedByThisSession": false,
+    "actualNetlifyConnectionTested": false
+  },
+  "confirmationDiagnostics": {
+    "userReported": "No confirmation prompt appeared",
+    "supabaseAppPermission": "Use my default",
+    "defaultPermission": "Allow low-risk actions",
+    "exactCancellationCause": "not established",
+    "settingsChangedByAgent": false,
+    "nextDiagnostic": "Owner can select Allow read actions for Supabase so write requests are presented for approval, subject to other policies."
+  },
+  "previousSecurityAdvisors": {
+    "function_search_path_mutable": [
+      "tenant_is_authorized",
+      "is_operator",
+      "current_user_id",
+      "current_tenant",
+      "forbid_tenant_change",
+      "is_worker",
+      "ensure_tenant_keeps_owner"
+    ]
+  },
+  "schemaChecks": {
+    "operationalTablesWithoutForcedRls": [],
+    "mutableFunctions": [],
+    "unsafeOplyraLogins": [],
+    "legacyOwnerGuardPresent": false
+  },
+  "remoteSmoke": {
+    "status": "not_executed_confirmation_expired",
+    "persistentFixtures": false,
+    "noFallbackUsed": true
+  },
+  "remoteHistory": [
+    {
+      "version": "20261116193604",
+      "name": "remote_schema"
+    },
+    {
+      "version": "20261116195453",
+      "name": "access_roles_and_context"
+    },
+    {
+      "version": "20261116195541",
+      "name": "identity_and_tenancy"
+    },
+    {
+      "version": "20261116195548",
+      "name": "rls_policies"
+    },
+    {
+      "version": "20261116195556",
+      "name": "storage_isolation"
+    },
+    {
+      "version": "20261116195617",
+      "name": "last_owner_guard"
+    },
+    {
+      "version": "20261116210150",
+      "name": "identity_scoped_reads"
+    },
+    {
+      "version": "20261116210224",
+      "name": "resolve_access_context"
+    },
+    {
+      "version": "20261116210233",
+      "name": "operator_read_scope"
+    },
+    {
+      "version": "20261116210249",
+      "name": "content_repository"
+    },
+    {
+      "version": "20261116210323",
+      "name": "create_copy_variants_write"
+    },
+    {
+      "version": "20261116210449",
+      "name": "outbox_delivery_persistence"
+    },
+    {
+      "version": "20261116210459",
+      "name": "outbox_dispatcher_functions"
+    },
+    {
+      "version": "20261116210522",
+      "name": "finops_ledger_schema"
+    },
+    {
+      "version": "20261116210535",
+      "name": "finops_ledger_functions"
+    },
+    {
+      "version": "20261116211205",
+      "name": "tenant_deletion_owner_guard"
+    },
+    {
+      "version": "20261116211232",
+      "name": "brand_os"
+    },
+    {
+      "version": "20261116211241",
+      "name": "strategy"
+    },
+    {
+      "version": "20261116211251",
+      "name": "runtime"
+    },
+    {
+      "version": "20261116211333",
+      "name": "harden_application_function_search_paths"
+    },
+    {
+      "version": "20261116211501",
+      "name": "harden_domain_validator_search_paths"
+    }
+  ],
+  "lastRefusedSourceVersionHistorical": "20260915000006",
+  "minimumLoginPreparation": {
+    "status": "owner_terminal_execution_pending",
+    "helper": "deploy/develop/provision-web-login.mjs",
+    "login": "oplyra_web_login",
+    "passwordPresentObserved": false,
+    "onlyGrantedRole": "authenticated",
+    "inheritOption": false,
+    "adminOption": false,
+    "setOption": true,
+    "provisionerExecuted": false,
+    "netlifySecretInstalledByThisSession": false,
+    "nativeTests": 23,
+    "selectedVitestTests": 391,
+    "realLoginVerified": false
+  },
+  "authPreparation": {
+    "siteUrl": "https://oplyra-develop.netlify.app",
+    "siteUrlSavedByThisSession": true,
+    "emailEnabledObserved": true,
+    "emailConfirmationEnabledObserved": true,
+    "anonymousSignInsEnabledObserved": false,
+    "publicSignupsEnabledObserved": true,
+    "signupPolicyChanged": false,
+    "additionalRedirects": [],
+    "smtpConfiguredByThisSession": false,
+    "usersCreatedByThisSession": false,
+    "hostedLoginTested": false,
+    "frontendSecureCookieFixPending": true
+  },
+  "hostedAcceptanceObservation": {
+    "observedAt": "2026-11-17T08:46:22.069006-03:00",
+    "environment": "develop",
+    "origin": "https://oplyra-develop.netlify.app",
+    "path": "/entrar",
+    "httpStatus": 500,
+    "code": "DV-LOGIN-PAGE",
+    "publicReadiness": false,
+    "functionalAcceptance": false,
+    "causeEstablished": false,
+    "authenticatedFlowTested": false,
+    "subsequentEndpointsRequested": false,
+    "remoteDataOrConfigurationChanged": false,
+    "harnessEntry": "pnpm claude:develop"
+  }
+}

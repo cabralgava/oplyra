@@ -1,14 +1,21 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { authGateway, resolverContexto, supabaseUrl, chavePublicavel } from "./deps";
+import { authGateway, resolverContexto, supabaseUrl, chavePublicavel, ambienteDevelop } from "./deps";
 import type { AccessContext, TenantId, VerifiedClaims } from "@oplyra/core";
+
+import { cookieSeguro, duracaoDaSessao } from "./sessao-cookie";
 
 const COOKIE = "oplyra_sessao";
 
-/** O token fica em cookie httpOnly: não é acessível ao script da página. */
+/**
+ * O token fica em cookie httpOnly (inacessível ao script), Secure fora do ambiente local, SameSite=lax,
+ * e só é guardado depois de verificado por assinatura (JWKS); a duração acompanha o `exp` do token.
+ */
 export async function guardarSessao(accessToken: string): Promise<void> {
+  await authGateway.verifyAccessToken(accessToken);
+  const maxAge = duracaoDaSessao(accessToken);
   const jar = await cookies();
-  jar.set(COOKIE, accessToken, { httpOnly: true, sameSite: "lax", path: "/", secure: false, maxAge: 3600 });
+  jar.set(COOKIE, accessToken, { httpOnly: true, sameSite: "lax", path: "/", secure: cookieSeguro(), maxAge });
 }
 
 export async function encerrarSessao(): Promise<void> {
@@ -53,6 +60,8 @@ export async function autenticar(email: string, senha: string): Promise<string> 
 }
 
 export async function enviarLinkMagico(email: string): Promise<void> {
+  // Link mágico/SMTP não validados em develop: não é oferecido nem aceito no servidor.
+  if (ambienteDevelop) throw new Error("link indisponível neste ambiente");
   const r = await fetch(`${supabaseUrl}/auth/v1/magiclink`, {
     method: "POST",
     headers: { apikey: chavePublicavel, "Content-Type": "application/json" },

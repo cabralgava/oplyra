@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { guardarSessao } from "../../../lib/session";
-import { supabaseUrl, chavePublicavel } from "../../../lib/deps";
+import { supabaseUrl, chavePublicavel, ambienteDevelop } from "../../../lib/deps";
 
 /**
  * Conclusão do acesso por link. O token chega como token_hash na query e é
@@ -11,6 +11,7 @@ export async function GET(requisicao: NextRequest) {
   const { searchParams, origin } = requisicao.nextUrl;
   const tokenHash = searchParams.get("token_hash");
   const tipo = searchParams.get("type") ?? "magiclink";
+  if (ambienteDevelop) return NextResponse.redirect(`${origin}/entrar?erro=link-indisponivel`);
   if (!tokenHash) return NextResponse.redirect(`${origin}/entrar?erro=link`);
 
   const r = await fetch(`${supabaseUrl}/auth/v1/verify`, {
