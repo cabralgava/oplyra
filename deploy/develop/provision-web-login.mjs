@@ -2,6 +2,7 @@
 import { randomBytes, pbkdf2Sync, createHmac, createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
+import { SUPABASE_DEVELOP_CA } from '../../packages/infra/src/supabase-develop-ca.ts';
 
 export const TARGET = Object.freeze({
   ref: 'eqpvjydnqbbawpkeizys', role: 'oplyra_web_login',
@@ -42,7 +43,7 @@ export function adminOptions(raw) {
   if (!inspectAdminUrl(raw).valid) deny('ADMIN_URL_INVALIDA');
   // Parâmetros SSL da URL não podem substituir rejectUnauthorized.
   url.search = '';
-  return { connectionString: url.href, ssl: { rejectUnauthorized: true },
+  return { connectionString: url.href, ssl: { rejectUnauthorized: true, ca: SUPABASE_DEVELOP_CA },
     connectionTimeoutMillis: 15000, query_timeout: 20000, application_name: 'oplyra-develop-initial-login' };
 }
 

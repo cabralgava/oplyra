@@ -173,7 +173,11 @@
     },
     {
       "path": "apps/web/src/lib/deps.ts",
-      "sha256": "9920bcc031ddd6d37b171c1170c108b9880f35a42fbbb4d99b08c89185c14edd"
+      "sha256": "9e096e40a971372ef24758627110c6e4130be47883cc3850e72f019c1741f7c7"
+    },
+    {
+      "path": "packages/infra/src/db.ts",
+      "sha256": "9656e6673f2901eaca9b830a8b617564f9504b9780a05e3d1c2755776086b8f0"
     }
   ],
   "added": [
@@ -605,7 +609,7 @@
     {
       "path": "deploy/develop/LOGIN-MINIMO.md",
       "category": "environment_plan",
-      "sha256": "fd9673d157ca6e40ff42ebe85f94a1d348c7ffa6c44ff74b3e01c5923335fe26"
+      "sha256": "f1051d76c7c9c09790b56ac0e2de362f44e06a44461957f172ec274501a4fcad"
     },
     {
       "path": "deploy/develop/NETLIFY-CONNECTION.md",
@@ -640,12 +644,12 @@
     {
       "path": "deploy/develop/provision-web-login.mjs",
       "category": "development_tool",
-      "sha256": "ebe74f5516a6912b7e5898379d43274b64db77acb89e57a8640644f96d9a22c9"
+      "sha256": "91162be23aa95a1925d0b24f8ffcd86c19f0e6e0731174c6875c68d84871c770"
     },
     {
       "path": "deploy/develop/provision-web-login.test.mjs",
       "category": "runtime_test",
-      "sha256": "c5524012eeda37f085e8ae68a10f5810fe7e770f5dd0109e07bda75b3d0280da"
+      "sha256": "8dec3958209dde6e66756117564bfb1050f00f0fcb21db8d0fd27bd9fda45ee7"
     },
     {
       "path": "deploy/develop/runtime.env.example",
@@ -675,7 +679,7 @@
     {
       "path": "docs/product/marketing-ops/contracts/changes/CR-061-develop-login-runtime-integration.md",
       "category": "change_proposal",
-      "sha256": "3450ef2916ecefc73b847658417a8dd230e0d29788de199e3a9c49b657473ad8"
+      "sha256": "7c601e292c447d7fae3f76a33d8ace468f33ad3ef960b4050dd8a7dffbdec182"
     },
     {
       "path": "e2e/develop-hospedado.spec.ts",
@@ -706,6 +710,16 @@
       "path": "test/web-sessao.test.ts",
       "category": "runtime_test",
       "sha256": "51ccd0935b5484da9d28dcfe733b3f21b07189d8c882805f369c7455a4dcb0a3"
+    },
+    {
+      "path": "packages/infra/src/supabase-develop-ca.ts",
+      "category": "runtime_component",
+      "sha256": "802ea8e9c8377d248aecf9ec40757902018e93ba4d405e19f26c4326710ef300"
+    },
+    {
+      "path": "packages/infra/test/develop-tls.test.ts",
+      "category": "runtime_test",
+      "sha256": "312da2be661bb1bd6e992d666f717610f3e6579b5e4a5dd89a6caf9b59702401"
     }
   ]
 }

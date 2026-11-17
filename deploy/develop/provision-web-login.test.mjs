@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
+import { X509Certificate, createHash } from 'node:crypto';
+import { SUPABASE_DEVELOP_CA } from '../../packages/infra/src/supabase-develop-ca.ts';
 import { TARGET, ROLE_QUERY, inspectAdminUrl, adminConnectionCode, connectAdmin, checkAdminConnection, adminOptions, assertRole, scramVerifier, webUrl, provision, netlifyApi } from './provision-web-login.mjs';
 
 const minimal = () => ({ rolname: TARGET.role, rolcanlogin: true, rolsuper: false, rolinherit: false,
@@ -201,4 +203,13 @@ test('falha da conexão não executa SQL, e leitura inválida não aprova identi
   for(const rows of [[],[{expected_identity:false}]])
     await assert.rejects(checkAdminConnection({connect:async()=>{},query:async()=>({rows})}),/ADMIN_IDENTIDADE_DIVERGENTE/);
   await assert.rejects(checkAdminConnection({connect:async()=>{},query:async()=>{throw new Error('synthetic-private');}}),/^ProvisionError: ADMIN_VERIFICACAO_LEITURA_FALHOU$/);
+});
+
+test('provisionador confia na CA pública oficial, mantendo validação de identidade TLS',()=>{
+  const ca=new X509Certificate(SUPABASE_DEVELOP_CA);
+  assert.equal(ca.ca,true);assert.equal(ca.verify(ca.publicKey),true);
+  assert.equal(createHash('sha256').update(SUPABASE_DEVELOP_CA).digest('hex'),'700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7');
+  const options=adminOptions(`postgresql://postgres.${TARGET.ref}:synthetic-only@${TARGET.pooler}:5432/postgres?sslmode=verify-full`);
+  assert.equal(options.ssl.ca,SUPABASE_DEVELOP_CA);assert.equal(options.ssl.rejectUnauthorized,true);
+  assert.equal(new URL(options.connectionString).search,'');
 });
