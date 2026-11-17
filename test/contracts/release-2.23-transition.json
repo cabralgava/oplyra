@@ -750,6 +750,226 @@
       "path": "apps/web/src/app/layout.tsx",
       "sha256": "267f7af31949e1ab84876091d02b753747a1d3899d7f68868b03161de8eb1db3",
       "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/lib/deps-estrategia.ts",
+      "sha256": "eacba37ac008ea5bbf95882adf857397d466c4d51ce72a2d06d9666bcd3a8210",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/lib/deps-runtime.ts",
+      "sha256": "474a972bf1c0ec0540e3a8faa24350009dcb65b57ce8b2a61540898ea5c53861",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/lib/estrategia.ts",
+      "sha256": "d512c2eaec522a018c5820e2a3084b172bd74504c22ff8c464256920070f57a7",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/lib/estrategia-form.ts",
+      "sha256": "926581860b4c0e322f308059f10a4d0be291df8f2c78a853064da151788b0acd",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/lib/execucoes.ts",
+      "sha256": "71fe537c67fd30f93f659a683b2741dfdfaf7584ca78e5c1562bb786239c9c49",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/lib/catalogo-runtime.ts",
+      "sha256": "22c541aa2c0f596ae9ba7710006395c24dbbc9c266e8e361c00c8bf4392166b2",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/lib/catalogo-agentes.ts",
+      "sha256": "029ce51b4ef063d043be3fc0a1b2ff2c8a7b37fafe4b736b636e1ba350f28a15",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/components/nav-empresa.tsx",
+      "sha256": "91bbff685b4e4bf1b506820007b45c04c2323b7155a9f00cd00eab641d4d04fc",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/components/aviso-estrategia.tsx",
+      "sha256": "e7e1d87fb7aff7bc8ce3a0634e29b06909347a17ffce05d7ff62f09c0190926e",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/components/banner-interrupcao.tsx",
+      "sha256": "7efe480ebf29ebf3f359a8720b157f2a9d58539d678730b8c746d902c3e62fbb",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/components/icones-nav.tsx",
+      "sha256": "bff3f2d4ed8c046c8a0e9d4cedb354d057c1ecef844efd97b33eda3d11210052",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/components/visao-agentes.tsx",
+      "sha256": "54572c9e0372149286642401cc31c46b6eacf7f22b5f18e2154feffcfa441d32",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/globals.css",
+      "sha256": "2b0e33b32351cfe6a425f10f11cc93efcbefdc4d6c6005ff7d8621256677058c",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/layout.tsx",
+      "sha256": "16856bdc432a0dd1d6ea462387e5eb7b93262ae14891fa4ebac25082c677ebc8",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/page.tsx",
+      "sha256": "99c240ce0bfb71a43a13bf139d7dfab8166794f647255ef78925e6a0b29fd870",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/error.tsx",
+      "sha256": "4277cc1053f1cf39a472b9a917ade5e422484c485c549d1e87e2e308ae410acf",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/loading.tsx",
+      "sha256": "f03e4ef47eff5d4be246e7a58875baa788f008adf88ca8caeb7e5b721bb33fbd",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/estrategia/page.tsx",
+      "sha256": "a39cb80228d15a50f88f517639a2601a65f9789ad3aedc19e3f9e8706dea6e1d",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/estrategia/campanhas/[campaignId]/page.tsx",
+      "sha256": "b57c9e60cdd1edc3cad5219f8c7a3855ed75029c82fc0ae4a478159ed207b918",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/execucoes/page.tsx",
+      "sha256": "e9b52f56df1514acc289540affad8852ea6e79accc9a926e70b4cfdf599959a2",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/execucoes/[runId]/page.tsx",
+      "sha256": "46f5d27a2cb4e64aba459341c5c9b879ab0501120fa364c2c613c5a613bd5649",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/fonts/Inter-Variable.ttf",
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/fonts/Manrope-Variable.ttf",
+      "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/fonts/OFL-Inter.txt",
+      "sha256": "5dd548d31a85f756e01d63e00d7faf1e324103ed3e9102fcbbabf2cc2db6dd39",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/app/fonts/OFL-Manrope.txt",
+      "sha256": "d6a309fcfb963d329a93baf9df66fa5f3c23a4be2b5f67edf24d6cafecde12ac",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/domain/ids.ts",
+      "sha256": "2d1bf8af79fe5d87d5783c528d77f4be9c8646be0e946c2f18b787ce073e6655",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/domain/roles.ts",
+      "sha256": "2fba40d5821e63d3cf58fcf01103335f2cddd75728dd9e78f8ce783432b403a7",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/domain/strategy.ts",
+      "sha256": "f3042bfd9f1cba5e8fc26d78acfb8b9f3e16ac46bb2dd89b0d25f3d32c67b0d7",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/domain/strategy-errors.ts",
+      "sha256": "ec960a4a0044537a627c43c592216dd9a90d603320e93070cb11bdedaabee34f",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/application/strategy-ports.ts",
+      "sha256": "554b19cd4138a06243d51bd792263b025876951f1e5d6265e90a63fc7c97907d",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/application/use-cases/strategy.ts",
+      "sha256": "7abd4881ad2fd074e9375d1ab91ca33bfcbbf6f363662d78db97bc021c1e635d",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/application/use-cases/strategy-objectives.ts",
+      "sha256": "0b9dba96e1af3d09d654f34b859b885f55d83035deb384f20a4cb1fe318d1006",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/application/use-cases/strategy-experiments.ts",
+      "sha256": "1d907626300c9a48a9160fff688d8b3838a432ac54d36582f5d787d84bdde56f",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/application/use-cases/strategy-tasks.ts",
+      "sha256": "243836cececfcfe67a68ab00713e07c416597cb3b19e58eab84550b767e75932",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/runtime/domain.ts",
+      "sha256": "2ad87314c8ddfd53a3797fa8332080cf00eaa42e44a233fb20c8b0831a00d3d7",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/runtime/ports.ts",
+      "sha256": "5206959c6036ea6bbd8ef51b6db393a627862b44ac8d1bc06b8f4fe27113a62d",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/runtime/use-cases.ts",
+      "sha256": "d8ce36ac0f53c2c00babe49c4c7fa4e6ed84945ae8c39d861e60c102496db0e1",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/core/src/runtime/errors.ts",
+      "sha256": "60a23df3c1f476837d9e55d6443b861d21246ebc5694fb4ad2806c29929a7bb5",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/infra/src/runtime-repository.ts",
+      "sha256": "858ec755ad6a04be35eb3079448e8a0aa44f3dc6f4a24e2a54ad79cb38af048e",
+      "category": "runtime_component"
+    },
+    {
+      "path": "packages/infra/src/strategy-repository.ts",
+      "sha256": "980f1cc690a07073d08070a41cbfd9ecea60b94c39a14b9a16a93b10dc10a9d7",
+      "category": "runtime_component"
+    },
+    {
+      "path": "test/web-catalogo-runtime.test.ts",
+      "sha256": "130739ab2036d6f796455ccbd3fa8a6e91f14d453887ffd034f132defbb3a129",
+      "category": "runtime_test"
+    },
+    {
+      "path": "test/web-estrategia-form.test.ts",
+      "sha256": "99c609b61004ffbf61548b2e155f1fe183b1d1ce360c394299a6da39484bad7e",
+      "category": "runtime_test"
+    },
+    {
+      "path": "test/web-execucoes.test.ts",
+      "sha256": "f80d96a161158754760c92c04c5d6da84f395daaaf86932d88eb450a7f392ece",
+      "category": "runtime_test"
+    },
+    {
+      "path": "test/web-shell-empresa.test.ts",
+      "sha256": "9f710382667ac160993c6805c38b2b7d2a8562e4694dd6628fc3e0883e407c51",
+      "category": "runtime_test"
     }
   ]
 }
