@@ -730,6 +730,31 @@
       "path": "docs/product/marketing-ops/contracts/changes/CR-062-develop-build-secret-scanner.md",
       "category": "change_proposal",
       "sha256": "2f7073190a62e87e7050bbd52eb4868a09ea79810633c02a48bb1afa28e3f2c7"
+    },
+    {
+      "path": "deploy/develop/provision-tenant.mjs",
+      "category": "development_tool",
+      "sha256": "c4ef82cfdcf074bf1c04ed5a1a9e97600e10b6be26c253760c130486add3d390"
+    },
+    {
+      "path": "deploy/develop/provision-tenant.test.mjs",
+      "category": "runtime_test",
+      "sha256": "6a6df39fcad88f27ce48f30e3c50d3179633aedd6601d10fbcff473b804378e5"
+    },
+    {
+      "path": "deploy/develop/PROVISIONAR-EMPRESA.md",
+      "category": "environment_plan",
+      "sha256": "c5e2d6b87a6a577b71e2f2ee038ffb595f11890484d2f569a3f2c971bd86256c"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-063-develop-private-tenant-provisioning.md",
+      "category": "change_proposal",
+      "sha256": "ca20344ed418249958b415bafad4dbd19d5e95f5c8682ddb1efe00462eb09956"
+    },
+    {
+      "path": "test/develop-private-tools.test.ts",
+      "category": "runtime_test",
+      "sha256": "5f8fd70e8a4f6a42cd060a13d436a8164cdf80f54487d54b4206d4b75524be36"
     }
   ]
 }
