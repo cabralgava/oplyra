@@ -734,22 +734,22 @@
     {
       "path": "deploy/develop/provision-tenant.mjs",
       "category": "development_tool",
-      "sha256": "c4ef82cfdcf074bf1c04ed5a1a9e97600e10b6be26c253760c130486add3d390"
+      "sha256": "b425208293f6bba284bb88b561a107a1676bd5a901edb23d23c73454f52a9802"
     },
     {
       "path": "deploy/develop/provision-tenant.test.mjs",
       "category": "runtime_test",
-      "sha256": "6a6df39fcad88f27ce48f30e3c50d3179633aedd6601d10fbcff473b804378e5"
+      "sha256": "0162d395dc96d63052da524bb2af656aaeb0e2532919469512c6cfdf6350a8ac"
     },
     {
       "path": "deploy/develop/PROVISIONAR-EMPRESA.md",
       "category": "environment_plan",
-      "sha256": "c5e2d6b87a6a577b71e2f2ee038ffb595f11890484d2f569a3f2c971bd86256c"
+      "sha256": "db2da1920575c73582a333fe39a81a35a27213fa2cd903fb223c77694015a5b0"
     },
     {
       "path": "docs/product/marketing-ops/contracts/changes/CR-063-develop-private-tenant-provisioning.md",
       "category": "change_proposal",
-      "sha256": "ca20344ed418249958b415bafad4dbd19d5e95f5c8682ddb1efe00462eb09956"
+      "sha256": "07dd42aa94b47d351095f2572c4bfceef7e45190696d25c1a6207b7a177cbfdf"
     },
     {
       "path": "test/develop-private-tools.test.ts",
