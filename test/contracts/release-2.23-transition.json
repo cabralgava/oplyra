@@ -720,6 +720,16 @@
       "path": "packages/infra/test/develop-tls.test.ts",
       "category": "runtime_test",
       "sha256": "312da2be661bb1bd6e992d666f717610f3e6579b5e4a5dd89a6caf9b59702401"
+    },
+    {
+      "path": "netlify.toml",
+      "category": "environment_plan",
+      "sha256": "bbb2cdbe3126b8dd15c12d39c083759345b324852e5887d00966da54f54d6d24"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-062-develop-build-secret-scanner.md",
+      "category": "change_proposal",
+      "sha256": "2f7073190a62e87e7050bbd52eb4868a09ea79810633c02a48bb1afa28e3f2c7"
     }
   ]
 }
