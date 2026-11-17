@@ -605,7 +605,7 @@
     {
       "path": "deploy/develop/LOGIN-MINIMO.md",
       "category": "environment_plan",
-      "sha256": "b6e97aa8582c722e8ec5572c432eb178cc2aaa013812c6c626eac866243fcf83"
+      "sha256": "fd9673d157ca6e40ff42ebe85f94a1d348c7ffa6c44ff74b3e01c5923335fe26"
     },
     {
       "path": "deploy/develop/NETLIFY-CONNECTION.md",
@@ -640,12 +640,12 @@
     {
       "path": "deploy/develop/provision-web-login.mjs",
       "category": "development_tool",
-      "sha256": "b174878b877985b417c8fc9141f0ea4faddbf1d8e348364ec0c3913758234078"
+      "sha256": "ebe74f5516a6912b7e5898379d43274b64db77acb89e57a8640644f96d9a22c9"
     },
     {
       "path": "deploy/develop/provision-web-login.test.mjs",
       "category": "runtime_test",
-      "sha256": "1a6a30efef45e2c4dfbaa0d35b6dbb77d42ec7bfbd5d2da14fbeb142f9bb9dcd"
+      "sha256": "c5524012eeda37f085e8ae68a10f5810fe7e770f5dd0109e07bda75b3d0280da"
     },
     {
       "path": "deploy/develop/runtime.env.example",
@@ -675,7 +675,7 @@
     {
       "path": "docs/product/marketing-ops/contracts/changes/CR-061-develop-login-runtime-integration.md",
       "category": "change_proposal",
-      "sha256": "a595517cb90cbe0d5d14dc4f6c8df7274420d9b8cea0e23297dfe7455d33a291"
+      "sha256": "3450ef2916ecefc73b847658417a8dd230e0d29788de199e3a9c49b657473ad8"
     },
     {
       "path": "e2e/develop-hospedado.spec.ts",
@@ -685,7 +685,7 @@
     {
       "path": "e2e/login-aceitacao.spec.ts",
       "category": "runtime_test",
-      "sha256": "c68e2c7bc34827ff290d418ba6845c9a991b796eebb9b4fb38519491ff00c823"
+      "sha256": "54ee3b1ca0f076a015dbf5ac7ea25190c5305692d1aebcbce0f5f7fe76338b1f"
     },
     {
       "path": "packages/infra/src/develop-config.ts",

@@ -165,8 +165,33 @@ export async function hidden(question) {
   });
 }
 
+// Códigos públicos previamente enumerados. Mensagem/stack/cause do driver nunca saem.
+export function adminConnectionCode(error) {
+  const allowed = new Set(['28P01','28000','ENOTFOUND','EAI_AGAIN','ECONNREFUSED','ECONNRESET',
+    'ETIMEDOUT','ENETUNREACH','EHOSTUNREACH','SELF_SIGNED_CERT_IN_CHAIN',
+    'DEPTH_ZERO_SELF_SIGNED_CERT','UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+    'UNABLE_TO_GET_ISSUER_CERT_LOCALLY','CERT_HAS_EXPIRED','ERR_TLS_CERT_ALTNAME_INVALID']);
+  if (allowed.has(error?.code)) return `ADMIN_CONEXAO_FALHOU_${error.code}`;
+  if (['timeout expired','Connection terminated due to connection timeout'].includes(error?.message))
+    return 'ADMIN_CONEXAO_FALHOU_TIMEOUT';
+  return 'ADMIN_CONEXAO_FALHOU_NAO_CLASSIFICADA';
+}
+export async function connectAdmin(admin) {
+  try { await admin.connect(); } catch(error) { deny(adminConnectionCode(error)); }
+}
+export async function checkAdminConnection(admin) {
+  await connectAdmin(admin);
+  try {
+    const result = await admin.query("SELECT current_user = 'postgres' AS expected_identity");
+    if(result.rows.length !== 1 || result.rows[0].expected_identity !== true) deny('ADMIN_IDENTIDADE_DIVERGENTE');
+  } catch(error) {
+    if(error instanceof ProvisionError) throw error;
+    deny('ADMIN_VERIFICACAO_LEITURA_FALHOU');
+  }
+}
+
 async function main() {
-  if (process.argv.length !== 3 || !['--apply-develop','--check-admin-url'].includes(process.argv[2])) deny('USE_APPLY_DEVELOP_OU_CHECK_ADMIN_URL');
+  if (process.argv.length !== 3 || !['--apply-develop','--check-admin-url','--check-admin-connection'].includes(process.argv[2])) deny('USE_APPLY_DEVELOP_OU_CHECK_ADMIN_URL');
   if (!process.stdin.isTTY || !process.stdout.isTTY) deny('TERMINAL_INTERATIVO_NECESSARIO');
   if (process.env.NODE_OPTIONS || process.execArgv.length) deny('OPCOES_DE_DEPURACAO_NAO_PERMITIDAS');
   if (process.argv[2] === '--check-admin-url') {
@@ -175,16 +200,30 @@ async function main() {
     if (!diagnostic.valid) process.exitCode = 1;
     return;
   }
+  if (process.argv[2] === '--check-admin-connection') {
+    const options = adminOptions(await hidden('URL administrativa de DEVELOP (oculta; somente teste de conexão/leitura): '));
+    const require = createRequire(new URL('../../packages/infra/package.json', import.meta.url));
+    let Client;
+    try { ({Client} = require('pg')); } catch { deny('DRIVER_PG_INDISPONIVEL'); }
+    const client = new Client(options);
+    client.on('error',()=>{});
+    try {
+      await checkAdminConnection(client);
+      console.log('ADMIN_CONEXAO_TLS_E_IDENTIDADE_OK_SEM_ALTERACOES');
+    } finally { await client.end().catch(()=>{}); }
+    return;
+  }
   console.log('Destino exclusivo: develop eqpvjydnqbbawpkeizys / Netlify oplyra-develop. Não executa deploy.');
   const options = adminOptions(await hidden('URL administrativa de DEVELOP (oculta, com sslmode=verify-full): '));
-  const token = await hidden('Token temporário da Netlify (oculto): ');
-  if (!token || /\s/.test(token)) deny('TOKEN_INVALIDO');
   const require = createRequire(new URL('../../packages/infra/package.json', import.meta.url));
-  const { Client } = require('pg');
+  let Client;
+  try { ({Client} = require('pg')); } catch { deny('DRIVER_PG_INDISPONIVEL'); }
   const admin = new Client(options);
   admin.on('error', () => {});
   try {
-    await admin.connect();
+    await connectAdmin(admin);
+    const token = await hidden('Token temporário da Netlify (oculto): ');
+    if (!token || /\s/.test(token)) deny('TOKEN_INVALIDO');
     await provision({ admin, api: await netlifyApi(token), phase: message => console.log(message),
       verifyLogin: async (uri) => {
         const url = new URL(uri); url.search = '';

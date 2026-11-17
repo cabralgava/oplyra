@@ -62,3 +62,7 @@ Build e testes do candidato são intermediários, não validação hospedada. N�
 ### ADMIN_URL_INVALIDA: conferir sem nova tentativa de provisionamento
 
 Essa recusa ocorre antes da conexão/API. O modo `node deploy/develop/provision-web-login.mjs --check-admin-url` exige o mesmo Terminal privado/entrada oculta, mas não faz rede ou alterações. Informa somente ADMIN_URL_FORMATO_OK ou ADMIN_URL_CAMPOS_RECUSADOS seguido dos nomes dos campos. Não mostra valores. Só depois de identificar/corrigir a causa repetir --apply-develop. Não tratar senha/URL real no chat; placeholders não são senhas. SSL explícito requer o sufixo ?sslmode=verify-full, sem espaços, aspas externas ou fragmento.
+
+### Diagnóstico da conexão inicial — 17/11/2026
+
+FALHA_SEM_DETALHES_SENSIVEIS relatada após token. A conexão administrativa inicial estava fora da classificação segura de erros. Adicionado --check-admin-connection: TTY/URL oculta/TLS validado, somente conexão e SELECT de identidade, sem escrita/Netlify/token. Erros do driver viram apenas códigos enumerados; código/mensagem/stack/cause desconhecidos nunca são impressos. Não desligar validação TLS para diagnosticar. No provisionamento normal, pedir token só após conectar ao banco. Resultado seguro ADMIN_CONEXAO_TLS_E_IDENTIDADE_OK_SEM_ALTERACOES não é provisionamento. Senha do papel web continua ausente por leitura; causa da falha original ainda não confirmada.33 testes Node aprovados com fakes, sem conexão real do proprietário.

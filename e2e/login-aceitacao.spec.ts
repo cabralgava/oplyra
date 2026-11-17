@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { existsSync } from "node:fs";
 import { entrar, sair, TENANT_A, TENANT_B } from "./ajuda";
 
 // Aceitação do login por HTTP local (OPLYRA_ENV=local): cookie, JWT, expiração, logout e isolamento.
@@ -96,11 +97,15 @@ test.describe("logout", () => {
 });
 
 test.describe("isolamento", () => {
-  test("usuário só da empresa A não acessa nenhuma tela da empresa B", async ({ page }) => {
+  test("usuário de A é recusado nas telas implementadas de B; rotas ainda ausentes retornam 404", async ({ page }) => {
     await entrar(page, "a-owner@local.test");
+    const implementada = (rota: string) => existsSync(new URL(`../apps/web/src/app/e/[tenantId]/${rota}/page.tsx`, import.meta.url));
+    // O candidato de login não publica o MVP ainda sem commit. Não confundir 404 com bypass de autorização.
+    for (const obrigatoria of ["equipe", "marca"]) expect(implementada(obrigatoria)).toBe(true);
     for (const rota of ["equipe", "estrategia", "marca", "execucoes", "campanhas"]) {
-      await page.goto(`/e/${TENANT_B}/${rota}`);
-      await expect(page).toHaveURL(/\/empresas/);
+      const resposta = await page.goto(`/e/${TENANT_B}/${rota}`);
+      if (implementada(rota)) await expect(page).toHaveURL(/\/empresas/);
+      else expect(resposta?.status()).toBe(404);
       await expect(page.getByText("Beta Cloud")).toHaveCount(0);
     }
   });

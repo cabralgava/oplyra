@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-import { TARGET, ROLE_QUERY, inspectAdminUrl, adminOptions, assertRole, scramVerifier, webUrl, provision, netlifyApi } from './provision-web-login.mjs';
+import { TARGET, ROLE_QUERY, inspectAdminUrl, adminConnectionCode, connectAdmin, checkAdminConnection, adminOptions, assertRole, scramVerifier, webUrl, provision, netlifyApi } from './provision-web-login.mjs';
 
 const minimal = () => ({ rolname: TARGET.role, rolcanlogin: true, rolsuper: false, rolinherit: false,
   rolbypassrls: false, rolcreaterole: false, rolcreatedb: false, rolreplication: false,
@@ -178,4 +178,27 @@ test('placeholder nunca é tratado como senha pronta para conectar',()=>{
   const base=`postgresql://postgres.${TARGET.ref}:[YOUR-PASSWORD]@${TARGET.pooler}:5432/postgres?sslmode=verify-full`;
   assert.equal(inspectAdminUrl(base).checks.SEM_PLACEHOLDER,false);
   assert.throws(()=>adminOptions(base),/ADMIN_URL_INVALIDA/);
+});
+
+test('falha inicial mantém só código enumerado, nunca mensagem, stack ou cause',async()=>{
+  const privateValue='synthetic-private-password-and-token';
+  for(const code of ['28P01','ENOTFOUND','ECONNREFUSED','SELF_SIGNED_CERT_IN_CHAIN','UNABLE_TO_VERIFY_LEAF_SIGNATURE']) {
+    const error=Object.assign(new Error(privateValue),{code,cause:new Error(privateValue)});
+    assert.equal(adminConnectionCode(error),`ADMIN_CONEXAO_FALHOU_${code}`);
+    await assert.rejects(connectAdmin({connect:async()=>{throw error;}}),new RegExp(`^ProvisionError: ADMIN_CONEXAO_FALHOU_${code}$`));
+  }
+  for(const error of [new Error(privateValue),{code:privateValue,message:privateValue},null])
+    assert.equal(adminConnectionCode(error),'ADMIN_CONEXAO_FALHOU_NAO_CLASSIFICADA');
+  assert.equal(adminConnectionCode(new Error('timeout expired')),'ADMIN_CONEXAO_FALHOU_TIMEOUT');
+});
+test('diagnóstico de conexão não solicita API/token nem faz SQL de escrita',async()=>{
+  const calls=[];
+  await checkAdminConnection({connect:async()=>calls.push('connect'),query:async sql=>{calls.push(sql);return {rows:[{expected_identity:true}]};}});
+  assert.deepEqual(calls,['connect',"SELECT current_user = 'postgres' AS expected_identity"]);
+});
+test('falha da conexão não executa SQL, e leitura inválida não aprova identidade',async()=>{
+  await assert.rejects(checkAdminConnection({connect:async()=>{throw {code:'28P01'};},query:async()=>assert.fail('SQL após falha')}),/ADMIN_CONEXAO_FALHOU_28P01/);
+  for(const rows of [[],[{expected_identity:false}]])
+    await assert.rejects(checkAdminConnection({connect:async()=>{},query:async()=>({rows})}),/ADMIN_IDENTIDADE_DIVERGENTE/);
+  await assert.rejects(checkAdminConnection({connect:async()=>{},query:async()=>{throw new Error('synthetic-private');}}),/^ProvisionError: ADMIN_VERIFICACAO_LEITURA_FALHOU$/);
 });
