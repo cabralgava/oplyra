@@ -16,5 +16,11 @@ export const PERMISSOES = [
   "member.remove", "entitlement.read", "asset.read", "asset.write",
   // I-03: ler a marca, editar o rascunho e publicar uma versão.
   "brand.read", "brand.write", "brand.publish",
+  // I-04: ler e operar estratégia (campanhas, testes, tarefas). Ativar campanha não publica anúncio.
+  "strategy.read", "strategy.write",
+  // I-02 (runtime local): ver execuções; submeter, cancelar e acionar o kill switch da empresa.
+  "runtime.read", "runtime.operate",
+  // CR-055: mídia somente leitura; gerir conexão não autoriza alterar anúncios.
+  "media.read", "media.connection.manage",
 ] as const;
 export type PermissionKey = (typeof PERMISSOES)[number];
