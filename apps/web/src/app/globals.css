@@ -21,11 +21,13 @@
 * { box-sizing: border-box; }
 body {
   margin: 0; background: var(--bg); color: var(--text);
-  font: 100%/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font: 100%/1.5 var(--font-inter), Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-h1, h2, h3 { font-family: Manrope, Inter, system-ui, sans-serif; letter-spacing: -.02em; margin: 0 0 .5rem; }
-h1 { font-size: 1.6rem; font-weight: 800; }
+h1, h2, h3 { font-family: var(--font-manrope), Manrope, Inter, system-ui, sans-serif; letter-spacing: -.02em; margin: 0 0 .5rem; }
+/* Figma (Campanhas 4:268): título de página em Manrope Bold 32 px; título de seção 20 px (`.titulo-secao`); título de cartão 17 px. */
+h1 { font-size: 1.6rem; font-weight: 700; }
 h2 { font-size: 1.1rem; font-weight: 700; }
+.titulo-secao { font-size: 1.25rem; }
 a { color: var(--accent-hover); }
 main { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; }
@@ -38,7 +40,7 @@ input, select {
 }
 :focus-visible { outline: 3px solid var(--accent-hover); outline-offset: 2px; }
 .btn {
-  font: inherit; font-weight: 600; cursor: pointer; border-radius: 10px; padding: .6rem 1.1rem;
+  font: inherit; font-size: .875rem; font-weight: 600; cursor: pointer; border-radius: 8px; padding: .625rem 1.125rem; /* Figma: Inter SemiBold 14 px, raio 8, 18×10 */
   background: var(--accent); color: #fff; border: 1px solid var(--accent);
   transition: transform 100ms ease-out, background 120ms ease-out;
 }
@@ -112,3 +114,227 @@ label.inline input { width: auto; }
 @media (prefers-contrast: more) {
   .nav-secoes a, fieldset.item, .sucesso { border: 2px solid var(--text-3); }
 }
+
+/* ---- Estratégia e Operação (I-04) -------------------------------------------------------
+   Fieldset tem largura mínima intrínseca por padrão e estoura telas estreitas; textos longos
+   (URL com UTMs, chaves) quebram em qualquer ponto; barras de ações quebram de linha. */
+fieldset { min-inline-size: 0; }
+code, td { overflow-wrap: anywhere; }
+@media (max-width: 40rem) {
+  .entre { flex-wrap: wrap; }
+  .entre > form { flex-wrap: wrap; }
+}
+
+/* ---- Shell: sidebar + topbar (frontend, 13/11/2026) -------------------------------------
+   Medidas (sidebar 15rem, topbar 2.75rem, breakpoint 60rem) são decisões de implementação:
+   os frames do Figma não puderam ser inspecionados (ver ESTADO-FRONT). */
+body:has(.shell) > header { display: none; }
+body:has(.shell) main { max-width: none; margin: 0; padding: 0; }
+.shell { display: grid; grid-template-columns: 13.75rem minmax(0, 1fr); min-height: 100vh; }
+.shell-main { min-width: 0; }
+.shell-conteudo { max-width: 72rem; margin: 0 auto; padding: 1.75rem 1.5rem 4rem; }
+.topbar {
+  display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; min-height: 2.75rem;
+  padding: .5rem 1.5rem; border-bottom: 1px solid var(--line); background: var(--bg);
+}
+.sidebar {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 1rem; padding: 1.1rem .8rem;
+  background: var(--surface); border-right: 1px solid var(--line);
+}
+.sidebar-marca { display: flex; align-items: center; gap: .6rem; padding: 0 .5rem .5rem; }
+.marca-simbolo {
+  width: 1.5rem; height: 1.5rem; border-radius: 50%;
+  background: conic-gradient(from 135deg, #5b3df5, #2f7df6, #22d3c5, #5b3df5);
+  -webkit-mask: radial-gradient(circle, transparent 38%, #000 40%); mask: radial-gradient(circle, transparent 38%, #000 40%);
+}
+.marca-nome { font-family: var(--font-manrope), Manrope, Inter, sans-serif; font-weight: 800; letter-spacing: -.02em; font-size: 1.15rem; }
+.sidebar nav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .2rem; }
+.sidebar nav a {
+  display: flex; align-items: center; gap: .6rem; padding: .6rem .65rem; border-radius: 10px;
+  color: var(--text-2); text-decoration: none; font-weight: 500; font-size: .875rem; /* Figma: Inter Medium 14 px */
+  transition: background 180ms ease-out, color 180ms ease-out;
+}
+.sidebar nav a:hover { background: var(--surface-2); color: var(--text); }
+/* Figma Dashboard 4:9: o item ativo é um preenchimento sólido em gradiente violeta→azul, texto branco. */
+.sidebar nav a.ativo { background: var(--grad-botao); color: #fff; font-weight: 600; }
+.sidebar nav a.ativo .demo-contador { background: rgba(255, 255, 255, .25); }
+.sidebar-troca { margin-top: auto; padding: .6rem .75rem; color: var(--text-3); font-size: .875rem; }
+/* Título de card que também é link: texto principal, sem sublinhado fixo (como o título dos cards de Campanhas);
+   o sublinhado aparece ao passar o mouse ou focar, e o foco mantém o anel padrão. */
+a.link-titulo { color: var(--text); text-decoration: none; }
+a.link-titulo:hover, a.link-titulo:focus-visible { text-decoration: underline; text-underline-offset: .2em; }
+.menu-toggle, .sidebar-fundo { display: none; }
+.menu-toggle {
+  position: fixed; top: .35rem; left: .75rem; z-index: 30; align-items: center; gap: .45rem; cursor: pointer;
+  font: inherit; font-weight: 600; color: var(--text); background: var(--elevated);
+  border: 1px solid var(--line); border-radius: 10px; padding: .4rem .75rem;
+}
+@media (max-width: 60rem) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .menu-toggle { display: inline-flex; }
+  /* O botão Menu é fixo no canto; os controles ficam abaixo dele, alinhados à esquerda. */
+  .topbar { padding: 3.1rem 1rem .5rem; }
+  .topbar > select, .topbar .demo-select, .topbar .demo-select select { min-width: 0; max-width: 100%; }
+  .shell-conteudo { padding: 1.25rem 1rem 3rem; }
+  .sidebar {
+    position: fixed; z-index: 40; inset: 0 auto 0 0; width: min(17rem, 85vw);
+    transform: translateX(-100%); visibility: hidden;
+    transition: transform 220ms ease-out, visibility 0s linear 220ms;
+  }
+  .sidebar.aberta { transform: none; visibility: visible; transition: transform 220ms ease-out; }
+  .sidebar-fundo { display: block; position: fixed; inset: 0; z-index: 35; background: rgba(12, 16, 35, .7); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sidebar { transition: none !important; }
+}
+@media (prefers-contrast: more) {
+  .sidebar, .topbar { border-color: var(--text-3); }
+  .sidebar nav a.ativo { border: 2px solid var(--text-3); }
+}
+
+/* Campanhas (frame 4:268): cartões em 2 colunas no desktop, 1 coluna abaixo de 60rem. */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.camp-grade { list-style: none; margin: .75rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+.camp { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem; display: grid; gap: .6rem; }
+.camp h3 { font-size: 1.05rem; margin: 0; }
+.camp p { margin: 0; }
+.camp-rotulo { color: var(--text-3); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; margin-top: .3rem !important; }
+.etapas { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .35rem; }
+.etapa { font-size: .75rem; padding: .15rem .55rem; border-radius: 6px; border: 1px solid transparent; }
+.etapa.feita { background: var(--accent); color: #fff; }
+.etapa.atual { border-color: var(--accent-hover); color: var(--text); }
+.etapa.futura { background: var(--surface-2); color: var(--text-3); }
+.sigla { text-decoration: none; display: inline-block; min-width: 1.7rem; text-align: center; font-size: .7rem; font-weight: 600; background: var(--elevated); border-radius: 6px; padding: .1rem .25rem; margin-right: .4rem; }
+.camp-metricas { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: .3rem 0; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.camp-metricas > div { padding: .6rem .75rem; border-left: 1px solid var(--line); }
+.camp-metricas > div:first-child { border-left: 0; }
+.camp-metricas dt { color: var(--text-3); font-size: .72rem; }
+.camp-metricas dd { margin: .15rem 0 0; font-weight: 600; }
+@media (max-width: 60rem) { .camp-grade { grid-template-columns: 1fr; } }
+@media (max-width: 30rem) { .camp-metricas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-contrast: more) { .camp, .camp-metricas { border: 2px solid var(--text-3); } }
+
+/* ---- Sistema visual (referências Dashboard/Campanhas/Central, escolhidas pelo proprietário) ----
+   Direção: tema escuro, cartões com raio 16, botão primário em gradiente da marca, abas sublinhadas,
+   selos em pílula com borda, tabelas sóbrias. Adaptação de contraste: o gradiente dos botões vai do
+   violeta ao azul (texto branco legível); o ciano fica para detalhes não textuais. */
+:root {
+  --grad-marca: linear-gradient(135deg, #5b3df5 0%, #2f7df6 52%, #22d3c5 100%);
+  --grad-botao: linear-gradient(135deg, #5b3df5 0%, #3f5cf3 100%);
+  --radius: 16px;
+  --raio-controle: 10px;
+}
+h1 { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2rem); }
+.card { border-radius: var(--radius); }
+.btn { background: var(--grad-botao); border-color: transparent; border-radius: 8px; }
+.btn:hover { background: var(--accent-hover); border-color: transparent; filter: brightness(1.08); }
+.btn.secundario { background: var(--surface-2); border: 1px solid var(--line); }
+.btn.secundario:hover { background: var(--elevated); border-color: var(--text-3); filter: none; }
+input, select, textarea { border-radius: var(--raio-controle); background: var(--bg); transition: border-color 180ms ease-out; }
+input:hover, select:hover, textarea:hover { border-color: var(--text-3); }
+input::placeholder, textarea::placeholder { color: var(--text-3); }
+
+/* Abas (ex.: Marca/Equipe, Visão Geral…): sublinhado no ativo, sem pílulas. */
+.nav-secoes { border-bottom: 1px solid var(--line); }
+.nav-secoes ul { gap: 1.25rem; }
+.nav-secoes a { border: 0; border-radius: 0; padding: .55rem 0; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.nav-secoes a:hover { border-color: var(--text-3); }
+.nav-secoes a.ativo { background: transparent; border-color: var(--accent-hover); }
+
+/* Indicador de ambiente: mesma aparência de um selo, mas NÃO é um selo de estado (`.selo` marca estado de entidade e é
+   usado por seletores de teste; o ambiente tem classe própria). */
+/* Visão de agentes: agente fora do plano fica esmaecido (continua legível); a chave técnica em fonte monoespaçada. */
+.camp.agente-fora { border-style: dashed; }
+/* Grade de agentes: 3 colunas no desktop (como no print), 2 em tablet, 1 no celular. `minmax(0, 1fr)` impede estouro por texto longo. */
+ul.agentes-grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+@media (max-width: 64rem) { ul.agentes-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 40rem) { ul.agentes-grade { grid-template-columns: minmax(0, 1fr); } }
+/* Cards da mesma linha com a mesma altura; selos nunca quebram por dentro (quebram de linha como um todo). */
+ul.agentes-grade { align-items: stretch; }
+.agentes-grade .camp { overflow-wrap: anywhere; height: 100%; }
+.agente-topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem .5rem; }
+.agente-topo .selo { white-space: nowrap; }
+.agente-chave { display: block; margin-top: .6rem; font-size: .75rem; color: var(--text-2); }
+.camp details summary { cursor: pointer; font-size: .875rem; }
+.selo-ambiente { font-size: .75rem; border: 1px solid var(--line); border-radius: 999px; padding: .1rem .6rem; background: var(--elevated); color: var(--text-2); }
+@media (prefers-contrast: more) { .selo-ambiente { border-color: var(--text-3); } }
+
+/* Selos em pílula com borda (estado sempre com texto). */
+.selo { border: 1px solid var(--line); background: transparent; padding: .1rem .6rem; }
+.selo.ok { border-color: rgba(22, 163, 106, .5); background: rgba(22, 163, 106, .12); }
+.selo.pendente { border-color: rgba(245, 158, 11, .5); background: rgba(245, 158, 11, .1); }
+.selo.proibido { border-color: rgba(229, 72, 77, .5); background: rgba(229, 72, 77, .1); }
+
+/* Tabelas: cabeçalho em caixa-alta discreta, linha destacada ao passar/focar. */
+th { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; }
+tbody tr:hover { background: var(--surface-2); }
+/* `position: relative` torna o cartão o bloco de contenção dos filhos absolutos (ex.: `.sr-only` de cabeçalhos de coluna),
+   que senão escapam do recorte do overflow e alongam o documento em telas estreitas. */
+.card:has(> table), .card:has(> .tabela) { overflow-x: auto; position: relative; }
+
+/* Cartão de seção com título em caixa-alta (rótulo "PRECISA DE VOCÊ", "ÚLTIMOS 7 DIAS"). */
+.rotulo-secao { color: var(--text-3); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; margin: 0 0 .5rem; }
+.destaque-grad { border: 1px solid transparent; background: linear-gradient(var(--elevated), var(--elevated)) padding-box, var(--grad-marca) border-box; }
+
+@media (prefers-contrast: more) { .btn { background: var(--accent); border: 2px solid var(--text); } }
+
+/* Dashboard: coluna principal + lateral de indicadores (empilha abaixo de 60rem). */
+.dash { display: grid; grid-template-columns: minmax(0, 1fr) 17rem; gap: 1.5rem; align-items: start; }
+.dash > aside { position: sticky; top: 1rem; }
+.indicadores-lista { margin: 0; }
+.indicadores-lista > div { display: flex; justify-content: space-between; gap: .75rem; padding: .6rem 0; border-top: 1px solid var(--line); }
+.indicadores-lista > div:first-child { border-top: 0; }
+.indicadores-lista dt { color: var(--text-2); font-size: .9rem; }
+.indicadores-lista dd { margin: 0; font-size: .9rem; }
+.nota-pequena { font-size: .8rem; margin: .5rem 0 0; }
+.aba-indisponivel { display: inline-block; padding: .55rem 0; color: var(--text-disabled, #5f6b85); cursor: not-allowed; }
+@media (max-width: 60rem) { .dash { grid-template-columns: minmax(0, 1fr); } .dash > aside { position: static; } }
+
+/* Telas fora do shell (entrar, empresas, convite): cabeçalho com símbolo; formulários estreitos e centrados. */
+.cabecalho-global { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; padding: .9rem 1.25rem; border-bottom: 1px solid var(--line); background: var(--surface); }
+.auth { max-width: 28rem; margin: 2rem auto 0; }
+@media (max-width: 40rem) { .auth { margin-top: .5rem; } }
+
+/* Topbar: seletor de empresa, busca (desabilitada) e selo de ambiente. */
+.seletor-empresa { display: flex; align-items: center; gap: .6rem; padding: .25rem .6rem .25rem .3rem; border: 1px solid var(--line); border-radius: var(--raio-controle); background: var(--surface); text-decoration: none; color: var(--text); }
+.seletor-empresa:hover { border-color: var(--text-3); }
+.seletor-empresa small { display: block; color: var(--text-3); font-size: .72rem; line-height: 1.1; }
+.avatar-empresa { display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--accent); font-weight: 700; font-size: .8rem; }
+.busca-topbar { width: min(20rem, 100%); margin-left: auto; padding: .4rem .7rem; }
+.busca-topbar:disabled { opacity: .6; cursor: not-allowed; }
+@media (max-width: 60rem) { .busca-topbar { margin-left: 0; flex: 1 1 100%; width: 100%; } }
+
+/* Seletor de empresa (details) e componentes de decisão (F-05). */
+.seletor-menu { position: relative; }
+.seletor-menu > summary { list-style: none; cursor: pointer; }
+.seletor-menu > summary::-webkit-details-marker { display: none; }
+.seletor-lista { list-style: none; margin: .35rem 0 0; padding: .35rem; position: absolute; z-index: 20; min-width: 16rem; background: var(--elevated); border: 1px solid var(--line); border-radius: 12px; }
+.seletor-lista a { display: flex; justify-content: space-between; gap: .75rem; padding: .5rem .6rem; border-radius: 8px; color: var(--text); text-decoration: none; }
+.seletor-lista a:hover, .seletor-lista a[aria-current] { background: var(--surface-2); }
+.modal { background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 16px; padding: 1.25rem; max-width: min(32rem, calc(100vw - 2rem)); }
+.modal::backdrop { background: rgba(12, 16, 35, .75); }
+.modal-acoes { justify-content: flex-end; margin-top: 1rem; }
+.painel-lateral { position: fixed; z-index: 25; top: 0; right: 0; bottom: 0; width: min(28rem, 100vw); overflow-y: auto; padding: 1.25rem; background: var(--surface); border-left: 1px solid var(--line); animation: painel-entra 300ms ease-out; }
+@keyframes painel-entra { from { transform: translateX(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .painel-lateral { animation: none; } }
+
+a.btn { text-decoration: none; display: inline-block; }
+
+/* Esqueleto de carregamento e link de salto para o conteúdo (teclado). */
+.skel { background: linear-gradient(90deg, var(--surface) 25%, var(--elevated) 50%, var(--surface) 75%); background-size: 200% 100%; border-radius: 12px; animation: skel-brilho 1.4s ease-in-out infinite; }
+@keyframes skel-brilho { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
+.skip-link { position: absolute; left: -9999px; top: .5rem; z-index: 100; padding: .5rem .9rem; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 600; text-decoration: none; }
+.skip-link:focus { left: .75rem; }
+#conteudo-principal:focus { outline: none; }
+
+.card.destaque { border-left: 3px solid var(--accent-hover); background: var(--elevated); }
+
+/* Indicadores sem dados: nunca zero, sempre "Indisponível" (guia §Critérios de aceite). */
+.metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .75rem; }
+.metrica { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; }
+.metrica .rotulo { color: var(--text-3); font-size: .85rem; margin: 0; }
+.metrica .valor { font-weight: 500; font-size: 1.5rem; margin: .25rem 0; color: var(--text-3); }
+.metrica .nota { font-size: .8rem; color: var(--text-3); margin: 0; }
