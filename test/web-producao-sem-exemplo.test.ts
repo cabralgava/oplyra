@@ -14,10 +14,18 @@ describe("tela oficial de Produção", () => {
     expect(codigo).not.toMatch(/ProducaoExemplo|producao-exemplo/);
   });
 
-  it("mantém o módulo indisponível com as três áreas prometidas, sem filhos simulados", () => {
-    expect(codigo).toContain("<ModuloIndisponivel");
+  it("mostra o estado indisponível acessível, nesta página, com as três áreas prometidas", () => {
+    expect(codigo).toContain('role="status"');
+    expect(codigo).toContain("Ainda não disponível");
+    expect(codigo).toContain("Nenhum dado é simulado aqui");
+    expect(codigo).toMatch(/<h1>Produção<\/h1>/);
     for (const rotulo of ["Entregas", "Ativos", "Imagens"]) expect(codigo).toContain(`rotulo: "${rotulo}"`);
-    expect(codigo).not.toMatch(/<\/ModuloIndisponivel>/);
+    expect(codigo).not.toMatch(/Exemplo|Dados sintéticos/);
+  });
+
+  it("só importa módulos presentes na base (o pedido contém apenas página e teste)", () => {
+    const imports = [...codigo.matchAll(/from\s+"([^"]+)"/g)].map((m) => m[1]);
+    expect(imports).toEqual(["../../../../lib/session"]);
   });
 
   it("continua exigindo o contexto autenticado da empresa", () => {
