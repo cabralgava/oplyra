@@ -1,6 +1,7 @@
 // CR068: prova do schema reconciliado, sem SDK/provedor e sem estado persistente nas fixtures.
 import {afterAll,describe,expect,it} from 'vitest';
 import {randomUUID} from 'node:crypto';
+import {readFileSync} from 'node:fs';
 import type {PoolClient} from 'pg';
 import {criarUnitOfWork} from '../src/db.ts';
 const admin=criarUnitOfWork({connectionString:'postgresql://postgres:postgres@127.0.0.1:54422/postgres',max:1});
@@ -54,9 +55,15 @@ describe('CR068: mídia em PostgreSQL isolado, com papéis reais',()=>{
   await c.query('reset role');
   expect((await c.query('select count(*)::int as n from media.connections where tenant_id=$1',[f.a])).rows[0].n).toBe(0);
  }));
- it('índices das três FKs existem e as onze funções já têm hardening antes da suíte',()=>isolated(async(c)=>{
+ it('índices das três FKs existem; CI exige hardening prévio e local valida sob rollback',()=>isolated(async(c)=>{
   const indexes=(await c.query("select count(*)::int as n from pg_class x join pg_namespace n on n.oid=x.relnamespace join pg_index i on i.indexrelid=x.oid where n.nspname='media' and x.relname=any($1::text[]) and i.indisvalid",[['media_account_claims_tenant_platform','media_campaign_links_campaign','media_sync_jobs_account']])).rows[0].n;
   expect(indexes).toBe(3);
+  // Na CI nenhuma preparação ocorre aqui: a asserção deve detectar um bootstrap omitido.
+  // Fora do runner, o teste continua reproduzível após db:reset, sem alterar o banco ao terminar.
+  if(process.env.GITHUB_ACTIONS!=='true') {
+   for(const name of ['20261116202506_harden_application_function_search_paths.sql','20261116211348_harden_domain_validator_search_paths.sql'])
+    await c.query(readFileSync(new URL('../../../deploy/develop/supabase/migrations/'+name,import.meta.url),'utf8'));
+  }
   const signatures=['app.current_user_id()','app.current_tenant()','app.is_worker()','app.is_operator()','app.tenant_is_authorized()','app.forbid_tenant_change()',
    'brand.evidence_valid(jsonb)','strategy.kpis_valid(jsonb)','strategy.method_valid(jsonb)','strategy.method_complete(jsonb)','strategy.variants_valid(jsonb)'];
   const rows=(await c.query('select proconfig from pg_proc where oid=any($1::regprocedure[])',[signatures])).rows;
