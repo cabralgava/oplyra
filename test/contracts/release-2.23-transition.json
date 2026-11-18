@@ -970,6 +970,16 @@
       "path": "test/web-shell-empresa.test.ts",
       "sha256": "9f710382667ac160993c6805c38b2b7d2a8562e4694dd6628fc3e0883e407c51",
       "category": "runtime_test"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/producao/page.tsx",
+      "sha256": "c409213fce6e9e46ea511d1bc077949a3254d67c81339e7945e8c46ff3a003c7",
+      "category": "runtime_component"
+    },
+    {
+      "path": "test/web-producao-sem-exemplo.test.ts",
+      "sha256": "a3f8082b06eff1bbbbe56a62c65cbd93d996673edcc34f95657c1628b076b067",
+      "category": "runtime_test"
     }
   ]
 }
