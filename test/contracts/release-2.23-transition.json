@@ -980,6 +980,11 @@
       "path": "test/web-producao-sem-exemplo.test.ts",
       "sha256": "65001b84a226a2a2d9eedacef19da82b160cb1cf1c582f9eb2d975c41a2c7f71",
       "category": "runtime_test"
+    },
+    {
+      "path": "test/web-estrategia-mensagens.test.ts",
+      "sha256": "a33127394bb48323da1545e1de60b00cfa7d4e2f83e3963aaa0a413bbe91c76e",
+      "category": "runtime_test"
     }
   ]
 }
