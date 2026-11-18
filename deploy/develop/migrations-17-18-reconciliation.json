@@ -1,0 +1,29 @@
+{
+  "schema": "oplyra-develop-migration-reconciliation/1",
+  "projectRef": "eqpvjydnqbbawpkeizys",
+  "mode": "history_only_no_apply",
+  "decision": "CR-067",
+  "entries": [
+    {
+      "source": "supabase/migrations/20261111000017_strategy.sql",
+      "sourceVersion": "20261111000017",
+      "remoteVersion": "20261116211241",
+      "remoteName": "strategy",
+      "sha256": "f925e1ed287cf05f674e07d0f82cc3f8a946aa693465fb38bc236c1ebdd5421c"
+    },
+    {
+      "source": "supabase/migrations/20261111000018_runtime.sql",
+      "sourceVersion": "20261111000018",
+      "remoteVersion": "20261116211251",
+      "remoteName": "runtime",
+      "sha256": "583533d6e3a036cf4cda991a13509bb1ac943e657cbe1b2ec1beb90fbb65f2a8"
+    }
+  ],
+  "excluded": [
+    "remote_schema",
+    "harden_application_function_search_paths",
+    "harden_domain_validator_search_paths",
+    "media_connection_read_cr055_v1",
+    "media_fk_indexes_cr055_v1"
+  ]
+}
