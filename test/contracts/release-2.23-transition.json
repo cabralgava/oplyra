@@ -1005,6 +1005,11 @@
       "path": "test/develop-private-tools.test.ts",
       "category": "runtime_test",
       "sha256": "5f8fd70e8a4f6a42cd060a13d436a8164cdf80f54487d54b4206d4b75524be36"
+    },
+    {
+      "path": "test/web-estrategia-mensagens.test.ts",
+      "sha256": "a33127394bb48323da1545e1de60b00cfa7d4e2f83e3963aaa0a413bbe91c76e",
+      "category": "runtime_test"
     }
   ]
 }
