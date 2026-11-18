@@ -1,0 +1,21 @@
+-- CR055: metadados de segurança no Supabase local, sem dados reais e com rollback.
+begin;
+select plan(16);
+select has_schema('media','schema privado de mídia existe');
+select is((select count(*)::int from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='media' and c.relkind='r'),10,'dez tabelas de mídia');
+select is((select count(*)::int from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='media' and c.relkind='r' and c.relrowsecurity and c.relforcerowsecurity),10,'RLS habilitada e forçada nas dez');
+select ok(not has_schema_privilege('authenticated','media','usage'),'browser não usa schema privado');
+select ok(not has_table_privilege('authenticated','media.credentials','select'),'usuário não lê credenciais diretamente');
+select ok(not has_table_privilege('oplyra_worker_exec','media.credentials','select'),'worker não lê credenciais diretamente');
+select ok(not has_function_privilege('anon','app.media_command(uuid,text,jsonb)','execute'),'anon sem comando');
+select ok(has_function_privilege('authenticated','app.media_command(uuid,text,jsonb)','execute'),'usuário tem fronteira humana');
+select ok(not has_function_privilege('authenticated','app.media_worker(uuid,text,jsonb)','execute'),'usuário não tem fronteira worker');
+select ok(has_function_privilege('oplyra_worker_exec','app.media_worker(uuid,text,jsonb)','execute'),'worker tem fronteira própria');
+select ok(not has_function_privilege('oplyra_worker_exec','app.media_command(uuid,text,jsonb)','execute'),'worker não administra conexão');
+select is((select array_agg(role_key order by role_key)::text from core.role_permissions where permission_key='media.connection.manage'),'{admin,owner}','só owner/admin administram');
+select is((select count(*)::int from core.role_permissions where permission_key='media.read'),4,'quatro papéis existentes leem');
+select is((select count(*)::int from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='app' and p.proname like 'media_%' and p.prosecdef and p.proconfig @> array['search_path=pg_catalog, pg_temp']),3,'três funções privilegiadas com search_path fixo');
+select ok(not has_function_privilege('authenticated','app.media_authorize(uuid,text,uuid)','execute'),'helper de autorização não é API');
+select throws_ok($$select app.media_command('f1000000-0000-4000-8000-000000000001','connections.list')$$,'42501','MEDIA_FORBIDDEN','papel administrativo sem contexto não usa serviço');
+select * from finish();
+rollback;

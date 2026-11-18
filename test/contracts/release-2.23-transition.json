@@ -9,7 +9,7 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "c276d8caf4c6c53085adfa415af731f006e79991c897fb3c6dac79db2ac5a15d"
+      "sha256": "2ffee1817a03a475d862c7e607b620c5ccb0dd89ef7a7a16cd91979df15dc2c7"
     },
     {
       "path": "CLAUDE.md",
@@ -165,7 +165,7 @@
     },
     {
       "path": "test/contracts/cross-registry-validation.ts",
-      "sha256": "f2476d14699b313969b3d505775ab1d570f8e6ac07df3044c4acab743593c42c"
+      "sha256": "9768c335a2e1bf256a5490059b838ece64a0ad78a7714ed238eaef26a6cc3aa0"
     },
     {
       "path": "test/developer-harness.supply-chain.test.ts",
@@ -449,7 +449,7 @@
     {
       "path": "test/contracts/contract-registry-release-2.23.contract.test.ts",
       "category": "contract_test",
-      "sha256": "bd350d95f8b701f6ff5fddf4752e004267d0d8df023e212e5ef7b5cbcc9e983c"
+      "sha256": "34a69a24a5c94b678a71d89231d2cad680d6825ceca48085c24b8f81bf7a8e37"
     },
     {
       "path": "test/contracts/cr-033-current-content.test.ts",
@@ -1095,6 +1095,101 @@
       "path": "docs/product/marketing-ops/contracts/changes/CR-067-develop-migrations-17-18-reconciliation.md",
       "category": "change_proposal",
       "sha256": "bf673b9834dea6ecb754d79e168cc6331e88fd4cd21f3ab00b16f740af0a64f2"
+    },
+    {
+      "path": "supabase/migrations/20261116210007_media_connection_read.sql",
+      "category": "database_migration",
+      "sha256": "7f10ffeb250d4b44badb058825414b921279e43db7b481ca1a2bffcc7bc87b85"
+    },
+    {
+      "path": "supabase/migrations/20261116214433_media_fk_indexes.sql",
+      "category": "database_migration",
+      "sha256": "6ae6fa4ae3041ff1805bd01e7ea1b1e7a3b81966860b4b0ff0ad8ee9d33c8df5"
+    },
+    {
+      "path": "supabase/tests/media.test.sql",
+      "category": "database_test",
+      "sha256": "e90c8e7662e485d3ede1e537f7bac18b55960334007c51df511e75092480db28"
+    },
+    {
+      "path": "packages/infra/test/develop-search-path.integration.test.ts",
+      "category": "runtime_test",
+      "sha256": "3f5b8f29454fc1af26c86a84c22f5a8150d6804665eba0f981aaa9f856a63115"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-055-google-meta-ads-connection-and-read-contracts-proposal.md",
+      "category": "change_proposal",
+      "sha256": "3a83e006f8b54fc696d9c3aeb4752c4b6c7404d0028ede322480d16834abcc3c"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-058-develop-function-search-path-hardening.md",
+      "category": "change_proposal",
+      "sha256": "ccdffb105e41fd1ef1b4b7356d6325688dfdd9db1da6a4e1229276c56d1f8bbf"
+    },
+    {
+      "path": "deploy/develop/prepare-ci-security.mjs",
+      "category": "development_tool",
+      "sha256": "5d14d54b74fa339864915667f584691468fd4501d418dd59731d2642a9e384ac"
+    },
+    {
+      "path": "test/develop-ci-security.test.ts",
+      "category": "runtime_test",
+      "sha256": "ea3365d130f2a8a3ed55faae8de0b7891028c1de40d4ec573f494d81b057e99f"
+    },
+    {
+      "path": "packages/infra/test/media-database-reconciliation.integration.test.ts",
+      "category": "runtime_test",
+      "sha256": "729df11ac0f028f3ea1f3f6a18563874c12332c3984d77b47b1f6f6473a32270"
+    },
+    {
+      "path": "deploy/develop/migrations-19-20-security-reconciliation.json",
+      "category": "environment_plan",
+      "sha256": "912ebef1ee2172b7097cb69aaa934071bcf8c4c3b45f760db8d7b9dbe898f149"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-068-develop-media-security-reconciliation.md",
+      "category": "change_proposal",
+      "sha256": "5964ec9de6c63236c311a3edd58849d1a246592cbeaafd53ce66c491aa97782a"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-054-paid-media-execution-and-business-presence-documentation.md",
+      "category": "change_proposal",
+      "sha256": "b25e80cd01329db12c0ed362fababfb7456e1de447c0df20522e8dd8d733d239"
+    },
+    {
+      "path": "docs/product/marketing-ops/integrations/PAID-MEDIA-AND-BUSINESS-PRESENCE-PLAN.md",
+      "category": "contract_documentation",
+      "sha256": "c89674e62caf766a1b61f540df71dda0831b01bf2357d12716d8421d990e6c5e"
+    },
+    {
+      "path": "docs/product/marketing-ops/integrations/CR-055-IMPLEMENTATION-HANDOFF.md",
+      "category": "contract_documentation",
+      "sha256": "d148ad9c81851d0800d0f8d01b126fe21939be675a9de22899716a7f154ba5dd"
+    },
+    {
+      "path": "docs/product/marketing-ops/integrations/CR-055-FRONTEND-CONTRACT.ts",
+      "category": "contract_documentation",
+      "sha256": "e5a51c2583bf7ab39923136073be3aaf6e058cbb3ed267d68a6ed5b5a2f7d9eb"
+    },
+    {
+      "path": "docs/decisions/ADR-0011-credenciais-de-anuncios-cifradas.md",
+      "category": "contract_documentation",
+      "sha256": "c66dffe02942d8a5fba1a0c5a692ac82dcbc63d0079bb28de63678b379a4c532"
+    },
+    {
+      "path": "packages/core/src/application/ad-platform-api.ts",
+      "category": "runtime_component",
+      "sha256": "eecf71d4a230d7dae9f6de7c58fd4530af6ffcf6f17f1908e1b3d2889834e46e"
+    },
+    {
+      "path": "packages/core/src/domain/metric-confidence.ts",
+      "category": "runtime_component",
+      "sha256": "7803e18dbad7caa066cc6db3aeb754f109064cbffdc0a8a52b6b84fa09317750"
+    },
+    {
+      "path": "packages/testing/test/metric-confidence.test.ts",
+      "category": "runtime_test",
+      "sha256": "1eaa47b963be641e181049ca4ed4509b95dbbd6f680c6d49c117a1c354b02799"
     }
   ]
 }

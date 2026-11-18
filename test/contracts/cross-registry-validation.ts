@@ -44,7 +44,50 @@ export function runCrossRegistryValidation(root: string, profile: "2.22" | "2.23
     {source: strategy, sourceVersion: "20261111000017", remoteVersion: "20261116211241", remoteName: "strategy", sha256: strategyHash},
     {source: runtime, sourceVersion: "20261111000018", remoteVersion: "20261116211251", remoteName: "runtime", sha256: runtimeHash},
   ];
-  const expected = [...legacy.map((a: {path: string}) => a.path), CR028_MIGRATION, brand, strategy, runtime].sort();
+  const securityMapPath = "deploy/develop/migrations-19-20-security-reconciliation.json";
+  const securityDecision = `${CONTRACTS_DIR}/changes/CR-068-develop-media-security-reconciliation.md`;
+  const mediaDecision = `${CONTRACTS_DIR}/changes/CR-055-google-meta-ads-connection-and-read-contracts-proposal.md`;
+  const hardeningDecision = `${CONTRACTS_DIR}/changes/CR-058-develop-function-search-path-hardening.md`;
+  const securityEntries = [
+  {
+    "source": "supabase/migrations/20261116210007_media_connection_read.sql",
+    "sourceVersion": "20261116210007",
+    "remoteVersion": "20261116214247",
+    "remoteName": "media_connection_read_cr055_v1",
+    "sha256": "7f10ffeb250d4b44badb058825414b921279e43db7b481ca1a2bffcc7bc87b85",
+    "ci": "canonical_migration"
+  },
+  {
+    "source": "supabase/migrations/20261116214433_media_fk_indexes.sql",
+    "sourceVersion": "20261116214433",
+    "remoteVersion": "20261116214625",
+    "remoteName": "media_fk_indexes_cr055_v1",
+    "sha256": "6ae6fa4ae3041ff1805bd01e7ea1b1e7a3b81966860b4b0ff0ad8ee9d33c8df5",
+    "ci": "canonical_migration"
+  },
+  {
+    "source": "deploy/develop/supabase/migrations/20261116202506_harden_application_function_search_paths.sql",
+    "sourceVersion": "20261116202506",
+    "remoteVersion": "20261116211333",
+    "remoteName": "harden_application_function_search_paths",
+    "sha256": "1eb1ff59a19625fac34f73371e1dee1224f9b6cfe4087f37b8050b1312d26908",
+    "ci": "local_ci_overlay"
+  },
+  {
+    "source": "deploy/develop/supabase/migrations/20261116211348_harden_domain_validator_search_paths.sql",
+    "sourceVersion": "20261116211348",
+    "remoteVersion": "20261116211501",
+    "remoteName": "harden_domain_validator_search_paths",
+    "sha256": "a65156b4e48fb3176997290e05630a0da2e41602408f4ad09debaeb53878881a",
+    "ci": "local_ci_overlay"
+  }
+];
+  const securityMap = json(securityMapPath);
+  const mediaFiles = securityEntries.filter((e) => e.ci === "canonical_migration").map((e) => e.source);
+  const securityBootstrap = "deploy/develop/prepare-ci-security.mjs";
+  const ci = text(".github/workflows/ci.yml");
+  const rolesStep = ci.indexOf("run: pnpm db:roles"), securityStep = ci.indexOf("run: node deploy/develop/prepare-ci-security.mjs"), verifyStep = ci.indexOf("run: pnpm verificar");
+  const expected = [...legacy.map((a: {path: string}) => a.path), CR028_MIGRATION, brand, strategy, runtime, ...mediaFiles].sort();
   const actual = readdirSync(join(root, "supabase/migrations")).filter((p) => p.endsWith(".sql")).map((p) => `supabase/migrations/${p}`).sort();
   const changed = legacy.filter((a: {path: string; sha256: string}) => !existsSync(join(root, a.path)) || sha256File(root, a.path) !== a.sha256).map((a: {path: string}) => a.path);
   replace("FROZEN-migrations-000001-000014", {
@@ -57,6 +100,13 @@ export function runCrossRegistryValidation(root: string, profile: "2.22" | "2.23
     reconciliationAuthorized: text(reconciliationDecision).includes("**Status:** `approved`") && text(reconciliationDecision).includes("`develop_history_reconciliation_no_apply`"),
     reconciliationTarget: map.schema === "oplyra-develop-migration-reconciliation/1" && map.projectRef === "eqpvjydnqbbawpkeizys" && map.mode === "history_only_no_apply" && map.decision === "CR-067",
     reconciliationExact: JSON.stringify(map.entries) === JSON.stringify(expectedEntries),
+    mediaSecurityBytes: securityEntries.every((e) => existsSync(join(root, e.source)) && sha256File(root, e.source) === e.sha256),
+    mediaAuthority: text(mediaDecision).includes("**Status:** `approved`") && text(mediaDecision).includes("**Contract version:** `1.0`"),
+    hardeningAuthority: text(hardeningDecision).includes("**Estado de execução:** aplicado somente em develop"),
+    securityAuthority: text(securityDecision).includes("**Status:** `approved`") && text(securityDecision).includes("`develop_history_reconciliation_no_apply`"),
+    securityTarget: securityMap.schema === "oplyra-develop-migration-reconciliation/1" && securityMap.projectRef === "eqpvjydnqbbawpkeizys" && securityMap.mode === "history_only_no_apply" && securityMap.decision === "CR-068",
+    securityExact: JSON.stringify(securityMap.entries) === JSON.stringify(securityEntries),
+    isolatedCiBootstrap: rolesStep > 0 && securityStep > rolesStep && verifyStep > securityStep && existsSync(join(root, securityBootstrap)),
   });
   const priorAi = result.checks.find((c) => c.id === "DOCS-cr030-product-ai-alignment")!.details;
   const updates = text("docs/product/marketing-ops/ATUALIZACOES.md");
@@ -90,7 +140,7 @@ export function runCrossRegistryValidation(root: string, profile: "2.22" | "2.23
     switchNotActivated: json(".claude/delegated-delivery.json").delegatedDelivery === false,
   });
   // As novas entradas também são entradas verificáveis; outputs/receitas da release nunca entram aqui.
-  for (const p of [brand, strategy, runtime, strategyDecision, runtimeDecision, reconciliation, reconciliationDecision, "AGENTS.md", "docs/harness/POLITICA-REVISAO-RESPONSAVEL-UNICO.md",
+  for (const p of [brand, strategy, runtime, strategyDecision, runtimeDecision, reconciliation, reconciliationDecision, securityMapPath, securityDecision, mediaDecision, hardeningDecision, securityBootstrap, ".github/workflows/ci.yml", ...securityEntries.map((e) => e.source), "AGENTS.md", "docs/harness/POLITICA-REVISAO-RESPONSAVEL-UNICO.md",
     `${CONTRACTS_DIR}/changes/CR-034-brand-os-package-entries.md`, `${CONTRACTS_DIR}/changes/CR-041-single-owner-review-policy.md`,
     "scripts/claude-git.mjs", "scripts/claude-gates.mjs", ".github/CODEOWNERS", ".github/pull_request_template.md", ".claude/delegated-delivery.json"]) {
     if (!result.inputs.some((i) => i.path === p)) result.inputs.push({path: p, sha256: sha256File(root, p), evidenceLevel: "direct"});

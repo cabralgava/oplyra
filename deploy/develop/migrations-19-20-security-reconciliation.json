@@ -1,0 +1,43 @@
+{
+  "schema": "oplyra-develop-migration-reconciliation/1",
+  "projectRef": "eqpvjydnqbbawpkeizys",
+  "mode": "history_only_no_apply",
+  "decision": "CR-068",
+  "entries": [
+    {
+      "source": "supabase/migrations/20261116210007_media_connection_read.sql",
+      "sourceVersion": "20261116210007",
+      "remoteVersion": "20261116214247",
+      "remoteName": "media_connection_read_cr055_v1",
+      "sha256": "7f10ffeb250d4b44badb058825414b921279e43db7b481ca1a2bffcc7bc87b85",
+      "ci": "canonical_migration"
+    },
+    {
+      "source": "supabase/migrations/20261116214433_media_fk_indexes.sql",
+      "sourceVersion": "20261116214433",
+      "remoteVersion": "20261116214625",
+      "remoteName": "media_fk_indexes_cr055_v1",
+      "sha256": "6ae6fa4ae3041ff1805bd01e7ea1b1e7a3b81966860b4b0ff0ad8ee9d33c8df5",
+      "ci": "canonical_migration"
+    },
+    {
+      "source": "deploy/develop/supabase/migrations/20261116202506_harden_application_function_search_paths.sql",
+      "sourceVersion": "20261116202506",
+      "remoteVersion": "20261116211333",
+      "remoteName": "harden_application_function_search_paths",
+      "sha256": "1eb1ff59a19625fac34f73371e1dee1224f9b6cfe4087f37b8050b1312d26908",
+      "ci": "local_ci_overlay"
+    },
+    {
+      "source": "deploy/develop/supabase/migrations/20261116211348_harden_domain_validator_search_paths.sql",
+      "sourceVersion": "20261116211348",
+      "remoteVersion": "20261116211501",
+      "remoteName": "harden_domain_validator_search_paths",
+      "sha256": "a65156b4e48fb3176997290e05630a0da2e41602408f4ad09debaeb53878881a",
+      "ci": "local_ci_overlay"
+    }
+  ],
+  "excluded": [
+    "remote_schema"
+  ]
+}

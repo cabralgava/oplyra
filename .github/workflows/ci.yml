@@ -148,6 +148,9 @@ jobs:
       - name: Configure local database roles
         run: pnpm db:roles
 
+      - name: Prepare security overlays in disposable CI database
+        run: node deploy/develop/prepare-ci-security.mjs
+
       - name: Run complete verification
         run: pnpm verificar
 
