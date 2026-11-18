@@ -165,7 +165,7 @@
     },
     {
       "path": "test/contracts/cross-registry-validation.ts",
-      "sha256": "7c4ffc1a2c2e456a2760d139f7b3ecc8ad3734f319c151c102e9fecf7eb37d3f"
+      "sha256": "f2476d14699b313969b3d505775ab1d570f8e6ac07df3044c4acab743593c42c"
     },
     {
       "path": "test/developer-harness.supply-chain.test.ts",
@@ -449,7 +449,7 @@
     {
       "path": "test/contracts/contract-registry-release-2.23.contract.test.ts",
       "category": "contract_test",
-      "sha256": "60c5643030d0b7043bcade080d7139c341ba57fcb534445d34abdcfc5549d2a3"
+      "sha256": "bd350d95f8b701f6ff5fddf4752e004267d0d8df023e212e5ef7b5cbcc9e983c"
     },
     {
       "path": "test/contracts/cr-033-current-content.test.ts",
@@ -1010,6 +1010,91 @@
       "path": "test/web-estrategia-mensagens.test.ts",
       "sha256": "a33127394bb48323da1545e1de60b00cfa7d4e2f83e3963aaa0a413bbe91c76e",
       "category": "runtime_test"
+    },
+    {
+      "path": "supabase/migrations/20261111000017_strategy.sql",
+      "category": "database_migration",
+      "sha256": "f925e1ed287cf05f674e07d0f82cc3f8a946aa693465fb38bc236c1ebdd5421c"
+    },
+    {
+      "path": "supabase/migrations/20261111000018_runtime.sql",
+      "category": "database_migration",
+      "sha256": "583533d6e3a036cf4cda991a13509bb1ac943e657cbe1b2ec1beb90fbb65f2a8"
+    },
+    {
+      "path": "supabase/tests/strategy.test.sql",
+      "category": "database_test",
+      "sha256": "701f2599675ebff322f1e5f8171b0ee01e31eddc8b18fc4a8441d3fd9238f2d7"
+    },
+    {
+      "path": "supabase/tests/runtime.test.sql",
+      "category": "database_test",
+      "sha256": "12b136b5c69777f5295e589174905af96b9b729ec69b6fdb1ef06025a682929b"
+    },
+    {
+      "path": "supabase/tests/strategy_update_cross_tenant.test.sql",
+      "category": "database_test",
+      "sha256": "56507ebb98d4c265383d2473d1203e0b7d231622502b9f9e1ce307e708acbe63"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-042-i04-local-strategy-migration.md",
+      "category": "change_proposal",
+      "sha256": "e63cf82647e9b079a9be3077f027ec3220dfc2d4dc032233aeeb4a75d09c6163"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-043-i02-local-runtime-migration.md",
+      "category": "change_proposal",
+      "sha256": "a415e65bd2b7150eebbaa51adc9a9e92964658505f92de9ce29d84590d406140"
+    },
+    {
+      "path": "packages/testing/src/strategy.ts",
+      "category": "runtime_test",
+      "sha256": "cdb1d6610c27198d8bc06aca90a9e92bf13c92c36784669d0a5724cc90c6a1c7"
+    },
+    {
+      "path": "packages/testing/src/runtime.ts",
+      "category": "runtime_test",
+      "sha256": "21529b7609b6e83470f0827ab0885fac126db122b86692907fddf84a5bfd1a01"
+    },
+    {
+      "path": "packages/testing/test/strategy-domain.test.ts",
+      "category": "runtime_test",
+      "sha256": "6ce243ca6c3e48f262985d8dc5dbc3e79dbe5b0fac432b8ab6a1ed11c955fc89"
+    },
+    {
+      "path": "packages/testing/test/strategy-casos-de-uso.test.ts",
+      "category": "runtime_test",
+      "sha256": "ad1ab1a77828f44c6941fc84e821d59ab0601b23719b06367f12940354762020"
+    },
+    {
+      "path": "packages/testing/test/strategy-objetivo-teste-tarefa.test.ts",
+      "category": "runtime_test",
+      "sha256": "386b88917fe11447924b554296090e7148cdda8ffa25cbae7416f31170154008"
+    },
+    {
+      "path": "packages/testing/test/runtime-tst-12-13-14.test.ts",
+      "category": "runtime_test",
+      "sha256": "f37843e50888db305b808a9cc3538b36e22e222f2bd87e20899a4fbdf881e2b5"
+    },
+    {
+      "path": "packages/infra/test/strategy.integration.test.ts",
+      "category": "runtime_test",
+      "sha256": "cf50fbb6e281fb571317d1cc00675023a23ede6e8596bfdafea4f0d039e76ce5"
+    },
+    {
+      "path": "packages/infra/test/runtime.integration.test.ts",
+      "category": "runtime_test",
+      "sha256": "b0e67d24f5b9632aa5744686ce74a8f494488933f2ac5f0813ac8f8fc31bdde2"
+    },
+    {
+      "path": "deploy/develop/migrations-17-18-reconciliation.json",
+      "category": "environment_plan",
+      "sha256": "63200c8099afb73a526fe8f5f61c731897145a431f3909027ab667df403d0ca1"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-067-develop-migrations-17-18-reconciliation.md",
+      "category": "change_proposal",
+      "sha256": "bf673b9834dea6ecb754d79e168cc6331e88fd4cd21f3ab00b16f740af0a64f2"
     }
   ]
 }

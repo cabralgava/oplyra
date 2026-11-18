@@ -28,7 +28,23 @@ export function runCrossRegistryValidation(root: string, profile: "2.22" | "2.23
     ...m17.artifacts.filter((a: {path: string}) => /^supabase\/migrations\/\d+_.*\.sql$/.test(a.path))];
   const m22 = json(`${CONTRACTS_DIR}/contract-registry-manifest-v2.22.json`);
   const brand = "supabase/migrations/20261004000016_brand_os.sql";
-  const expected = [...legacy.map((a: {path: string}) => a.path), CR028_MIGRATION, brand].sort();
+  const strategy = "supabase/migrations/20261111000017_strategy.sql";
+  const runtime = "supabase/migrations/20261111000018_runtime.sql";
+  const strategyDecision = `${CONTRACTS_DIR}/changes/CR-042-i04-local-strategy-migration.md`;
+  const runtimeDecision = `${CONTRACTS_DIR}/changes/CR-043-i02-local-runtime-migration.md`;
+  const reconciliation = "deploy/develop/migrations-17-18-reconciliation.json";
+  const reconciliationDecision = `${CONTRACTS_DIR}/changes/CR-067-develop-migrations-17-18-reconciliation.md`;
+  const strategyHash = "f925e1ed287cf05f674e07d0f82cc3f8a946aa693465fb38bc236c1ebdd5421c";
+  const runtimeHash = "583533d6e3a036cf4cda991a13509bb1ac943e657cbe1b2ec1beb90fbb65f2a8";
+  const approvedHash = (p: string, hash: string) => existsSync(join(root, p))
+    && text(p).includes("**Status:** `approved`")
+    && text(p).includes("**Migration SHA-256:** `" + hash + "`");
+  const map = json(reconciliation);
+  const expectedEntries = [
+    {source: strategy, sourceVersion: "20261111000017", remoteVersion: "20261116211241", remoteName: "strategy", sha256: strategyHash},
+    {source: runtime, sourceVersion: "20261111000018", remoteVersion: "20261116211251", remoteName: "runtime", sha256: runtimeHash},
+  ];
+  const expected = [...legacy.map((a: {path: string}) => a.path), CR028_MIGRATION, brand, strategy, runtime].sort();
   const actual = readdirSync(join(root, "supabase/migrations")).filter((p) => p.endsWith(".sql")).map((p) => `supabase/migrations/${p}`).sort();
   const changed = legacy.filter((a: {path: string; sha256: string}) => !existsSync(join(root, a.path)) || sha256File(root, a.path) !== a.sha256).map((a: {path: string}) => a.path);
   replace("FROZEN-migrations-000001-000014", {
@@ -36,6 +52,11 @@ export function runCrossRegistryValidation(root: string, profile: "2.22" | "2.23
     authorizedSet: JSON.stringify(expected) === JSON.stringify(actual),
     migration15Preserved: sha256File(root, CR028_MIGRATION) === m22.artifacts.find((a: {path: string}) => a.path === CR028_MIGRATION)?.sha256,
     brandAuthorized: text(`${CONTRACTS_DIR}/changes/CR-034-brand-os-package-entries.md`).includes(brand),
+    strategyApprovedBytes: approvedHash(strategyDecision, strategyHash) && existsSync(join(root, strategy)) && sha256File(root, strategy) === strategyHash,
+    runtimeApprovedBytes: approvedHash(runtimeDecision, runtimeHash) && existsSync(join(root, runtime)) && sha256File(root, runtime) === runtimeHash,
+    reconciliationAuthorized: text(reconciliationDecision).includes("**Status:** `approved`") && text(reconciliationDecision).includes("`develop_history_reconciliation_no_apply`"),
+    reconciliationTarget: map.schema === "oplyra-develop-migration-reconciliation/1" && map.projectRef === "eqpvjydnqbbawpkeizys" && map.mode === "history_only_no_apply" && map.decision === "CR-067",
+    reconciliationExact: JSON.stringify(map.entries) === JSON.stringify(expectedEntries),
   });
   const priorAi = result.checks.find((c) => c.id === "DOCS-cr030-product-ai-alignment")!.details;
   const updates = text("docs/product/marketing-ops/ATUALIZACOES.md");
@@ -69,7 +90,7 @@ export function runCrossRegistryValidation(root: string, profile: "2.22" | "2.23
     switchNotActivated: json(".claude/delegated-delivery.json").delegatedDelivery === false,
   });
   // As novas entradas também são entradas verificáveis; outputs/receitas da release nunca entram aqui.
-  for (const p of [brand, "AGENTS.md", "docs/harness/POLITICA-REVISAO-RESPONSAVEL-UNICO.md",
+  for (const p of [brand, strategy, runtime, strategyDecision, runtimeDecision, reconciliation, reconciliationDecision, "AGENTS.md", "docs/harness/POLITICA-REVISAO-RESPONSAVEL-UNICO.md",
     `${CONTRACTS_DIR}/changes/CR-034-brand-os-package-entries.md`, `${CONTRACTS_DIR}/changes/CR-041-single-owner-review-policy.md`,
     "scripts/claude-git.mjs", "scripts/claude-gates.mjs", ".github/CODEOWNERS", ".github/pull_request_template.md", ".claude/delegated-delivery.json"]) {
     if (!result.inputs.some((i) => i.path === p)) result.inputs.push({path: p, sha256: sha256File(root, p), evidenceLevel: "direct"});

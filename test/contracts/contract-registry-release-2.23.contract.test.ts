@@ -41,7 +41,7 @@ describe("Release 2.23: cobertura corrente e preservação histórica", () => {
 
 function copyCurrent(root: string) {
   // Base corrente copiada sem dependências, caches, segredos ou Git.
-  for (const p of ["docs", "scripts", "tools", "test", "packages", "supabase", ".claude", ".github", "AGENTS.md", "CLAUDE.md", "README.md", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".mcp.json", ".env.example"]) {
+  for (const p of ["docs", "scripts", "tools", "deploy", "test", "packages", "supabase", ".claude", ".github", "AGENTS.md", "CLAUDE.md", "README.md", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".mcp.json", ".env.example"]) {
     cpSync(join(REPO_ROOT, p), join(root, p), {recursive: true, filter: (s) => !/(^|\/)node_modules(\/|$)|\/\.oplyra(\/|$)/.test(s) && !/\/\.env($|\.)/.test(s.replace(/\.env\.example$/, "safe-example"))});
   }
 
@@ -49,6 +49,14 @@ function copyCurrent(root: string) {
 
 // Mutações em cópia do snapshot/arquivos normativos; nunca na árvore real.
 const mutations = [
+  ["supabase/migrations/20261111000017_strategy.sql", "create schema if not exists strategy;", "create schema if not exists strategy; -- bytes alterados", "FROZEN-migrations-000001-000014-v2"],
+  ["supabase/migrations/20261111000018_runtime.sql", "create schema if not exists runtime;", "create schema if not exists runtime; -- bytes alterados", "FROZEN-migrations-000001-000014-v2"],
+  ["docs/product/marketing-ops/contracts/changes/CR-042-i04-local-strategy-migration.md", '**Status:** `approved`', '**Status:** `proposed`', "FROZEN-migrations-000001-000014-v2"],
+  ["docs/product/marketing-ops/contracts/changes/CR-043-i02-local-runtime-migration.md", '**Status:** `approved`', '**Status:** `proposed`', "FROZEN-migrations-000001-000014-v2"],
+  ["deploy/develop/migrations-17-18-reconciliation.json", "eqpvjydnqbbawpkeizys", "outro-projeto", "FROZEN-migrations-000001-000014-v2"],
+  ["deploy/develop/migrations-17-18-reconciliation.json", "20261116211241", "20261116211242", "FROZEN-migrations-000001-000014-v2"],
+  ["deploy/develop/migrations-17-18-reconciliation.json", "history_only_no_apply", "apply", "FROZEN-migrations-000001-000014-v2"],
+  ["docs/product/marketing-ops/contracts/changes/CR-067-develop-migrations-17-18-reconciliation.md", '**Status:** `approved`', '**Status:** `proposed`', "FROZEN-migrations-000001-000014-v2"],
   ["docs/product/marketing-ops/ATUALIZACOES.md", "instrução explícita do usuário → este complemento → v2.3", "precedência removida", "DOCS-cr030-product-ai-alignment-v2"],
   ["CLAUDE.md", "Autorização não é implementação", "autorizar automaticamente", "DOCS-cr031-harness-documents-v2"],
   ["docs/harness/POLITICA-REVISAO-RESPONSAVEL-UNICO.md", "pedidos de alteração", "pedidos ignorados", "DOCS-cr032-s1-git-lifecycle-v2"],
