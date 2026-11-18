@@ -980,6 +980,31 @@
       "path": "test/web-producao-sem-exemplo.test.ts",
       "sha256": "65001b84a226a2a2d9eedacef19da82b160cb1cf1c582f9eb2d975c41a2c7f71",
       "category": "runtime_test"
+    },
+    {
+      "path": "deploy/develop/provision-tenant.mjs",
+      "category": "development_tool",
+      "sha256": "b425208293f6bba284bb88b561a107a1676bd5a901edb23d23c73454f52a9802"
+    },
+    {
+      "path": "deploy/develop/provision-tenant.test.mjs",
+      "category": "runtime_test",
+      "sha256": "0162d395dc96d63052da524bb2af656aaeb0e2532919469512c6cfdf6350a8ac"
+    },
+    {
+      "path": "deploy/develop/PROVISIONAR-EMPRESA.md",
+      "category": "environment_plan",
+      "sha256": "db2da1920575c73582a333fe39a81a35a27213fa2cd903fb223c77694015a5b0"
+    },
+    {
+      "path": "docs/product/marketing-ops/contracts/changes/CR-063-develop-private-tenant-provisioning.md",
+      "category": "change_proposal",
+      "sha256": "07dd42aa94b47d351095f2572c4bfceef7e45190696d25c1a6207b7a177cbfdf"
+    },
+    {
+      "path": "test/develop-private-tools.test.ts",
+      "category": "runtime_test",
+      "sha256": "5f8fd70e8a4f6a42cd060a13d436a8164cdf80f54487d54b4206d4b75524be36"
     }
   ]
 }
