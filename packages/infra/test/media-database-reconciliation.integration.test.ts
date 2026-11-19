@@ -5,7 +5,8 @@ import {readFileSync} from 'node:fs';
 import type {PoolClient} from 'pg';
 import {criarUnitOfWork} from '../src/db.ts';
 const admin=criarUnitOfWork({connectionString:'postgresql://postgres:postgres@127.0.0.1:54422/postgres',max:1});
-afterAll(()=>admin.encerrar());
+const worker=criarUnitOfWork({connectionString:'postgresql://oplyra_worker_login:local-worker-2026@127.0.0.1:54422/postgres',max:1});
+afterAll(()=>Promise.all([admin.encerrar(),worker.encerrar()]));
 async function isolated(run:(c:PoolClient,f:{a:string;b:string;ua:string;ub:string;viewer:string})=>Promise<void>) {
  const c=await admin.pool.connect();
  try {
@@ -44,17 +45,24 @@ describe('CR068: mídia em PostgreSQL isolado, com papéis reais',()=>{
   expect((await c.query('select count(*)::int as n from media.intents where tenant_id=$1',[f.a])).rows[0].n).toBe(1);
   expect((await c.query("select count(*)::int as n from core.audit_log where tenant_id=$1 and action='media.disconnect'",[f.a])).rows[0].n).toBe(1);
  }));
- it('Viewer não gerencia conexão; pessoa/worker não leem credenciais nem usam a fronteira alheia',()=>isolated(async(c,f)=>{
+ it('Viewer não gerencia conexão nem lê credenciais; pessoa não usa a fronteira worker',()=>isolated(async(c,f)=>{
   await asUser(c,f.a,f.viewer);expect((await command(c,f.a,'connections.list')).rows[0].value).toEqual([]);
   await refused(c,()=>command(c,f.a,'disconnect',{plataforma:'metaAds',idempotencyKey:'cr068-viewer'}));
   await refused(c,()=>c.query('select * from media.credentials'));
   await refused(c,()=>c.query("select app.media_worker($1,'claim')",[f.a]));
-  await c.query('reset role');await c.query('set local role oplyra_worker_exec');
-  await refused(c,()=>c.query('select * from media.credentials'));
-  await refused(c,()=>command(c,f.a,'connections.list'));
   await c.query('reset role');
   expect((await c.query('select count(*)::int as n from media.connections where tenant_id=$1',[f.a])).rows[0].n).toBe(0);
  }));
+ it('login worker assume seu próprio papel; tabela de credenciais e fronteira humana são recusadas',async()=>{
+  const c=await worker.pool.connect();
+  try {
+   await c.query('begin');await c.query('set local role oplyra_worker_exec');
+   expect((await c.query("select session_user as login,current_user as role,(select rolsuper or rolbypassrls from pg_roles where rolname=current_user) as bypass")).rows[0])
+    .toEqual({login:'oplyra_worker_login',role:'oplyra_worker_exec',bypass:false});
+   await refused(c,()=>c.query('select * from media.credentials'));
+   await refused(c,()=>command(c,randomUUID(),'connections.list'));
+  }finally{try{await c.query('rollback');}finally{c.release();}}
+ });
  it('índices das três FKs existem; CI exige hardening prévio e local valida sob rollback',()=>isolated(async(c)=>{
   const indexes=(await c.query("select count(*)::int as n from pg_class x join pg_namespace n on n.oid=x.relnamespace join pg_index i on i.indexrelid=x.oid where n.nspname='media' and x.relname=any($1::text[]) and i.indisvalid",[['media_account_claims_tenant_platform','media_campaign_links_campaign','media_sync_jobs_account']])).rows[0].n;
   expect(indexes).toBe(3);
