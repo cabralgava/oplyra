@@ -724,7 +724,7 @@
     {
       "path": "netlify.toml",
       "category": "environment_plan",
-      "sha256": "bbb2cdbe3126b8dd15c12d39c083759345b324852e5887d00966da54f54d6d24"
+      "sha256": "434af0df40144cc2aa966d85340da8ff0ec8eb79b86f785a4c7942b4abada5df"
     },
     {
       "path": "docs/product/marketing-ops/contracts/changes/CR-062-develop-build-secret-scanner.md",
@@ -1220,6 +1220,36 @@
       "path": "packages/testing/test/strategy-campaign-detail.test.ts",
       "category": "runtime_test",
       "sha256": "1eaa1288755d7b74bc8ffd234e45e49c5d41cb8b2597da4b839a0ae700fd98a4"
+    },
+    {
+      "path": "deploy/develop/i04-pool-audit/index.js",
+      "category": "development_tool",
+      "sha256": "a2622f351318d0b10ccd3ca408c33644947ca236d36643c0fec0de3d88f69975"
+    },
+    {
+      "path": "deploy/develop/i04-pool-audit/guard.mjs",
+      "category": "development_tool",
+      "sha256": "8c145cfc089ea93d9972ec3b6a52f0cc6c1a5a8e074c7812cbe334c709b422ba"
+    },
+    {
+      "path": "deploy/develop/i04-pool-audit/manifest.yml",
+      "category": "development_tool",
+      "sha256": "d79341a1b2b8a1b4ef317ad83641f40436f65b8720f9bc044f7b6f52f55c4ad9"
+    },
+    {
+      "path": "deploy/develop/i04-pool-audit/plan.json",
+      "category": "development_tool",
+      "sha256": "a8f24b700ea37e0b2380a4dec6606ff8d3340afa014c4d6b41ffba05ecafc770"
+    },
+    {
+      "path": "deploy/develop/i04-pool-audit/run.mts",
+      "category": "development_tool",
+      "sha256": "fe80b6de5dda7f70213e28b07647ec68e07de885d6b38f9b96c9d97e7d43c3f2"
+    },
+    {
+      "path": "test/i04-pool-audit.test.ts",
+      "category": "runtime_test",
+      "sha256": "290452b0627b6b8b6dd1391a1221ed640b1b29df91b23f44bd81993dccee4bac"
     }
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "id": "i04-pool-20261119",
+  "expiresAt": "2026-11-20T00:00:00Z",
+  "actors": [
+    {
+      "tenantId": "60f456c4-0e69-40e2-9027-44f2c2d018f7",
+      "userId": "9832c240-e25f-4ec1-9fd4-199627e86638",
+      "objectId": "66405a79-0c0a-44fe-96e7-5a5fe1788916"
+    },
+    {
+      "tenantId": "a84e789a-49cd-4c73-aa53-47389af5a478",
+      "userId": "f5ed0d4d-4ea9-4444-b8f0-180618698b07",
+      "objectId": "b5ff6afc-477e-4928-9570-0c7426e1cfb6"
+    }
+  ]
+}
