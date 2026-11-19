@@ -1244,7 +1244,7 @@
     {
       "path": "deploy/develop/i04-pool-audit/run.mts",
       "category": "development_tool",
-      "sha256": "00673b99bb6764dfdc4eded5591d5f1f3e2d3a9d9be593bc8c3dac8864ada0db"
+      "sha256": "fe80b6de5dda7f70213e28b07647ec68e07de885d6b38f9b96c9d97e7d43c3f2"
     },
     {
       "path": "test/i04-pool-audit.test.ts",

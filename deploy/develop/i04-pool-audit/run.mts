@@ -164,6 +164,7 @@ try {
         const r = await tx.query(`select count(*)::int as n from strategy.${table} where id=$1`, [actor.objectId]);
         check(r.rows[0].n === 1);
         const other = plan.actors.find((a: Actor) => a.tenantId !== actor.tenantId);
+        if (!other) throw Error("I04_POOL_COUNTERPART_MISSING");
         check((await tx.query(`select count(*)::int as n from strategy.${table} where id=$1`, [other.objectId])).rows[0].n === 0);
       }
     })));
