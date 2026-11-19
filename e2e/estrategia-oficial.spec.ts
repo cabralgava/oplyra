@@ -46,6 +46,8 @@ test.describe("Estratégia oficial — fluxo do Owner", () => {
     await item.getByRole("button", { name: "Tornar principal" }).click();
     await page.waitForURL(/ok=principal/);
     await expect(page.locator("li", { hasText: `Objetivo ${SUF}` }).locator(".selo.ok")).toContainText("Principal");
+    await expect(page.getByRole("heading", { name: `Objetivo ${SUF}`, exact: true })).toBeVisible();
+    await expect(page.getByRole("list", { name: "Alvos dos indicadores do objetivo principal" })).toContainText("Alvo: 20.5 reuniões");
   });
 
   test("campanha: ativar sem método lista o que falta; chave duplicada é recusada", async ({ page }) => {
@@ -146,7 +148,9 @@ test.describe("Estratégia oficial — papéis e isolamento", () => {
     await entrar(page, "ab-duas-empresas@local.test"); // leitor na Beta
     for (const rota of [`/e/${TENANT_B}/estrategia`]) {
       await page.goto(rota);
-      await expect(page.locator("main h1, h1").first()).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Central Estratégica", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Objetivos", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Campanhas", exact: true })).toBeVisible();
       await expect(page.locator("form")).toHaveCount(0);
     }
   });
