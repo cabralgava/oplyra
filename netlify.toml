@@ -17,7 +17,3 @@
 [build.environment]
   OPLYRA_ENV = "local"
   SUPABASE_URL = "http://127.0.0.1:54421"
-
-# Time-boxed I-04 diagnostic; fixed develop site/branch only. No public execution endpoint.
-[[plugins]]
-  package = "./deploy/develop/i04-pool-audit"

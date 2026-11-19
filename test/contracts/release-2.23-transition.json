@@ -724,7 +724,7 @@
     {
       "path": "netlify.toml",
       "category": "environment_plan",
-      "sha256": "434af0df40144cc2aa966d85340da8ff0ec8eb79b86f785a4c7942b4abada5df"
+      "sha256": "bbb2cdbe3126b8dd15c12d39c083759345b324852e5887d00966da54f54d6d24"
     },
     {
       "path": "docs/product/marketing-ops/contracts/changes/CR-062-develop-build-secret-scanner.md",
