@@ -6,7 +6,7 @@
 // ab-duas-empresas) cobre isolamento e o papel somente leitura.
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
-import { entrar, TENANT_A, TENANT_B } from "./ajuda";
+import { entrar, sair, TENANT_A, TENANT_B } from "./ajuda";
 
 const ESTRATEGIA_A = `/e/${TENANT_A}/estrategia`;
 const SUF = "oficial-" + randomUUID().slice(0, 8);
@@ -233,6 +233,10 @@ test.describe("Estratégia oficial — papéis e isolamento", () => {
     await page.getByRole("button", { name: "Criar campanha", exact: true }).click();
     await page.waitForURL(/\/campanhas\//);
     const detalhe = new URL(page.url()).pathname;
+    // /entrar redireciona quem já tem sessão: encerre a do Owner antes de testar o leitor.
+    await page.goto("/empresas");
+    await sair(page);
+    await expect(page).toHaveURL(/\/entrar$/);
     await entrar(page, "ab-duas-empresas@local.test");
     await page.goto(detalhe);
     await expect(page.getByRole("heading", { name: nome, exact: true })).toBeVisible();

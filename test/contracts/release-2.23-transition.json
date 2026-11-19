@@ -1208,7 +1208,7 @@
     },
     {
       "path": "e2e/estrategia-oficial.spec.ts",
-      "sha256": "2fe5ec4d82d45cd4869022f7619e9f981663a7670459ef6157526dd5da06ad80",
+      "sha256": "79bb77ee44afde297f93d3637ad82c474556ec325e7c7ad897b61ef2babf6f97",
       "category": "runtime_test"
     },
     {
