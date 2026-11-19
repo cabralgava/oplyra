@@ -838,7 +838,7 @@
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/estrategia/page.tsx",
-      "sha256": "a39cb80228d15a50f88f517639a2601a65f9789ad3aedc19e3f9e8706dea6e1d",
+      "sha256": "7d53629cec79f2bcc670ef55dce09ce0ed34f63b641511d911101a6944ed954d",
       "category": "runtime_component"
     },
     {
@@ -1190,6 +1190,26 @@
       "path": "packages/testing/test/metric-confidence.test.ts",
       "category": "runtime_test",
       "sha256": "1eaa47b963be641e181049ca4ed4509b95dbbd6f680c6d49c117a1c354b02799"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/estrategia/estrategia.module.css",
+      "sha256": "f00f631519312c12ab066f39126f41dbc243f92e284e8ea43213fde4eee07d9d",
+      "category": "runtime_component"
+    },
+    {
+      "path": "apps/web/src/components/estrategia-resumo.tsx",
+      "sha256": "36211b3d8c15a593188ef249c65ef31482630ae501b53176f80e827703669ad5",
+      "category": "runtime_component"
+    },
+    {
+      "path": "test/web-estrategia-visual.test.ts",
+      "sha256": "238d3fbaa5ae6f7b773adcda212c451b5bc1e041f7bb29c87b57c96e8be95439",
+      "category": "runtime_test"
+    },
+    {
+      "path": "e2e/estrategia-oficial.spec.ts",
+      "sha256": "13804d36a4244241259ab67c1a9aa51398ce7ef645a3babf7e2dc77a189ecce2",
+      "category": "runtime_test"
     }
   ]
 }

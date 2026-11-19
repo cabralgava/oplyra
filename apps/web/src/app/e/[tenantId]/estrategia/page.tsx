@@ -14,6 +14,9 @@ import {
 import { BotaoEnviar } from "../../../../components/botao-enviar";
 import { AvisoDeErro, AvisoSemPermissao } from "../../../../components/aviso-estrategia";
 
+import { EstrategiaResumo } from "../../../../components/estrategia-resumo";
+import styles from "./estrategia.module.css";
+
 type Props = { params: Promise<{ tenantId: string }>; searchParams: Promise<{ erro?: string; ok?: string; problemas?: string }> };
 
 const SELO_CAMPANHA = { draft: "selo pendente", active: "selo ok", paused: "selo pendente", completed: "selo", cancelled: "selo proibido" } as const;
@@ -87,11 +90,12 @@ export default async function Estrategia({ params, searchParams }: Props) {
   }
 
   return (
-    <div className="pilha">
-      <div>
+    <div className={`pilha ${styles.central}`}>
+      <header className={styles.cabecalho}>
+        <p className="camp-rotulo">Estratégia da empresa</p>
         <h1>Central Estratégica</h1>
         <p className="muted">Objetivos e indicadores, e as campanhas que os perseguem. Ativar uma campanha não publica anúncio.</p>
-      </div>
+      </header>
 
       <nav aria-label="Seções da Central Estratégica" className="nav-secoes">
         <ul>
@@ -104,27 +108,12 @@ export default async function Estrategia({ params, searchParams }: Props) {
         </ul>
       </nav>
 
-      {(() => {
-        const principalAtivo = ativos.find((o) => o.primary);
-        return (
-          <section className="card destaque" aria-labelledby="meta-principal">
-            <p className="camp-rotulo">Meta primária</p>
-            <h2 id="meta-principal">{principalAtivo ? principalAtivo.name : "Nenhum objetivo principal definido"}</h2>
-            {principalAtivo ? (
-              <ul className="evidencias">
-                {principalAtivo.kpis.map((k) => <li key={k.key}>{k.name}: alvo {k.target} {k.unit}</li>)}
-              </ul>
-            ) : (
-              <p className="muted">Defina um objetivo e torne-o principal para acompanhar a meta aqui. Progresso e projeção ainda não estão disponíveis.</p>
-            )}
-          </section>
-        );
-      })()}
+      <EstrategiaResumo objetivos={objetivos} campanhas={campanhas} className={styles.resumo} />
 
       {ok && <p className="sucesso" role="status"><strong>Feito.</strong></p>}
       <AvisoDeErro erro={erro} problemas={problemas} />
 
-      <section className="card pilha" aria-labelledby="objetivos">
+      <section className={`card pilha ${styles.secao}`} aria-labelledby="objetivos">
         <h2 id="objetivos">Objetivos</h2>
         {objetivos.length === 0 ? (
           <div className="vazio">
@@ -160,7 +149,7 @@ export default async function Estrategia({ params, searchParams }: Props) {
         )}
 
         {podeEditar && (
-          <form action={novoObjetivo} className="pilha">
+          <form action={novoObjetivo} className={`pilha ${styles.formulario}`}>
             <input type="hidden" name="k_n" value={LINHAS_NOVAS_KPI + 1} />
             <h3>Novo objetivo</h3>
             <div><label htmlFor="o_name">Nome</label><input id="o_name" name="name" maxLength={160} required /></div>
@@ -187,7 +176,7 @@ export default async function Estrategia({ params, searchParams }: Props) {
         )}
       </section>
 
-      <section className="card pilha" aria-labelledby="campanhas">
+      <section className={`card pilha ${styles.secao}`} aria-labelledby="campanhas">
         <h2 id="campanhas">Campanhas</h2>
         {campanhas.length === 0 ? (
           <div className="vazio">
@@ -195,6 +184,7 @@ export default async function Estrategia({ params, searchParams }: Props) {
             <p className="muted">Toda campanha parte de situação, dor, consequência, desejo, mecanismo, prova e oferta. Crie a campanha e complete o método na página dela.</p>
           </div>
         ) : (
+          <div className={styles.tabela} role="region" aria-label="Lista de campanhas" tabIndex={0}>
           <table>
             <thead><tr><th scope="col">Campanha</th><th scope="col">Situação</th><th scope="col">Chave de rastreamento</th></tr></thead>
             <tbody>
@@ -207,10 +197,11 @@ export default async function Estrategia({ params, searchParams }: Props) {
               ))}
             </tbody>
           </table>
+          </div>
         )}
 
         {podeEditar && (
-          <form action={novaCampanha} className="pilha">
+          <form action={novaCampanha} className={`pilha ${styles.formulario}`}>
             <h3>Nova campanha</h3>
             <div><label htmlFor="c_name">Nome</label><input id="c_name" name="name" maxLength={160} required /></div>
             <div>
