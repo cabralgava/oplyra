@@ -843,7 +843,7 @@
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/estrategia/campanhas/[campaignId]/page.tsx",
-      "sha256": "b57c9e60cdd1edc3cad5219f8c7a3855ed75029c82fc0ae4a478159ed207b918",
+      "sha256": "280cc3e9162505d0ccef0be7f15ec7bec322a5351e4d86d146b8bf0d1879a4b2",
       "category": "runtime_component"
     },
     {
@@ -1208,8 +1208,18 @@
     },
     {
       "path": "e2e/estrategia-oficial.spec.ts",
-      "sha256": "eb1f43d2b21136a878d3adb6e28e8e7c5a5356b81554b0705f45180cd7336b90",
+      "sha256": "79bb77ee44afde297f93d3637ad82c474556ec325e7c7ad897b61ef2babf6f97",
       "category": "runtime_test"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/estrategia/campanhas/[campaignId]/campanha-detalhe.module.css",
+      "category": "runtime_component",
+      "sha256": "f78b1cba93d423796c3023e8a4a3f7d690d34cf87295ecd66ea7868659f4fd8a"
+    },
+    {
+      "path": "packages/testing/test/strategy-campaign-detail.test.ts",
+      "category": "runtime_test",
+      "sha256": "1eaa1288755d7b74bc8ffd234e45e49c5d41cb8b2597da4b839a0ae700fd98a4"
     }
   ]
 }
