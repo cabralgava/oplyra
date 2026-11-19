@@ -163,6 +163,8 @@ test.describe("Estratégia oficial — fluxo do Owner", () => {
 
     await page.getByRole("button", { name: "Retomar", exact: true }).click();
     await page.waitForURL(/ok=estado/);
+    // A URL de sucesso pode ser a mesma da pausa: espere o estado novo antes de recarregar.
+    await expect(page.locator(".selo").first()).toContainText("Ativa");
     await page.reload();
     await expect(page.locator(".selo").first()).toContainText("Ativa");
     await expect(item.getByRole("button", { name: "Iniciar", exact: true })).toBeEnabled();
