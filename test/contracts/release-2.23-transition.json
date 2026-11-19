@@ -748,7 +748,7 @@
     },
     {
       "path": "apps/web/src/app/layout.tsx",
-      "sha256": "267f7af31949e1ab84876091d02b753747a1d3899d7f68868b03161de8eb1db3",
+      "sha256": "e9f8bd21f594fd1cfdb9fc59830c011520e42fe7d396b83255ca63e5d6e3c3d7",
       "category": "runtime_component"
     },
     {
@@ -1208,7 +1208,7 @@
     },
     {
       "path": "e2e/estrategia-oficial.spec.ts",
-      "sha256": "79bb77ee44afde297f93d3637ad82c474556ec325e7c7ad897b61ef2babf6f97",
+      "sha256": "dc00abb34eea3c125b173aba6f954f1e1d4527f89107ddc2bbf1a82bb2fd3920",
       "category": "runtime_test"
     },
     {
