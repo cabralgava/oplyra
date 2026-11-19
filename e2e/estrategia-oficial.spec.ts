@@ -264,6 +264,32 @@ test.describe("Estratégia oficial — papéis e isolamento", () => {
     await expect(page.locator("body")).not.toContainText(NOME);
   });
 
+  test("o detalhe renderiza as fontes locais carregadas, sem cair na fonte padrão", async ({ page }) => {
+    await entrar(page, "a-owner@local.test");
+    await page.goto(urlCampanha);
+    await expect(page.getByRole("heading", { name: NOME, exact: true })).toBeVisible();
+    const fonts = await page.evaluate(async () => {
+      await document.fonts.ready;
+      const family = (value: string) => value.split(",")[0]!.trim().replace(/["']/g, "");
+      const root = getComputedStyle(document.documentElement);
+      const loaded: string[] = [];
+      document.fonts.forEach((face) => { if (face.status === "loaded") loaded.push(family(face.family)); });
+      return {
+        inter: family(root.getPropertyValue("--font-inter")),
+        manrope: family(root.getPropertyValue("--font-manrope")),
+        body: family(getComputedStyle(document.body).fontFamily),
+        heading: family(getComputedStyle(document.querySelector("h1")!).fontFamily),
+        loaded,
+      };
+    });
+    expect(fonts.inter).not.toBe("");
+    expect(fonts.manrope).not.toBe("");
+    expect(fonts.body).toBe(fonts.inter);
+    expect(fonts.heading).toBe(fonts.manrope);
+    expect(fonts.loaded).toContain(fonts.inter);
+    expect(fonts.loaded).toContain(fonts.manrope);
+  });
+
   test("sem rolagem horizontal em 768 e 360 px", async ({ page }) => {
     await entrar(page, "a-owner@local.test");
     for (const largura of [768, 360]) {
