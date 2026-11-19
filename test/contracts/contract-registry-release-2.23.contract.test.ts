@@ -49,6 +49,17 @@ function copyCurrent(root: string) {
 
 // Mutações em cópia do snapshot/arquivos normativos; nunca na árvore real.
 const mutations = [
+  ["supabase/migrations/20261116210007_media_connection_read.sql", "create schema media;", "create schema media; -- alterado", "FROZEN-migrations-000001-000014-v2"],
+  ["supabase/migrations/20261116214433_media_fk_indexes.sql", "create index media_account_claims_tenant_platform", "-- alterado\ncreate index media_account_claims_tenant_platform", "FROZEN-migrations-000001-000014-v2"],
+  ["deploy/develop/supabase/migrations/20261116202506_harden_application_function_search_paths.sql", "alter function app.current_user_id()", "-- alterado\nalter function app.current_user_id()", "FROZEN-migrations-000001-000014-v2"],
+  ["deploy/develop/supabase/migrations/20261116211348_harden_domain_validator_search_paths.sql", "alter function brand.evidence_valid(jsonb)", "-- alterado\nalter function brand.evidence_valid(jsonb)", "FROZEN-migrations-000001-000014-v2"],
+  ["docs/product/marketing-ops/contracts/changes/CR-068-develop-media-security-reconciliation.md", "**Status:** `approved`", "**Status:** `proposed`", "FROZEN-migrations-000001-000014-v2"],
+  ["docs/product/marketing-ops/contracts/changes/CR-055-google-meta-ads-connection-and-read-contracts-proposal.md", "**Status:** `approved`", "**Status:** `proposed`", "FROZEN-migrations-000001-000014-v2"],
+  ["docs/product/marketing-ops/contracts/changes/CR-058-develop-function-search-path-hardening.md", "**Estado de execução:** aplicado somente em develop", "**Estado de execução:** não confirmado", "FROZEN-migrations-000001-000014-v2"],
+  ["deploy/develop/migrations-19-20-security-reconciliation.json", "eqpvjydnqbbawpkeizys", "outro-projeto", "FROZEN-migrations-000001-000014-v2"],
+  ["deploy/develop/migrations-19-20-security-reconciliation.json", "20261116214247", "20261116214248", "FROZEN-migrations-000001-000014-v2"],
+  ["deploy/develop/migrations-19-20-security-reconciliation.json", "history_only_no_apply", "apply", "FROZEN-migrations-000001-000014-v2"],
+  [".github/workflows/ci.yml", "run: node deploy/develop/prepare-ci-security.mjs", "run: node --version", "FROZEN-migrations-000001-000014-v2"],
   ["supabase/migrations/20261111000017_strategy.sql", "create schema if not exists strategy;", "create schema if not exists strategy; -- bytes alterados", "FROZEN-migrations-000001-000014-v2"],
   ["supabase/migrations/20261111000018_runtime.sql", "create schema if not exists runtime;", "create schema if not exists runtime; -- bytes alterados", "FROZEN-migrations-000001-000014-v2"],
   ["docs/product/marketing-ops/contracts/changes/CR-042-i04-local-strategy-migration.md", '**Status:** `approved`', '**Status:** `proposed`', "FROZEN-migrations-000001-000014-v2"],
