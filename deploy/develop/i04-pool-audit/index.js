@@ -15,4 +15,3 @@ export async function onPreBuild({ constants, utils }) {
     utils.build.failBuild("I04_POOL_AUDIT_FAILED_SEM_DETALHES_SENSIVEIS" + (phase ? "_" + phase : ""));
   }
 }
-

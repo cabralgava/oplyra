@@ -181,4 +181,3 @@ try {
 } finally {
   await web?.encerrar().catch(() => { process.exitCode = 1; });
 }
-

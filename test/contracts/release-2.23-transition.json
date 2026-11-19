@@ -1224,7 +1224,7 @@
     {
       "path": "deploy/develop/i04-pool-audit/index.js",
       "category": "development_tool",
-      "sha256": "b2d368cf04c90408d9abc66a7b900d46c844db9fa327fe02e6a8c2a7619932d8"
+      "sha256": "a2622f351318d0b10ccd3ca408c33644947ca236d36643c0fec0de3d88f69975"
     },
     {
       "path": "deploy/develop/i04-pool-audit/guard.mjs",
@@ -1244,12 +1244,12 @@
     {
       "path": "deploy/develop/i04-pool-audit/run.mts",
       "category": "development_tool",
-      "sha256": "9532f05d675ba72c699753c2b2d698ddeb0018615596d61f3ceda03a261d1995"
+      "sha256": "00673b99bb6764dfdc4eded5591d5f1f3e2d3a9d9be593bc8c3dac8864ada0db"
     },
     {
       "path": "test/i04-pool-audit.test.ts",
       "category": "runtime_test",
-      "sha256": "e57f315f352fa5fbe4578d0f02db8747e277199ce0922aa88ba7e514b390d5b7"
+      "sha256": "290452b0627b6b8b6dd1391a1221ed640b1b29df91b23f44bd81993dccee4bac"
     }
   ]
 }

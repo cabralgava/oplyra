@@ -60,4 +60,3 @@ describe("auditoria privada I04 no build develop", () => {
     expect(() => aggregate({ ...report, ...patch }, env.COMMIT_REF)).toThrow("I04_POOL_INVALID_REPORT");
   });
 });
-
