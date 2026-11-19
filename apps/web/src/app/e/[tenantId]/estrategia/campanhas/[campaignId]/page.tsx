@@ -18,6 +18,7 @@ import {
 } from "../../../../../../lib/estrategia-form";
 import { BotaoEnviar } from "../../../../../../components/botao-enviar";
 import { AvisoDeErro, AvisoSemPermissao } from "../../../../../../components/aviso-estrategia";
+import styles from "./campanha-detalhe.module.css";
 
 type Props = {
   params: Promise<{ tenantId: string; campaignId: string }>;
@@ -134,20 +135,30 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
   }
 
   return (
-    <div className="pilha">
-      <div className="entre">
+    <div className={`pilha ${styles.campanha}`}>
+      <header className={`entre ${styles.cabecalho}`}>
         <div>
+          <p className="camp-rotulo">Campanha da empresa</p>
           <h1>{campanha.name || "Campanha sem nome"}</h1>
-          <p className="muted"><span className="selo">{ROTULO_CAMPANHA[campanha.status]}</span> · versão {campanha.revision} · criada em {hora(campanha.createdAt)}{campanha.activatedAt ? ` · ativada em ${hora(campanha.activatedAt)}` : ""}</p>
+          <p className={`muted ${styles.metadados}`}><span className="selo">{ROTULO_CAMPANHA[campanha.status]}</span> · versão {campanha.revision} · criada em {hora(campanha.createdAt)}{campanha.activatedAt ? ` · ativada em ${hora(campanha.activatedAt)}` : ""}</p>
         </div>
         <Link className="btn secundario" href={base}>Voltar à estratégia</Link>
-      </div>
+      </header>
+
+      <nav aria-label="Seções da campanha" className={`nav-secoes ${styles.navegacao}`}>
+        <ul>
+          <li><a href="#geral">Dados</a></li>
+          <li><a href="#metodo">Método</a></li>
+          <li><a href="#utm">Rastreamento</a></li>
+          <li><a href="#testes">Testes</a></li>
+        </ul>
+      </nav>
 
       {ok && <p className="sucesso" role="status"><strong>Feito.</strong></p>}
       <AvisoDeErro erro={erro} problemas={problemas} />
 
       {podeEditar && campanha.status !== "completed" && campanha.status !== "cancelled" && (
-        <section className="card entre" aria-label="Ciclo de vida da campanha">
+        <section className={`card entre ${styles.ciclo}`} aria-label="Ciclo de vida da campanha">
           <p className="muted">Ativar fixa a chave de rastreamento e libera os testes. Não publica anúncio.</p>
           <form className="entre">
             <input type="hidden" name="campanha" value={campanha.id} />
@@ -161,10 +172,11 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
         </section>
       )}
 
-      <form action={salvar} className="pilha">
+      <div className={styles.corpo}>
+      <form action={salvar} className={`pilha ${styles.formulario}`}>
         <input type="hidden" name="campanha" value={campanha.id} />
         <input type="hidden" name="revisao" value={campanha.revision} />
-        <section className="card pilha" aria-labelledby="geral">
+        <section className={`card pilha ${styles.secao}`} aria-labelledby="geral">
           <h2 id="geral">Dados da campanha</h2>
           {!rascunho && <p className="muted">Campanha {ROTULO_CAMPANHA[campanha.status].toLowerCase()}: o conteúdo não é mais editável.</p>}
           <fieldset disabled={!rascunho || !podeEditar} className="pilha">
@@ -192,10 +204,10 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
           </fieldset>
         </section>
 
-        <section className="card pilha" aria-labelledby="metodo">
+        <section className={`card pilha ${styles.secao}`} aria-labelledby="metodo">
           <h2 id="metodo">Método da campanha</h2>
           <p className="muted">Situação, dor, consequência, desejo, mecanismo, prova e oferta, estruturados antes da produção. Os sete são obrigatórios para ativar.</p>
-          <fieldset disabled={!rascunho || !podeEditar} className="pilha">
+          <fieldset disabled={!rascunho || !podeEditar} className={styles.metodo}>
             {ELEMENTOS_DO_METODO.map((el) => (
               <div key={el}>
                 <label htmlFor={`m_${el}`}>{ROTULO_METODO[el]}</label>
@@ -208,7 +220,7 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
         </section>
       </form>
 
-      <section className="card pilha" aria-labelledby="utm">
+      <section className={`card pilha ${styles.secao} ${styles.rastreamento}`} aria-labelledby="utm">
         <h2 id="utm">UTMs recomendados</h2>
         {!campanha.trackingKey ? <p className="muted">Defina a chave de rastreamento para gerar os UTMs.</p> : (
           <>
@@ -238,7 +250,9 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
         )}
       </section>
 
-      <section className="card pilha" aria-labelledby="testes">
+      </div>
+
+      <section className={`card pilha ${styles.secao} ${styles.testes}`} aria-labelledby="testes">
         <h2 id="testes">Testes por hipótese</h2>
         <p className="muted">Um teste declara a hipótese e a dimensão variada antes de rodar. Sem amostra suficiente o resultado é inconclusivo, não sucesso.</p>
         {testes.length === 0 ? <p className="vazio">Nenhum teste nesta campanha.</p> : (
@@ -289,7 +303,7 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
                     <div className="entre">
                       {t.status === "planned" && <button className="btn" type="submit" formAction={iniciarTeste} disabled={campanha.status !== "active"}>Iniciar</button>}
                       {t.status === "running" && <button className="btn" type="submit" formAction={concluirTeste}>Concluir</button>}
-                      <button className="btn secundario" type="submit" formAction={cancelarTeste}>Cancelar teste</button>
+                      <button className="btn secundario" type="submit" formNoValidate formAction={cancelarTeste}>Cancelar teste</button>
                     </div>
                   </form>
                 )}

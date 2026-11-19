@@ -141,6 +141,73 @@ test.describe("Estratégia oficial — fluxo do Owner", () => {
     await expect(teste).toContainText("Janela de três dias.");
   });
 
+
+  test("pausa e retoma: teste planejado só inicia com a campanha ativa", async ({ page }) => {
+    await entrar(page, "a-owner@local.test");
+    await page.goto(urlCampanha);
+    const hipotese = `Retomada ${SUF}`;
+    await page.locator("#hypothesis").fill(hipotese);
+    await page.locator("#variants").fill("Retomada pela dor\nRetomada pelo ganho");
+    await page.locator("#decisionMetric").fill("reuniões marcadas");
+    await page.locator("#minimumSample").fill("30");
+    await page.getByRole("button", { name: "Registrar hipótese" }).click();
+    await page.waitForURL(/ok=teste/);
+    const item = page.locator("li", { hasText: hipotese });
+
+    await page.getByRole("button", { name: "Pausar", exact: true }).click();
+    await page.waitForURL(/ok=estado/);
+    await page.reload();
+    await expect(page.locator(".selo").first()).toContainText("Pausada");
+    await expect(item.getByRole("button", { name: "Iniciar", exact: true })).toBeDisabled();
+    await expect(page.locator("#trackingKey")).toBeDisabled();
+
+    await page.getByRole("button", { name: "Retomar", exact: true }).click();
+    await page.waitForURL(/ok=estado/);
+    await page.reload();
+    await expect(page.locator(".selo").first()).toContainText("Ativa");
+    await expect(item.getByRole("button", { name: "Iniciar", exact: true })).toBeEnabled();
+    await item.getByRole("button", { name: "Iniciar", exact: true }).click();
+    await page.waitForURL(/ok=teste/);
+    await expect(item).toContainText("Em execução");
+    // Concluir continua sujeito à validação nativa; cancelar não exige inventar um resultado.
+    await item.getByRole("button", { name: "Concluir", exact: true }).click();
+    await expect(item.locator("input[name=observedSample]")).toBeFocused();
+    await expect(item).toContainText("Em execução");
+    await item.getByRole("button", { name: "Cancelar teste", exact: true }).click();
+    await page.waitForURL(/ok=teste/);
+    await expect(item).toContainText("Cancelado");
+  });
+
+  test("conclusão persiste e encerra as ações da campanha", async ({ page }) => {
+    await entrar(page, "a-owner@local.test");
+    await page.goto(urlCampanha);
+    await page.getByRole("button", { name: "Concluir", exact: true }).click();
+    await page.waitForURL(/ok=estado/);
+    await page.reload();
+    await expect(page.locator(".selo").first()).toContainText("Concluída");
+    await expect(page.locator("#name")).toBeDisabled();
+    await expect(page.locator("#m_pain")).toBeDisabled();
+    for (const name of ["Pausar", "Retomar", "Concluir", "Cancelar campanha", "Salvar rascunho", "Registrar hipótese"]) {
+      await expect(page.getByRole("button", { name, exact: true })).toHaveCount(0);
+    }
+  });
+
+  test("cancelamento de rascunho persiste sem permitir reativação", async ({ page }) => {
+    await entrar(page, "a-owner@local.test");
+    await page.goto(ESTRATEGIA_A);
+    await page.locator("#c_name").fill(`Cancelamento ${SUF}`);
+    await page.locator("#c_key").fill(`canc-${SUF}`);
+    await page.getByRole("button", { name: "Criar campanha", exact: true }).click();
+    await page.waitForURL(/\/campanhas\//);
+    await page.getByRole("button", { name: "Cancelar campanha", exact: true }).click();
+    await page.waitForURL(/ok=estado/);
+    await page.reload();
+    await expect(page.locator(".selo").first()).toContainText("Cancelada");
+    await expect(page.locator("#name")).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Ativar", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Registrar hipótese", exact: true })).toHaveCount(0);
+  });
+
 });
 
 test.describe("Estratégia oficial — papéis e isolamento", () => {
@@ -152,6 +219,29 @@ test.describe("Estratégia oficial — papéis e isolamento", () => {
       await expect(page.getByRole("heading", { name: "Objetivos", exact: true })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Campanhas", exact: true })).toBeVisible();
       await expect(page.locator("form")).toHaveCount(0);
+    }
+  });
+
+  test("leitor abre o detalhe autorizado, mas não recebe ações de escrita", async ({ page }) => {
+    const nome = `Campanha Beta ${SUF}`;
+    await entrar(page, "b-owner@local.test");
+    await page.goto(`/e/${TENANT_B}/estrategia`);
+    await page.locator("#c_name").fill(nome);
+    await page.locator("#c_key").fill(`beta-${SUF}`);
+    await page.getByRole("button", { name: "Criar campanha", exact: true }).click();
+    await page.waitForURL(/\/campanhas\//);
+    const detalhe = new URL(page.url()).pathname;
+    await entrar(page, "ab-duas-empresas@local.test");
+    await page.goto(detalhe);
+    await expect(page.getByRole("heading", { name: nome, exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Dados da campanha", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Método da campanha", exact: true })).toBeVisible();
+    await expect(page.locator("#name")).toHaveValue(nome);
+    await expect(page.locator("#name")).toBeDisabled();
+    await expect(page.locator("#m_pain")).toBeDisabled();
+    await expect(page.getByRole("region", { name: "Ciclo de vida da campanha", exact: true })).toHaveCount(0);
+    for (const name of ["Ativar", "Cancelar campanha", "Salvar rascunho", "Registrar hipótese"]) {
+      await expect(page.getByRole("button", { name, exact: true })).toHaveCount(0);
     }
   });
 
