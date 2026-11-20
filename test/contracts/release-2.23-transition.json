@@ -1309,7 +1309,7 @@
     {
       "path": "e2e/operacao-oficial.spec.ts",
       "category": "runtime_test",
-      "sha256": "3018174e48d4dc246fca729db029432ea7a8b95c3dc4d80e61300e22f781fcfb"
+      "sha256": "3a2d63de99f21ca9839915c9df8f887061c47b05d329192ed823238f46e8b8b0"
     }
   ]
 }

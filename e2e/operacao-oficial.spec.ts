@@ -11,7 +11,7 @@ const betaTitle = `Tarefa Beta ${suffix}`;
 const campaignTitle = `Campanha de operação ${suffix}`;
 const routeA = `/e/${TENANT_A}/operacao`;
 const routeB = `/e/${TENANT_B}/operacao`;
-const card = (page: Page, name: string) => page.locator("li").filter({ has: page.getByRole("heading", { name, exact: true }) });
+const card = (page: Page, name: string) => page.locator("li").filter({ has: page.getByRole("heading", { name, exact: true, level: 3 }) });
 async function create(page: Page, name: string) {
   await page.locator("input[name=title]").fill(name);
   await page.getByRole("button", { name: "Criar tarefa", exact: true }).click();
@@ -41,12 +41,12 @@ test.describe("Operação oficial — tarefas persistidas", () => {
     await page.waitForURL(/\/campanhas\//);
     await page.goto(routeA);
     await expect(page.getByRole("heading", { name: "Operação", exact: true })).toBeVisible();
-    await page.locator("[name=campaignId]").selectOption({ label: campaignTitle });
-    await page.locator("[name=description]").fill("Conferir a proposta com a campanha");
-    await page.locator("[name=dueDate]").fill("2028-02-29");
+    await page.locator("select[name=campaignId]").selectOption({ label: campaignTitle });
+    await page.locator("textarea[name=description]").fill("Conferir a proposta com a campanha");
+    await page.locator("input[name=dueDate]").fill("2028-02-29");
     await create(page, title);
     await page.reload();
-    await expect(card(page, title)).toContainText("A fazer");
+    await expect(card(page, title).locator(".selo")).toHaveText("A fazer");
     await expect(card(page, title)).toContainText("Conferir a proposta com a campanha");
     await expect(card(page, title)).toContainText("29/02/2028");
     await expect(card(page, title)).toContainText(campaignTitle);
@@ -61,8 +61,8 @@ test.describe("Operação oficial — tarefas persistidas", () => {
     await expect(card(page, dependent)).toContainText(title);
     await card(page, dependent).getByRole("button", { name: "Iniciar", exact: true }).click();
     await page.waitForURL(/ok=estado/);
-    await expect(card(page, dependent)).toContainText("Em andamento");
-    await expect(card(page, title)).toContainText("A fazer");
+    await expect(card(page, dependent).locator(".selo")).toHaveText("Em andamento");
+    await expect(card(page, title).locator(".selo")).toHaveText("A fazer");
   });
 
   test("revisão obsoleta é recusada e a mudança anterior permanece", async ({ page, context }) => {
@@ -72,14 +72,15 @@ test.describe("Operação oficial — tarefas persistidas", () => {
     const stale = await context.newPage();
     try {
       await stale.goto(routeA);
-      await expect(card(stale, title)).toContainText("A fazer");
+      await expect(card(stale, title).locator(".selo")).toHaveText("A fazer");
       await card(page, title).getByRole("button", { name: "Iniciar", exact: true }).click();
       await page.waitForURL(/ok=estado/);
+      await expect(card(page, title).locator(".selo")).toHaveText("Em andamento");
       await card(stale, title).getByRole("button", { name: "Cancelar", exact: true }).click();
       await stale.waitForURL(/erro=CONFLICT_VERSION/);
       await expect(stale.locator('.erro[role="alert"]')).toContainText("Outra pessoa alterou");
       await stale.reload();
-      await expect(card(stale, title)).toContainText("Em andamento");
+      await expect(card(stale, title).locator(".selo")).toHaveText("Em andamento");
     } finally { await stale.close(); }
   });
 
@@ -88,16 +89,17 @@ test.describe("Operação oficial — tarefas persistidas", () => {
     await page.goto(routeA);
     await card(page, dependent).getByRole("button", { name: "Concluir", exact: true }).click();
     await page.waitForURL(/ok=estado/);
+    await expect(card(page, dependent).locator(".selo")).toHaveText("Concluída");
     await page.reload();
-    await expect(card(page, dependent)).toContainText("Concluída");
+    await expect(card(page, dependent).locator(".selo")).toHaveText("Concluída");
     await card(page, dependent).getByRole("button", { name: "Reabrir", exact: true }).click();
     await page.waitForURL(/ok=estado/);
-    await expect(card(page, dependent)).toContainText("Em andamento");
+    await expect(card(page, dependent).locator(".selo")).toHaveText("Em andamento");
     await card(page, dependent).getByRole("button", { name: "Cancelar", exact: true }).click();
     await page.waitForURL(/ok=estado/);
-    await expect(card(page, dependent)).toContainText("Cancelada");
+    await expect(card(page, dependent).locator(".selo")).toHaveText("Cancelada");
     await page.reload();
-    await expect(card(page, dependent)).toContainText("Cancelada");
+    await expect(card(page, dependent).locator(".selo")).toHaveText("Cancelada");
     await expect(card(page, dependent).getByRole("button")).toHaveCount(0);
   });
 
@@ -110,6 +112,7 @@ test.describe("Operação oficial — tarefas persistidas", () => {
     await expect(page.getByRole("option", { name: campaignTitle, exact: true })).toHaveCount(0);
     await create(page, betaTitle);
     await page.goto(routeA);
+    await page.waitForURL(/\/empresas\?erro=sem-acesso/);
     await expect(page.getByRole("heading", { name: "Operação", exact: true })).toHaveCount(0);
     await expect(page.getByText(title, { exact: true })).toHaveCount(0);
   });
@@ -118,7 +121,7 @@ test.describe("Operação oficial — tarefas persistidas", () => {
     await entrar(page, "ab-duas-empresas@local.test");
     await page.goto(routeB);
     await expect(page.getByRole("heading", { name: "Operação", exact: true })).toBeVisible();
-    await expect(card(page, betaTitle)).toContainText("A fazer");
+    await expect(card(page, betaTitle).locator(".selo")).toHaveText("A fazer");
     await expect(page.getByRole("button", { name: "Criar tarefa", exact: true })).toHaveCount(0);
     await expect(page.locator("input[name=title]")).toHaveCount(0);
     await expect(card(page, betaTitle).getByRole("button")).toHaveCount(0);
