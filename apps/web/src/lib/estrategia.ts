@@ -10,3 +10,4 @@ export * from "../../../../packages/core/src/application/use-cases/strategy-obje
 export * from "../../../../packages/core/src/application/use-cases/strategy-experiments.ts";
 export * from "../../../../packages/core/src/application/use-cases/strategy-tasks.ts";
 export * from "../../../../packages/core/src/domain/task-dependencies.ts";
+export * from "../../../../packages/core/src/domain/task-due-dates.ts";

@@ -25,8 +25,9 @@ const compiled = await transform(source, { filename: "operacao.tsx", jsc: { pars
 const modules: Record<string, unknown> = {
   "next/navigation": { redirect }, "next/cache": { revalidatePath },
   "../../../../lib/session": { contextoDaEmpresa }, "../../../../lib/deps-estrategia": { strategyDeps: dependencies },
-  "../../../../lib/estrategia": { summarizeTaskDependencies: (await import("../apps/web/src/lib/estrategia")).summarizeTaskDependencies, getOperationTasks, listTasks, listCampaigns, createTask, changeTaskStatus, saveTaskDetails },
+  "../../../../lib/estrategia": { isValidCivilDate: (await import("../apps/web/src/lib/estrategia")).isValidCivilDate, classifyTaskDueDate: (await import("../apps/web/src/lib/estrategia")).classifyTaskDueDate, sortTasksByDueDate: (await import("../apps/web/src/lib/estrategia")).sortTasksByDueDate, summarizeTaskDependencies: (await import("../apps/web/src/lib/estrategia")).summarizeTaskDependencies, getOperationTasks, listTasks, listCampaigns, createTask, changeTaskStatus, saveTaskDetails },
   "../../../../lib/estrategia-form": { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro, FormularioInvalido, lerEdicaoDaTarefa },
+  "../../../../lib/operacao-prazos": { hojeDaOperacao: async () => "2026-11-20" },
   "../../../../lib/operacao-filtro": await import("../apps/web/src/lib/operacao-filtro"),
   "../../../../components/tarefa-destino": { TarefaDestino: () => null },
   "../../../../components/botao-enviar": { BotaoEnviar: ({ children }: { children: unknown }) => React.createElement("button", { type: "submit" }, children) },
