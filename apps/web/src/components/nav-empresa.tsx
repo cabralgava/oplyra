@@ -20,6 +20,7 @@ export function NavEmpresa({ tenantId }: { tenantId: string }) {
     { chave: "inicio", href: base, rotulo: "Início", exato: true },
     // Fatia publicada em develop: Central Estratégica. As demais páginas existem no código, mas ficam fora do nav.
     { chave: "estrategia", href: `${base}/estrategia`, rotulo: "Central Estratégica", exato: false },
+    { chave: "operacao", href: `${base}/operacao`, rotulo: "Operação", exato: false },
     { chave: "execucoes", href: `${base}/execucoes`, rotulo: "Execuções", exato: false },
     { chave: "marca", href: `${base}/marca`, rotulo: "Marca", exato: false },
     { chave: "equipe", href: `${base}/equipe`, rotulo: "Equipe", exato: false },

@@ -788,7 +788,7 @@
     },
     {
       "path": "apps/web/src/components/nav-empresa.tsx",
-      "sha256": "91bbff685b4e4bf1b506820007b45c04c2323b7155a9f00cd00eab641d4d04fc",
+      "sha256": "47ce751846aabf00f4fcc96c43896ff091dfadd28620fb430596b5e48478d954",
       "category": "runtime_component"
     },
     {
@@ -1275,6 +1275,41 @@
       "path": "test/i04-ssr-probe.test.ts",
       "category": "runtime_test",
       "sha256": "789ec17e7a6dc56e12d3c8c9f1b55ee1db71162a4ea574d99b93a1d664cf723e"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/operacao/page.tsx",
+      "category": "runtime_component",
+      "sha256": "f92703232caee5d5632ba007b4ab32966f124b6c90f42109e111370660454a53"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/operacao/operacao.module.css",
+      "category": "runtime_component",
+      "sha256": "da3d8ee528d8574caaa6db360c51dc8687e52a2647e3d61cb0364ec956fcdf3f"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/operacao/loading.tsx",
+      "category": "runtime_component",
+      "sha256": "dd74efebbfe98f79601ebb00f7ebcece8a3d61c07f28c44fecff3af6de275d8d"
+    },
+    {
+      "path": "apps/web/src/app/e/[tenantId]/operacao/error.tsx",
+      "category": "runtime_component",
+      "sha256": "b1dc806155ddcbe5421ebe19f9c7351c7bcf0a611b2879034022c91059fb9ccd"
+    },
+    {
+      "path": "test/web-operacao-oficial.test.ts",
+      "category": "runtime_test",
+      "sha256": "a8fc5dcccc752abd472d86b0a0d9a1769e76491331810d5cc4b3e039d20e31f6"
+    },
+    {
+      "path": "test/operacao-contract.test.ts",
+      "category": "runtime_test",
+      "sha256": "d7b1d862e6906df9ccfa5bda48149c3b7a22501a35ed0a588c03eb96f67956c5"
+    },
+    {
+      "path": "e2e/operacao-oficial.spec.ts",
+      "category": "runtime_test",
+      "sha256": "51ab8317b4bb40047778f844cb8a36b99db58f2418f4c4c94001c09eda17263d"
     }
   ]
 }
