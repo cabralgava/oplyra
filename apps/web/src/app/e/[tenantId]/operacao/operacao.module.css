@@ -50,3 +50,7 @@
 .sinalDependencias p + p { margin-top: .375rem; }
 .atencaoDependencias { border-inline-start: 3px solid var(--warn); }
 @media (prefers-contrast: more) { .sinalDependencias { border-color: var(--text-3); } }
+
+/* Informação de prazo independente do selo do estado da tarefa. */
+.prazoAtrasado { font-weight: 600; color: var(--bad-text); }
+.prazoHoje { font-weight: 600; color: var(--warn); }

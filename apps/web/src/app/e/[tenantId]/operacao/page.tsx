@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { contextoDaEmpresa } from "../../../../lib/session";
+import { hojeDaOperacao } from "../../../../lib/operacao-prazos";
 import { strategyDeps } from "../../../../lib/deps-estrategia";
-import { summarizeTaskDependencies, getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
+import { isValidCivilDate, classifyTaskDueDate, sortTasksByDueDate, summarizeTaskDependencies, getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
 import type { TaskStatus, Task } from "../../../../lib/estrategia";
 import { lerFiltroOperacao, manterFiltroOperacao, valorFiltroOperacao, type FiltroOperacao } from "../../../../lib/operacao-filtro";
 import type { TaskId } from "@oplyra/core";
@@ -104,6 +105,8 @@ export default async function Operacao({ params, searchParams }: Props) {
     return <div className="pilha"><h1>Operação</h1><div className="erro" role="alert"><p>Filtro de campanha inválido ou indisponível nesta empresa.</p></div><a className="btn secundario" href={base}>Limpar filtro</a></div>;
   }
   const { tasks: tarefas, references: referencias, campaigns: campanhas } = leitura;
+  const hoje = await hojeDaOperacao(ctx);
+  const tarefasPorPrazo = sortTasksByDueDate(tarefas);
   const retorno = manterFiltroOperacao(base, filtro);
   const podeEditar = ctx.permissions.has("strategy.write");
   const referenciasPorId = new Map(referencias.filter(t => t.tenantId === ctx.tenantId).map(t => [t.id, t]));
@@ -128,6 +131,7 @@ export default async function Operacao({ params, searchParams }: Props) {
   function cartao(t: typeof tarefas[number]) {
     const tarefaId = t.id;
     const sinal = summarizeTaskDependencies(t, referencias);
+    const prazo = classifyTaskDueDate(t, hoje);
     async function salvar(dados: FormData) { "use server"; return editarTarefa(tenantId, base, filtro, tarefaId, dados); }
     return (
       <li key={t.id} id={`tarefa-${t.id}`} className={estilos.tarefa}>
@@ -136,7 +140,11 @@ export default async function Operacao({ params, searchParams }: Props) {
         </div>
         {t.description && <p className="texto">{t.description}</p>}
         <p className={estilos.contexto}>{t.campaignId ? `Campanha: ${nomesCampanhas.get(t.campaignId) ?? "Indisponível"}` : "Tarefa avulsa"}</p>
-        {t.dueDate && <p className={estilos.contexto}>Prazo: <time dateTime={t.dueDate}>{t.dueDate.split("-").reverse().join("/")}</time></p>}
+        <p data-testid="prazo-tarefa" className={estilos.contexto}>Prazo: {t.dueDate === null ? "Sem prazo" : isValidCivilDate(t.dueDate) ? <time dateTime={t.dueDate}>{t.dueDate.split("-").reverse().join("/")}</time> : "Prazo indisponível"}
+          {prazo === "overdue" && <span className={estilos.prazoAtrasado}> · Atrasada</span>}
+          {prazo === "today" && <span className={estilos.prazoHoje}> · Hoje</span>}
+          {prazo === "upcoming" && <span> · Prazo futuro</span>}
+        </p>
         {t.dependsOn.length > 0 && <p className={estilos.contexto}>Depende de: {t.dependsOn.map((id) => referenciasPorId.has(id) ? `${referenciasPorId.get(id)!.title} — ${ROTULO_TAREFA[referenciasPorId.get(id)!.status]}` : "Dependência indisponível").join(", ")}</p>}
         {sinal.total > 0 && <div role="note" aria-label="Situação das dependências" className={`${estilos.sinalDependencias} ${sinal.attentionRequired ? estilos.atencaoDependencias : ""}`}>
           <p><strong>{sinal.attentionRequired ? "Dependências sem conclusão" : sinal.completed === sinal.total ? "Dependências concluídas" : "Dependências registradas"}</strong></p>
@@ -182,11 +190,13 @@ export default async function Operacao({ params, searchParams }: Props) {
       {!podeEditar && <p className="aviso">Você tem acesso de leitura. A criação e a alteração de tarefas exigem permissão de escrita.</p>}
       <section aria-labelledby="tarefas">
         <h2 id="tarefas">Tarefas</h2>
+        <p className="muted">A fazer e Em andamento: prazos mais próximos primeiro; tarefas sem prazo ao final. Datas iguais mantêm a ordem anterior.</p>
+        {!hoje && <p className="aviso" role="note" aria-label="Classificação dos prazos">Classificação de prazos indisponível. As datas informadas continuam visíveis.</p>}
         {tarefas.length === 0 ? <div className="card vazio"><p>{filtro.kind === "all" ? "Nenhuma tarefa ainda." : filtro.kind === "unlinked" ? "Nenhuma tarefa avulsa." : "Nenhuma tarefa vinculada a esta campanha."}</p><p>{filtro.kind === "all" ? "Registre o trabalho que precisa acontecer e o que depende de quê." : "Altere ou limpe o filtro para consultar outras tarefas da empresa."}</p></div> : (
           <div className={estilos.quadro}>
             {COLUNAS.map((estado) => <section key={estado} className={estilos.coluna} aria-labelledby={`coluna-${estado}`}>
               <h2 id={`coluna-${estado}`}>{TITULO[estado]}</h2>
-              <ul className={estilos.lista}>{tarefas.filter((t) => t.status === estado).map(cartao)}</ul>
+              <ul className={estilos.lista}>{(estado === "done" ? tarefas : tarefasPorPrazo).filter((t) => t.status === estado).map(cartao)}</ul>
               {!tarefas.some((t) => t.status === estado) && <p className={estilos.vazioColuna}>Nenhuma tarefa neste estado.</p>}
             </section>)}
           </div>
