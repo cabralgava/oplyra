@@ -1319,7 +1319,7 @@
     {
       "path": "packages/infra/test/task-details.integration.test.ts",
       "category": "integration_test",
-      "sha256": "9e4fc28a431a60b44bc2b56226fae06fb0d2af4a3cb93a317dd3ac356a668121"
+      "sha256": "c5091cb8efe6856f4ccca117642b954547e58fd4eb506e78ccf654a07cd7e3fb"
     },
     {
       "path": "test/web-operacao-edicao.test.ts",

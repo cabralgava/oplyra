@@ -48,7 +48,7 @@ const saves = async (id: string) => uow.withUserTransaction(own, async tx => {
 beforeAll(async () => {
   await admin.pool.query(
     "insert into core.tenants(id,name,slug) values($1,$2,$3),($4,$5,$6)",
-    [TA, "Task details A", `task-details-a-${TA}`, TB, "Task details B", `task-details-b-${TB}`],
+    [TA, "Task details A", `td-a-${TA}`, TB, "Task details B", `td-b-${TB}`],
   );
   await admin.pool.query(
     "insert into core.memberships(tenant_id,user_id,role_key) values($1,$2,'owner'),($1,$3,'marketing_manager'),($1,$4,'viewer'),($5,$6,'owner')",
