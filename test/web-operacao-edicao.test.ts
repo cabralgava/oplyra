@@ -23,6 +23,7 @@ const modules: Record<string, unknown> = {
   "../../../../lib/session": { contextoDaEmpresa }, "../../../../lib/deps-estrategia": { strategyDeps: dependencies },
   "../../../../lib/estrategia": { listTasks, listCampaigns, createTask: vi.fn(), changeTaskStatus: vi.fn(), saveTaskDetails },
   "../../../../lib/estrategia-form": form,
+  "../../../../components/tarefa-destino": { TarefaDestino: () => null },
   "../../../../components/botao-enviar": { BotaoEnviar: ({ children }: { children: unknown }) => React.createElement("button", { type: "submit" }, children) },
   "../../../../components/aviso-estrategia": { AvisoDeErro: () => null, AvisoSemPermissao: () => React.createElement("p", null, "Sem permissão") },
   "./operacao.module.css": { default: {} },

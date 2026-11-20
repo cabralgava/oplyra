@@ -1279,7 +1279,7 @@
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/page.tsx",
       "category": "runtime_component",
-      "sha256": "23e37dcfe7f44bbc79f054a3b6bd0408803582b9ac6110a75e826333ea857819"
+      "sha256": "4afde8b32cb406b0fa1d5f464faf6b2357f6e7201fabab22ba8bf10bb4f17782"
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/operacao.module.css",
@@ -1299,7 +1299,7 @@
     {
       "path": "test/web-operacao-oficial.test.ts",
       "category": "runtime_test",
-      "sha256": "a8fc5dcccc752abd472d86b0a0d9a1769e76491331810d5cc4b3e039d20e31f6"
+      "sha256": "55f39b3baa89f59b220a0218095e3045c957df3296de5c25165c0a5961e75f19"
     },
     {
       "path": "test/operacao-contract.test.ts",
@@ -1324,7 +1324,7 @@
     {
       "path": "test/web-operacao-edicao.test.ts",
       "category": "runtime_test",
-      "sha256": "8269a44b4c41bf01e439dd1db435e63897459dd1b9b1b0fcd5c6ff73cb042c53"
+      "sha256": "d408f7bf2ee6e5d5e81e9aedbdffc46540c6bc4e4e8f929ccef48fc7ebe2f01b"
     },
     {
       "path": "e2e/operacao-edicao.spec.ts",
@@ -1350,6 +1350,16 @@
       "path": "e2e/campanha-tarefas.spec.ts",
       "category": "runtime_test",
       "sha256": "530c329804a6b5a64fe3c13788f465e31df5247ffbcbf88ca2b065169b39d699"
+    },
+    {
+      "path": "apps/web/src/components/tarefa-destino.tsx",
+      "category": "runtime_component",
+      "sha256": "42250b761345f76ac5b9ac40a54857bf46cbc09318dd10eb622380dfb0d6c0ef"
+    },
+    {
+      "path": "test/web-tarefa-destino.test.ts",
+      "category": "runtime_test",
+      "sha256": "016072489f19e16ef4148c52b8d273a8bd32d70faab6b79ab02baec47f31fb79"
     }
   ]
 }
