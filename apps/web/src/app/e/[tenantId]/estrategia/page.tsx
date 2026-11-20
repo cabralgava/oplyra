@@ -1,5 +1,3 @@
-import { headers } from "next/headers";
-import { provaSsrSeSolicitada } from "../../../../lib/i04-ssr-probe";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -33,7 +31,6 @@ export default async function Estrategia({ params, searchParams }: Props) {
   if (!ctx.permissions.has("strategy.read")) return <AvisoSemPermissao titulo="Estratégia" oque="ver a estratégia" />;
 
   const [objetivos, campanhas] = await Promise.all([listObjectives(strategyDeps, ctx), listCampaigns(strategyDeps, ctx)]);
-  const evidenciaSsr = await provaSsrSeSolicitada(strategyDeps.uow, ctx, { objectiveIds: objetivos.map(o => o.id), campaignIds: campanhas.map(c => c.id) }, await headers());
   const podeEditar = ctx.permissions.has("strategy.write");
   const ativos = objetivos.filter((o) => o.status === "active");
 
@@ -94,7 +91,6 @@ export default async function Estrategia({ params, searchParams }: Props) {
 
   return (
     <div className={`pilha ${styles.central}`}>
-      {evidenciaSsr && <pre hidden id="oplyra-i04-ssr-receipt">{JSON.stringify(evidenciaSsr)}</pre>}
       <header className={styles.cabecalho}>
         <p className="camp-rotulo">Estratégia da empresa</p>
         <h1>Central Estratégica</h1>
