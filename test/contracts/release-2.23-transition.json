@@ -838,7 +838,7 @@
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/estrategia/page.tsx",
-      "sha256": "7d53629cec79f2bcc670ef55dce09ce0ed34f63b641511d911101a6944ed954d",
+      "sha256": "b3c6e5f839b009f859508b2809053a4a78e1d501a3c1609afdd935671aed2541",
       "category": "runtime_component"
     },
     {
@@ -1250,6 +1250,31 @@
       "path": "test/i04-pool-audit.test.ts",
       "category": "runtime_test",
       "sha256": "290452b0627b6b8b6dd1391a1221ed640b1b29df91b23f44bd81993dccee4bac"
+    },
+    {
+      "path": "apps/web/src/lib/i04-ssr-guard.ts",
+      "category": "development_tool",
+      "sha256": "95c50cea83bcc629116ad623ea898fdfc9650fa1b5d86ef8dc627c1a8019eb1f"
+    },
+    {
+      "path": "apps/web/src/lib/i04-ssr-plan.json",
+      "category": "development_tool",
+      "sha256": "c9a2a9892eb48bb0e81fb585f3e0d9b56da5334e02e5a234b9664a1704e74d91"
+    },
+    {
+      "path": "apps/web/src/lib/i04-ssr-probe.ts",
+      "category": "development_tool",
+      "sha256": "dc2c477b70680aa0cde8f30c297c82816e1eb98ce75ea0783e2844a71abb6359"
+    },
+    {
+      "path": "packages/infra/src/i04-ssr-isolation-probe.ts",
+      "category": "development_tool",
+      "sha256": "fa5b642ba572fdaf0e7f96e5695be281d39846f01b5f6feebbf33705e6460d99"
+    },
+    {
+      "path": "test/i04-ssr-probe.test.ts",
+      "category": "runtime_test",
+      "sha256": "789ec17e7a6dc56e12d3c8c9f1b55ee1db71162a4ea574d99b93a1d664cf723e"
     }
   ]
 }

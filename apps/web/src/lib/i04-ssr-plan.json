@@ -1,0 +1,19 @@
+{
+  "id": "i04-ssr-20261120",
+  "expiresAt": "2026-11-20T20:31:51.517460+00:00",
+  "requester": "9832c240-e25f-4ec1-9fd4-199627e86638",
+  "tenants": [
+    {
+      "tenantId": "6584845d-63c0-4b5f-b17b-56b840334dce",
+      "objectId": "09e98b96-05a8-4d96-b050-559a634fb73c"
+    },
+    {
+      "tenantId": "2bef0e1d-8749-4a7c-922c-5431e61256aa",
+      "objectId": "3ecee6ad-136d-4747-bdca-1ec7ef547acd"
+    },
+    {
+      "tenantId": "c19b3ebd-955d-4d4d-9ae1-9243c622d92d",
+      "objectId": "66e7b203-b936-40d6-b617-2239358f06b7"
+    }
+  ]
+}
