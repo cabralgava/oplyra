@@ -22,7 +22,7 @@ const compiled = await transform(source, { filename: "operacao-edicao.tsx", jsc:
 const modules: Record<string, unknown> = {
   "next/navigation": { redirect }, "next/cache": { revalidatePath },
   "../../../../lib/session": { contextoDaEmpresa }, "../../../../lib/deps-estrategia": { strategyDeps: dependencies },
-  "../../../../lib/estrategia": { getOperationTasks, listTasks, listCampaigns, createTask: vi.fn(), changeTaskStatus: vi.fn(), saveTaskDetails },
+  "../../../../lib/estrategia": { summarizeTaskDependencies: (await import("../apps/web/src/lib/estrategia")).summarizeTaskDependencies, getOperationTasks, listTasks, listCampaigns, createTask: vi.fn(), changeTaskStatus: vi.fn(), saveTaskDetails },
   "../../../../lib/estrategia-form": form,
   "../../../../lib/operacao-filtro": await import("../apps/web/src/lib/operacao-filtro"),
   "../../../../components/tarefa-destino": { TarefaDestino: () => null },
@@ -37,7 +37,7 @@ new Function("require", "exports", "React", compiled.code)((name: string) => {
 }, exports, React);
 const ID = "11111111-1111-4111-8111-111111111111", OTHER = "22222222-2222-4222-8222-222222222222";
 const owner = { permissions: new Set(["strategy.read", "strategy.write"]), tenantId: "empresa-a" };
-const task = (extra = {}) => ({ id: ID, title: "Revisar oferta", description: "Descrição salva", status: "in_progress", campaignId: OTHER, dueDate: "2028-02-29", dependsOn: [OTHER], assignee: { kind: "user", userId: "pessoa" }, revision: 3, ...extra });
+const task = (extra = {}) => ({ tenantId: "empresa-a", id: ID, title: "Revisar oferta", description: "Descrição salva", status: "in_progress", campaignId: OTHER, dueDate: "2028-02-29", dependsOn: [OTHER], assignee: { kind: "user", userId: "pessoa" }, revision: 3, ...extra });
 function nodes(element: any): any[] {
   if (element === null || element === undefined || typeof element !== "object") return [];
   if (Array.isArray(element)) return element.flatMap(nodes);

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { contextoDaEmpresa } from "../../../../lib/session";
 import { strategyDeps } from "../../../../lib/deps-estrategia";
-import { getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
+import { summarizeTaskDependencies, getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
 import type { TaskStatus, Task } from "../../../../lib/estrategia";
 import { lerFiltroOperacao, manterFiltroOperacao, valorFiltroOperacao, type FiltroOperacao } from "../../../../lib/operacao-filtro";
 import type { TaskId } from "@oplyra/core";
@@ -106,7 +106,7 @@ export default async function Operacao({ params, searchParams }: Props) {
   const { tasks: tarefas, references: referencias, campaigns: campanhas } = leitura;
   const retorno = manterFiltroOperacao(base, filtro);
   const podeEditar = ctx.permissions.has("strategy.write");
-  const titulos = new Map(referencias.map((t) => [t.id, t.title]));
+  const referenciasPorId = new Map(referencias.filter(t => t.tenantId === ctx.tenantId).map(t => [t.id, t]));
   const nomesCampanhas = new Map(campanhas.map((c) => [c.id, c.name || "(sem nome)"]));
   const dependencias = referencias.filter((t) => t.status !== "cancelled");
   const canceladas = tarefas.filter((t) => t.status === "cancelled");
@@ -127,6 +127,7 @@ export default async function Operacao({ params, searchParams }: Props) {
 
   function cartao(t: typeof tarefas[number]) {
     const tarefaId = t.id;
+    const sinal = summarizeTaskDependencies(t, referencias);
     async function salvar(dados: FormData) { "use server"; return editarTarefa(tenantId, base, filtro, tarefaId, dados); }
     return (
       <li key={t.id} id={`tarefa-${t.id}`} className={estilos.tarefa}>
@@ -136,7 +137,12 @@ export default async function Operacao({ params, searchParams }: Props) {
         {t.description && <p className="texto">{t.description}</p>}
         <p className={estilos.contexto}>{t.campaignId ? `Campanha: ${nomesCampanhas.get(t.campaignId) ?? "Indisponível"}` : "Tarefa avulsa"}</p>
         {t.dueDate && <p className={estilos.contexto}>Prazo: <time dateTime={t.dueDate}>{t.dueDate.split("-").reverse().join("/")}</time></p>}
-        {t.dependsOn.length > 0 && <p className={estilos.contexto}>Depende de: {t.dependsOn.map((id) => titulos.get(id) ?? "Tarefa indisponível").join(", ")}</p>}
+        {t.dependsOn.length > 0 && <p className={estilos.contexto}>Depende de: {t.dependsOn.map((id) => referenciasPorId.has(id) ? `${referenciasPorId.get(id)!.title} — ${ROTULO_TAREFA[referenciasPorId.get(id)!.status]}` : "Dependência indisponível").join(", ")}</p>}
+        {sinal.total > 0 && <div role="note" aria-label="Situação das dependências" className={`${estilos.sinalDependencias} ${sinal.attentionRequired ? estilos.atencaoDependencias : ""}`}>
+          <p><strong>{sinal.attentionRequired ? "Dependências sem conclusão" : sinal.completed === sinal.total ? "Dependências concluídas" : "Dependências registradas"}</strong></p>
+          <p>Concluídas: {sinal.completed} · Pendentes: {sinal.pending} · Canceladas: {sinal.cancelled} · Indisponíveis: {sinal.unavailable}</p>
+          {sinal.attentionRequired && <p>Esta indicação não impede alterar o estado da tarefa.</p>}
+        </div>}
         {podeEditar && PROXIMOS[t.status].length > 0 && (
           <div className={estilos.acoes}>
             {PROXIMOS[t.status].map((para) => (

@@ -24,7 +24,7 @@ const compiled = await transform(source, { filename: "operacao.tsx", jsc: { pars
 const modules: Record<string, unknown> = {
   "next/navigation": { redirect }, "next/cache": { revalidatePath },
   "../../../../lib/session": { contextoDaEmpresa }, "../../../../lib/deps-estrategia": { strategyDeps: dependencies },
-  "../../../../lib/estrategia": { getOperationTasks, listTasks, listCampaigns, createTask, changeTaskStatus },
+  "../../../../lib/estrategia": { summarizeTaskDependencies: (await import("../apps/web/src/lib/estrategia")).summarizeTaskDependencies, getOperationTasks, listTasks, listCampaigns, createTask, changeTaskStatus },
   "../../../../lib/estrategia-form": { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro, FormularioInvalido, lerEdicaoDaTarefa },
   "../../../../lib/operacao-filtro": await import("../apps/web/src/lib/operacao-filtro"),
   "../../../../components/tarefa-destino": { TarefaDestino: () => null },
@@ -42,7 +42,7 @@ new Function("require", "exports", "React", compiled.code)((name: string) => {
 }, exports, React);
 const page = () => exports.default!({ params: Promise.resolve({ tenantId: "empresa-a" }), searchParams: Promise.resolve({}) });
 const owner = { permissions: new Set(["strategy.read", "strategy.write"]), tenantId: "empresa-a" };
-const task = (status = "todo", extra = {}) => ({ id: "11111111-1111-4111-8111-111111111111", title: "Tarefa real", description: "Descrição persistida", status, campaignId: null, dueDate: null, dependsOn: [], revision: 3, ...extra });
+const task = (status = "todo", extra = {}) => ({ tenantId: "empresa-a", id: "11111111-1111-4111-8111-111111111111", title: "Tarefa real", description: "Descrição persistida", status, campaignId: null, dueDate: null, dependsOn: [], revision: 3, ...extra });
 function nodes(element: any): any[] {
   if (element === null || element === undefined || typeof element !== "object") return [];
   if (Array.isArray(element)) return element.flatMap(nodes);
@@ -70,7 +70,7 @@ describe("Operação oficial — apresentação e ações", () => {
     expect(listCampaigns).not.toHaveBeenCalled();
   });
   it("leitor vê dados persistidos com filtro GET e sem formulários de mutação ou CTA de criação", async () => {
-    contextoDaEmpresa.mockResolvedValue({ permissions: new Set(["strategy.read"]) });
+    contextoDaEmpresa.mockResolvedValue({ ...owner, permissions: new Set(["strategy.read"]) });
     listTasks.mockResolvedValue([task()]);
     const tree = await page();
     expect(forms(tree).filter(f => f.props.method === "get")).toHaveLength(1);
