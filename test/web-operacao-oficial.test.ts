@@ -8,9 +8,10 @@ const React = requireWeb("react");
 const { renderToStaticMarkup } = requireWeb("react-dom/server");
 const { transform, loadBindings } = requireWeb("next/dist/build/swc");
 await loadBindings();
-const { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro } = await import("../apps/web/src/lib/estrategia-form");
+const { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro, FormularioInvalido, lerEdicaoDaTarefa } = await import("../apps/web/src/lib/estrategia-form");
 const contextoDaEmpresa = vi.fn();
 const listTasks = vi.fn();
+const getOperationTasks = vi.fn(async () => ({ tasks: await listTasks(), references: await listTasks(), campaigns: await listCampaigns() }));
 const listCampaigns = vi.fn();
 const createTask = vi.fn();
 const changeTaskStatus = vi.fn();
@@ -23,8 +24,9 @@ const compiled = await transform(source, { filename: "operacao.tsx", jsc: { pars
 const modules: Record<string, unknown> = {
   "next/navigation": { redirect }, "next/cache": { revalidatePath },
   "../../../../lib/session": { contextoDaEmpresa }, "../../../../lib/deps-estrategia": { strategyDeps: dependencies },
-  "../../../../lib/estrategia": { listTasks, listCampaigns, createTask, changeTaskStatus },
-  "../../../../lib/estrategia-form": { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro },
+  "../../../../lib/estrategia": { getOperationTasks, listTasks, listCampaigns, createTask, changeTaskStatus },
+  "../../../../lib/estrategia-form": { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro, FormularioInvalido, lerEdicaoDaTarefa },
+  "../../../../lib/operacao-filtro": await import("../apps/web/src/lib/operacao-filtro"),
   "../../../../components/tarefa-destino": { TarefaDestino: () => null },
   "../../../../components/botao-enviar": { BotaoEnviar: ({ children }: { children: unknown }) => React.createElement("button", { type: "submit" }, children) },
   "../../../../components/aviso-estrategia": {
@@ -67,11 +69,12 @@ describe("Operação oficial — apresentação e ações", () => {
     expect(listTasks).not.toHaveBeenCalled();
     expect(listCampaigns).not.toHaveBeenCalled();
   });
-  it("leitor vê dados persistidos sem formulários ou CTA de criação", async () => {
+  it("leitor vê dados persistidos com filtro GET e sem formulários de mutação ou CTA de criação", async () => {
     contextoDaEmpresa.mockResolvedValue({ permissions: new Set(["strategy.read"]) });
     listTasks.mockResolvedValue([task()]);
     const tree = await page();
-    expect(forms(tree)).toHaveLength(0);
+    expect(forms(tree).filter(f => f.props.method === "get")).toHaveLength(1);
+    expect(forms(tree).filter(f => f.props.method !== "get")).toHaveLength(0);
     const html = renderToStaticMarkup(tree);
     expect(html).toContain("Tarefa real");
     expect(html).toContain("Descrição persistida");
@@ -84,7 +87,7 @@ describe("Operação oficial — apresentação e ações", () => {
     expect(html).toContain("Nenhuma tarefa ainda.");
     expect(html).not.toContain("Prova quantitativa");
     expect(html).not.toContain("Decomposição sugerida");
-    expect(forms(tree)).toHaveLength(1);
+    expect(forms(tree).filter(f => f.props.method !== "get")).toHaveLength(1);
   });
   it("mostra dependências, campanha e data civil sem interpretar conteúdo como HTML", async () => {
     listTasks.mockResolvedValue([task("todo", { title: "<script>injetado</script>", campaignId: "campanha", dueDate: "2028-02-29", dependsOn: ["outra"] }), task("done", { id: "outra", title: "Revisar briefing" })]);
@@ -108,7 +111,7 @@ describe("Operação oficial — apresentação e ações", () => {
   });
   it("criação refaz contexto vivo e usa parser com assignee null", async () => {
     const tree = await page();
-    const form = forms(tree)[0];
+    const form = forms(tree).find(f => f.props.method !== "get");
     const fresh = { ...owner, userId: "contexto-vivo" };
     contextoDaEmpresa.mockResolvedValue(fresh);
     const input = new FormData(); input.set("title", "Nova tarefa");

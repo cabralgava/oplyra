@@ -53,7 +53,7 @@ test.describe("Campanha oficial — tarefas vinculadas", () => {
     await page.goto(firstPath);
     await expect(section(page)).toContainText("Nenhuma tarefa vinculada a esta campanha.");
     await expect(section(page).getByRole("list")).toHaveCount(0);
-    await expect(section(page).getByRole("link", { name: "Abrir Operação", exact: true })).toHaveAttribute("href", operation);
+    await expect(section(page).getByRole("link", { name: "Abrir Operação", exact: true })).toHaveAttribute("href", `${operation}?campanha=${firstId}`);
     await expect(page.getByRole("navigation", { name: "Seções da campanha" }).getByRole("link", { name: "Tarefas", exact: true })).toHaveAttribute("href", "#tarefas-vinculadas");
   });
 
@@ -81,7 +81,7 @@ test.describe("Campanha oficial — tarefas vinculadas", () => {
       page.waitForEvent("domcontentloaded"),
       campaignTask(page, linked).getByRole("link", { name: "Ver na Operação", exact: true }).click(),
     ]);
-    await expect(page).toHaveURL(new RegExp(`/operacao#tarefa-${linkedId}$`));
+    await expect(page).toHaveURL(new RegExp(`/operacao\\?campanha=${firstId}#tarefa-${linkedId}$`));
     await expect(page.locator(`#tarefa-${linkedId}`)).toBeInViewport();
     await expect(taskCard(page, linked)).toContainText("Em andamento");
   });
@@ -128,7 +128,7 @@ test.describe("Campanha oficial — tarefas vinculadas", () => {
       page.waitForEvent("domcontentloaded"),
       campaignTask(page, betaTask).getByRole("link", { name: "Ver na Operação", exact: true }).click(),
     ]);
-    await expect(page).toHaveURL(new RegExp(`/operacao#tarefa-${betaTaskId}$`));
+    await expect(page).toHaveURL(new RegExp(`/operacao\\?campanha=${betaPath.split("/").at(-1)!}#tarefa-${betaTaskId}$`));
     await expect(taskCard(page, betaTask).locator("details")).toHaveCount(0);
     await expect(taskCard(page, betaTask).getByRole("button")).toHaveCount(0);
   });

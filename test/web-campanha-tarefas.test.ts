@@ -82,7 +82,7 @@ describe("Tarefas vinculadas no detalhe oficial de campanha", () => {
     listCampaignTasks.mockResolvedValue([]);
     const result = html(await page());
     expect(result).toContain("Nenhuma tarefa vinculada a esta campanha.");
-    expect(result).toContain(`href="/e/empresa-a/operacao"`);
+    expect(result).toContain(`href="/e/empresa-a/operacao?campanha=${CAMPAIGN}"`);
     expect(result).not.toContain("Ver na Operação");
     expect(result).not.toContain("<progress");
     expect(result).not.toContain("<li");
@@ -94,7 +94,7 @@ describe("Tarefas vinculadas no detalhe oficial de campanha", () => {
     expect(result).toContain("Trabalho persistido");
     expect(result).toContain("Em andamento");
     expect(result).toContain('<time dateTime="2028-02-29">29/02/2028</time>');
-    expect(result).toContain(`href="/e/empresa-a/operacao#tarefa-${TASK}"`);
+    expect(result).toContain(`href="/e/empresa-a/operacao?campanha=${CAMPAIGN}#tarefa-${TASK}"`);
     expect(result).toContain("Ver na Operação");
   });
 

@@ -2,8 +2,9 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { contextoDaEmpresa } from "../../../../lib/session";
 import { strategyDeps } from "../../../../lib/deps-estrategia";
-import { listTasks, createTask, changeTaskStatus, listCampaigns, saveTaskDetails } from "../../../../lib/estrategia";
+import { getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
 import type { TaskStatus, Task } from "../../../../lib/estrategia";
+import { lerFiltroOperacao, manterFiltroOperacao, valorFiltroOperacao, type FiltroOperacao } from "../../../../lib/operacao-filtro";
 import type { TaskId } from "@oplyra/core";
 import { ROTULO_TAREFA, destinoDeErro, lerId, lerRevisao, lerTarefa, lerEdicaoDaTarefa, FormularioInvalido } from "../../../../lib/estrategia-form";
 import { BotaoEnviar } from "../../../../components/botao-enviar";
@@ -11,7 +12,7 @@ import { TarefaDestino } from "../../../../components/tarefa-destino";
 import { AvisoDeErro, AvisoSemPermissao } from "../../../../components/aviso-estrategia";
 import estilos from "./operacao.module.css";
 
-type Props = { params: Promise<{ tenantId: string }>; searchParams: Promise<{ erro?: string; ok?: string; problemas?: string; editar?: string }> };
+type Props = { params: Promise<{ tenantId: string }>; searchParams: Promise<{ erro?: string; ok?: string; problemas?: string; editar?: string; campanha?: string | string[] }> };
 const SELO = { todo: "selo pendente", in_progress: "selo pendente", done: "selo ok", cancelled: "selo proibido" } as const;
 const PROXIMOS: Record<TaskStatus, readonly TaskStatus[]> = {
   todo: ["in_progress", "cancelled"], in_progress: ["done", "todo", "cancelled"], done: ["in_progress"], cancelled: [],
@@ -23,13 +24,14 @@ const TITULO = { todo: "A fazer", in_progress: "Em andamento", done: "Concluída
 type EditorProps = {
   tarefa: Task;
   tarefas: readonly Task[];
-  campanhas: Awaited<ReturnType<typeof listCampaigns>>;
+  campanhas: Awaited<ReturnType<typeof getOperationTasks>>["campaigns"];
   aberta: boolean;
+  retorno: string;
   action: (dados: FormData) => Promise<void>;
 };
 
 /** Adaptação ao cartão K01: edição local ao objeto, sem campos de responsável/estado. */
-function EditorDaTarefa({ tarefa, tarefas, campanhas, aberta, action }: EditorProps) {
+function EditorDaTarefa({ tarefa, tarefas, campanhas, aberta, retorno, action }: EditorProps) {
   const prefixo = `editar_${tarefa.id}`;
   const candidatas = tarefas.filter((t) => t.id !== tarefa.id && (t.status !== "cancelled" || tarefa.dependsOn.includes(t.id)));
   const ausentes = tarefa.dependsOn.filter((id) => !tarefas.some((t) => t.id === id));
@@ -53,67 +55,79 @@ function EditorDaTarefa({ tarefa, tarefas, campanhas, aberta, action }: EditorPr
           {candidatas.map((t) => <label key={t.id} className="inline" htmlFor={`${prefixo}_dep_${t.id}`}><input id={`${prefixo}_dep_${t.id}`} type="checkbox" name="editar_dep" value={t.id} defaultChecked={tarefa.dependsOn.includes(t.id)} /><span>Depende de {t.title}</span></label>)}
           {ausentes.map((id) => <label key={id} className="inline" htmlFor={`${prefixo}_dep_${id}`}><input id={`${prefixo}_dep_${id}`} type="checkbox" name="editar_dep" value={id} defaultChecked /><span>Dependência indisponível; será conferida ao salvar</span></label>)}
         </fieldset>}
-        <div className="linha"><BotaoEnviar rotuloEmEspera="Salvando…">Salvar tarefa</BotaoEnviar><a className="btn secundario" href={`?editar=#tarefa-${tarefa.id}`}>Fechar edição</a></div>
+        <div className="linha"><BotaoEnviar rotuloEmEspera="Salvando…">Salvar tarefa</BotaoEnviar><a className="btn secundario" href={`${retorno}#tarefa-${tarefa.id}`}>Fechar edição</a></div>
       </form>
     </details>
   );
 }
 
-async function editarTarefa(tenantId: string, base: string, tarefaEsperada: string, dados: FormData): Promise<void> {
+async function editarTarefa(tenantId: string, base: string, filtro: FiltroOperacao, tarefaEsperada: string, dados: FormData): Promise<void> {
   const ctx = await contextoDaEmpresa(tenantId);
   try {
+    await getOperationTasks(strategyDeps, ctx, filtro);
     const entrada = lerEdicaoDaTarefa(dados);
     if (entrada.taskId !== tarefaEsperada) throw new FormularioInvalido("editar_tarefa");
     await saveTaskDetails(strategyDeps, { ctx, ...entrada });
   } catch (e) {
-    redirect(`${destinoDeErro(base, e)}&editar=${encodeURIComponent(tarefaEsperada)}#editar-${tarefaEsperada}`);
+    redirect(manterFiltroOperacao(`${destinoDeErro(base, e)}&editar=${encodeURIComponent(tarefaEsperada)}#editar-${tarefaEsperada}`, filtro));
   }
   revalidatePath(base);
-  redirect(`${base}?ok=salva#tarefa-${tarefaEsperada}`);
+  redirect(manterFiltroOperacao(`${base}?ok=salva#tarefa-${tarefaEsperada}`, filtro));
 }
 
 // A action fecha apenas sobre identificadores e refaz identidade/permissão pelo caso de uso.
-async function mudarTarefa(tenantId: string, base: string, para: TaskStatus, dados: FormData): Promise<void> {
+async function mudarTarefa(tenantId: string, base: string, filtro: FiltroOperacao, para: TaskStatus, dados: FormData): Promise<void> {
   const contexto = await contextoDaEmpresa(tenantId);
   try {
+    await getOperationTasks(strategyDeps, contexto, filtro);
     await changeTaskStatus(strategyDeps, { ctx: contexto, taskId: lerId(dados, "tarefa") as TaskId, expectedRevision: lerRevisao(dados), to: para });
-  } catch (e) { redirect(destinoDeErro(base, e)); }
+  } catch (e) { redirect(manterFiltroOperacao(destinoDeErro(base, e), filtro)); }
   revalidatePath(base);
-  redirect(`${base}?ok=estado`);
+  redirect(manterFiltroOperacao(`${base}?ok=estado`, filtro));
 }
 
 /** K01 (36:4863): quadro e cartões adaptados aos estados reais de tarefa. */
 export default async function Operacao({ params, searchParams }: Props) {
   const { tenantId } = await params;
-  const { erro, ok, problemas, editar } = await searchParams;
+  const { erro, ok, problemas, editar, campanha } = await searchParams;
   const ctx = await contextoDaEmpresa(tenantId);
   const base = `/e/${encodeURIComponent(tenantId)}/operacao`;
   if (!ctx.permissions.has("strategy.read")) return <AvisoSemPermissao titulo="Operação" oque="ver a operação" />;
 
-  const [tarefas, campanhas] = await Promise.all([listTasks(strategyDeps, ctx), listCampaigns(strategyDeps, ctx)]);
+  let filtro: FiltroOperacao;
+  let leitura: Awaited<ReturnType<typeof getOperationTasks>>;
+  try {
+    filtro = lerFiltroOperacao(campanha);
+    leitura = await getOperationTasks(strategyDeps, ctx, filtro);
+  } catch (e) {
+    if (!(e instanceof FormularioInvalido) && !(e instanceof Error && "code" in e && e.code === "CAMPAIGN_NOT_FOUND")) throw e;
+    return <div className="pilha"><h1>Operação</h1><div className="erro" role="alert"><p>Filtro de campanha inválido ou indisponível nesta empresa.</p></div><a className="btn secundario" href={base}>Limpar filtro</a></div>;
+  }
+  const { tasks: tarefas, references: referencias, campaigns: campanhas } = leitura;
+  const retorno = manterFiltroOperacao(base, filtro);
   const podeEditar = ctx.permissions.has("strategy.write");
-  const titulos = new Map(tarefas.map((t) => [t.id, t.title]));
+  const titulos = new Map(referencias.map((t) => [t.id, t.title]));
   const nomesCampanhas = new Map(campanhas.map((c) => [c.id, c.name || "(sem nome)"]));
-  const dependencias = tarefas.filter((t) => t.status !== "cancelled");
+  const dependencias = referencias.filter((t) => t.status !== "cancelled");
   const canceladas = tarefas.filter((t) => t.status === "cancelled");
 
   async function nova(dados: FormData) {
     "use server";
     const contexto = await contextoDaEmpresa(tenantId);
-    try { await createTask(strategyDeps, { ctx: contexto, content: lerTarefa(dados) }); }
-    catch (e) { redirect(destinoDeErro(base, e)); }
+    try { await getOperationTasks(strategyDeps, contexto, filtro); await createTask(strategyDeps, { ctx: contexto, content: lerTarefa(dados) }); }
+    catch (e) { redirect(manterFiltroOperacao(destinoDeErro(base, e), filtro)); }
     revalidatePath(base);
-    redirect(`${base}?ok=criada`);
+    redirect(manterFiltroOperacao(`${base}?ok=criada`, filtro));
   }
-  async function iniciar(d: FormData) { "use server"; return mudarTarefa(tenantId, base, "in_progress", d); }
-  async function concluir(d: FormData) { "use server"; return mudarTarefa(tenantId, base, "done", d); }
-  async function reabrir(d: FormData) { "use server"; return mudarTarefa(tenantId, base, "todo", d); }
-  async function cancelar(d: FormData) { "use server"; return mudarTarefa(tenantId, base, "cancelled", d); }
+  async function iniciar(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, "in_progress", d); }
+  async function concluir(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, "done", d); }
+  async function reabrir(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, "todo", d); }
+  async function cancelar(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, "cancelled", d); }
   const acoes = { todo: reabrir, in_progress: iniciar, done: concluir, cancelled: cancelar };
 
   function cartao(t: typeof tarefas[number]) {
     const tarefaId = t.id;
-    async function salvar(dados: FormData) { "use server"; return editarTarefa(tenantId, base, tarefaId, dados); }
+    async function salvar(dados: FormData) { "use server"; return editarTarefa(tenantId, base, filtro, tarefaId, dados); }
     return (
       <li key={t.id} id={`tarefa-${t.id}`} className={estilos.tarefa}>
         <div className={estilos.tituloTarefa}>
@@ -136,7 +150,7 @@ export default async function Operacao({ params, searchParams }: Props) {
             ))}
           </div>
         )}
-        {podeEditar && t.status !== "cancelled" && <EditorDaTarefa key={`${t.id}:${t.revision}:${editar === t.id ? "aberta" : "fechada"}`} tarefa={t} tarefas={tarefas} campanhas={campanhas} aberta={editar === t.id} action={salvar} />}
+        {podeEditar && t.status !== "cancelled" && <EditorDaTarefa key={`${t.id}:${t.revision}:${editar === t.id ? "aberta" : "fechada"}`} tarefa={t} tarefas={referencias} campanhas={campanhas} retorno={retorno} aberta={editar === t.id} action={salvar} />}
       </li>
     );
   }
@@ -148,6 +162,13 @@ export default async function Operacao({ params, searchParams }: Props) {
         <div><h1>Operação</h1><p className="muted">Organize as tarefas da empresa, suas campanhas, prazos e dependências.</p></div>
         {podeEditar && <a className="btn" href="#nova-tarefa">Nova tarefa</a>}
       </header>
+      <form method="get" action={base} className={`card ${estilos.filtro}`} aria-label="Filtrar tarefas por campanha">
+        <div><label htmlFor="filtro-campanha">Filtrar tarefas por campanha</label><select id="filtro-campanha" name="campanha" defaultValue={valorFiltroOperacao(filtro)}>
+          <option value="todas">Todas as tarefas</option><option value="avulsas">Somente tarefas avulsas</option>
+          {campanhas.map(c => <option key={c.id} value={c.id}>{c.name || "(sem nome)"}</option>)}
+        </select></div><button className="btn" type="submit">Aplicar filtro</button>
+        {filtro.kind !== "all" && <a className="btn secundario" href={base}>Limpar filtro</a>}
+      </form>
       {ok === "criada" && <p className="sucesso" role="status">Tarefa criada.</p>}
       {ok === "estado" && <p className="sucesso" role="status">Estado da tarefa atualizado.</p>}
       {ok === "salva" && <p className="sucesso" role="status">Tarefa atualizada.</p>}
@@ -155,7 +176,7 @@ export default async function Operacao({ params, searchParams }: Props) {
       {!podeEditar && <p className="aviso">Você tem acesso de leitura. A criação e a alteração de tarefas exigem permissão de escrita.</p>}
       <section aria-labelledby="tarefas">
         <h2 id="tarefas">Tarefas</h2>
-        {tarefas.length === 0 ? <div className="card vazio"><p>Nenhuma tarefa ainda.</p><p>Registre o trabalho que precisa acontecer e o que depende de quê.</p></div> : (
+        {tarefas.length === 0 ? <div className="card vazio"><p>{filtro.kind === "all" ? "Nenhuma tarefa ainda." : filtro.kind === "unlinked" ? "Nenhuma tarefa avulsa." : "Nenhuma tarefa vinculada a esta campanha."}</p><p>{filtro.kind === "all" ? "Registre o trabalho que precisa acontecer e o que depende de quê." : "Altere ou limpe o filtro para consultar outras tarefas da empresa."}</p></div> : (
           <div className={estilos.quadro}>
             {COLUNAS.map((estado) => <section key={estado} className={estilos.coluna} aria-labelledby={`coluna-${estado}`}>
               <h2 id={`coluna-${estado}`}>{TITULO[estado]}</h2>
@@ -173,7 +194,7 @@ export default async function Operacao({ params, searchParams }: Props) {
           <div><label htmlFor="title">Título</label><input id="title" name="title" maxLength={200} required /></div>
           <div><label htmlFor="description">Descrição (opcional)</label><textarea id="description" name="description" rows={3} maxLength={2000} /></div>
           <div className={estilos.campos}>
-            <div><label htmlFor="campaignId">Campanha (opcional)</label><select id="campaignId" name="campaignId" defaultValue=""><option value="">Tarefa avulsa</option>{campanhas.map((c) => <option key={c.id} value={c.id}>{c.name || "(sem nome)"}</option>)}</select></div>
+            <div><label htmlFor="campaignId">Campanha (opcional)</label><select id="campaignId" name="campaignId" defaultValue={filtro.kind === "campaign" ? filtro.campaignId : ""}><option value="">Tarefa avulsa</option>{campanhas.map((c) => <option key={c.id} value={c.id}>{c.name || "(sem nome)"}</option>)}</select></div>
             <div><label htmlFor="dueDate">Prazo (opcional)</label><input id="dueDate" name="dueDate" type="date" /></div>
           </div>
           {dependencias.length > 0 && <fieldset className={`item ${estilos.dependencias}`}>

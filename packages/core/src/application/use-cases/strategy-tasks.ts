@@ -5,7 +5,7 @@ import type { AccessContext } from "../../domain/access-context.ts";
 import { exigirPermissao } from "../../domain/access-context.ts";
 import type { CampaignId, TaskId } from "../../domain/ids.ts";
 import {
-  type Task, type TaskContent, type TaskStatus,
+  type Campaign, type Task, type TaskContent, type TaskStatus,
   exigirResponsavelValido, exigirSemCiclo, exigirTarefaValida, transicaoDaTarefaPermitida,
 } from "../../domain/strategy.ts";
 import { CampaignNotFound, TaskNotFound } from "../../domain/strategy-errors.ts";
@@ -29,6 +29,40 @@ export async function listCampaignTasks(deps: StrategyDeps, ctx: AccessContext, 
     if (!campaign || campaign.id !== campaignId || campaign.tenantId !== ctx.tenantId) throw new CampaignNotFound();
     const tasks = await deps.tasks.list(tx, ctx.tenantId);
     return tasks.filter((task) => task.tenantId === ctx.tenantId && task.campaignId === campaignId);
+  });
+}
+
+/** Filtro da leitura da Operação; não altera o escopo das referências de edição. */
+export type OperationTaskFilter =
+  | { readonly kind: "all" }
+  | { readonly kind: "unlinked" }
+  | { readonly kind: "campaign"; readonly campaignId: CampaignId };
+
+export type OperationTasks = {
+  readonly tasks: readonly Task[];
+  readonly references: readonly Task[];
+  readonly campaigns: readonly Campaign[];
+};
+
+/**
+ * Lê a Operação em uma transação, uma vez por porta. As referências continuam completas
+ * dentro da empresa para que filtrar cartões não apague dependências ao editar.
+ * A porta atual carrega o tenant no servidor; nenhum filtro é delegado ao navegador.
+ */
+export async function getOperationTasks(
+  deps: StrategyDeps, ctx: AccessContext, filter: OperationTaskFilter,
+): Promise<OperationTasks> {
+  exigirPermissao(ctx, "strategy.read");
+  if (!filter || (filter.kind !== "all" && filter.kind !== "unlinked" && filter.kind !== "campaign")) throw new ReferenceNotFound();
+  return deps.uow.withUserTransaction(ctx, async (tx) => {
+    const campaigns = (await deps.campaigns.list(tx, ctx.tenantId)).filter(campaign => campaign.tenantId === ctx.tenantId);
+    // A lista já necessária ao seletor valida o filtro sem uma segunda consulta de campanha.
+    if (filter.kind === "campaign" && !campaigns.some(campaign => campaign.id === filter.campaignId)) throw new CampaignNotFound();
+    const references = (await deps.tasks.list(tx, ctx.tenantId)).filter(task => task.tenantId === ctx.tenantId);
+    const tasks = filter.kind === "all" ? references
+      : filter.kind === "unlinked" ? references.filter(task => task.campaignId === null)
+      : references.filter(task => task.campaignId === filter.campaignId);
+    return { tasks, references, campaigns };
   });
 }
 

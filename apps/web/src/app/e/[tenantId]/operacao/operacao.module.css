@@ -37,3 +37,9 @@
 .editor input, .editor select { min-width: 0; }
 .editor :global(.linha) { gap: .5rem; }
 .editor button, .editor a { max-width: 100%; white-space: normal; overflow-wrap: anywhere; min-height: 44px; }
+
+/* Navegação GET independente dos formulários de mutação. */
+.filtro { display: flex; align-items: end; gap: 1rem; flex-wrap: wrap; padding: 1rem; }
+.filtro > div { flex: 1 1 16rem; min-width: 0; }
+.filtro select { width: 100%; min-width: 0; }
+.filtro button, .filtro a { min-height: 44px; }
