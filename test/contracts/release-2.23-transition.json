@@ -838,7 +838,7 @@
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/estrategia/page.tsx",
-      "sha256": "b3c6e5f839b009f859508b2809053a4a78e1d501a3c1609afdd935671aed2541",
+      "sha256": "7d53629cec79f2bcc670ef55dce09ce0ed34f63b641511d911101a6944ed954d",
       "category": "runtime_component"
     },
     {
