@@ -126,6 +126,9 @@ test.describe("Operação oficial — tarefas persistidas", () => {
     await expect(page.locator("input[name=title]")).toHaveCount(0);
     await expect(card(page, betaTitle).getByRole("button")).toHaveCount(0);
     await expect(page.getByText(title, { exact: true })).toHaveCount(0);
+    await page.goto("/empresas");
+    await expect(page.getByRole("heading", { name: "Suas empresas", exact: true })).toBeVisible();
     await sair(page);
+    await expect(page).toHaveURL(/\/entrar/);
   });
 });
