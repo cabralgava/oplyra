@@ -5,15 +5,15 @@ import { contextoDaEmpresa } from "../../../../../../lib/session";
 import { strategyDeps } from "../../../../../../lib/deps-estrategia";
 import { brandDeps } from "../../../../../../lib/deps-marca";
 import {
-  getCampaign, saveCampaignDraft, activateCampaign, pauseCampaign, resumeCampaign, completeCampaign, cancelCampaign,
-  listObjectives, listExperiments, planExperiment, startExperiment, concludeExperiment, cancelExperiment,
+  CampaignNotFound, getCampaign, saveCampaignDraft, activateCampaign, pauseCampaign, resumeCampaign, completeCampaign, cancelCampaign,
+  listObjectives, listExperiments, listCampaignTasks, planExperiment, startExperiment, concludeExperiment, cancelExperiment,
   gerarUtm, CANAIS_DE_UTM, ELEMENTOS_DO_METODO, DIMENSOES, REGRA_DE_UTM,
 } from "../../../../../../lib/estrategia";
 import type { UtmChannel, UtmResult } from "../../../../../../lib/estrategia";
 import { getBrandOverview } from "@oplyra/core/brand";
 import type { CampaignId, ExperimentId } from "@oplyra/core";
 import {
-  AJUDA_METODO, ROTULO_CAMPANHA, ROTULO_CANAL, ROTULO_DIMENSAO, ROTULO_METODO, ROTULO_RESULTADO, ROTULO_TESTE,
+  AJUDA_METODO, ROTULO_CAMPANHA, ROTULO_CANAL, ROTULO_DIMENSAO, ROTULO_METODO, ROTULO_RESULTADO, ROTULO_TESTE, ROTULO_TAREFA,
   destinoDeErro, lerCampanha, lerId, lerPlano, lerResultado, lerRevisao,
 } from "../../../../../../lib/estrategia-form";
 import { BotaoEnviar } from "../../../../../../components/botao-enviar";
@@ -84,6 +84,13 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
   const podeEditar = ctx.permissions.has("strategy.write");
   const rascunho = campanha.status === "draft";
   const testes = await listExperiments(strategyDeps, ctx, campanha.id);
+  let tarefas: Awaited<ReturnType<typeof listCampaignTasks>>;
+  try {
+    tarefas = await listCampaignTasks(strategyDeps, ctx, campanha.id);
+  } catch (e) {
+    if (e instanceof CampaignNotFound) redirect(`${base}?erro=CAMPAIGN_NOT_FOUND`);
+    throw e;
+  }
   const objetivos = (await listObjectives(strategyDeps, ctx)).filter((o) => o.status === "active" || o.id === campanha.objectiveId);
   const marca = ctx.permissions.has("brand.read") ? (await getBrandOverview(brandDeps, ctx)).current : null;
 
@@ -151,6 +158,7 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
           <li><a href="#metodo">Método</a></li>
           <li><a href="#utm">Rastreamento</a></li>
           <li><a href="#testes">Testes</a></li>
+          <li><a href="#tarefas-vinculadas">Tarefas</a></li>
         </ul>
       </nav>
 
@@ -333,6 +341,33 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
             </div>
             <BotaoEnviar rotuloEmEspera="Registrando…">Registrar hipótese</BotaoEnviar>
           </form>
+        )}
+      </section>
+
+      <section className={`card pilha ${styles.secao} ${styles.tarefas}`} aria-labelledby="tarefas-vinculadas">
+        <div className={`entre ${styles.tarefasCabecalho}`}>
+          <div>
+            <h2 id="tarefas-vinculadas">Tarefas vinculadas</h2>
+            <p className="muted">Trabalho registrado na Operação para esta campanha.</p>
+          </div>
+          <Link className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao`}>Abrir Operação</Link>
+        </div>
+        {tarefas.length === 0 ? (
+          <p className="vazio">Nenhuma tarefa vinculada a esta campanha.</p>
+        ) : (
+          <ul className={styles.listaTarefas} aria-label="Tarefas desta campanha">
+            {tarefas.map((t) => (
+              <li key={t.id} className={styles.tarefa}>
+                <div className={styles.tarefaTitulo}>
+                  <h3>{t.title}</h3>
+                  <span className={`selo ${t.status === "done" ? "ok" : t.status === "cancelled" ? "proibido" : "pendente"}`}>{ROTULO_TAREFA[t.status]}</span>
+                </div>
+                {t.description && <p className="texto">{t.description}</p>}
+                <p className="muted">{t.dueDate ? <>Prazo: <time dateTime={t.dueDate}>{t.dueDate.split("-").reverse().join("/")}</time></> : "Sem prazo definido"}</p>
+                <Link className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao#tarefa-${encodeURIComponent(t.id)}`}>Ver na Operação</Link>
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </div>

@@ -139,3 +139,16 @@
     padding: 1rem;
   }
 }
+
+.tarefas { min-width: 0; }
+
+/* F03: cartões e hierarquia adaptados às tarefas reais, sem simular etapas de aprovação. */
+.tarefasCabecalho { flex-wrap: wrap; align-items: flex-start; }
+.tarefasCabecalho > div { min-width: 0; flex: 1 1 20rem; }
+.tarefasCabecalho p { margin: .5rem 0 0; }
+.listaTarefas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 1rem; list-style: none; padding: 0; margin: 0; }
+.tarefa { display: grid; align-content: start; gap: .75rem; min-width: 0; padding: 1rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--bg); }
+.tarefaTitulo { display: flex; align-items: flex-start; gap: .5rem; flex-wrap: wrap; }
+.tarefaTitulo h3 { flex: 1 1 100%; margin: 0; font-size: 1.0625rem; line-height: 1.42; }
+.tarefa p { margin: 0; }
+.tarefa a { justify-self: start; min-height: 44px; white-space: normal; overflow-wrap: anywhere; }

@@ -3,18 +3,33 @@
 import type { StrategyDeps } from "../strategy-ports.ts";
 import type { AccessContext } from "../../domain/access-context.ts";
 import { exigirPermissao } from "../../domain/access-context.ts";
-import type { TaskId } from "../../domain/ids.ts";
+import type { CampaignId, TaskId } from "../../domain/ids.ts";
 import {
   type Task, type TaskContent, type TaskStatus,
   exigirResponsavelValido, exigirSemCiclo, exigirTarefaValida, transicaoDaTarefaPermitida,
 } from "../../domain/strategy.ts";
-import { TaskNotFound } from "../../domain/strategy-errors.ts";
+import { CampaignNotFound, TaskNotFound } from "../../domain/strategy-errors.ts";
 import { InvalidStateTransition, ReferenceNotFound } from "../../domain/errors.ts";
 import type { Tx } from "../ports.ts";
 
 export async function listTasks(deps: StrategyDeps, ctx: AccessContext): Promise<Task[]> {
   exigirPermissao(ctx, "strategy.read");
   return deps.uow.withUserTransaction(ctx, (tx) => deps.tasks.list(tx, ctx.tenantId));
+}
+
+/**
+ * Leitura das tarefas vinculadas após conferir a campanha no mesmo tenant/transação.
+ * A porta atual lista o tenant no servidor; o filtro nunca é delegado ao navegador.
+ * Sem mudar os objetos/grafo: a apresentação escolhe os campos da seção da campanha.
+ */
+export async function listCampaignTasks(deps: StrategyDeps, ctx: AccessContext, campaignId: CampaignId): Promise<Task[]> {
+  exigirPermissao(ctx, "strategy.read");
+  return deps.uow.withUserTransaction(ctx, async (tx) => {
+    const campaign = await deps.campaigns.findById(tx, ctx.tenantId, campaignId);
+    if (!campaign || campaign.id !== campaignId || campaign.tenantId !== ctx.tenantId) throw new CampaignNotFound();
+    const tasks = await deps.tasks.list(tx, ctx.tenantId);
+    return tasks.filter((task) => task.tenantId === ctx.tenantId && task.campaignId === campaignId);
+  });
 }
 
 async function exigirReferencias(deps: StrategyDeps, tx: Tx, ctx: AccessContext, c: TaskContent): Promise<void> {
