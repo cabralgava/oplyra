@@ -77,7 +77,10 @@ test.describe("Campanha oficial — tarefas vinculadas", () => {
     await expect(campaignTask(page, cancelled)).toContainText("Cancelada");
     await expect(campaignTask(page, cancelled)).toContainText("Sem prazo definido");
     for (const title of [outsider, loose]) await expect(section(page).getByRole("heading", { name: title, exact: true })).toHaveCount(0);
-    await campaignTask(page, linked).getByRole("link", { name: "Ver na Operação", exact: true }).click();
+    await Promise.all([
+      page.waitForEvent("domcontentloaded"),
+      campaignTask(page, linked).getByRole("link", { name: "Ver na Operação", exact: true }).click(),
+    ]);
     await expect(page).toHaveURL(new RegExp(`/operacao#tarefa-${linkedId}$`));
     await expect(page.locator(`#tarefa-${linkedId}`)).toBeInViewport();
     await expect(taskCard(page, linked)).toContainText("Em andamento");
@@ -121,7 +124,10 @@ test.describe("Campanha oficial — tarefas vinculadas", () => {
     await expect(campaignTask(page, betaTask)).toBeVisible();
     await expect(section(page).getByRole("button")).toHaveCount(0);
     await expect(section(page).getByRole("textbox")).toHaveCount(0);
-    await campaignTask(page, betaTask).getByRole("link", { name: "Ver na Operação", exact: true }).click();
+    await Promise.all([
+      page.waitForEvent("domcontentloaded"),
+      campaignTask(page, betaTask).getByRole("link", { name: "Ver na Operação", exact: true }).click(),
+    ]);
     await expect(page).toHaveURL(new RegExp(`/operacao#tarefa-${betaTaskId}$`));
     await expect(taskCard(page, betaTask).locator("details")).toHaveCount(0);
     await expect(taskCard(page, betaTask).getByRole("button")).toHaveCount(0);
