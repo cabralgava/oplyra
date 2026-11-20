@@ -768,7 +768,7 @@
     },
     {
       "path": "apps/web/src/lib/estrategia-form.ts",
-      "sha256": "926581860b4c0e322f308059f10a4d0be291df8f2c78a853064da151788b0acd",
+      "sha256": "7570c20155534107c9e90118d0a22d71c4661fd1ad9b914aaf273ec188b23dd2",
       "category": "runtime_component"
     },
     {
@@ -918,7 +918,7 @@
     },
     {
       "path": "packages/core/src/application/use-cases/strategy-tasks.ts",
-      "sha256": "243836cececfcfe67a68ab00713e07c416597cb3b19e58eab84550b767e75932",
+      "sha256": "1dd0ea1f78f11a783b1466ef6dfaa4b449d34bb9acc493bc837d5acabebeee5d",
       "category": "runtime_component"
     },
     {
@@ -1279,12 +1279,12 @@
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/page.tsx",
       "category": "runtime_component",
-      "sha256": "f92703232caee5d5632ba007b4ab32966f124b6c90f42109e111370660454a53"
+      "sha256": "23e37dcfe7f44bbc79f054a3b6bd0408803582b9ac6110a75e826333ea857819"
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/operacao.module.css",
       "category": "runtime_component",
-      "sha256": "da3d8ee528d8574caaa6db360c51dc8687e52a2647e3d61cb0364ec956fcdf3f"
+      "sha256": "24b2f91cf6e9b48657d0e421715ac205fd81861136a9137c028b155693f93719"
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/loading.tsx",
@@ -1310,6 +1310,26 @@
       "path": "e2e/operacao-oficial.spec.ts",
       "category": "runtime_test",
       "sha256": "51ab8317b4bb40047778f844cb8a36b99db58f2418f4c4c94001c09eda17263d"
+    },
+    {
+      "path": "packages/testing/test/strategy-task-details.test.ts",
+      "category": "runtime_test",
+      "sha256": "bac0678943bd4eb35bd9eb1d992e3b5c2715062168400a4aba1533fc05111ae9"
+    },
+    {
+      "path": "packages/infra/test/task-details.integration.test.ts",
+      "category": "integration_test",
+      "sha256": "c5091cb8efe6856f4ccca117642b954547e58fd4eb506e78ccf654a07cd7e3fb"
+    },
+    {
+      "path": "test/web-operacao-edicao.test.ts",
+      "category": "runtime_test",
+      "sha256": "8269a44b4c41bf01e439dd1db435e63897459dd1b9b1b0fcd5c6ff73cb042c53"
+    },
+    {
+      "path": "e2e/operacao-edicao.spec.ts",
+      "category": "runtime_test",
+      "sha256": "4eea37178795c5ba88d3bea814497dbf20cca33b323fb0f2cbd2ec618ff9af80"
     }
   ]
 }

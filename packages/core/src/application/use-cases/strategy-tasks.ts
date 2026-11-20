@@ -44,16 +44,21 @@ export async function createTask(
   });
 }
 
-export async function saveTask(
+type TaskEditTarget = { ctx: AccessContext; taskId: TaskId; expectedRevision: number };
+
+/** Campos editáveis pela tela; responsável e estado são autoridade da tarefa persistida. */
+export type TaskDetails = Omit<TaskContent, "assignee">;
+
+async function salvarConteudo(
   deps: StrategyDeps,
-  { ctx, taskId, expectedRevision, content }: { ctx: AccessContext; taskId: TaskId; expectedRevision: number; content: TaskContent },
+  { ctx, taskId, expectedRevision }: TaskEditTarget,
+  resolverConteudo: (atual: Task) => TaskContent,
 ): Promise<Task> {
-  exigirPermissao(ctx, "strategy.write");
-  exigirTarefaValida(content);
   return deps.uow.withUserTransaction(ctx, async (tx) => {
     const atual = await deps.tasks.findById(tx, ctx.tenantId, taskId);
     if (!atual) throw new TaskNotFound();
     if (atual.status === "cancelled") throw new InvalidStateTransition("tarefa cancelada não é editável");
+    const content = resolverConteudo(atual);
     await exigirReferencias(deps, tx, ctx, content);
     exigirSemCiclo(await deps.tasks.dependencyGraph(tx, ctx.tenantId), taskId, content.dependsOn);
     const salva = await deps.tasks.replaceContent(tx, { tenantId: ctx.tenantId, id: taskId, expectedRevision, content });
@@ -63,6 +68,38 @@ export async function saveTask(
     });
     return salva;
   });
+}
+
+export async function saveTask(
+  deps: StrategyDeps,
+  input: TaskEditTarget & { content: TaskContent },
+): Promise<Task> {
+  exigirPermissao(input.ctx, "strategy.write");
+  exigirTarefaValida(input.content);
+  return salvarConteudo(deps, input, () => input.content);
+}
+
+/**
+ * Edita detalhes sem atribuir responsável nem mudar estado. Mesmo entradas com campos extras
+ * não substituem a identidade persistida. O responsável é relido na mesma transação da escrita;
+ * expectedRevision recusa alterações concorrentes, inclusive de responsável, sem sobrescrevê-las.
+ * A regra de agente habilitado continua valendo: não se apaga um responsável para contorná-la.
+ */
+export async function saveTaskDetails(
+  deps: StrategyDeps,
+  input: TaskEditTarget & { content: TaskDetails },
+): Promise<Task> {
+  exigirPermissao(input.ctx, "strategy.write");
+  const details: TaskContent = {
+    title: input.content.title,
+    description: input.content.description,
+    campaignId: input.content.campaignId,
+    dueDate: input.content.dueDate,
+    dependsOn: input.content.dependsOn,
+    assignee: null,
+  };
+  exigirTarefaValida(details);
+  return salvarConteudo(deps, input, (atual) => ({ ...details, assignee: atual.assignee }));
 }
 
 export async function changeTaskStatus(

@@ -4,7 +4,7 @@
 import type { CampaignId, ObjectiveId, ProductKey, TaskId } from "@oplyra/core";
 import type {
   CampaignContent, CampaignStatus, ExperimentDimension, ExperimentOutcome, ExperimentPlan, ExperimentResult,
-  ExperimentStatus, Learning, ObjectiveContent, TaskContent, TaskStatus,
+  ExperimentStatus, Learning, ObjectiveContent, TaskContent, TaskDetails, TaskStatus,
 } from "./estrategia";
 import { DIMENSOES, ELEMENTOS_DO_METODO, type MethodElement } from "./estrategia";
 import { FormularioInvalido } from "./marca-form";
@@ -160,6 +160,21 @@ export function lerTarefa(f: FormData): TaskContent {
       return v as TaskId;
     }),
   };
+}
+
+/**
+ * Edição usa campos próprios para não confundir os formulários do quadro.
+ * Responsável e estado não vêm do navegador: o caso de uso relê a tarefa.
+ */
+export function lerEdicaoDaTarefa(f: FormData): { taskId: TaskId; expectedRevision: number; content: TaskDetails } {
+  const campos = new FormData();
+  for (const chave of ["title", "description", "campaignId", "dueDate", "tarefa", "revisao"]) {
+    const valor = f.get(`editar_${chave}`);
+    if (valor !== null) campos.set(chave, valor);
+  }
+  for (const valor of f.getAll("editar_dep")) campos.append("dep", valor);
+  const { assignee: _ignorado, ...content } = lerTarefa(campos);
+  return { taskId: lerId(campos, "tarefa") as TaskId, expectedRevision: lerRevisao(campos), content };
 }
 
 export function lerRevisao(f: FormData): number {
