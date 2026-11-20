@@ -105,7 +105,7 @@ test.describe("Operação oficial — filtro por campanha", () => {
     await logout(page); await entrar(page, "a-owner@local.test");
     for (const query of ["campanha=", "campanha=ruim", `campanha=${a}&campanha=${b}`, `campanha=${foreign}`, `campanha=${randomUUID()}`]) {
       await page.goto(`${operation}?${query}`);
-      await expect(page.getByRole("alert")).toContainText("Filtro de campanha inválido ou indisponível");
+      await expect(page.locator('.erro[role="alert"]')).toContainText("Filtro de campanha inválido ou indisponível");
       await expect(page.getByRole("link", { name: "Limpar filtro", exact: true })).toBeVisible();
       await expect(page.getByRole("heading", { name: "A fazer", exact: true })).toHaveCount(0);
       await expect(page.getByRole("button", { name: "Criar tarefa", exact: true })).toHaveCount(0);
@@ -121,6 +121,6 @@ test.describe("Operação oficial — filtro por campanha", () => {
     await expect(page.locator("details")).toHaveCount(0);
     await expect(page.locator("form").filter({ hasNot: page.locator('select[name=campanha]') })).toHaveCount(0);
     await page.goto(`/e/${TENANT_B}/operacao?campanha=${a}`);
-    await expect(page.getByRole("alert")).toContainText("Filtro de campanha inválido ou indisponível");
+    await expect(page.locator('.erro[role="alert"]')).toContainText("Filtro de campanha inválido ou indisponível");
   });
 });
