@@ -118,7 +118,8 @@ test.describe("Operação oficial — filtro por campanha", () => {
     await page.goto(`/e/${TENANT_B}/operacao?campanha=${foreign}`);
     await expect(filter(page)).toBeVisible();
     await expect(page.getByRole("button", { name: "Criar tarefa", exact: true })).toHaveCount(0);
-    await expect(page.locator("details")).toHaveCount(0);
+    await expect(page.locator("details.seletor-menu")).toHaveCount(1);
+    await expect(page.locator('li[id^="tarefa-"] details')).toHaveCount(0);
     await expect(page.locator("form").filter({ hasNot: page.locator('select[name=campanha]') })).toHaveCount(0);
     await page.goto(`/e/${TENANT_B}/operacao?campanha=${a}`);
     await expect(page.locator('.erro[role="alert"]')).toContainText("Filtro de campanha inválido ou indisponível");
