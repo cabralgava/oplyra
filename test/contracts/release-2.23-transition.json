@@ -843,7 +843,7 @@
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/estrategia/campanhas/[campaignId]/page.tsx",
-      "sha256": "97182711968216ee7334e78ce843b4683a1f422e1b4934048d74d67da96367bd",
+      "sha256": "9b98c775059d3b4b8d72515126cb5e74f99526ee5ad29d3d6bbb0165805f381c",
       "category": "runtime_component"
     },
     {
@@ -918,7 +918,7 @@
     },
     {
       "path": "packages/core/src/application/use-cases/strategy-tasks.ts",
-      "sha256": "71a0d66f7f843c38b5156eb345f83afffa7b5e7d8e7b4b558be5dbdba9c53575",
+      "sha256": "b01cf9ff6b97da498852bda9631c988bc258316add62e66ec6deadf80724817b",
       "category": "runtime_component"
     },
     {
@@ -1279,12 +1279,12 @@
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/page.tsx",
       "category": "runtime_component",
-      "sha256": "4afde8b32cb406b0fa1d5f464faf6b2357f6e7201fabab22ba8bf10bb4f17782"
+      "sha256": "54809f0c0a2f67cdf6ec6e18468873eaa91ac57a62c4482e3a019742d0fb7650"
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/operacao.module.css",
       "category": "runtime_component",
-      "sha256": "24b2f91cf6e9b48657d0e421715ac205fd81861136a9137c028b155693f93719"
+      "sha256": "98f39f83b6ae8946b8c916cdb4e915202092079e247e8b7826157be45412ce3e"
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/loading.tsx",
@@ -1299,7 +1299,7 @@
     {
       "path": "test/web-operacao-oficial.test.ts",
       "category": "runtime_test",
-      "sha256": "55f39b3baa89f59b220a0218095e3045c957df3296de5c25165c0a5961e75f19"
+      "sha256": "29a8ffdeb5c82dbe415315c33fce6f00d54bf292d41a81558da83e3659e6d95a"
     },
     {
       "path": "test/operacao-contract.test.ts",
@@ -1324,7 +1324,7 @@
     {
       "path": "test/web-operacao-edicao.test.ts",
       "category": "runtime_test",
-      "sha256": "d408f7bf2ee6e5d5e81e9aedbdffc46540c6bc4e4e8f929ccef48fc7ebe2f01b"
+      "sha256": "8c2908303326d64f5b78eb46efb8f0393c9a764cac3556464f223c6760797cd5"
     },
     {
       "path": "e2e/operacao-edicao.spec.ts",
@@ -1344,12 +1344,12 @@
     {
       "path": "test/web-campanha-tarefas.test.ts",
       "category": "runtime_test",
-      "sha256": "93b441afb182d928a9521bec9013d7c41ca75f6399d0b49d93e0da281ce6436a"
+      "sha256": "a93c4814274643b412ad58e566757761b056396db91ad0ff070f1d80b4cfa4a8"
     },
     {
       "path": "e2e/campanha-tarefas.spec.ts",
       "category": "runtime_test",
-      "sha256": "530c329804a6b5a64fe3c13788f465e31df5247ffbcbf88ca2b065169b39d699"
+      "sha256": "632894271583d0611e4928d361af0de1faccb6f50b19a7778a264b08ca2b330d"
     },
     {
       "path": "apps/web/src/components/tarefa-destino.tsx",
@@ -1360,6 +1360,31 @@
       "path": "test/web-tarefa-destino.test.ts",
       "category": "runtime_test",
       "sha256": "016072489f19e16ef4148c52b8d273a8bd32d70faab6b79ab02baec47f31fb79"
+    },
+    {
+      "path": "packages/testing/test/operation-tasks-filter.test.ts",
+      "category": "runtime_test",
+      "sha256": "42bd4ff00f2032d9387f7b5a9e7c571eec7f85865fcd72532f352b1012dbe459"
+    },
+    {
+      "path": "packages/infra/test/operation-tasks-filter.integration.test.ts",
+      "category": "integration_test",
+      "sha256": "dad30ae31807013d6c10151fbd18b01bf556f081383cb125e44ab4e871f3f08a"
+    },
+    {
+      "path": "apps/web/src/lib/operacao-filtro.ts",
+      "category": "runtime_component",
+      "sha256": "20833a7a312c284c7bfa519206c389f9ad50cea1ab8f05221fba2684c2937aae"
+    },
+    {
+      "path": "test/web-operacao-filtro.test.ts",
+      "category": "runtime_test",
+      "sha256": "20dc6f84c920474074b01c65a94f3001ee859925ae5115465810ec087612cdf7"
+    },
+    {
+      "path": "e2e/operacao-filtro.spec.ts",
+      "category": "runtime_test",
+      "sha256": "2d752dae1a1ac881d6b602b5d43cb9efd8571e037af850a1f51b2c83fe92dddd"
     }
   ]
 }

@@ -350,7 +350,7 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
             <h2 id="tarefas-vinculadas">Tarefas vinculadas</h2>
             <p className="muted">Trabalho registrado na Operação para esta campanha.</p>
           </div>
-          <Link className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao`}>Abrir Operação</Link>
+          <Link className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao?campanha=${encodeURIComponent(campanha.id)}`}>Abrir Operação</Link>
         </div>
         {tarefas.length === 0 ? (
           <p className="vazio">Nenhuma tarefa vinculada a esta campanha.</p>
@@ -365,7 +365,7 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
                 {t.description && <p className="texto">{t.description}</p>}
                 <p className="muted">{t.dueDate ? <>Prazo: <time dateTime={t.dueDate}>{t.dueDate.split("-").reverse().join("/")}</time></> : "Sem prazo definido"}</p>
                 {/* Navegação de documento mantém o salto ao cartão após carregar o HTML. */}
-                <a className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao#tarefa-${encodeURIComponent(t.id)}`}>Ver na Operação</a>
+                <a className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao?campanha=${encodeURIComponent(campanha.id)}#tarefa-${encodeURIComponent(t.id)}`}>Ver na Operação</a>
               </li>
             ))}
           </ul>

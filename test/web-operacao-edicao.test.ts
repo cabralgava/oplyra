@@ -11,6 +11,7 @@ await loadBindings();
 const form = await import("../apps/web/src/lib/estrategia-form");
 const contextoDaEmpresa = vi.fn();
 const listTasks = vi.fn();
+const getOperationTasks = vi.fn(async () => ({ tasks: await listTasks(), references: await listTasks(), campaigns: await listCampaigns() }));
 const listCampaigns = vi.fn();
 const saveTaskDetails = vi.fn();
 const revalidatePath = vi.fn();
@@ -21,8 +22,9 @@ const compiled = await transform(source, { filename: "operacao-edicao.tsx", jsc:
 const modules: Record<string, unknown> = {
   "next/navigation": { redirect }, "next/cache": { revalidatePath },
   "../../../../lib/session": { contextoDaEmpresa }, "../../../../lib/deps-estrategia": { strategyDeps: dependencies },
-  "../../../../lib/estrategia": { listTasks, listCampaigns, createTask: vi.fn(), changeTaskStatus: vi.fn(), saveTaskDetails },
+  "../../../../lib/estrategia": { getOperationTasks, listTasks, listCampaigns, createTask: vi.fn(), changeTaskStatus: vi.fn(), saveTaskDetails },
   "../../../../lib/estrategia-form": form,
+  "../../../../lib/operacao-filtro": await import("../apps/web/src/lib/operacao-filtro"),
   "../../../../components/tarefa-destino": { TarefaDestino: () => null },
   "../../../../components/botao-enviar": { BotaoEnviar: ({ children }: { children: unknown }) => React.createElement("button", { type: "submit" }, children) },
   "../../../../components/aviso-estrategia": { AvisoDeErro: () => null, AvisoSemPermissao: () => React.createElement("p", null, "Sem permissão") },
