@@ -28,8 +28,8 @@ test.describe("Operação oficial — tarefas persistidas", () => {
     await page.locator("input[name=title]").fill("   ");
     await page.getByRole("button", { name: "Criar tarefa", exact: true }).click();
     await page.waitForURL(/erro=TASK_INVALID/);
-    await expect(page.getByRole("alert")).toContainText("informe o título da tarefa");
-    await expect(page.getByRole("status")).toHaveCount(0);
+    await expect(page.locator('.erro[role="alert"]')).toContainText("informe o título da tarefa");
+    await expect(page.locator('.sucesso[role="status"]')).toHaveCount(0);
   });
 
   test("cria campanha vinculada, prazo e descrição; recarregar mantém os dados", async ({ page }) => {
@@ -77,7 +77,7 @@ test.describe("Operação oficial — tarefas persistidas", () => {
       await page.waitForURL(/ok=estado/);
       await card(stale, title).getByRole("button", { name: "Cancelar", exact: true }).click();
       await stale.waitForURL(/erro=CONFLICT_VERSION/);
-      await expect(stale.getByRole("alert")).toContainText("Outra pessoa alterou");
+      await expect(stale.locator('.erro[role="alert"]')).toContainText("Outra pessoa alterou");
       await stale.reload();
       await expect(card(stale, title)).toContainText("Em andamento");
     } finally { await stale.close(); }
