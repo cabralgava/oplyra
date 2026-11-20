@@ -7,6 +7,7 @@ import type { TaskStatus, Task } from "../../../../lib/estrategia";
 import type { TaskId } from "@oplyra/core";
 import { ROTULO_TAREFA, destinoDeErro, lerId, lerRevisao, lerTarefa, lerEdicaoDaTarefa, FormularioInvalido } from "../../../../lib/estrategia-form";
 import { BotaoEnviar } from "../../../../components/botao-enviar";
+import { TarefaDestino } from "../../../../components/tarefa-destino";
 import { AvisoDeErro, AvisoSemPermissao } from "../../../../components/aviso-estrategia";
 import estilos from "./operacao.module.css";
 
@@ -142,6 +143,7 @@ export default async function Operacao({ params, searchParams }: Props) {
 
   return (
     <div className={`pilha ${estilos.operacao}`}>
+      <TarefaDestino taskIds={tarefas.map(t => t.id)} />
       <header className={estilos.cabecalho}>
         <div><h1>Operação</h1><p className="muted">Organize as tarefas da empresa, suas campanhas, prazos e dependências.</p></div>
         {podeEditar && <a className="btn" href="#nova-tarefa">Nova tarefa</a>}

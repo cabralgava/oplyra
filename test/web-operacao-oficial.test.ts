@@ -25,6 +25,7 @@ const modules: Record<string, unknown> = {
   "../../../../lib/session": { contextoDaEmpresa }, "../../../../lib/deps-estrategia": { strategyDeps: dependencies },
   "../../../../lib/estrategia": { listTasks, listCampaigns, createTask, changeTaskStatus },
   "../../../../lib/estrategia-form": { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro },
+  "../../../../components/tarefa-destino": { TarefaDestino: () => null },
   "../../../../components/botao-enviar": { BotaoEnviar: ({ children }: { children: unknown }) => React.createElement("button", { type: "submit" }, children) },
   "../../../../components/aviso-estrategia": {
     AvisoDeErro: () => null,
