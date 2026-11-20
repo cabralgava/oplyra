@@ -27,3 +27,13 @@
 @media (max-width: 70rem) { .quadro { grid-template-columns: 1fr; } }
 @media (max-width: 40rem) { .campos { grid-template-columns: 1fr; } .formulario { padding: 1rem; } }
 @media (prefers-contrast: more) { .tarefa, .vazioColuna { border-color: var(--text-3); } }
+
+/* Editor por cartão; abertura nativa oferece teclado/foco sem sobrepor o quadro. */
+.editor { min-width: 0; margin-top: 1rem; padding-top: .5rem; border-top: 1px solid var(--line); scroll-margin-top: 1rem; }
+.editor > summary { cursor: pointer; min-height: 44px; padding-block: .625rem; font-size: .875rem; font-weight: 600; color: var(--text-2); }
+.editor form { margin-top: .5rem; min-width: 0; }
+.editor fieldset { min-width: 0; margin-inline: 0; }
+.editor textarea { width: 100%; min-width: 0; }
+.editor input, .editor select { min-width: 0; }
+.editor :global(.linha) { gap: .5rem; }
+.editor button, .editor a { max-width: 100%; white-space: normal; overflow-wrap: anywhere; min-height: 44px; }
