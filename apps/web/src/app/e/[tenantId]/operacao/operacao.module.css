@@ -1,0 +1,29 @@
+/* K01: cartões de 16px/12px, quadro de três colunas e espaçamento de 24px.
+   Estados e controles adaptados ao contrato real; shell e tokens existentes preservados. */
+.operacao { min-width: 0; overflow-wrap: anywhere; }
+.cabecalho { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; padding-block: .5rem; }
+.cabecalho h1 { font-size: clamp(1.6rem, 2.5vw, 2rem); line-height: 1.3125; }
+.cabecalho p { margin: 0; }
+.cabecalho a { text-decoration: none; }
+.quadro { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-top: 1rem; align-items: start; }
+.coluna { min-width: 0; }
+.coluna > h2 { font-size: 1.125rem; line-height: 1.45; margin-bottom: 1rem; }
+.lista, .canceladas { display: grid; gap: 1rem; padding: 0; margin: 0; list-style: none; }
+.canceladas { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); margin-top: 1rem; }
+.tarefa { min-width: 0; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.tituloTarefa { display: flex; align-items: start; gap: .5rem; flex-wrap: wrap; }
+.tituloTarefa h3 { font-size: 1.0625rem; line-height: 1.42; margin: 0; flex: 1 1 100%; }
+.tarefa > p { font-size: .875rem; line-height: 1.5; margin: .5rem 0 0; }
+.tarefa .contexto { font-size: .8125rem; color: var(--text-2); }
+.acoes { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+.acoes form { max-width: 100%; }
+.acoes button { min-height: 44px; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.vazioColuna { font-size: .875rem; color: var(--text-2); border: 1px dashed var(--line); padding: 1rem; border-radius: 12px; }
+.formulario { scroll-margin-top: 1.5rem; padding: 1.5rem; }
+.campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.dependencias { max-height: 20rem; overflow-y: auto; }
+.dependencias label { min-height: 44px; }
+.dependencias input { flex: 0 0 auto; }
+@media (max-width: 70rem) { .quadro { grid-template-columns: 1fr; } }
+@media (max-width: 40rem) { .campos { grid-template-columns: 1fr; } .formulario { padding: 1rem; } }
+@media (prefers-contrast: more) { .tarefa, .vazioColuna { border-color: var(--text-3); } }
