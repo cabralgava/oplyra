@@ -843,7 +843,7 @@
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/estrategia/campanhas/[campaignId]/page.tsx",
-      "sha256": "b67e5713b107d9ac03ba032b7bfffa829e201cf12817c66a0b9a74abc85b42a7",
+      "sha256": "97182711968216ee7334e78ce843b4683a1f422e1b4934048d74d67da96367bd",
       "category": "runtime_component"
     },
     {
@@ -1349,7 +1349,7 @@
     {
       "path": "e2e/campanha-tarefas.spec.ts",
       "category": "runtime_test",
-      "sha256": "ccc283a15f44d0a1a3ba06be66db021fb68d4e6ff3d150c5af1a7d3a67510acf"
+      "sha256": "530c329804a6b5a64fe3c13788f465e31df5247ffbcbf88ca2b065169b39d699"
     }
   ]
 }

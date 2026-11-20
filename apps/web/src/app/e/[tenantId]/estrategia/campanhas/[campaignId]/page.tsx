@@ -364,7 +364,8 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
                 </div>
                 {t.description && <p className="texto">{t.description}</p>}
                 <p className="muted">{t.dueDate ? <>Prazo: <time dateTime={t.dueDate}>{t.dueDate.split("-").reverse().join("/")}</time></> : "Sem prazo definido"}</p>
-                <Link className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao#tarefa-${encodeURIComponent(t.id)}`}>Ver na Operação</Link>
+                {/* Navegação de documento mantém o salto ao cartão após carregar o HTML. */}
+                <a className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao#tarefa-${encodeURIComponent(t.id)}`}>Ver na Operação</a>
               </li>
             ))}
           </ul>
