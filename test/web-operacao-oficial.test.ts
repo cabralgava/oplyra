@@ -27,6 +27,8 @@ const modules: Record<string, unknown> = {
   "../../../../lib/estrategia": { filterTasksByDueDate: (await import("../apps/web/src/lib/estrategia")).filterTasksByDueDate, summarizeOpenTaskDueDates: (await import("../apps/web/src/lib/estrategia")).summarizeOpenTaskDueDates, isValidCivilDate: (await import("../apps/web/src/lib/estrategia")).isValidCivilDate, classifyTaskDueDate: (await import("../apps/web/src/lib/estrategia")).classifyTaskDueDate, sortTasksByDueDate: (await import("../apps/web/src/lib/estrategia")).sortTasksByDueDate, summarizeTaskDependencies: (await import("../apps/web/src/lib/estrategia")).summarizeTaskDependencies, getOperationTasks, listTasks, listCampaigns, createTask, changeTaskStatus },
   "../../../../lib/estrategia-form": { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro, FormularioInvalido, lerEdicaoDaTarefa },
   "../../../../lib/operacao-prazos": { hojeDaOperacao: async () => "2026-11-20" },
+  // Adapter de navegação é testado com UUIDs reais na suíte própria; estas fixtures legadas usam empresa-a.
+  "../../../../lib/operacao-navegacao": { ...await import("../apps/web/src/lib/operacao-navegacao"), linkCampanhaDaOperacao: (tenant: string, campaign: string) => `/e/${encodeURIComponent(tenant)}/estrategia/campanhas/${encodeURIComponent(campaign)}` },
   "../../../../lib/operacao-filtro": await import("../apps/web/src/lib/operacao-filtro"),
   "../../../../components/tarefa-destino": { TarefaDestino: () => null },
   "../../../../components/botao-enviar": { BotaoEnviar: ({ children }: { children: unknown }) => React.createElement("button", { type: "submit" }, children) },

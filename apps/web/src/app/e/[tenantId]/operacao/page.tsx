@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { contextoDaEmpresa } from "../../../../lib/session";
 import { hojeDaOperacao } from "../../../../lib/operacao-prazos";
+import { linkCampanhaDaOperacao } from "../../../../lib/operacao-navegacao";
 import { strategyDeps } from "../../../../lib/deps-estrategia";
 import { filterTasksByDueDate, summarizeOpenTaskDueDates, isValidCivilDate, classifyTaskDueDate, sortTasksByDueDate, summarizeTaskDependencies, getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
 import type { TaskStatus, Task, TaskDueDateFilter } from "../../../../lib/estrategia";
@@ -143,6 +144,7 @@ export default async function Operacao({ params, searchParams }: Props) {
         <div className={estilos.tituloTarefa}>
           <h3>{t.title}</h3><span className={SELO[t.status]}>{ROTULO_TAREFA[t.status]}</span>
         </div>
+        {t.campaignId && nomesCampanhas.has(t.campaignId) && <p><a className="btn secundario" href={linkCampanhaDaOperacao(tenantId, t.campaignId, { campanha: filtro, prazo: filtroPrazo, tarefaId: t.id })}>Ver campanha</a></p>}
         {t.description && <p className="texto">{t.description}</p>}
         <p className={estilos.contexto}>{t.campaignId ? `Campanha: ${nomesCampanhas.get(t.campaignId) ?? "Indisponível"}` : "Tarefa avulsa"}</p>
         <p data-testid="prazo-tarefa" className={estilos.contexto}>Prazo: {t.dueDate === null ? "Sem prazo" : isValidCivilDate(t.dueDate) ? <time dateTime={t.dueDate}>{t.dueDate.split("-").reverse().join("/")}</time> : "Prazo indisponível"}
@@ -179,6 +181,7 @@ export default async function Operacao({ params, searchParams }: Props) {
       <TarefaDestino taskIds={tarefas.map(t => t.id)} />
       <header className={estilos.cabecalho}>
         <div><h1>Operação</h1><p className="muted">Organize as tarefas da empresa, suas campanhas, prazos e dependências.</p></div>
+        {filtro.kind === "campaign" && <a className="btn secundario" href={linkCampanhaDaOperacao(tenantId, filtro.campaignId, { campanha: filtro, prazo: filtroPrazo, tarefaId: null })}>Ver campanha selecionada</a>}
         {podeEditar && <a className="btn" href="#nova-tarefa">Nova tarefa</a>}
       </header>
       <form method="get" action={base} className={`card ${estilos.filtro}`} aria-label="Filtrar tarefas por campanha">
