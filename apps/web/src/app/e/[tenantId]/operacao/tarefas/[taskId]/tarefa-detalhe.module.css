@@ -11,5 +11,9 @@
 .dados dd { margin: .375rem 0 0; line-height: 1.6; }
 .dados a { margin-inline-start: .5rem; max-width: 100%; }
 .dependencias { display: grid; gap: .75rem; margin: 0 0 1rem; padding-inline-start: 1.25rem; }
-.dependencias li > span + span { margin-inline-start: .5rem; color: var(--text-2); }
+.dependencias li > a { color: var(--text-2); text-decoration: underline; text-underline-offset: .2em; overflow-wrap: anywhere; }
+.dependencias li > a + span { margin-inline-start: .5rem; color: var(--text-2); }
+.dependencias a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 2px; }
+.origem { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.origem p { margin: 0; flex: 1 1 18rem; }
 @media (max-width: 40rem) { .dados { grid-template-columns: 1fr; } .dados a { display: block; width: fit-content; margin: .5rem 0 0; } }

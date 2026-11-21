@@ -107,11 +107,11 @@ describe("Detalhe oficial somente de leitura da tarefa",()=>{
     readTask(task({dueDate:"2026-02-30",createdAt:new Date(NaN)}));const invalid=await taskDetail();expect(dd(invalid,"Prazo")).toBe("Prazo indisponível");expect(dd(invalid,"Registro")).toBe("Data de registro indisponível.");expect(nodes(invalid).filter(n=>n.type==="time")).toHaveLength(0);
     readTask();hojeDaOperacao.mockResolvedValue(null);const tree=await taskDetail();expect(dd(tree,"Prazo")).toBe("19/11/2026");expect(renderToStaticMarkup(tree)).toContain("Classificação de prazos indisponível.");
   });
-  it("dependências são só texto próprio/estado, desconhecida somente contagem sem ID",async()=>{
+  it("dependências próprias ganham links locais; desconhecida segue somente contagem sem ID",async()=>{
     const missing="77777777-7777-4777-8777-777777777777";readTask(task({dependsOn:[OTHER,E,missing]}),{dependencies:[task({id:OTHER,title:"Briefing",status:"done"}),task({id:E,title:"Oferta",status:"in_progress"})],unavailableDependencyCount:1});
     const tree=await taskDetail();const section=nodes(tree).find(n=>n.props?.["aria-labelledby"]==="dependencias-tarefa");const html=renderToStaticMarkup(section);
     expect(html).toContain("Briefing");expect(html).toContain("Concluída");expect(html).toContain("Oferta");expect(html).toContain("Em andamento");expect(html).toContain("1 dependência indisponível.");
-    expect(html).toContain("Dependências sem conclusão");expect(html).not.toContain(missing);expect(html).not.toContain(OTHER);expect(html).not.toContain(E);expect(nodes(section).some(n=>n.type==="a")).toBe(false);
+    expect(html).toContain("Dependências sem conclusão");expect(html).not.toContain(missing);expect(links(section,"Briefing")[0].props.href).toBe(`/e/${T}/operacao/tarefas/${OTHER}?tarefa_origem=${TASK}`);expect(links(section,"Oferta")[0].props.href).toBe(`/e/${T}/operacao/tarefas/${E}?tarefa_origem=${TASK}`);expect(nodes(section).filter(n=>n.type==="a")).toHaveLength(2);expect(text(section)).not.toContain(OTHER);expect(text(section)).not.toContain(E);
   });
   it("sem descrição/dependências/campanha exibe vazios honestos; campanha indisponível não cria link",async()=>{
     readTask(task({description:"",campaignId:null}),{campaign:null});const plain=await taskDetail();expect(dd(plain,"Descrição")).toBe("Nenhuma descrição informada.");expect(dd(plain,"Campanha")).toBe("Tarefa avulsa");expect(renderToStaticMarkup(plain)).toContain("Nenhuma dependência registrada.");
