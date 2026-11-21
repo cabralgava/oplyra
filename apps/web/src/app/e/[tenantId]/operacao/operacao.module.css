@@ -54,3 +54,13 @@
 /* Informação de prazo independente do selo do estado da tarefa. */
 .prazoAtrasado { font-weight: 600; color: var(--bad-text); }
 .prazoHoje { font-weight: 600; color: var(--warn); }
+
+/* Contagens de leitura do filtro atual; sem competir com o estado dos cartões. */
+.resumoPrazos { padding: 1.25rem; min-width: 0; }
+.resumoPrazos h2 { font-size: 1.125rem; line-height: 1.45; margin: 0 0 .75rem; }
+.resumoPrazos > p { font-size: .875rem; margin: .375rem 0; }
+.contagensPrazos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: .75rem; margin: 1rem 0 0; }
+.contagensPrazos > div { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: .75rem; }
+.contagensPrazos dt { font-size: .8125rem; color: var(--text-2); }
+.contagensPrazos dd { margin: .375rem 0 0; font-size: 1.25rem; font-weight: 600; overflow-wrap: anywhere; }
+@media (prefers-contrast: more) { .contagensPrazos > div { border-color: var(--text-3); } }

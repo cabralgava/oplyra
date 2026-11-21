@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { contextoDaEmpresa } from "../../../../lib/session";
 import { hojeDaOperacao } from "../../../../lib/operacao-prazos";
 import { strategyDeps } from "../../../../lib/deps-estrategia";
-import { isValidCivilDate, classifyTaskDueDate, sortTasksByDueDate, summarizeTaskDependencies, getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
+import { summarizeOpenTaskDueDates, isValidCivilDate, classifyTaskDueDate, sortTasksByDueDate, summarizeTaskDependencies, getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
 import type { TaskStatus, Task } from "../../../../lib/estrategia";
 import { lerFiltroOperacao, manterFiltroOperacao, valorFiltroOperacao, type FiltroOperacao } from "../../../../lib/operacao-filtro";
 import type { TaskId } from "@oplyra/core";
@@ -106,6 +106,7 @@ export default async function Operacao({ params, searchParams }: Props) {
   }
   const { tasks: tarefas, references: referencias, campaigns: campanhas } = leitura;
   const hoje = await hojeDaOperacao(ctx);
+  const resumoPrazos = summarizeOpenTaskDueDates(tarefas, hoje, ctx.tenantId);
   const tarefasPorPrazo = sortTasksByDueDate(tarefas);
   const retorno = manterFiltroOperacao(base, filtro);
   const podeEditar = ctx.permissions.has("strategy.write");
@@ -188,6 +189,20 @@ export default async function Operacao({ params, searchParams }: Props) {
       {ok === "salva" && <p className="sucesso" role="status">Tarefa atualizada.</p>}
       <AvisoDeErro erro={erro} problemas={problemas} />
       {!podeEditar && <p className="aviso">Você tem acesso de leitura. A criação e a alteração de tarefas exigem permissão de escrita.</p>}
+      <section className={`card ${estilos.resumoPrazos}`} aria-labelledby="resumo-prazos">
+        <h2 id="resumo-prazos">Resumo dos prazos das tarefas abertas</h2>
+        <p className="muted">Escopo: {filtro.kind === "all" ? "todas as tarefas abertas desta empresa" : filtro.kind === "unlinked" ? "tarefas abertas avulsas desta empresa" : `tarefas abertas da campanha ${nomesCampanhas.get(filtro.campaignId) ?? "selecionada"}`}.</p>
+        <p className="muted">{resumoPrazos.relativeDatesAvailable ? `Referência: ${hoje!.split("-").reverse().join("/")}` : "Referência de data indisponível"}.</p>
+        <p className="muted">Concluídas e canceladas não entram neste resumo.</p>
+        <dl className={estilos.contagensPrazos}>
+          <div><dt>Tarefas abertas</dt><dd>{resumoPrazos.totalOpen}</dd></div>
+          <div><dt>Atrasadas</dt><dd>{resumoPrazos.relativeDatesAvailable ? resumoPrazos.overdue : "Indisponível"}</dd></div>
+          <div><dt>Hoje</dt><dd>{resumoPrazos.relativeDatesAvailable ? resumoPrazos.dueToday : "Indisponível"}</dd></div>
+          <div><dt>Prazos futuros</dt><dd>{resumoPrazos.relativeDatesAvailable ? resumoPrazos.upcoming : "Indisponível"}</dd></div>
+          <div><dt>Sem prazo</dt><dd>{resumoPrazos.undated}</dd></div>
+          <div><dt>Prazos indisponíveis</dt><dd>{resumoPrazos.unclassified}</dd></div>
+        </dl>
+      </section>
       <section aria-labelledby="tarefas">
         <h2 id="tarefas">Tarefas</h2>
         <p className="muted">A fazer e Em andamento: prazos mais próximos primeiro; tarefas sem prazo ao final. Datas iguais mantêm a ordem anterior.</p>

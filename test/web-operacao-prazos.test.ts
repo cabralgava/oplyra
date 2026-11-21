@@ -148,13 +148,15 @@ describe("Operação — prioridade visual dos prazos", () => {
     expect(listIds(tree,"done")).toEqual([`tarefa-${id(1)}`,`tarefa-${id(2)}`]);
     const section = nodes(tree).find(n=>n.type==="section" && n.props["aria-labelledby"]==="canceladas");
     expect(nodes(section).filter(n=>n.type==="li").map(n=>n.props.id)).toEqual([`tarefa-${id(3)}`,`tarefa-${id(4)}`]);
-    expect(html).not.toContain("Atrasada"); expect(html).not.toContain("Prazo futuro"); expect(nodes(tree).filter(n=>n.type==="time")).toHaveLength(4);
+    const cardHtml = nodes(tree).filter(n=>n.type==="li" && n.props.id?.startsWith("tarefa-")).map(n=>renderToStaticMarkup(n)).join("");
+    expect(cardHtml).not.toContain("Atrasada"); expect(cardHtml).not.toContain("Prazo futuro"); expect(nodes(tree).filter(n=>n.type==="time")).toHaveLength(4);
   });
   it("dia indisponível não classifica atrasos, mantém datas e aviso honesto", async () => {
     hojeDaOperacao.mockResolvedValue(null); read([dated(1,"2026-11-18"),dated(2,null)]);
     const tree = await page(); const html = renderToStaticMarkup(tree);
     expect(html).toContain("Classificação de prazos indisponível."); expect(html).toContain("18/11/2026");
-    expect(html).not.toContain("Atrasada"); expect(html).not.toContain("Prazo futuro"); expect(html).toContain("Sem prazo");
+    const cardHtml = nodes(tree).filter(n=>n.type==="li" && n.props.id?.startsWith("tarefa-")).map(n=>renderToStaticMarkup(n)).join("");
+    expect(cardHtml).not.toContain("Atrasada"); expect(cardHtml).not.toContain("Prazo futuro"); expect(html).toContain("Sem prazo");
   });
   it("data impossível não fabrica time/atraso e fica no grupo final", async () => {
     read([dated(1,"2026-02-30"),dated(2,"2026-11-20"),dated(3,null)]); const tree = await page();
