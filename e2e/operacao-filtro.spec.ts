@@ -14,7 +14,7 @@ async function select(page: Page, value: string) {
   await filter(page).getByLabel("Filtrar tarefas por campanha", { exact: true }).selectOption(value);
   await filter(page).getByRole("button", { name: "Aplicar filtro", exact: true }).click();
   await page.waitForURL(url => url.pathname === operation && url.searchParams.get("campanha") === value);
-  await expect(filter(page).locator("select")).toHaveValue(value);
+  await expect(filter(page).getByLabel("Filtrar tarefas por campanha", { exact: true })).toHaveValue(value);
 }
 async function campaign(page: Page, tenant: string, name: string, key: string) {
   await page.goto(`/e/${tenant}/estrategia`);

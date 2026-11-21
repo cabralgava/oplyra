@@ -12,3 +12,4 @@ export * from "../../../../packages/core/src/application/use-cases/strategy-task
 export * from "../../../../packages/core/src/domain/task-dependencies.ts";
 export * from "../../../../packages/core/src/domain/task-due-dates.ts";
 export * from "../../../../packages/core/src/domain/task-due-summary.ts";
+export * from "../../../../packages/core/src/domain/task-due-filter.ts";

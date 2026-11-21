@@ -763,7 +763,7 @@
     },
     {
       "path": "apps/web/src/lib/estrategia.ts",
-      "sha256": "30fbf14a4a9c9813441a75da8a29c7add9aa3398f5996651f78b61214c41b607",
+      "sha256": "a2d5d4a62d2660547d31b753b9dda08be5b9159e9bc699e1e311a603f8ec9511",
       "category": "runtime_component"
     },
     {
@@ -1279,7 +1279,7 @@
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/page.tsx",
       "category": "runtime_component",
-      "sha256": "942189d29d008e86a9dd43096624b6678ac5d246bcb811a6ec3e15e0eca49691"
+      "sha256": "f81f5a33132ba99e2802de933940fda8c8e5ccd4f8d0da2d38cd61cc6a45c73a"
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/operacao.module.css",
@@ -1299,7 +1299,7 @@
     {
       "path": "test/web-operacao-oficial.test.ts",
       "category": "runtime_test",
-      "sha256": "278c4e547012789dbfc84042fe264e36843bad4ae21878e3ffde64e2a8f2e5db"
+      "sha256": "ca6cdddb4952aec6b3c1b3f0d451c9086d8eeb10a5456e7b903d149d8d4a52ec"
     },
     {
       "path": "test/operacao-contract.test.ts",
@@ -1324,7 +1324,7 @@
     {
       "path": "test/web-operacao-edicao.test.ts",
       "category": "runtime_test",
-      "sha256": "4b1f07136d4c5accecc3bddc93ef65fb26ad07e67f1111be6442d54b1dcaf19f"
+      "sha256": "1cc8e0b39e33cee5bd4120d0b9674329b8ac845eae9dd594a5a99cf80d4813ce"
     },
     {
       "path": "e2e/operacao-edicao.spec.ts",
@@ -1374,17 +1374,17 @@
     {
       "path": "apps/web/src/lib/operacao-filtro.ts",
       "category": "runtime_component",
-      "sha256": "20833a7a312c284c7bfa519206c389f9ad50cea1ab8f05221fba2684c2937aae"
+      "sha256": "2a5df5ce7891854522c23e14244862c5c07ebd713653d04f7a125cfc3224cfec"
     },
     {
       "path": "test/web-operacao-filtro.test.ts",
       "category": "runtime_test",
-      "sha256": "86d75c36f6d33b035149d38bb44df9f76d8227a906c34632af7f6452ad6c010f"
+      "sha256": "7188444128bba5fa17f9c92f55c9884c29d54e4486608bd95c3c14a0ac3ce996"
     },
     {
       "path": "e2e/operacao-filtro.spec.ts",
       "category": "runtime_test",
-      "sha256": "0f5c282d4119a6d18afee11dc82a799410ec634a2c3ebdc81ba7bc449383bd24"
+      "sha256": "27babac6607b82ffc676c879a8e144d133466f3f14f2cf8d77efbe9e5a458dad"
     },
     {
       "path": "packages/core/src/domain/task-dependencies.ts",
@@ -1404,7 +1404,7 @@
     {
       "path": "test/web-operacao-dependencias.test.ts",
       "category": "runtime_test",
-      "sha256": "a73b53eae25c4736518ea0d55dd01a6a214b5655cade524fd5549829df73317b"
+      "sha256": "f98522e416b5d4371fe4aa5b7ba98025aaff942c023468b0852d3b5981a0e45a"
     },
     {
       "path": "e2e/operacao-dependencias.spec.ts",
@@ -1465,6 +1465,31 @@
       "path": "e2e/operacao-resumo-prazos.spec.ts",
       "category": "runtime_test",
       "sha256": "a6ccad4102271715ea5fd0ee5afffbb6d9dbd9e700fd3ae9d041c9ce0839ad00"
+    },
+    {
+      "path": "packages/core/src/domain/task-due-filter.ts",
+      "category": "runtime_component",
+      "sha256": "2d8745d274ef7959be99c92fb549f2fd4cf34643e6dde86164c8acf5c9d4d16c"
+    },
+    {
+      "path": "packages/testing/test/task-due-filter.test.ts",
+      "category": "runtime_test",
+      "sha256": "9623373b68dbb9dc66d642b342b492b4419d37e59f79bfa272882d1c4997c181"
+    },
+    {
+      "path": "packages/infra/test/task-due-filter.integration.test.ts",
+      "category": "integration_test",
+      "sha256": "65838de28dabbbdad310b6e0c25054873c44a4e7f4f674969e9cffb6ce0280e4"
+    },
+    {
+      "path": "test/web-operacao-filtro-prazos.test.ts",
+      "category": "runtime_test",
+      "sha256": "fda2d00b03d2b6523a9036543f3692379040082e056c05a410b43196baac1d09"
+    },
+    {
+      "path": "e2e/operacao-filtro-prazos.spec.ts",
+      "category": "runtime_test",
+      "sha256": "66fb101574afec760710f1102fb08bbb10627cce42a2c2b5a743604a30701ea0"
     }
   ]
 }

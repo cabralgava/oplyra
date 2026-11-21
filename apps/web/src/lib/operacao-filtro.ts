@@ -1,5 +1,5 @@
 import { FormularioInvalido } from "./estrategia-form";
-import type { OperationTaskFilter } from "./estrategia";
+import type { OperationTaskFilter, TaskDueDateFilter } from "./estrategia";
 import type { CampaignId } from "@oplyra/core";
 /** Filtro de navegação; existência e autorização são conferidas pelo caso de uso. */
 export type FiltroOperacao = OperationTaskFilter;
@@ -13,12 +13,22 @@ export function lerFiltroOperacao(valor: unknown): FiltroOperacao {
 export function valorFiltroOperacao(filtro: FiltroOperacao): string {
   return filtro.kind === "all" ? "todas" : filtro.kind === "unlinked" ? "avulsas" : filtro.campaignId;
 }
+const PRAZOS = { todas: "all", atrasadas: "overdue", hoje: "today", futuros: "upcoming", "sem-prazo": "undated", indisponiveis: "unclassified" } as const;
+export function lerFiltroPrazo(valor: unknown): TaskDueDateFilter {
+  if (valor === undefined) return "all";
+  if (typeof valor === "string" && Object.hasOwn(PRAZOS, valor)) return PRAZOS[valor as keyof typeof PRAZOS];
+  throw new FormularioInvalido("prazo");
+}
+export function valorFiltroPrazo(filtro: TaskDueDateFilter): string {
+  return Object.entries(PRAZOS).find(([, value]) => value === filtro)![0];
+}
 /** Só recebe destinos locais construídos pela tela, nunca um retorno fornecido pelo navegador. */
-export function manterFiltroOperacao(destino: string, filtro: FiltroOperacao): string {
-  if (filtro.kind === "all") return destino;
+export function manterFiltroOperacao(destino: string, filtro: FiltroOperacao, prazo: TaskDueDateFilter = "all"): string {
   const url = new URL(destino, "https://oplyra.invalid");
   const query = new URLSearchParams();
-  query.set("campanha", valorFiltroOperacao(filtro));
-  for (const [key, value] of url.searchParams) if (key !== "campanha") query.append(key, value);
-  return `${url.pathname}?${query.toString()}${url.hash}`;
+  if (filtro.kind !== "all") query.set("campanha", valorFiltroOperacao(filtro));
+  if (prazo !== "all") query.set("prazo", valorFiltroPrazo(prazo));
+  for (const [key, value] of url.searchParams) if (key !== "campanha" && key !== "prazo") query.append(key, value);
+  const search = query.toString();
+  return `${url.pathname}${search ? `?${search}` : ""}${url.hash}`;
 }
