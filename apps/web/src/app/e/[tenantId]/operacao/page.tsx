@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { contextoDaEmpresa } from "../../../../lib/session";
 import { hojeDaOperacao } from "../../../../lib/operacao-prazos";
 import { linkCampanhaDaOperacao } from "../../../../lib/operacao-navegacao";
+import { linkDetalheDaTarefa } from "../../../../lib/operacao-tarefa-navegacao";
 import { strategyDeps } from "../../../../lib/deps-estrategia";
 import { filterTasksByDueDate, summarizeOpenTaskDueDates, isValidCivilDate, classifyTaskDueDate, sortTasksByDueDate, summarizeTaskDependencies, getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
 import type { TaskStatus, Task, TaskDueDateFilter } from "../../../../lib/estrategia";
@@ -144,6 +145,7 @@ export default async function Operacao({ params, searchParams }: Props) {
         <div className={estilos.tituloTarefa}>
           <h3>{t.title}</h3><span className={SELO[t.status]}>{ROTULO_TAREFA[t.status]}</span>
         </div>
+        <p><a className="btn secundario" href={linkDetalheDaTarefa(tenantId, t.id, { campanha: filtro, prazo: filtroPrazo, tarefaId: t.id })}>Ver detalhes</a></p>
         {t.campaignId && nomesCampanhas.has(t.campaignId) && <p><a className="btn secundario" href={linkCampanhaDaOperacao(tenantId, t.campaignId, { campanha: filtro, prazo: filtroPrazo, tarefaId: t.id })}>Ver campanha</a></p>}
         {t.description && <p className="texto">{t.description}</p>}
         <p className={estilos.contexto}>{t.campaignId ? `Campanha: ${nomesCampanhas.get(t.campaignId) ?? "Indisponível"}` : "Tarefa avulsa"}</p>
