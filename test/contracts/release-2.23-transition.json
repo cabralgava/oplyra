@@ -1279,7 +1279,7 @@
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/page.tsx",
       "category": "runtime_component",
-      "sha256": "f81f5a33132ba99e2802de933940fda8c8e5ccd4f8d0da2d38cd61cc6a45c73a"
+      "sha256": "49d0f0b296bccbd3a65cf1a0d63f3d933841a274cc13a7ce50dae731d1548111"
     },
     {
       "path": "apps/web/src/app/e/[tenantId]/operacao/operacao.module.css",
@@ -1484,7 +1484,7 @@
     {
       "path": "test/web-operacao-filtro-prazos.test.ts",
       "category": "runtime_test",
-      "sha256": "fda2d00b03d2b6523a9036543f3692379040082e056c05a410b43196baac1d09"
+      "sha256": "d8a9896fc512e9f259c3643acd332321ecd9d1cede312a961545e2bcfe64953b"
     },
     {
       "path": "e2e/operacao-filtro-prazos.spec.ts",
