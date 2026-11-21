@@ -29,6 +29,7 @@ const modules: Record<string, unknown> = {
   "../../../../lib/estrategia-form": { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro, FormularioInvalido, lerEdicaoDaTarefa },
   "../../../../lib/operacao-prazos": { hojeDaOperacao: async () => "2026-11-20" },
   // Adapter de navegação é testado com UUIDs reais na suíte própria; estas fixtures legadas usam empresa-a.
+  "../../../../lib/operacao-tarefa-navegacao": { linkDetalheDaTarefa: (tenant: string, task: string) => `/e/${encodeURIComponent(tenant)}/operacao/tarefas/${encodeURIComponent(task)}` },
   "../../../../lib/operacao-navegacao": { ...await import("../apps/web/src/lib/operacao-navegacao"), linkCampanhaDaOperacao: (tenant: string, campaign: string) => `/e/${encodeURIComponent(tenant)}/estrategia/campanhas/${encodeURIComponent(campaign)}` },
   "../../../../lib/operacao-filtro": await import("../apps/web/src/lib/operacao-filtro"),
   "../../../../components/tarefa-destino": { TarefaDestino: () => null },

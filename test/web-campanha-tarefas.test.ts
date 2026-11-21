@@ -25,6 +25,7 @@ const modules: Record<string, unknown> = {
   "../../../../../../lib/deps-estrategia": { strategyDeps: deps },
   "../../../../../../lib/deps-marca": { brandDeps: {} },
   "../../../../../../lib/estrategia": { ...strategy, getCampaign, listCampaignTasks, listExperiments, listObjectives },
+  "../../../../../../lib/operacao-tarefa-navegacao": { linkDetalheDaTarefa: (tenant: string, task: string) => `/e/${encodeURIComponent(tenant)}/operacao/tarefas/${encodeURIComponent(task)}` },
   "../../../../../../lib/operacao-navegacao": await import("../apps/web/src/lib/operacao-navegacao"),
   "../../../../../../lib/estrategia-form": form,
   "@oplyra/core/brand": { getBrandOverview: vi.fn() },

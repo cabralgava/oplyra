@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { contextoDaEmpresa } from "../../../../../../lib/session";
 import { lerRetornoOperacao, destinoRetornoOperacao, manterRetornoOperacao, validarRetornoDaCampanha, type RetornoOperacao } from "../../../../../../lib/operacao-navegacao";
+import { linkDetalheDaTarefa } from "../../../../../../lib/operacao-tarefa-navegacao";
 import { strategyDeps } from "../../../../../../lib/deps-estrategia";
 import { brandDeps } from "../../../../../../lib/deps-marca";
 import {
@@ -378,6 +379,7 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
                 </div>
                 {t.description && <p className="texto">{t.description}</p>}
                 <p className="muted">{t.dueDate ? <>Prazo: <time dateTime={t.dueDate}>{t.dueDate.split("-").reverse().join("/")}</time></> : "Sem prazo definido"}</p>
+                {(!retorno || retorno.campanha.kind !== "unlinked") && <a className="btn secundario" href={linkDetalheDaTarefa(tenantId, t.id, retorno ? { ...retorno, tarefaId: t.id } : { campanha: { kind: "campaign", campaignId: campanha.id }, prazo: "all", tarefaId: t.id })}>Ver detalhes</a>}
                 {/* Navegação de documento mantém o salto ao cartão após carregar o HTML. */}
                 {(!retorno || retorno.campanha.kind !== "unlinked") && <a className="btn secundario" href={retorno ? destinoRetornoOperacao(tenantId, { ...retorno, tarefaId: t.id }) : `/e/${encodeURIComponent(tenantId)}/operacao?campanha=${encodeURIComponent(campanha.id)}#tarefa-${encodeURIComponent(t.id)}`}>Ver na Operação</a>}
               </li>
