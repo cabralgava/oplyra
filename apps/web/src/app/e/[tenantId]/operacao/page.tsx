@@ -213,7 +213,7 @@ export default async function Operacao({ params, searchParams }: Props) {
       <section aria-labelledby="tarefas">
         <h2 id="tarefas">Tarefas</h2>
         <p className="muted">A fazer e Em andamento: prazos mais próximos primeiro; tarefas sem prazo ao final. Datas iguais mantêm a ordem anterior.</p>
-        {!hoje && <p className="aviso" role="note" aria-label="Classificação dos prazos">Classificação de prazos indisponível. As datas informadas continuam visíveis.</p>}
+        {!hoje && <p className="aviso" role="note" aria-label="Classificação dos prazos">Classificação de prazos indisponível.</p>}
         <p className="muted">Filtro de prazo: {({ all: "Todos os prazos", overdue: "Atrasadas", today: "Hoje", upcoming: "Prazos futuros", undated: "Sem prazo", unclassified: "Prazos indisponíveis" } as const)[filtroPrazo]}.</p>
         {recortePrazo.available && <p className="muted">Tarefas exibidas: {tarefas.length}.</p>}
         {!recortePrazo.available ? <div className="aviso" role="note" aria-label="Filtro de prazo indisponível"><p>O filtro de prazo não pode ser aplicado sem uma data de referência válida.</p></div> : tarefas.length === 0 ? <div className="card vazio"><p>{filtroPrazo !== "all" ? "Nenhuma tarefa aberta corresponde a este filtro de prazo." : filtro.kind === "all" ? "Nenhuma tarefa ainda." : filtro.kind === "unlinked" ? "Nenhuma tarefa avulsa." : "Nenhuma tarefa vinculada a esta campanha."}</p><p>{filtro.kind === "all" && filtroPrazo === "all" ? "Registre o trabalho que precisa acontecer e o que depende de quê." : "Altere ou limpe o filtro para consultar outras tarefas da empresa."}</p></div> : (

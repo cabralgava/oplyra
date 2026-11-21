@@ -110,6 +110,8 @@ describe("Operação — filtro de prazo combinado com campanha",()=>{
   it("filtro relativo sem data mostra indisponibilidade, nunca vazio ou quantidade falsos",async()=>{
     hojeDaOperacao.mockResolvedValue(null);read();const tree=await page({prazo:"atrasadas"});const html=renderToStaticMarkup(tree);
     expect(ids(tree)).toHaveLength(0);expect(html).toContain("O filtro de prazo não pode ser aplicado");
+    const classificationNote=nodes(tree).find(n=>n.props?.["aria-label"]==="Classificação dos prazos");
+    expect(textOf(classificationNote)).toBe("Classificação de prazos indisponível.");
     expect(html).not.toContain("Nenhuma tarefa aberta corresponde");expect(html).not.toContain("Tarefas exibidas:");
     expect(nodes(tree).some(n=>n.props?.["aria-label"]==="Filtro de prazo indisponível")).toBe(true);
     expect(hojeDaOperacao).toHaveBeenCalledTimes(1);
