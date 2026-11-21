@@ -3,9 +3,9 @@ import { revalidatePath } from "next/cache";
 import { contextoDaEmpresa } from "../../../../lib/session";
 import { hojeDaOperacao } from "../../../../lib/operacao-prazos";
 import { strategyDeps } from "../../../../lib/deps-estrategia";
-import { summarizeOpenTaskDueDates, isValidCivilDate, classifyTaskDueDate, sortTasksByDueDate, summarizeTaskDependencies, getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
-import type { TaskStatus, Task } from "../../../../lib/estrategia";
-import { lerFiltroOperacao, manterFiltroOperacao, valorFiltroOperacao, type FiltroOperacao } from "../../../../lib/operacao-filtro";
+import { filterTasksByDueDate, summarizeOpenTaskDueDates, isValidCivilDate, classifyTaskDueDate, sortTasksByDueDate, summarizeTaskDependencies, getOperationTasks, createTask, changeTaskStatus, saveTaskDetails } from "../../../../lib/estrategia";
+import type { TaskStatus, Task, TaskDueDateFilter } from "../../../../lib/estrategia";
+import { lerFiltroPrazo, valorFiltroPrazo, lerFiltroOperacao, manterFiltroOperacao, valorFiltroOperacao, type FiltroOperacao } from "../../../../lib/operacao-filtro";
 import type { TaskId } from "@oplyra/core";
 import { ROTULO_TAREFA, destinoDeErro, lerId, lerRevisao, lerTarefa, lerEdicaoDaTarefa, FormularioInvalido } from "../../../../lib/estrategia-form";
 import { BotaoEnviar } from "../../../../components/botao-enviar";
@@ -13,7 +13,7 @@ import { TarefaDestino } from "../../../../components/tarefa-destino";
 import { AvisoDeErro, AvisoSemPermissao } from "../../../../components/aviso-estrategia";
 import estilos from "./operacao.module.css";
 
-type Props = { params: Promise<{ tenantId: string }>; searchParams: Promise<{ erro?: string; ok?: string; problemas?: string; editar?: string; campanha?: string | string[] }> };
+type Props = { params: Promise<{ tenantId: string }>; searchParams: Promise<{ erro?: string; ok?: string; problemas?: string; editar?: string; campanha?: string | string[]; prazo?: string | string[] }> };
 const SELO = { todo: "selo pendente", in_progress: "selo pendente", done: "selo ok", cancelled: "selo proibido" } as const;
 const PROXIMOS: Record<TaskStatus, readonly TaskStatus[]> = {
   todo: ["in_progress", "cancelled"], in_progress: ["done", "todo", "cancelled"], done: ["in_progress"], cancelled: [],
@@ -62,7 +62,7 @@ function EditorDaTarefa({ tarefa, tarefas, campanhas, aberta, retorno, action }:
   );
 }
 
-async function editarTarefa(tenantId: string, base: string, filtro: FiltroOperacao, tarefaEsperada: string, dados: FormData): Promise<void> {
+async function editarTarefa(tenantId: string, base: string, filtro: FiltroOperacao, filtroPrazo: TaskDueDateFilter, tarefaEsperada: string, dados: FormData): Promise<void> {
   const ctx = await contextoDaEmpresa(tenantId);
   try {
     await getOperationTasks(strategyDeps, ctx, filtro);
@@ -70,45 +70,49 @@ async function editarTarefa(tenantId: string, base: string, filtro: FiltroOperac
     if (entrada.taskId !== tarefaEsperada) throw new FormularioInvalido("editar_tarefa");
     await saveTaskDetails(strategyDeps, { ctx, ...entrada });
   } catch (e) {
-    redirect(manterFiltroOperacao(`${destinoDeErro(base, e)}&editar=${encodeURIComponent(tarefaEsperada)}#editar-${tarefaEsperada}`, filtro));
+    redirect(manterFiltroOperacao(`${destinoDeErro(base, e)}&editar=${encodeURIComponent(tarefaEsperada)}#editar-${tarefaEsperada}`, filtro, filtroPrazo));
   }
   revalidatePath(base);
-  redirect(manterFiltroOperacao(`${base}?ok=salva#tarefa-${tarefaEsperada}`, filtro));
+  redirect(manterFiltroOperacao(`${base}?ok=salva#tarefa-${tarefaEsperada}`, filtro, filtroPrazo));
 }
 
 // A action fecha apenas sobre identificadores e refaz identidade/permissão pelo caso de uso.
-async function mudarTarefa(tenantId: string, base: string, filtro: FiltroOperacao, para: TaskStatus, dados: FormData): Promise<void> {
+async function mudarTarefa(tenantId: string, base: string, filtro: FiltroOperacao, filtroPrazo: TaskDueDateFilter, para: TaskStatus, dados: FormData): Promise<void> {
   const contexto = await contextoDaEmpresa(tenantId);
   try {
     await getOperationTasks(strategyDeps, contexto, filtro);
     await changeTaskStatus(strategyDeps, { ctx: contexto, taskId: lerId(dados, "tarefa") as TaskId, expectedRevision: lerRevisao(dados), to: para });
-  } catch (e) { redirect(manterFiltroOperacao(destinoDeErro(base, e), filtro)); }
+  } catch (e) { redirect(manterFiltroOperacao(destinoDeErro(base, e), filtro, filtroPrazo)); }
   revalidatePath(base);
-  redirect(manterFiltroOperacao(`${base}?ok=estado`, filtro));
+  redirect(manterFiltroOperacao(`${base}?ok=estado`, filtro, filtroPrazo));
 }
 
 /** K01 (36:4863): quadro e cartões adaptados aos estados reais de tarefa. */
 export default async function Operacao({ params, searchParams }: Props) {
   const { tenantId } = await params;
-  const { erro, ok, problemas, editar, campanha } = await searchParams;
+  const { erro, ok, problemas, editar, campanha, prazo } = await searchParams;
   const ctx = await contextoDaEmpresa(tenantId);
   const base = `/e/${encodeURIComponent(tenantId)}/operacao`;
   if (!ctx.permissions.has("strategy.read")) return <AvisoSemPermissao titulo="Operação" oque="ver a operação" />;
 
   let filtro: FiltroOperacao;
+  let filtroPrazo: TaskDueDateFilter;
   let leitura: Awaited<ReturnType<typeof getOperationTasks>>;
   try {
+    filtroPrazo = lerFiltroPrazo(prazo);
     filtro = lerFiltroOperacao(campanha);
     leitura = await getOperationTasks(strategyDeps, ctx, filtro);
   } catch (e) {
     if (!(e instanceof FormularioInvalido) && !(e instanceof Error && "code" in e && e.code === "CAMPAIGN_NOT_FOUND")) throw e;
-    return <div className="pilha"><h1>Operação</h1><div className="erro" role="alert"><p>Filtro de campanha inválido ou indisponível nesta empresa.</p></div><a className="btn secundario" href={base}>Limpar filtro</a></div>;
+    return <div className="pilha"><h1>Operação</h1><div className="erro" role="alert"><p>{e instanceof FormularioInvalido && e.message === "prazo" ? "Filtro de prazo inválido." : "Filtro de campanha inválido ou indisponível nesta empresa."}</p></div><a className="btn secundario" href={base}>Limpar filtro</a></div>;
   }
-  const { tasks: tarefas, references: referencias, campaigns: campanhas } = leitura;
+  const { tasks: tarefasDaCampanha, references: referencias, campaigns: campanhas } = leitura;
   const hoje = await hojeDaOperacao(ctx);
-  const resumoPrazos = summarizeOpenTaskDueDates(tarefas, hoje, ctx.tenantId);
+  const resumoPrazos = summarizeOpenTaskDueDates(tarefasDaCampanha, hoje, ctx.tenantId);
+  const recortePrazo = filterTasksByDueDate(tarefasDaCampanha, hoje, ctx.tenantId, filtroPrazo);
+  const tarefas = recortePrazo.tasks;
   const tarefasPorPrazo = sortTasksByDueDate(tarefas);
-  const retorno = manterFiltroOperacao(base, filtro);
+  const retorno = manterFiltroOperacao(base, filtro, filtroPrazo);
   const podeEditar = ctx.permissions.has("strategy.write");
   const referenciasPorId = new Map(referencias.filter(t => t.tenantId === ctx.tenantId).map(t => [t.id, t]));
   const nomesCampanhas = new Map(campanhas.map((c) => [c.id, c.name || "(sem nome)"]));
@@ -119,21 +123,21 @@ export default async function Operacao({ params, searchParams }: Props) {
     "use server";
     const contexto = await contextoDaEmpresa(tenantId);
     try { await getOperationTasks(strategyDeps, contexto, filtro); await createTask(strategyDeps, { ctx: contexto, content: lerTarefa(dados) }); }
-    catch (e) { redirect(manterFiltroOperacao(destinoDeErro(base, e), filtro)); }
+    catch (e) { redirect(manterFiltroOperacao(destinoDeErro(base, e), filtro, filtroPrazo)); }
     revalidatePath(base);
-    redirect(manterFiltroOperacao(`${base}?ok=criada`, filtro));
+    redirect(manterFiltroOperacao(`${base}?ok=criada`, filtro, filtroPrazo));
   }
-  async function iniciar(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, "in_progress", d); }
-  async function concluir(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, "done", d); }
-  async function reabrir(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, "todo", d); }
-  async function cancelar(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, "cancelled", d); }
+  async function iniciar(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, filtroPrazo, "in_progress", d); }
+  async function concluir(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, filtroPrazo, "done", d); }
+  async function reabrir(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, filtroPrazo, "todo", d); }
+  async function cancelar(d: FormData) { "use server"; return mudarTarefa(tenantId, base, filtro, filtroPrazo, "cancelled", d); }
   const acoes = { todo: reabrir, in_progress: iniciar, done: concluir, cancelled: cancelar };
 
   function cartao(t: typeof tarefas[number]) {
     const tarefaId = t.id;
     const sinal = summarizeTaskDependencies(t, referencias);
     const prazo = classifyTaskDueDate(t, hoje);
-    async function salvar(dados: FormData) { "use server"; return editarTarefa(tenantId, base, filtro, tarefaId, dados); }
+    async function salvar(dados: FormData) { "use server"; return editarTarefa(tenantId, base, filtro, filtroPrazo, tarefaId, dados); }
     return (
       <li key={t.id} id={`tarefa-${t.id}`} className={estilos.tarefa}>
         <div className={estilos.tituloTarefa}>
@@ -178,11 +182,14 @@ export default async function Operacao({ params, searchParams }: Props) {
         {podeEditar && <a className="btn" href="#nova-tarefa">Nova tarefa</a>}
       </header>
       <form method="get" action={base} className={`card ${estilos.filtro}`} aria-label="Filtrar tarefas por campanha">
+        <div><label htmlFor="filtro-prazo">Filtrar tarefas por prazo</label><select id="filtro-prazo" name="prazo" defaultValue={valorFiltroPrazo(filtroPrazo)}>
+          <option value="todas">Todos os prazos</option><option value="atrasadas">Atrasadas</option><option value="hoje">Hoje</option><option value="futuros">Prazos futuros</option><option value="sem-prazo">Sem prazo</option><option value="indisponiveis">Prazos indisponíveis</option>
+        </select></div>
         <div><label htmlFor="filtro-campanha">Filtrar tarefas por campanha</label><select id="filtro-campanha" name="campanha" defaultValue={valorFiltroOperacao(filtro)}>
           <option value="todas">Todas as tarefas</option><option value="avulsas">Somente tarefas avulsas</option>
           {campanhas.map(c => <option key={c.id} value={c.id}>{c.name || "(sem nome)"}</option>)}
         </select></div><button className="btn" type="submit">Aplicar filtro</button>
-        {filtro.kind !== "all" && <a className="btn secundario" href={base}>Limpar filtro</a>}
+        {(filtro.kind !== "all" || filtroPrazo !== "all") && <a className="btn secundario" href={base}>Limpar filtro</a>}
       </form>
       {ok === "criada" && <p className="sucesso" role="status">Tarefa criada.</p>}
       {ok === "estado" && <p className="sucesso" role="status">Estado da tarefa atualizado.</p>}
@@ -193,7 +200,7 @@ export default async function Operacao({ params, searchParams }: Props) {
         <h2 id="resumo-prazos">Resumo dos prazos das tarefas abertas</h2>
         <p className="muted">Escopo: {filtro.kind === "all" ? "todas as tarefas abertas desta empresa" : filtro.kind === "unlinked" ? "tarefas abertas avulsas desta empresa" : `tarefas abertas da campanha ${nomesCampanhas.get(filtro.campaignId) ?? "selecionada"}`}.</p>
         <p className="muted">{resumoPrazos.relativeDatesAvailable ? `Referência: ${hoje!.split("-").reverse().join("/")}` : "Referência de data indisponível"}.</p>
-        <p className="muted">Concluídas e canceladas não entram neste resumo.</p>
+        <p className="muted">Concluídas e canceladas não entram neste resumo. O filtro de prazo não altera este resumo.</p>
         <dl className={estilos.contagensPrazos}>
           <div><dt>Tarefas abertas</dt><dd>{resumoPrazos.totalOpen}</dd></div>
           <div><dt>Atrasadas</dt><dd>{resumoPrazos.relativeDatesAvailable ? resumoPrazos.overdue : "Indisponível"}</dd></div>
@@ -207,7 +214,9 @@ export default async function Operacao({ params, searchParams }: Props) {
         <h2 id="tarefas">Tarefas</h2>
         <p className="muted">A fazer e Em andamento: prazos mais próximos primeiro; tarefas sem prazo ao final. Datas iguais mantêm a ordem anterior.</p>
         {!hoje && <p className="aviso" role="note" aria-label="Classificação dos prazos">Classificação de prazos indisponível. As datas informadas continuam visíveis.</p>}
-        {tarefas.length === 0 ? <div className="card vazio"><p>{filtro.kind === "all" ? "Nenhuma tarefa ainda." : filtro.kind === "unlinked" ? "Nenhuma tarefa avulsa." : "Nenhuma tarefa vinculada a esta campanha."}</p><p>{filtro.kind === "all" ? "Registre o trabalho que precisa acontecer e o que depende de quê." : "Altere ou limpe o filtro para consultar outras tarefas da empresa."}</p></div> : (
+        <p className="muted">Filtro de prazo: {({ all: "Todos os prazos", overdue: "Atrasadas", today: "Hoje", upcoming: "Prazos futuros", undated: "Sem prazo", unclassified: "Prazos indisponíveis" } as const)[filtroPrazo]}.</p>
+        {recortePrazo.available && <p className="muted">Tarefas exibidas: {tarefas.length}.</p>}
+        {!recortePrazo.available ? <div className="aviso" role="note" aria-label="Filtro de prazo indisponível"><p>O filtro de prazo não pode ser aplicado sem uma data de referência válida.</p></div> : tarefas.length === 0 ? <div className="card vazio"><p>{filtroPrazo !== "all" ? "Nenhuma tarefa aberta corresponde a este filtro de prazo." : filtro.kind === "all" ? "Nenhuma tarefa ainda." : filtro.kind === "unlinked" ? "Nenhuma tarefa avulsa." : "Nenhuma tarefa vinculada a esta campanha."}</p><p>{filtro.kind === "all" && filtroPrazo === "all" ? "Registre o trabalho que precisa acontecer e o que depende de quê." : "Altere ou limpe o filtro para consultar outras tarefas da empresa."}</p></div> : (
           <div className={estilos.quadro}>
             {COLUNAS.map((estado) => <section key={estado} className={estilos.coluna} aria-labelledby={`coluna-${estado}`}>
               <h2 id={`coluna-${estado}`}>{TITULO[estado]}</h2>

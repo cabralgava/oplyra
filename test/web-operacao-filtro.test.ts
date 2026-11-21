@@ -25,7 +25,7 @@ const compiled = await transform(source, { filename: "operacao.tsx", jsc: { pars
 const modules: Record<string, unknown> = {
   "next/navigation": { redirect }, "next/cache": { revalidatePath },
   "../../../../lib/session": { contextoDaEmpresa }, "../../../../lib/deps-estrategia": { strategyDeps: dependencies },
-  "../../../../lib/estrategia": { summarizeOpenTaskDueDates: (await import("../apps/web/src/lib/estrategia")).summarizeOpenTaskDueDates, isValidCivilDate: (await import("../apps/web/src/lib/estrategia")).isValidCivilDate, classifyTaskDueDate: (await import("../apps/web/src/lib/estrategia")).classifyTaskDueDate, sortTasksByDueDate: (await import("../apps/web/src/lib/estrategia")).sortTasksByDueDate, summarizeTaskDependencies: (await import("../apps/web/src/lib/estrategia")).summarizeTaskDependencies, getOperationTasks, listTasks, listCampaigns, createTask, changeTaskStatus, saveTaskDetails },
+  "../../../../lib/estrategia": { filterTasksByDueDate: (await import("../apps/web/src/lib/estrategia")).filterTasksByDueDate, summarizeOpenTaskDueDates: (await import("../apps/web/src/lib/estrategia")).summarizeOpenTaskDueDates, isValidCivilDate: (await import("../apps/web/src/lib/estrategia")).isValidCivilDate, classifyTaskDueDate: (await import("../apps/web/src/lib/estrategia")).classifyTaskDueDate, sortTasksByDueDate: (await import("../apps/web/src/lib/estrategia")).sortTasksByDueDate, summarizeTaskDependencies: (await import("../apps/web/src/lib/estrategia")).summarizeTaskDependencies, getOperationTasks, listTasks, listCampaigns, createTask, changeTaskStatus, saveTaskDetails },
   "../../../../lib/estrategia-form": { lerTarefa, lerId, lerRevisao, ROTULO_TAREFA, destinoDeErro, FormularioInvalido, lerEdicaoDaTarefa },
   "../../../../lib/operacao-prazos": { hojeDaOperacao: async () => "2026-11-20" },
   "../../../../lib/operacao-filtro": await import("../apps/web/src/lib/operacao-filtro"),
@@ -83,6 +83,19 @@ describe("Filtro oficial de tarefas por campanha", () => {
     expect(filtro.lerFiltroOperacao("avulsas")).toEqual({ kind: "unlinked" });
     expect(filtro.lerFiltroOperacao(A.toUpperCase())).toEqual(campaignFilter);
     for (const value of ["", " ", "all", "null", "../", [A], [A, B], null, 1]) expect(() => filtro.lerFiltroOperacao(value)).toThrow();
+  });
+  it("parser de prazo só aceita tokens portugueses canônicos, nunca arrays ou fallback", () => {
+    expect(filtro.lerFiltroPrazo(undefined)).toBe("all");
+    for (const [value, kind] of [["todas","all"],["atrasadas","overdue"],["hoje","today"],["futuros","upcoming"],["sem-prazo","undated"],["indisponiveis","unclassified"]]) {
+      expect(filtro.lerFiltroPrazo(value)).toBe(kind);
+      expect(filtro.valorFiltroPrazo(kind as any)).toBe(value);
+    }
+    for (const value of ["", " ", "all", "overdue", "Hoje", "__proto__", ["hoje"], ["hoje","futuros"], null, 1]) expect(() => filtro.lerFiltroPrazo(value)).toThrow();
+  });
+  it("compõe os dois filtros com erro/hash e remove filtros antigos duplicados", () => {
+    expect(filtro.manterFiltroOperacao(`${pathname}?campanha=${B}&campanha=${B}&prazo=todas&prazo=hoje&erro=ERRO#tarefa-x`, campaignFilter as any, "upcoming")).toBe(`${pathname}?campanha=${A}&prazo=futuros&erro=ERRO#tarefa-x`);
+    expect(filtro.manterFiltroOperacao(`${pathname}?prazo=hoje&campanha=${A}&ok=salva`, {kind:"all"}, "all")).toBe(`${pathname}?ok=salva`);
+    expect(filtro.manterFiltroOperacao(pathname, {kind:"all"}, "undated")).toBe(`${pathname}?prazo=sem-prazo`);
   });
   it("preserva query e fragmentos nos destinos sem adicionar filtro à vista geral", () => {
     expect(filtro.manterFiltroOperacao(`${pathname}?erro=CONFLICT_VERSION&editar=x#editar-x`, campaignFilter as any)).toBe(`${pathname}?campanha=${A}&erro=CONFLICT_VERSION&editar=x#editar-x`);
