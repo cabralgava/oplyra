@@ -25,6 +25,7 @@ const modules: Record<string, unknown> = {
   "../../../../../../lib/deps-estrategia": { strategyDeps: deps },
   "../../../../../../lib/deps-marca": { brandDeps: {} },
   "../../../../../../lib/estrategia": { ...strategy, getCampaign, listCampaignTasks, listExperiments, listObjectives },
+  "../../../../../../lib/operacao-navegacao": await import("../apps/web/src/lib/operacao-navegacao"),
   "../../../../../../lib/estrategia-form": form,
   "@oplyra/core/brand": { getBrandOverview: vi.fn() },
   "../../../../../../components/botao-enviar": { BotaoEnviar: ({ children }: any) => React.createElement("button", null, children) },

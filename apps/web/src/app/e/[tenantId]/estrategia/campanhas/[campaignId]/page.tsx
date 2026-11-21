@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { contextoDaEmpresa } from "../../../../../../lib/session";
+import { lerRetornoOperacao, destinoRetornoOperacao, manterRetornoOperacao, validarRetornoDaCampanha, type RetornoOperacao } from "../../../../../../lib/operacao-navegacao";
 import { strategyDeps } from "../../../../../../lib/deps-estrategia";
 import { brandDeps } from "../../../../../../lib/deps-marca";
 import {
@@ -14,7 +15,7 @@ import { getBrandOverview } from "@oplyra/core/brand";
 import type { CampaignId, ExperimentId } from "@oplyra/core";
 import {
   AJUDA_METODO, ROTULO_CAMPANHA, ROTULO_CANAL, ROTULO_DIMENSAO, ROTULO_METODO, ROTULO_RESULTADO, ROTULO_TESTE, ROTULO_TAREFA,
-  destinoDeErro, lerCampanha, lerId, lerPlano, lerResultado, lerRevisao,
+  FormularioInvalido, destinoDeErro, lerCampanha, lerId, lerPlano, lerResultado, lerRevisao,
 } from "../../../../../../lib/estrategia-form";
 import { BotaoEnviar } from "../../../../../../components/botao-enviar";
 import { AvisoDeErro, AvisoSemPermissao } from "../../../../../../components/aviso-estrategia";
@@ -22,7 +23,7 @@ import styles from "./campanha-detalhe.module.css";
 
 type Props = {
   params: Promise<{ tenantId: string; campaignId: string }>;
-  searchParams: Promise<{ erro?: string; ok?: string; problemas?: string; destino?: string; canal?: string; conteudo?: string }>;
+  searchParams: Promise<{ erro?: string; ok?: string; problemas?: string; destino?: string; canal?: string; conteudo?: string; origem?: string | string[]; op_campanha?: string | string[]; op_prazo?: string | string[]; op_tarefa?: string | string[] }>;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -38,18 +39,18 @@ const CASOS_DE_CAMPANHA = {
  * serializáveis (strings); uma função local capturada não atravessa a fronteira cliente/servidor.
  * A autorização é refeita aqui (contextoDaEmpresa), nunca presumida pela página que renderizou o botão.
  */
-async function mudarCampanha(tenantId: string, aqui: string, qual: keyof typeof CASOS_DE_CAMPANHA, dados: FormData): Promise<void> {
+async function mudarCampanha(tenantId: string, aqui: string, qual: keyof typeof CASOS_DE_CAMPANHA, retorno: RetornoOperacao | null, dados: FormData): Promise<void> {
   const contexto = await contextoDaEmpresa(tenantId);
   try {
     await CASOS_DE_CAMPANHA[qual](strategyDeps, { ctx: contexto, campaignId: lerId(dados, "campanha") as CampaignId, expectedRevision: lerRevisao(dados) });
   } catch (e) {
-    redirect(destinoDeErro(aqui, e));
+    redirect(manterRetornoOperacao(destinoDeErro(aqui, e), retorno));
   }
   revalidatePath(aqui);
-  redirect(`${aqui}?ok=estado`);
+  redirect(manterRetornoOperacao(`${aqui}?ok=estado`, retorno));
 }
 
-async function agirNoTeste(tenantId: string, aqui: string, qual: "iniciar" | "concluir" | "cancelar", dados: FormData): Promise<void> {
+async function agirNoTeste(tenantId: string, aqui: string, qual: "iniciar" | "concluir" | "cancelar", retorno: RetornoOperacao | null, dados: FormData): Promise<void> {
   const contexto = await contextoDaEmpresa(tenantId);
   try {
     const base2 = { ctx: contexto, experimentId: lerId(dados, "teste") as ExperimentId, expectedRevision: lerRevisao(dados) };
@@ -57,21 +58,29 @@ async function agirNoTeste(tenantId: string, aqui: string, qual: "iniciar" | "co
     else if (qual === "cancelar") await cancelExperiment(strategyDeps, base2);
     else await concludeExperiment(strategyDeps, { ...base2, ...lerResultado(dados) });
   } catch (e) {
-    redirect(destinoDeErro(aqui, e));
+    redirect(manterRetornoOperacao(destinoDeErro(aqui, e), retorno));
   }
   revalidatePath(aqui);
-  redirect(`${aqui}?ok=teste`);
+  redirect(manterRetornoOperacao(`${aqui}?ok=teste`, retorno));
+}
+
+function AvisoRetornoInvalido() {
+  return <div className="pilha"><h1>Campanha</h1><div className="erro" role="alert"><p>Contexto de retorno à Operação inválido ou indisponível.</p></div></div>;
 }
 
 /** Campanha: método (DEC-017), ciclo de vida, UTMs e testes por hipótese (14 F-03; I-04). */
 export default async function PaginaDaCampanha({ params, searchParams }: Props) {
   const { tenantId, campaignId } = await params;
-  const { erro, ok, problemas, destino, canal, conteudo } = await searchParams;
+  const consulta = await searchParams;
+  const { erro, ok, problemas, destino, canal, conteudo } = consulta;
   const ctx = await contextoDaEmpresa(tenantId);
   const base = `/e/${encodeURIComponent(tenantId)}/estrategia`;
   const aqui = `${base}/campanhas/${encodeURIComponent(campaignId)}`;
 
   if (!ctx.permissions.has("strategy.read")) return <AvisoSemPermissao titulo="Campanha" oque="ver a estratégia" />;
+  let retorno: RetornoOperacao | null;
+  try { retorno = lerRetornoOperacao(consulta); }
+  catch (e) { if (e instanceof FormularioInvalido) return <AvisoRetornoInvalido />; throw e; }
   if (!UUID.test(campaignId)) redirect(`${base}?erro=CAMPAIGN_NOT_FOUND`);
 
   let campanha;
@@ -83,7 +92,6 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
   }
   const podeEditar = ctx.permissions.has("strategy.write");
   const rascunho = campanha.status === "draft";
-  const testes = await listExperiments(strategyDeps, ctx, campanha.id);
   let tarefas: Awaited<ReturnType<typeof listCampaignTasks>>;
   try {
     tarefas = await listCampaignTasks(strategyDeps, ctx, campanha.id);
@@ -91,6 +99,9 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
     if (e instanceof CampaignNotFound) redirect(`${base}?erro=CAMPAIGN_NOT_FOUND`);
     throw e;
   }
+  try { validarRetornoDaCampanha(retorno, campanha.id, tarefas); }
+  catch (e) { if (e instanceof FormularioInvalido) return <AvisoRetornoInvalido />; throw e; }
+  const testes = await listExperiments(strategyDeps, ctx, campanha.id);
   const objetivos = (await listObjectives(strategyDeps, ctx)).filter((o) => o.status === "active" || o.id === campanha.objectiveId);
   const marca = ctx.permissions.has("brand.read") ? (await getBrandOverview(brandDeps, ctx)).current : null;
 
@@ -102,18 +113,18 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
         ctx: contexto, campaignId: lerId(dados, "campanha") as CampaignId, expectedRevision: lerRevisao(dados), content: lerCampanha(dados),
       });
     } catch (e) {
-      redirect(destinoDeErro(aqui, e));
+      redirect(manterRetornoOperacao(destinoDeErro(aqui, e), retorno));
     }
     revalidatePath(aqui);
-    redirect(`${aqui}?ok=salvo`);
+    redirect(manterRetornoOperacao(`${aqui}?ok=salvo`, retorno));
   }
 
-  // Ações de servidor fecham só sobre strings (tenantId, aqui); a lógica vive no escopo do módulo.
-  async function ativar(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "ativar", d); }
-  async function pausar(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "pausar", d); }
-  async function retomar(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "retomar", d); }
-  async function concluir(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "concluir", d); }
-  async function cancelar(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "cancelar", d); }
+  // Ações fecham sobre identificadores e contexto de retorno serializável; a lógica vive no escopo do módulo.
+  async function ativar(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "ativar", retorno, d); }
+  async function pausar(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "pausar", retorno, d); }
+  async function retomar(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "retomar", retorno, d); }
+  async function concluir(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "concluir", retorno, d); }
+  async function cancelar(d: FormData) { "use server"; return mudarCampanha(tenantId, aqui, "cancelar", retorno, d); }
 
   async function novoTeste(dados: FormData) {
     "use server";
@@ -121,14 +132,14 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
     try {
       await planExperiment(strategyDeps, { ctx: contexto, campaignId: lerId(dados, "campanha") as CampaignId, plan: lerPlano(dados) });
     } catch (e) {
-      redirect(destinoDeErro(aqui, e));
+      redirect(manterRetornoOperacao(destinoDeErro(aqui, e), retorno));
     }
     revalidatePath(aqui);
-    redirect(`${aqui}?ok=teste`);
+    redirect(manterRetornoOperacao(`${aqui}?ok=teste`, retorno));
   }
-  async function iniciarTeste(d: FormData) { "use server"; return agirNoTeste(tenantId, aqui, "iniciar", d); }
-  async function concluirTeste(d: FormData) { "use server"; return agirNoTeste(tenantId, aqui, "concluir", d); }
-  async function cancelarTeste(d: FormData) { "use server"; return agirNoTeste(tenantId, aqui, "cancelar", d); }
+  async function iniciarTeste(d: FormData) { "use server"; return agirNoTeste(tenantId, aqui, "iniciar", retorno, d); }
+  async function concluirTeste(d: FormData) { "use server"; return agirNoTeste(tenantId, aqui, "concluir", retorno, d); }
+  async function cancelarTeste(d: FormData) { "use server"; return agirNoTeste(tenantId, aqui, "cancelar", retorno, d); }
 
   // UTMs: função pura; o resultado depende só dos parâmetros da URL desta página.
   let utm: UtmResult | null = null;
@@ -149,6 +160,7 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
           <h1>{campanha.name || "Campanha sem nome"}</h1>
           <p className={`muted ${styles.metadados}`}><span className="selo">{ROTULO_CAMPANHA[campanha.status]}</span> · versão {campanha.revision} · criada em {hora(campanha.createdAt)}{campanha.activatedAt ? ` · ativada em ${hora(campanha.activatedAt)}` : ""}</p>
         </div>
+        {retorno && <a className="btn secundario" href={destinoRetornoOperacao(tenantId, retorno)}>Voltar à Operação</a>}
         <Link className="btn secundario" href={base}>Voltar à estratégia</Link>
       </header>
 
@@ -234,6 +246,7 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
           <>
             {rascunho && <p className="muted" role="note">A campanha ainda está planejada: a chave pode mudar até a ativação. Só use os UTMs em veiculação depois de ativar.</p>}
             <form method="get" className="pilha">
+              {retorno && Array.from(new URL(manterRetornoOperacao(aqui, retorno), "https://oplyra.invalid").searchParams).map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />)}
               <div className="grade">
                 <div><label htmlFor="destino">URL de destino</label><input id="destino" name="destino" type="url" placeholder="https://exemplo.com/demo" defaultValue={destino ?? ""} /></div>
                 <div>
@@ -350,8 +363,9 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
             <h2 id="tarefas-vinculadas">Tarefas vinculadas</h2>
             <p className="muted">Trabalho registrado na Operação para esta campanha.</p>
           </div>
-          <Link className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao?campanha=${encodeURIComponent(campanha.id)}`}>Abrir Operação</Link>
+          <Link className="btn secundario" href={retorno ? destinoRetornoOperacao(tenantId, retorno) : `/e/${encodeURIComponent(tenantId)}/operacao?campanha=${encodeURIComponent(campanha.id)}`}>Abrir Operação</Link>
         </div>
+        {retorno && <p className="muted">Os filtros da Operação de origem são mantidos. Tarefas fora desse recorte não aparecerão ao voltar.</p>}
         {tarefas.length === 0 ? (
           <p className="vazio">Nenhuma tarefa vinculada a esta campanha.</p>
         ) : (
@@ -365,7 +379,7 @@ export default async function PaginaDaCampanha({ params, searchParams }: Props) 
                 {t.description && <p className="texto">{t.description}</p>}
                 <p className="muted">{t.dueDate ? <>Prazo: <time dateTime={t.dueDate}>{t.dueDate.split("-").reverse().join("/")}</time></> : "Sem prazo definido"}</p>
                 {/* Navegação de documento mantém o salto ao cartão após carregar o HTML. */}
-                <a className="btn secundario" href={`/e/${encodeURIComponent(tenantId)}/operacao?campanha=${encodeURIComponent(campanha.id)}#tarefa-${encodeURIComponent(t.id)}`}>Ver na Operação</a>
+                {(!retorno || retorno.campanha.kind !== "unlinked") && <a className="btn secundario" href={retorno ? destinoRetornoOperacao(tenantId, { ...retorno, tarefaId: t.id }) : `/e/${encodeURIComponent(tenantId)}/operacao?campanha=${encodeURIComponent(campanha.id)}#tarefa-${encodeURIComponent(t.id)}`}>Ver na Operação</a>}
               </li>
             ))}
           </ul>
